@@ -40,43 +40,33 @@
 
 package nu.staldal.lsp.expr;
 
-import nu.staldal.syntax.Token;
+import nu.staldal.lsp.LSPExpr;
 
 /**
- * A function name
+ * A tuple expression
  */
-class FunctionNameToken extends Token
+public class TupleExpr extends LSPExpr
 {
-	protected String prefix;
+	protected LSPExpr base;
 	protected String name;
 
-	/**
-	 * Create an StringToken.
-	 *
-	 * @param pos the position of the token in the parsed string
-	 * @param prefix the namespace prefix, or <code>null</code> if none
-	 * @param name the function name
-	 */
-	public FunctionNameToken(int pos, String prefix, String name)
+	public TupleExpr(LSPExpr base, String name)
 	{
-		super(-1, pos);
-		this.prefix = prefix;
+		this.base = base;
 		this.name = name;
 	}
 
-	/**
-	 * Get the namespace prefix.
-	 *
-	 * @return the namespace prefix, or <code>null</code> if none
-	 */
-	public String getPrefix()
+	public TupleExpr(LSPExpr base, NameToken name)
 	{
-		return prefix;
+		this.base = base;
+		this.name = name.getName();
+	}
+	
+	public LSPExpr getBase()
+	{
+		return base;
 	}
 
-	/**
-	 * Get the name
-	 */
 	public String getName()
 	{
 		return name;
@@ -84,7 +74,7 @@ class FunctionNameToken extends Token
 
 	public String toString()
 	{
-		return "FunctionNameToken(" + prefix + "," + name + ")";
+		return "TupleExpr(" + base + "." + name + ")";
 	}
 
 }

@@ -137,10 +137,10 @@ public class LSPExprParser extends Parser
 	 */
 	LSPExpr primaryExpr() throws ParseException, java.io.IOException
 	{
-		if (token instanceof VariableReferenceToken)
+		if (consumeDelimiter(DelimiterToken.DOLLAR))
 		{
 			return
-				new VariableReference((VariableReferenceToken)consumeToken());
+				new VariableReference((NameToken)consumeToken(NameToken.class));
 		}
 		else if (consumeDelimiter(DelimiterToken.LPAREN))
 		{
@@ -156,7 +156,7 @@ public class LSPExprParser extends Parser
 		{
 			return new NumberLiteral((NumberToken)consumeToken());
 		}
-		else if (token instanceof FunctionNameToken)
+		else if (token instanceof NameToken)
 		{
 			return functionCall();
 		}
@@ -168,13 +168,35 @@ public class LSPExprParser extends Parser
 
 	/**
 	 * FunctionCall ::= FunctionName '(' ( Argument ( ',' Argument )* )? ')'
+	 * FunctionName ::= LSPName ( ':' LSPName )?
 	 */
 	LSPExpr functionCall() throws ParseException, java.io.IOException
 	{
-		FunctionNameToken functionName =
-			(FunctionNameToken)consumeToken(FunctionNameToken.class);
+		NameToken functionName1 =
+			(NameToken)consumeToken(NameToken.class);
+		NameToken functionName2 = null;
+		
+		if (consumeDelimiter(DelimiterToken.COLON))
+		{
+			functionName2 = (NameToken)consumeToken(NameToken.class);
+		}
+		
+		if (functionName2 == null &&
+			(functionName1.getName().equals("comment")
+				|| functionName1.getName().equals("text")
+				|| functionName1.getName().equals("processing-instruction")
+				|| functionName1.getName().equals("node")))
+		{
+			throw new ParseException("function name may not be NodeType", 
+				functionName1);
+		}
+			
+					
 		consumeDelimiter(DelimiterToken.LPAREN, "( expected");
-		FunctionCall call = new FunctionCall(functionName);
+		FunctionCall call = 
+			(functionName2 == null) 
+				? new FunctionCall(null, functionName1)
+				: new FunctionCall(functionName1, functionName2);
 
 		if (!(token instanceof DelimiterToken) ||
 			!((DelimiterToken)token).isType(DelimiterToken.RPAREN))
@@ -321,7 +343,7 @@ public class LSPExprParser extends Parser
 	}
 
 	/**
-	 * UnaryExpr ::= PrimaryExpr
+	 * UnaryExpr ::= TupleExpr
 	 *			   | '-' UnaryExpr
 	 */
 	LSPExpr unaryExpr() throws ParseException, java.io.IOException
@@ -332,7 +354,23 @@ public class LSPExprParser extends Parser
 		}
 		else
 		{
-			return primaryExpr();
+			return tupleExpr();
 		}
 	}
+
+	/**
+	 * TupleExpr ::= PrimaryExpr
+	 *			   | TupleExpr '.' LSPName
+	 */
+	LSPExpr tupleExpr() throws ParseException, java.io.IOException
+	{
+		LSPExpr ret = primaryExpr();
+		while (consumeDelimiter(DelimiterToken.DOT))
+		{
+			ret = new TupleExpr(
+				ret, (NameToken)consumeToken(NameToken.class));
+		}
+		return ret;
+	}
+
 }

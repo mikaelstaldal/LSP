@@ -66,9 +66,7 @@ DIGIT = [0-9]
 COMBININGCHAR = "combiningchar"
 EXTENDER = "extender"
 
-NCNAME = ({LETTER}|_)({LETTER}|{DIGIT}|\.|-|_|{COMBININGCHAR}|{EXTENDER})*
-
-VARNAME = ({LETTER}|_)({LETTER}|{DIGIT}|-|_|{COMBININGCHAR}|{EXTENDER})*
+LSPNAME = ({LETTER}|_)({LETTER}|{DIGIT}|-|_|{COMBININGCHAR}|{EXTENDER})*
 
 %%
 
@@ -88,6 +86,9 @@ and  { return new DelimiterToken(yychar+1, DelimiterToken.AND); }
 "*"  { return new DelimiterToken(yychar+1, DelimiterToken.TIMES); }
 div  { return new DelimiterToken(yychar+1, DelimiterToken.DIV); }
 mod  { return new DelimiterToken(yychar+1, DelimiterToken.MOD); }
+"."  { return new DelimiterToken(yychar+1, DelimiterToken.DOT); }
+"$"  { return new DelimiterToken(yychar+1, DelimiterToken.DOLLAR); }
+":"  { return new DelimiterToken(yychar+1, DelimiterToken.COLON); }
 
 
 \"[^\"]*\"|'[^']*' { 
@@ -99,42 +100,9 @@ mod  { return new DelimiterToken(yychar+1, DelimiterToken.MOD); }
     return new NumberToken(yychar+1, Double.valueOf(yytext()).doubleValue()); 
 }
 
-({NCNAME}:)?{NCNAME} {
-    String s = yytext();
-    int colon = s.indexOf(':');
-    if (colon < 0)
-    {
-    	if (s.equals("comment") 
-    		|| s.equals("text") 
-    		|| s.equals("processing-instruction") 
-    		|| s.equals("node"))
-    	{
-    	    return new IllegalToken(-1, yychar+1, yytext());
-    	}
-    	else
-    	{
-	    return new FunctionNameToken(yychar+1, null, s);
-	}
-    }
-    else
-    {
-    	return new FunctionNameToken(yychar+1, 
-    	    s.substring(0, colon), s.substring(colon+1, s.length()));
-    }
-}
 
-\${VARNAME}(\.{VARNAME})? { 
-    String s = yytext();
-    int dot = s.indexOf('.');
-    if (dot < 0)
-    {
-    	return new VariableReferenceToken(yychar+1, s.substring(1), null);
-    }
-    else
-    {
-    	return new VariableReferenceToken(yychar+1, 
-    	    s.substring(1, dot), s.substring(dot+1, s.length()));
-    }
+{LSPNAME} { 
+    return new NameToken(yychar+1, yytext());
 }
 
 (" "|\r|\n|\t)+ { }

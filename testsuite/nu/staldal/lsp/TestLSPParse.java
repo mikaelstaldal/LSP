@@ -9,7 +9,7 @@ import junit.framework.*;
 public class TestLSPParse extends TestCase
 {
     public static final String correctExpr = "1+2-3.2*4 div f($a.b,$c)-\'4ad\'";
-    public static final String correctTest = "BinaryExpr(BinaryExpr(BinaryExpr(NumberLiteral(1.0),12,NumberLiteral(2.0)),13,BinaryExpr(BinaryExpr(NumberLiteral(3.2),14,NumberLiteral(4.0)),15,FunctionCall(null,f,(VariableReference(a,b),VariableReference(c,null),)))),13,StringLiteral(4ad))";
+    public static final String correctTest = "BinaryExpr(BinaryExpr(BinaryExpr(NumberLiteral(1.0),12,NumberLiteral(2.0)),13,BinaryExpr(BinaryExpr(NumberLiteral(3.2),14,NumberLiteral(4.0)),15,FunctionCall(null,f,[TupleExpr(VariableReference(a).b),VariableReference(c)]))),13,StringLiteral(4ad))";
 
     public static final String invalidExpr = "1+2-a-3.2*f($a.b,$c)";
 
@@ -30,5 +30,20 @@ public class TestLSPParse extends TestCase
         }
         catch (ParseException e)
         { }
+	}
+	
+	public static void main(String[] args)
+	{
+		System.out.println(args[0]);
+		try {
+			LSPExpr parsed = LSPExpr.parseFromString(args[0]);
+			System.out.println(parsed.toString());
+        }
+        catch (ParseException e)
+        {
+			System.out.println(LSPUtil.nChars(e.getColumn()-1,' ') 
+				+ "^ "+ e.getMessage());
+		}
+		
 	}
 }

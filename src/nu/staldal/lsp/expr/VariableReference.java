@@ -48,17 +48,15 @@ import nu.staldal.lsp.LSPExpr;
 public class VariableReference extends LSPExpr
 {
 	protected String name;
-	protected String field;
 
 	/**
-	 * Create a VariableReference from a corresponding token
+	 * Create a VariableReference
 	 *
 	 * @param t  the token
 	 */
-	public VariableReference(VariableReferenceToken t)
+	public VariableReference(NameToken t)
 	{
 		this.name = t.getName();
-		this.field = t.getField();
 	}
 
 	/**
@@ -69,19 +67,9 @@ public class VariableReference extends LSPExpr
 		return name;
 	}
 
-	/**
-	 * Get the field name.
-	 *
-	 * @return the field name, or <code>null</code> if none
-	 */
-	public String getField()
-	{
-		return field;
-	}
-
 	public String toString()
 	{
-		return "VariableReference(" + name + "," + field + ")";
+		return "VariableReference(" + name + ")";
 	}
 
 }

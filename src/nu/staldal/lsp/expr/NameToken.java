@@ -43,48 +43,35 @@ package nu.staldal.lsp.expr;
 import nu.staldal.syntax.Token;
 
 /**
- * A variable reference
+ * A symbolic name.
  */
-class VariableReferenceToken extends Token
+class NameToken extends Token
 {
 	protected String name;
-	protected String field;
 
 	/**
-	 * Create a VariableReference
+	 * Create an NameToken.
 	 *
 	 * @param pos the position of the token in the parsed string
-	 * @param name the variable name
-	 * @param field the field name, or <code>null</code> if none
+	 * @param name the name
 	 */
-	public VariableReferenceToken(int pos, String name, String field)
+	public NameToken(int pos, String name)
 	{
 		super(-1, pos);
 		this.name = name;
-		this.field = field;
 	}
 
 	/**
-	 * Get the variable name.
+	 * Get the name.
 	 */
 	public String getName()
 	{
 		return name;
 	}
 
-	/**
-	 * Get the field name.
-	 *
-	 * @return the field name, or <code>null</code> if none
-	 */
-	public String getField()
-	{
-		return field;
-	}
-
 	public String toString()
 	{
-		return "VariableReferenceToken(" + name + "," + field + ")";
+		return "NameToken(" + name + ")";
 	}
-
 }
+

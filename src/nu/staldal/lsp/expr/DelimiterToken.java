@@ -63,6 +63,9 @@ class DelimiterToken extends Token
 	public static final int TIMES = 14;
 	public static final int DIV = 15;
 	public static final int MOD = 16;
+	public static final int DOT = 17;
+	public static final int DOLLAR = 18;
+	public static final int COLON = 19;
 
 
 	protected int type;

@@ -53,19 +53,18 @@ public class FunctionCall extends LSPExpr
 	protected String name;
 	protected Vector args;
 
+
 	/**
-	 * Create an FuncionCall
-	 *
-	 * @param name  the function name
+	 * Create an FuncionCall from NameTokens
 	 */
-	public FunctionCall(FunctionNameToken name)
+	public FunctionCall(NameToken prefix, NameToken name, int numArgs)
 	{
-		this.prefix = name.getPrefix();
+		this.prefix = (prefix == null) ? null : prefix.getName();
 		this.name = name.getName();
-		args = new Vector(4);
+		args = new Vector(numArgs);
 	}
-
-
+	
+	
 	/**
 	 * Create an FuncionCall
 	 */
@@ -76,6 +75,28 @@ public class FunctionCall extends LSPExpr
 		args = new Vector(numArgs);
 	}
 
+	
+	/**
+	 * Create an FuncionCall from NameTokens
+	 */
+	public FunctionCall(NameToken prefix, NameToken name)
+	{
+		this.prefix = (prefix == null) ? null : prefix.getName();
+		this.name = name.getName();
+		args = new Vector();
+	}
+	
+	
+	/**
+	 * Create an FuncionCall
+	 */
+	public FunctionCall(String prefix, String name)
+	{
+		this.prefix = prefix;
+		this.name = name;
+		args = new Vector();
+	}
+	
 
 	/**
 	 * Add an argument to the function
@@ -130,13 +151,13 @@ public class FunctionCall extends LSPExpr
 		sb.append(prefix);
 		sb.append(",");
 		sb.append(name);
-		sb.append(",(");
+		sb.append(",[");
 		for (int i = 0; i < numberOfArgs(); i++)
 		{
 			sb.append(getArg(i).toString());
-			sb.append(",");
+			if (i < numberOfArgs()-1) sb.append(",");
 		}
-		sb.append("))");
+		sb.append("])");
 		return sb.toString();
 	}
 
