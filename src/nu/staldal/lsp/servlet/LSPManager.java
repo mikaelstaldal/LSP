@@ -63,7 +63,11 @@ public class LSPManager
 {
 	private final ServletContext context;
 	private final LSPHelper helper;
-	
+    private final ClassLoader servletClassLoader;
+
+    private final LocaleBundleFactory localeBundleFactory;
+    private final Map localeBundleCache;	
+    
 	
 	/**
 	 * Obtain the the LSPManager instance for the given 
@@ -98,6 +102,33 @@ public class LSPManager
 	{
 		this.context = context;
 		this.helper = new LSPHelper(servletClassLoader);
+        this.servletClassLoader = servletClassLoader;
+        
+        this.localeBundleCache = Collections.synchronizedMap(new HashMap());
+        
+        String localeBundleFactortClassName = context.getInitParameter(
+            "nu.staldal.lsp.servlet.LocaleBundleFactory");
+            
+        if (localeBundleFactortClassName == null)
+            localeBundleFactortClassName = PropertyLocaleBundleFactory.class.getName();
+        
+        try {
+            Class localeBundleFactoryClass = Class.forName(localeBundleFactortClassName);
+            localeBundleFactory = (LocaleBundleFactory)localeBundleFactoryClass.newInstance();        
+            localeBundleFactory.init(servletClassLoader);
+        }
+        catch (ClassNotFoundException e)
+        {
+            throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
+        }
+        catch (InstantiationException e)
+        {
+            throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
+        }
+        catch (IllegalAccessException e)
+        {
+            throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
+        }        
 	}
 
 	
@@ -152,7 +183,7 @@ public class LSPManager
             
         OutputStream out = response.getOutputStream();        
         helper.executePage(thePage, lspParams, 
-            new LSPServletContext(context, request), out);
+            new LSPServletContext(context, request, this), out);
     }
 
 
@@ -211,7 +242,7 @@ public class LSPManager
             
         OutputStream out = response.getOutputStream();        
         helper.executePage(thePage, lspParams, 
-            new LSPServletContext(context, request), 
+            new LSPServletContext(context, request, this), 
             compiledStylesheet, out);
     }
 
@@ -269,6 +300,41 @@ public class LSPManager
 		
 		return new LSPRequestDispatcher(this, page);
 	}
+    
+    
+    /**
+     * Get the {@link java.lang.ClassLoader} used to load LSP pages and
+     * associated resources.
+     *
+     * @return the {@link java.lang.ClassLoader} used to load LSP pages and
+     * associated resources.
+     */
+    public ClassLoader getClassLoader()
+    {
+        return servletClassLoader;    
+    }
 
+    
+    /**
+     * Load a {@link nu.staldal.lsp.servlet.LocaleBundle}
+     * for the given {@link java.util.Locale}.
+     *
+     * @param locale  the {@link java.util.Locale}
+     *
+     * @return {@link nu.staldal.lsp.servlet.LocaleBundle}, 
+     * or <code>null</code> if none found for the given locale
+     */
+    LocaleBundle loadLocaleBundle(Locale locale)
+        throws Exception
+    {
+        LocaleBundle localeBundle = (LocaleBundle)localeBundleCache.get(locale);
+        
+        if (localeBundle == null)
+        {
+            localeBundle = localeBundleFactory.loadBundle(locale);
+        }
+        
+        return localeBundle;
+    }
 }
 

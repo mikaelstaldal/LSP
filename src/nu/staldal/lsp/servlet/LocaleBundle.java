@@ -40,61 +40,21 @@
 
 package nu.staldal.lsp.servlet;
 
-import javax.servlet.*;
-
-import nu.staldal.lsp.*;
-
-
 /**
- * Context for LSP extension libraries.
+ * Interface for localization bundles. 
  */
-public class LSPServletContext
+public interface LocaleBundle
 {
-	private final ServletContext servletContext;
-	private final ServletRequest servletRequest;
-    private final LSPManager lspManager;
-	
-
-    protected LSPServletContext(ServletContext servletContext,
-        ServletRequest servletRequest, LSPManager lspManager)
-    {
-        this.servletContext = servletContext;
-        this.servletRequest = servletRequest;
-        this.lspManager = lspManager;
-    }
     
-
     /**
-     * Get the {@link javax.servlet.ServletContext}.
+     * Get a localized string from this LocaleBundle.   
      *
-     * @return the {@link javax.servlet.ServletContext}
-     */
-    public ServletContext getServletContext()
-    {
-        return servletContext;
-    }
-    
-
-    /**
-     * Get the {@link javax.servlet.ServletRequest}.
+     * @param pageName The page name (may be ignored)
+     * @param key      The localization key
      *
-     * @return the {@link javax.servlet.ServletRequest}
+     * @return the localized string, or <code>null</code> if key is not found
      */
-    public ServletRequest getServletRequest()
-    {
-        return servletRequest;
-    }
-    
-
-    /**
-     * Get the {@link nu.staldal.lsp.servlet.LSPManager}.
-     *
-     * @return the {@link nu.staldal.lsp.servlet.LSPManager}
-     */
-    public LSPManager getLSPManager()
-    {
-        return lspManager;
-    }
-
+    public String getString(String pageName, String key)
+        throws Exception;
 }
 

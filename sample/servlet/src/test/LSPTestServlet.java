@@ -51,6 +51,10 @@ public class LSPTestServlet extends HttpServlet
             req.setAttribute("flag", (flag == null) ? "" : flag);
             lspManager.getRequestDispatcher("Func3").forward(req, resp);
         }
+        else if (function.equals("/FUNC4"))
+        {
+            lspManager.getRequestDispatcher("Func4").forward(req, resp);
+        }
         else if (function.equals("/DIRLIST1"))
         {
             req.setAttribute("dirlist", 

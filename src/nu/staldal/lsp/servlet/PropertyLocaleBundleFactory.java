@@ -40,61 +40,37 @@
 
 package nu.staldal.lsp.servlet;
 
-import javax.servlet.*;
-
-import nu.staldal.lsp.*;
-
+import java.util.*;
+import java.io.*;
 
 /**
- * Context for LSP extension libraries.
+ * Factory for {@link nu.staldal.lsp.servlet.PropertyLocaleBundle}.
  */
-public class LSPServletContext
+class PropertyLocaleBundleFactory implements LocaleBundleFactory
 {
-	private final ServletContext servletContext;
-	private final ServletRequest servletRequest;
-    private final LSPManager lspManager;
-	
-
-    protected LSPServletContext(ServletContext servletContext,
-        ServletRequest servletRequest, LSPManager lspManager)
+    private ClassLoader classLoader;
+        
+    public void init(ClassLoader classLoader)
     {
-        this.servletContext = servletContext;
-        this.servletRequest = servletRequest;
-        this.lspManager = lspManager;
+        this.classLoader = classLoader;    
     }
     
-
-    /**
-     * Get the {@link javax.servlet.ServletContext}.
-     *
-     * @return the {@link javax.servlet.ServletContext}
-     */
-    public ServletContext getServletContext()
-    {
-        return servletContext;
+    public LocaleBundle loadBundle(Locale locale)
+        throws IOException
+    {        
+        String name = (locale != null)
+            ? "LSPLocale_"+locale.toString()+".properties"
+            : "LSPLocale.properties";
+        
+        InputStream is = classLoader.getResourceAsStream(name);
+            
+        if (is == null) return null;
+            
+        Properties props = new Properties();
+        props.load(is);
+        is.close();
+        
+        return new PropertyLocaleBundle(props);
     }
-    
-
-    /**
-     * Get the {@link javax.servlet.ServletRequest}.
-     *
-     * @return the {@link javax.servlet.ServletRequest}
-     */
-    public ServletRequest getServletRequest()
-    {
-        return servletRequest;
-    }
-    
-
-    /**
-     * Get the {@link nu.staldal.lsp.servlet.LSPManager}.
-     *
-     * @return the {@link nu.staldal.lsp.servlet.LSPManager}
-     */
-    public LSPManager getLSPManager()
-    {
-        return lspManager;
-    }
-
 }
 

@@ -40,61 +40,32 @@
 
 package nu.staldal.lsp.servlet;
 
-import javax.servlet.*;
-
-import nu.staldal.lsp.*;
+import java.util.Locale;
 
 
 /**
- * Context for LSP extension libraries.
+ * Interface for localization bundle factories. 
  */
-public class LSPServletContext
+public interface LocaleBundleFactory
 {
-	private final ServletContext servletContext;
-	private final ServletRequest servletRequest;
-    private final LSPManager lspManager;
-	
-
-    protected LSPServletContext(ServletContext servletContext,
-        ServletRequest servletRequest, LSPManager lspManager)
-    {
-        this.servletContext = servletContext;
-        this.servletRequest = servletRequest;
-        this.lspManager = lspManager;
-    }
     
-
     /**
-     * Get the {@link javax.servlet.ServletContext}.
+     * Initialize this factory.
      *
-     * @return the {@link javax.servlet.ServletContext}
-     */
-    public ServletContext getServletContext()
-    {
-        return servletContext;
-    }
+     * @param classLoader   the {@link java.lang.ClassLoader} to use
+     */    
+    public void init(ClassLoader classLoader);
     
-
     /**
-     * Get the {@link javax.servlet.ServletRequest}.
+     * Load this LocaleBundle.
+     * 
+     * @param locale        the {@link java.util.Locale},
+     *                      or <code>null</code> for default
      *
-     * @return the {@link javax.servlet.ServletRequest}
-     */
-    public ServletRequest getServletRequest()
-    {
-        return servletRequest;
-    }
-    
-
-    /**
-     * Get the {@link nu.staldal.lsp.servlet.LSPManager}.
-     *
-     * @return the {@link nu.staldal.lsp.servlet.LSPManager}
-     */
-    public LSPManager getLSPManager()
-    {
-        return lspManager;
-    }
-
+     * @return the {@link nu.staldal.lsp.servlet.LocaleBundle}, 
+     * or <code>null</code> if none found for the given locale
+     */    
+    public LocaleBundle loadBundle(Locale locale)
+        throws Exception;    
 }
 

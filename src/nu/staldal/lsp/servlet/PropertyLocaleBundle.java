@@ -40,61 +40,25 @@
 
 package nu.staldal.lsp.servlet;
 
-import javax.servlet.*;
-
-import nu.staldal.lsp.*;
+import java.util.*;
 
 
 /**
- * Context for LSP extension libraries.
+ * {@link nu.staldal.lsp.servlet.LocaleBundle} for files.
  */
-public class LSPServletContext
+class PropertyLocaleBundle implements LocaleBundle
 {
-	private final ServletContext servletContext;
-	private final ServletRequest servletRequest;
-    private final LSPManager lspManager;
-	
-
-    protected LSPServletContext(ServletContext servletContext,
-        ServletRequest servletRequest, LSPManager lspManager)
+    Properties props;
+    
+    PropertyLocaleBundle(Properties props)
     {
-        this.servletContext = servletContext;
-        this.servletRequest = servletRequest;
-        this.lspManager = lspManager;
+        this.props = props;    
     }
     
-
-    /**
-     * Get the {@link javax.servlet.ServletContext}.
-     *
-     * @return the {@link javax.servlet.ServletContext}
-     */
-    public ServletContext getServletContext()
-    {
-        return servletContext;
-    }
     
-
-    /**
-     * Get the {@link javax.servlet.ServletRequest}.
-     *
-     * @return the {@link javax.servlet.ServletRequest}
-     */
-    public ServletRequest getServletRequest()
+    public String getString(String pageName, String key)
     {
-        return servletRequest;
+        return props.getProperty(key); 
     }
-    
-
-    /**
-     * Get the {@link nu.staldal.lsp.servlet.LSPManager}.
-     *
-     * @return the {@link nu.staldal.lsp.servlet.LSPManager}
-     */
-    public LSPManager getLSPManager()
-    {
-        return lspManager;
-    }
-
 }
 
