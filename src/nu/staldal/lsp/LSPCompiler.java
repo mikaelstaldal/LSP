@@ -70,33 +70,40 @@ public class LSPCompiler
 	private boolean inPi;
 
 
-	private static LSPException fixSourceException(Node node, String msg)
+	private static SAXException fixSourceException(Node node, String msg)
 	{
-		return new LSPException(
-			((node.getSystemId() == null) ? "source" : node.getSystemId())
-			+ ':' + node.getLineNumber()
-			+ ':' + node.getColumnNumber() + ": " + msg);
+		return new SAXParseException(msg, null,
+			node.getSystemId(), node.getLineNumber(), node.getColumnNumber());
 	}
 
-	private static LSPException fixParseException(
+
+	private static SAXException fixParseException(Node node,
 		String expression, ParseException e)
 	{
-		return new LSPException("Illegal LSP expression:\n" + expression +
-			"\n" + LSPUtil.nChars(e.getColumn()-1,' ') + "^ "+ e.getMessage());
+		return new SAXParseException(
+			"Illegal LSP expression:\n"
+				+ expression + "\n" + LSPUtil.nChars(e.getColumn()-1,' ')
+				+ "^ "+ e.getMessage(),
+			null,
+			node.getSystemId(),
+			node.getLineNumber(),
+			node.getColumnNumber());
 	}
 
 
-    private static LSPException fixIllegalTemplate(String template)
+    private static SAXException fixIllegalTemplate(Node node, String template)
     {
-        if (template.length() > 64)
-            return new LSPException("Illegal LSP template");
-        else
-            return new LSPException("Illegal LSP template: " + template);
+        String msg = (template.length() > 50)
+            ? "Illegal LSP template"
+			: ("Illegal LSP template: " + template);
+
+		return new SAXParseException(msg, null,
+			node.getSystemId(), node.getLineNumber(), node.getColumnNumber());
     }
 
 
-	public String getAttr(String name, Element el, boolean throwOnError)
-		throws LSPException
+	private String getAttr(String name, Element el, boolean throwOnError)
+		throws SAXException
 	{
 		String value = el.getAttributeValue(el.lookupAttribute("", name));
 
@@ -117,10 +124,10 @@ public class LSPCompiler
 	}
 
 
-	private static Vector processTemplate(
+	private static Vector processTemplate(Node n,
         char left, char right, char quot1, char quot2,
         String template)
-        throws LSPException
+        throws SAXException
 	{
 		Vector vector = new Vector(template.length()/16);
 		StringBuffer text = new StringBuffer();
@@ -146,7 +153,7 @@ public class LSPCompiler
 					}
 					else if (brace == right)
 					{
-						throw fixIllegalTemplate(template);
+						throw fixIllegalTemplate(n, template);
 					}
 				}
 				else if (c == right)
@@ -162,7 +169,7 @@ public class LSPCompiler
 					}
 					else if (brace == left)
 					{
-						throw fixIllegalTemplate(template);
+						throw fixIllegalTemplate(n, template);
 					}
 				}
 				else
@@ -179,7 +186,7 @@ public class LSPCompiler
 					}
 					else if (brace == right)
 					{
-						throw fixIllegalTemplate(template);
+						throw fixIllegalTemplate(n, template);
 					}
 					else
 					{
@@ -212,7 +219,8 @@ public class LSPCompiler
                         }
                         catch (ParseException e)
                         {
-                            throw fixParseException(exp, (ParseException)e);
+                            throw fixParseException(
+								n, exp, (ParseException)e);
                         }
                         vector.addElement(res);
 						expr = null;
@@ -232,7 +240,7 @@ public class LSPCompiler
 
 		if (brace != 0)
 		{
-		    throw fixIllegalTemplate(template);
+		    throw fixIllegalTemplate(n, template);
 		}
 
 		if ((text != null) && (text.length() > 0))
@@ -340,7 +348,7 @@ public class LSPCompiler
 	}
 
 
-    private LSPNode compileNode(Node node) throws LSPException
+    private LSPNode compileNode(Node node) throws SAXException
     {
         if (node instanceof Element)
             return compileNode((Element)node);
@@ -354,7 +362,7 @@ public class LSPCompiler
     }
 
 
-    private LSPNode compileNode(Element el) throws LSPException
+    private LSPNode compileNode(Element el) throws SAXException
     {
 		if ((el.getNamespaceURI() != null)
 				&& el.getNamespaceURI().equals(LSP_CORE_NS))
@@ -423,7 +431,7 @@ public class LSPCompiler
 
 				LSPExpr newValue = (raw > 0)
                     ? new StringLiteral(value)
-                    : processTemplateExpr(value);
+                    : processTemplateExpr(el, value);
 
 				newEl.addAttribute(URI, local, type, newValue);
 			}
@@ -436,7 +444,7 @@ public class LSPCompiler
 
 
     private LSPNode compileNode(Text text)
-        throws LSPException
+        throws SAXException
     {
 		if (raw > 0)
 		{
@@ -444,49 +452,43 @@ public class LSPCompiler
 		}
 		else
 		{
-			return processTemplateNode(text.getValue());
+			Vector vec = processTemplate(text, '{', '}', '\'', '\"',
+				text.getValue());
+
+			LSPContainer container = new LSPContainer(vec.size());
+
+			for (Enumeration e = vec.elements(); e.hasMoreElements(); )
+			{
+				Object o = e.nextElement();
+				if (o instanceof String)
+				{
+					container.addChild(new LSPText((String)o));
+				}
+				else if (o instanceof LSPExpr)
+				{
+					container.addChild(new LSPTemplate((LSPExpr)o));
+				}
+			}
+
+			if (container.numberOfChildren() == 1)
+				return container.getChild(0);
+			else
+				return container;
 		}
     }
 
 
     private LSPNode compileNode(ProcessingInstruction pi)
-        throws LSPException
+        throws SAXException
     {
         return new LSPContainer(0);
     }
 
 
-    private LSPNode processTemplateNode(String template)
-        throws LSPException
+    private LSPExpr processTemplateExpr(Node n, String template)
+        throws SAXException
     {
-		Vector vec = processTemplate('{', '}', '\'', '\"', template);
-
-		LSPContainer container = new LSPContainer(vec.size());
-
-		for (Enumeration e = vec.elements(); e.hasMoreElements(); )
-		{
-			Object o = e.nextElement();
-			if (o instanceof String)
-			{
-				container.addChild(new LSPText((String)o));
-			}
-			else if (o instanceof LSPExpr)
-			{
-				container.addChild(new LSPTemplate((LSPExpr)o));
-			}
-		}
-
-		if (container.numberOfChildren() == 1)
-			return container.getChild(0);
-		else
-			return container;
-	}
-
-
-    private LSPExpr processTemplateExpr(String template)
-        throws LSPException
-    {
-		Vector vec = processTemplate('{', '}', '\'', '\"', template);
+		Vector vec = processTemplate(n, '{', '}', '\'', '\"', template);
 
 		FunctionCall expr = new FunctionCall(null, "concat", vec.size());
 
@@ -513,7 +515,7 @@ public class LSPCompiler
 
 
 	private void compileChildren(Element el, LSPContainer container)
-		throws LSPException
+		throws SAXException
 	{
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
@@ -524,7 +526,7 @@ public class LSPCompiler
 
 
 	private LSPNode compileChildren(Element el)
-		throws LSPException
+		throws SAXException
 	{
 		if (el.numberOfChildren() == 1)
 			return compileNode(el.getChild(0)); // optimization
@@ -538,14 +540,14 @@ public class LSPCompiler
 
 
 	private LSPNode process_root(Element el)
-		throws LSPException
+		throws SAXException
 	{
 		return compileChildren(el);
 	}
 
 
 	private LSPNode process_raw(Element el)
-		throws LSPException
+		throws SAXException
 	{
         raw++;
         LSPNode ret = compileChildren(el);
@@ -555,12 +557,12 @@ public class LSPCompiler
 
 
 	private LSPNode process_processing_instruction(Element el)
-		throws LSPException
+		throws SAXException
 	{
 		if (inPi) throw fixSourceException(el,
 			"<lsp:processing-instruction> may not be nested");
 
-		LSPExpr name = processTemplateExpr(getAttr("name", el, true));
+		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
 
 		inPi = true;
 		LSPNode data = compileChildren(el);
@@ -571,10 +573,9 @@ public class LSPCompiler
 
 
 	private LSPNode process_include(Element el)
-		throws LSPException
+		throws SAXException
 	{
-        LSPExpr file = processTemplateExpr(
-			getAttr("file", el, true));
+        LSPExpr file = processTemplateExpr(el, getAttr("file", el, true));
 
 		if (file instanceof StringLiteral)
 		{
@@ -590,7 +591,7 @@ public class LSPCompiler
 
 
 	private LSPNode process_if(Element el)
-		throws LSPException
+		throws SAXException
 	{
 		String exp = getAttr("test", el, true);
 		try {
@@ -600,13 +601,13 @@ public class LSPCompiler
 		}
 		catch (ParseException e)
 		{
-			throw fixParseException(exp, e);
+			throw fixParseException(el, exp, e);
 		}
 	}
 
 
 	private LSPNode process_choose(Element el)
-		throws LSPException
+		throws SAXException
 	{
 		LSPChoose choose = new LSPChoose(el.numberOfChildren());
 		for (int i = 0; i < el.numberOfChildren(); i++)
@@ -629,7 +630,7 @@ public class LSPCompiler
 					}
 					catch (ParseException e)
 					{
-						throw fixParseException(exp, e);
+						throw fixParseException(child, exp, e);
 					}
 				}
 				else if ((child.getNamespaceURI() != null)
