@@ -148,6 +148,8 @@ public class LSPInterpreter implements LSPPage
             processNode((LSPText)node, sax);
         else if (node instanceof LSPIf)
             processNode((LSPIf)node, sax);
+        else if (node instanceof LSPChoose)
+            processNode((LSPChoose)node, sax);
         else if (node instanceof LSPInclude)
             processNode((LSPInclude)node, sax);
         else if (node instanceof LSPProcessingInstruction)
@@ -263,6 +265,29 @@ public class LSPInterpreter implements LSPPage
 		if (evalExprAsBoolean(expr))
 		{
 			processNode(el.getBody(), sax);
+		}
+	}
+
+
+	private void processNode(LSPChoose el, ContentHandler sax)
+		throws SAXException
+	{
+		for (int i = 0; i<el.getNWhens(); i++)
+		{
+			LSPExpr expr = el.getWhenTest(i);
+
+			if (evalExprAsBoolean(expr))
+			{
+				processNode(el.getWhenBody(i), sax);
+				return;
+			}
+
+		}
+
+		LSPNode otherwise = el.getOtherwise();
+		if (otherwise != null)
+		{
+			processNode(otherwise, sax);
 		}
 	}
 

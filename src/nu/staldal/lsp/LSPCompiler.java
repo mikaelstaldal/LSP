@@ -360,6 +360,20 @@ public class LSPCompiler
 			{
 				return process_raw(el);
 			}
+			else if (el.getLocalName().equals("choose"))
+			{
+				return process_choose(el);
+			}
+			else if (el.getLocalName().equals("when"))
+			{
+				throw new LSPException(
+					"<lsp:when> must occur inside <lsp:choose>");
+			}
+			else if (el.getLocalName().equals("otherwise"))
+			{
+				throw new LSPException(
+					"<lsp:otherwise> must occur inside <lsp:choose>");
+			}
 			// *** more to implement
 			else
 			{
@@ -568,6 +582,69 @@ public class LSPCompiler
 		{
 			throw fixParseException(exp, e);
 		}
+	}
+
+
+	private LSPNode process_choose(Element el)
+		throws LSPException
+	{
+		LSPChoose choose = new LSPChoose(el.numberOfChildren());
+		for (int i = 0; i < el.numberOfChildren(); i++)
+		{
+			Node _child = el.getChild(i);
+			if (_child instanceof Element)
+			{
+				Element child = (Element)_child;
+
+				if ((child.getNamespaceURI() != null)
+						&& child.getNamespaceURI().equals(LSP_CORE_NS)
+						&& child.getLocalName().equals("when")
+						&& (choose.getOtherwise() == null))
+				{
+					String exp = LSPUtil.getAttr("test", child, true);
+					try {
+						LSPExpr test = LSPExpr.parseFromString(exp);
+
+						choose.addWhen(test, compileChildren(child));
+					}
+					catch (ParseException e)
+					{
+						throw fixParseException(exp, e);
+					}
+				}
+				else if ((child.getNamespaceURI() != null)
+						&& child.getNamespaceURI().equals(LSP_CORE_NS)
+						&& child.getLocalName().equals("otherwise")
+						&& (choose.getOtherwise() == null))
+				{
+					choose.setOtherwise(compileChildren(child));
+				}
+				else
+				{
+					throw new LSPException("content of <lsp:choose> must match "
+						+ "(lsp:when+, lsp:otherwise?): " + child.getLocalName());
+				}
+			}
+			else if (_child instanceof Text)
+			{
+				Text child = (Text)_child;
+				if (child.getValue().trim().length() > 0)
+					throw new LSPException("content of <lsp:choose> must match "
+						+ "(lsp:when+, lsp:otherwise?): CharacterData");
+				// ignore whitespace
+			}
+			else if (_child instanceof ProcessingInstruction)
+			{
+				// ignore PI
+			}
+			else
+			{
+	        	throw new LSPException("Unrecognized XTree Node: "
+	        		+ _child.getClass().getName());
+			}
+		}
+
+		return choose;
 	}
 
 }

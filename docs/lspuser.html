@@ -142,9 +142,43 @@ the content is used as the processing instruction data.
 </p>
 
 <p>The <code>test</code> expression is evaluated, and converted to
-boolean<!-- as if by a call to the <code>boolean()</code> function -->.
+boolean (as if by a call to the <code>boolean()</code> function).
 If the result is true, the content of the <code>lsp:if</code> element
 is outputted, otherwise nothing outputted.</p>
+
+
+<h4>lsp:choose</h4>
+
+<p class="element-syntax">
+<a name="element-choose"></a>
+&lt;lsp:choose&gt;<br />
+&#160;&#160;&lt;!-- Content: (lsp:when+, lsp:otherwise?) --&gt;<br />
+&lt;/lsp:choose&gt;
+</p>
+
+
+<h4>lsp:when</h4>
+
+<p class="element-syntax">
+<a name="element-when"></a>
+&lt;lsp:when<br />
+&#160;&#160;<b>test</b> = <var>boolean-expression</var>&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:when&gt;
+</p>
+
+
+<h4>lsp:otherwise</h4>
+
+<p class="element-syntax">
+<a name="element-otherwise"></a>
+&lt;lsp:otherwise&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:otherwise&gt;
+</p>
+
+<p>The <code>test</code> expression for each <code>lsp:when</code> element is
+evaluated in turn, and converted to boolean (as if by a call to the <code>boolean()</code> function). The content of the first, and only the first, <code>lsp:when</code> element whose test is true is outputted. If no <code>lsp:when</code> element is true, the content of the <code>lsp:otherwise</code> element is outputted. If no <code>lsp:when</code> element is true and if there is no <code>lsp:otherwise</code> element, nothing is outputted.</p>
 
 
 <a name="template"><h2>Templates</h2></a>
