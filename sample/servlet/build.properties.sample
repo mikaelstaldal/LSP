@@ -1,0 +1,9 @@
+# sample, adapt for your system
+
+XMLUtil=xmlutil.jar
+LSP=lsprt.jar
+LSPC=lspc.jar
+BCEL=bcel.jar
+Servlet=servlet.jar
+
+build.dir=
