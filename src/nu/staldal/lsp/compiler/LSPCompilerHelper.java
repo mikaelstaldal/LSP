@@ -38,7 +38,7 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compiler;
 
 import java.io.*;
 import java.net.URI;
@@ -51,6 +51,8 @@ import org.xml.sax.*;
 import javax.xml.parsers.*;
 
 import nu.staldal.util.Utils;
+
+import nu.staldal.lsp.*;
 
 
 /**

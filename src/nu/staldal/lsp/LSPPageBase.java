@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,6 @@ import java.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
-import nu.staldal.xtree.*;
 import nu.staldal.util.*;
 
 import nu.staldal.lsp.wrapper.*;
@@ -220,8 +219,6 @@ public abstract class LSPPageBase implements LSPPage
 		else if (value instanceof LSPList) 
 			return value;
 		else if (value instanceof Map) 
-			return value;
-		else if (value instanceof Node)
 			return value;
 		else if (value instanceof Object[]) 
 			return new LSPArrayList((Object[])value);

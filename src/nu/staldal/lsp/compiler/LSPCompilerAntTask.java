@@ -38,7 +38,7 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compiler;
 
 import java.io.*;
 import java.util.Properties;
@@ -48,6 +48,8 @@ import org.apache.tools.ant.*;
 import org.apache.tools.ant.util.*;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+
+import nu.staldal.lsp.*;
  
 
 /**

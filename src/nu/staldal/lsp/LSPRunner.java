@@ -281,6 +281,7 @@ public class LSPRunner
     {
         if (args.length < 2)
         {
+            System.err.println("LSP runtime version " + LSPPage.LSP_VERSION_NAME);
             System.err.println("Syntax: LSPRunner <pageName> <outFile>");
             System.err.println("Use \"-\" as <outFile> for standard output");
             return;
@@ -289,6 +290,11 @@ public class LSPRunner
         LSPRunner runner = new LSPRunner();
         
         LSPPage page = runner.getPage(args[0]);
+        if (page == null)
+        {
+            System.err.println("LSP page " + args[0] + " not found");
+            return;
+        }
         
         OutputStream out = args[1].equals("-") 
             ? (OutputStream)System.out 

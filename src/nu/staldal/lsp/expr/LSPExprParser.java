@@ -42,7 +42,7 @@ package nu.staldal.lsp.expr;
 
 import java.io.StringReader;
 
-import nu.staldal.lsp.LSPExpr;
+import nu.staldal.lsp.compiler.LSPExpr;
 import nu.staldal.syntax.*;
 
 public class LSPExprParser extends Parser

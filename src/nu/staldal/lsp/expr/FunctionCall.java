@@ -40,7 +40,7 @@
 
 package nu.staldal.lsp.expr;
 
-import nu.staldal.lsp.LSPExpr;
+import nu.staldal.lsp.compiler.LSPExpr;
 
 import java.util.Vector;
 

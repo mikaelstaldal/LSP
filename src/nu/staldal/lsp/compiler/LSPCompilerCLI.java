@@ -38,10 +38,12 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compiler;
 
 import java.io.*;
 import java.util.*;
+
+import nu.staldal.lsp.*;
 
 
 /**

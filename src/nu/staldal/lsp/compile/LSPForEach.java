@@ -42,7 +42,7 @@ package nu.staldal.lsp.compile;
 
 import org.xml.sax.Locator;
 
-import nu.staldal.lsp.LSPExpr;
+import nu.staldal.lsp.compiler.LSPExpr;
 
 public class LSPForEach extends LSPNode
 {

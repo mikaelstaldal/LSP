@@ -38,7 +38,7 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compiler;
 
 import nu.staldal.syntax.ParseException;
 import nu.staldal.lsp.expr.LSPExprParser;

@@ -44,7 +44,7 @@ import java.util.Vector;
 
 import org.xml.sax.Locator;
 
-import nu.staldal.lsp.LSPExpr;
+import nu.staldal.lsp.compiler.LSPExpr;
 
 public class LSPElement extends LSPContainer
 {

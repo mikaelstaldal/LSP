@@ -38,7 +38,7 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compiler;
 
 import java.io.*;
 import java.util.*;
@@ -46,8 +46,7 @@ import java.util.*;
 import org.xml.sax.*;
 
 import nu.staldal.util.Environment;
-import nu.staldal.xmlutil.StringHandler;
-import nu.staldal.xtree.Node;
+import nu.staldal.lsp.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
@@ -149,6 +148,7 @@ class LSPJVMCompiler implements Constants
                 sourceFiles.put(importedFiles.get(key), new Integer(i));
             }
         }
+        maxLineNumber = new int[sourceFiles.size()+2];
 			
 		classGen.addField(makeStringArrayField(EXT_LIBS_URLS, constGen));
 		classGen.addField(makeStringArrayField(EXT_LIBS_CLASS_NAMES, constGen));
@@ -250,7 +250,6 @@ class LSPJVMCompiler implements Constants
 		int methodLength;
 
 		try {
-			maxLineNumber = new int[sourceFiles.size()+2];
             theMethod = createExecuteMethod("_execute", theTree, 0);
 			methodLength = theMethod.getCode().getCode().length;
 		}
@@ -262,7 +261,6 @@ class LSPJVMCompiler implements Constants
 
 		if (methodLength > 65535)
 		{
-			maxLineNumber = new int[sourceFiles.size()+2];
 			theMethod = createExecuteMethod("_execute", theTree, 1);
 			methodLength = theMethod.getCode().getCode().length;
 			if (methodLength > 65535)
@@ -1158,37 +1156,13 @@ class LSPJVMCompiler implements Constants
 		}
 		else
 		{
-			// if (o instanceof Node)
-			instrList.append(InstructionConstants.DUP);
-			instrList.append(instrFactory.createInstanceOf((ReferenceType)Type.getType(Node.class)));
-			BranchInstruction branch1 = instrFactory.createBranchInstruction(
-				IFEQ, null);
-			instrList.append(branch1);
-			
-			// ((Node)o).toSAX(sax);
-			instrList.append(instrFactory.createCast(
-				Type.OBJECT, Type.getType(Node.class)));
-			instrList.append(instrFactory.createLoad(
-				Type.getType(org.xml.sax.ContentHandler.class),
-				PARAM_sax));
-			instrList.append(instrFactory.createInvoke(
-				Node.class.getName(), 
-				"toSAX", 
-				Type.VOID, 
-				new Type[] { Type.getType(ContentHandler.class) },
-				INVOKEVIRTUAL));
-	
-			BranchInstruction branch2 =
-				instrFactory.createBranchInstruction(GOTO, null); 				
-			instrList.append(branch2);
-			
 			// String text = convertToString(o);		
-			branch1.setTarget(instrList.append(instrFactory.createInvoke(
+			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToString",
 				Type.STRING,
 				new Type[] { Type.OBJECT },
-				INVOKESTATIC)));		
+				INVOKESTATIC));		
 	
 			// outputStringWithoutCR(sax, text);
 			instrList.append(instrFactory.createLoad(
@@ -1201,8 +1175,6 @@ class LSPJVMCompiler implements Constants
 				Type.VOID,
 				new Type[] { Type.getType(ContentHandler.class), Type.STRING },
 				INVOKESTATIC));		
-			
-			branch2.setTarget(instrList.append(InstructionConstants.NOP));
 		}
 	}
 
