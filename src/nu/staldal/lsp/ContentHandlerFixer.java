@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2003, Mikael Ståldal
+ * Copyright (c) 2001-2004, Mikael Ståldal
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -210,6 +210,8 @@ public class ContentHandlerFixer implements ContentHandler
 
 		if (nsDecl)
 		{
+            if (DEBUG) System.out.println("adding missing xmlns attributes");
+            
 			for (Enumeration e = nsSup.getDeclaredPrefixes(); e.hasMoreElements(); )
 			{
 				String prefix = (String)e.nextElement();
@@ -225,14 +227,17 @@ public class ContentHandlerFixer implements ContentHandler
 			}
 		}
 
-        for (Enumeration e = nsSup.getDeclaredPrefixes(); e.hasMoreElements(); )
+        if (!stripNs)
         {
-            String prefix = (String)e.nextElement();
-            String uri = nsSup.getURI(prefix);
-			
-			if (DEBUG) System.out.println("prefix=" + prefix + "  uri=" + uri);
-			
-			ch.startPrefixMapping(prefix, uri);
+            for (Enumeration e = nsSup.getDeclaredPrefixes(); e.hasMoreElements(); )
+            {
+                String prefix = (String)e.nextElement();
+                String uri = nsSup.getURI(prefix);
+                
+                if (DEBUG) System.out.println("prefix=" + prefix + "  uri=" + uri);
+                
+                ch.startPrefixMapping(prefix, uri);
+            }
         }
 						
         ch.startElement(stripNs ? "" : namespaceURI, localName, name, newAtts);
@@ -281,10 +286,13 @@ public class ContentHandlerFixer implements ContentHandler
 
         ch.endElement(stripNs ? "" : namespaceURI, localName, name);
 
-        for (Enumeration e = nsSup.getDeclaredPrefixes(); e.hasMoreElements(); )
+        if (!stripNs)
         {
-            String prefix = (String)e.nextElement();
-			ch.endPrefixMapping(prefix);
+            for (Enumeration e = nsSup.getDeclaredPrefixes(); e.hasMoreElements(); )
+            {
+                String prefix = (String)e.nextElement();
+                ch.endPrefixMapping(prefix);
+            }
         }
 
         nsSup.popContext();

@@ -282,7 +282,7 @@ public class LSPHelper
                 .equals("html");
 
 			trans.setOutputProperties(outputProperties);			
-				
+            
 			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
 		}
 		catch (TransformerConfigurationException e)
@@ -304,6 +304,9 @@ public class LSPHelper
     private void fixOutputProperties(Properties outputProperties)
     {
         String method = outputProperties.getProperty(OutputKeys.METHOD);
+
+        if (!outputProperties.containsKey(OutputKeys.INDENT)) 
+            outputProperties.setProperty(OutputKeys.INDENT, "no");
         
         if (method.equals("html"))
         {
