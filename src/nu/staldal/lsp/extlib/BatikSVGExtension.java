@@ -43,6 +43,8 @@ package nu.staldal.lsp.extlib;
 import java.io.*;
 import java.net.URL;
 
+import javax.xml.parsers.*;
+
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import org.apache.batik.transcoder.*;
@@ -67,8 +69,9 @@ public class BatikSVGExtension implements LSPExtLib
 	private Target target;
 	private SourceManager sourceMan;
 	private int imageNumber;
+	private String xmlReaderClassName;
 	
-	public BatikSVGExtension()
+	public BatikSVGExtension() throws ParserConfigurationException, SAXException
 	{
 		if (DEBUG) System.out.println("new BatikSVGExtension");
 		transcoder = new PNGTranscoder();
@@ -77,6 +80,10 @@ public class BatikSVGExtension implements LSPExtLib
 		out = null;
 		target = null;
 		sourceMan = null;		
+
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+		XMLReader parser = spf.newSAXParser().getXMLReader();
+		xmlReaderClassName = parser.getClass().getName();
 	}
 	
 	
@@ -95,8 +102,8 @@ public class BatikSVGExtension implements LSPExtLib
 		this.out = out;
 		this.target = target;
 		this.sourceMan = sourceMan;
-		docFactory = new SAXSVGDocumentFactory();
-		docFactory.prepareDocument();
+		docFactory = new SAXSVGDocumentFactory(xmlReaderClassName);
+		// docFactory.prepareDocument();
 		docFactory.startDocument();
 		return new ContentHandlerFixer(docFactory);
 	}
@@ -130,7 +137,8 @@ public class BatikSVGExtension implements LSPExtLib
 
 		docFactory.endDocument();
 		
-		SVGOMDocument doc = docFactory.getDocument(sourceURL); 
+		// *** will not work!
+		SVGOMDocument doc = docFactory.createDocument(sourceURL.toString()); 
 
 		if (DEBUG) System.out.println("Batik SVG DOM building complete");
         TranscoderInput input = new TranscoderInput(doc);
