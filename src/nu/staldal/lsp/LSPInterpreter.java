@@ -156,7 +156,7 @@ public class LSPInterpreter implements LSPPage
 			Map.Entry ent = (Map.Entry)it.next();
 			String key = (String)ent.getKey();
 			Object value = ent.getValue();						
-			env.bind(key, convertObjectToLSP(value));
+			env.bind(key, convertObjectToLSP(value, key));
 		}
 
         this.resolver = resolver;
@@ -414,7 +414,8 @@ public class LSPInterpreter implements LSPPage
 		{
 			Object o = theList.next();
 			env.pushFrame();
-			env.bind(el.getVariable(), convertObjectToLSP(o));
+			String var = el.getVariable();
+			env.bind(var, convertObjectToLSP(o, var));
 			if (el.getStatusObject() != null)
 			{
 				env.bind(el.getStatusObject(), new LSPTuple()
@@ -889,7 +890,7 @@ public class LSPInterpreter implements LSPPage
 			args[i] = evalExpr(expr.getArg(i));
 		}
 		try {
-			return convertObjectToLSP(extLib.function(expr.getName(), args));
+			return convertObjectToLSP(extLib.function(expr.getName(), args), expr.getName() + "()");
 		}
 		catch (IOException e)
 		{
@@ -918,7 +919,7 @@ public class LSPInterpreter implements LSPPage
 		if (o == null)
 			throw new LSPException("Element \'" + key + "\' not found in tuple");
 		else
-			return convertObjectToLSP(o);
+			return convertObjectToLSP(o, "."+key);
 	}
 	
 	
@@ -1056,11 +1057,11 @@ public class LSPInterpreter implements LSPPage
 	}
 
 
-	private Object convertObjectToLSP(Object value)
+	private Object convertObjectToLSP(Object value, String name)
 		throws LSPException
 	{
 		if (value == null)
-			throw new LSPException("LSP cannot handle null objects");
+			throw new LSPException(name + ": LSP cannot handle null objects");
 		else if (value instanceof String)
 			return value;
 		else if (value instanceof Boolean)
@@ -1103,7 +1104,7 @@ public class LSPInterpreter implements LSPPage
 		}
 		else
 			throw new LSPException(
-				"LSP cannot handle objects of type "
+				name + ": LSP cannot handle objects of type "
 				+ value.getClass().getName());
 	}
 
