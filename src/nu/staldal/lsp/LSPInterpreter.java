@@ -900,9 +900,11 @@ public class LSPInterpreter implements LSPPage
 
 	private Object evalExpr(VariableReference expr) throws LSPException
 	{
-		Object o = env.lookup(expr.getName());
+		String varName = expr.getName();
+		Object o = env.lookup(varName);
 		if (o == null)
-			return "";
+			throw new LSPException(
+				"Attempt to reference unbound variable: " + varName); 
 		else
 			return o;
 	}
@@ -1044,6 +1046,7 @@ public class LSPInterpreter implements LSPPage
 	private LSPTuple evalExprAsTuple(LSPExpr expr) throws SAXException
 	{
 		Object value = evalExpr(expr);
+
 		if (value instanceof LSPTuple) 
 			return (LSPTuple)value;
 		else
@@ -1056,7 +1059,9 @@ public class LSPInterpreter implements LSPPage
 	private Object convertObjectToLSP(Object value)
 		throws LSPException
 	{
-		if (value instanceof String)
+		if (value == null)
+			throw new LSPException("LSP cannot handle null objects");
+		else if (value instanceof String)
 			return value;
 		else if (value instanceof Boolean)
 			return value;

@@ -453,12 +453,10 @@ href="advuserguide.html">Advanced User Guide</a></p>
 
 <p>Unlike XPath, variable name may not be namespaced.</p>
 
-<p>The parameters passed to the LSP page are bound to variables as
-strings in the outermost scope.</p>
+<p>The parameters passed to the LSP page are bound to variables 
+in the outermost scope.</p>
 
-<p>Attempting to reference an unbound variable gives the empty string
-(which may be implicitly converted to the boolean value <code>false</code>
-or to the number <code>NaN</code>).</p>
+<p>It's an error to attempt to reference an unbound variable.</p>
 
 
 <h2>The stand-alone LSP compiler</h2>
