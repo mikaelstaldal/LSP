@@ -160,7 +160,7 @@ public class LSPManager
      *<p>
      * The output properties specified in the stylesheet will be used, 
      * and those specified in the LSP page will be ignored. Make sure
-     * to specify the output method in the stylesheet using <xsl:output>.
+     * to specify the output method in the stylesheet using &lt;xsl:output&gt;.
 	 *
  	 * @param thePage         the LSP page
 	 * @param lspParams       parameters to the LSP page
