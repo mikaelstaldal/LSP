@@ -7,14 +7,17 @@
 
 <h2>Overview</h2>
 
-<p>LSP is an advanced XML based web template language.</p>
+<p>LSP is an advanced web template language based on XML technology. 
+LSP provides powerful and easy to use presentation logic, but keeps 
+bussines logic and technical details out of templates. LSP is compiled 
+into Java bytecode for efficient execution.</p>
 
 <p>LSP is fully based on XML and namespaces. This means that it's easy
 to efficiently use LSP together with other XML technologies, such as
 XSLT (for example, you can process the output of LSP with XSLT).</p>
 
-<p>LSP pages can be used as an alternative to JSP in a 
-<a href="http://java.sun.com/products/servlet">Java Servlet</a> 
+<p>LSP can be used as an alternative to JSP in a 
+<a target="_new" href="http://java.sun.com/products/servlet">Java Servlet</a> 
 based web application. See <a href="lsp-servlet.html">here</a>.</p>
 
 
@@ -31,7 +34,7 @@ that this namespace is mapped to the prefix <code>lsp</code>, however
 any prefix may be used.</p>
 
 <p>An LSP page is processed by interpreting all LSP elements, and
-sending all non-LSP elements (unless they are extension elements), 
+sending all non-LSP elements (unless they are <a href="#extlib">extension elements</a>), 
 all character data and all processing instructions to the output 
 (subject to <a href="#template">template processing</a>). 
 However, some LSP element can alter the output of parts of the LSP page. 
@@ -354,7 +357,7 @@ to true the attribute will get its name as value. This is useful for handling
 the boolean attributes in HTML, such as <code>checked</code> and 
 <code>selected</code>. <em>Note:</em> the check if the expression yeilds a 
 boolean value is done at compile time, it won't work if the expression is a
-variable reference, a tuple expression or an extension function call. Wrap
+variable reference, a tuple expression or an <a href="#extlib">extension function</a> call. Wrap
 the expression with the <code>boolean</code> function to force handling as
 a boolean. Wrap the expression with the <code>string</code> function to 
 inhibit handling as a boolean.</p>
@@ -519,7 +522,7 @@ Digits ::= [0-9]+
 specified sequence</li>
 </ul>
 
-<p>Namespaced functions are extension functions in LSP Extension Libraries</p>
+<p>Namespaced functions are <a href="#extlib">extension functions</a>.</p>
 
 
 <h3>Variables</h3>
@@ -532,18 +535,17 @@ in the outermost scope.</p>
 <p>It's an error to attempt to reference an unbound variable.</p>
 
 
-<h2>The stand-alone LSP compiler</h2>
+<h2>The LSP compiler</h2>
 
-<p>LSP comes with a stand-alone compiler, which compiles LSP pages into Java 
-<code>.class</code> files. It is also useful to check LSP pages for errors.
-The LSP compiler is contained in <code>lspc.jar</code>.</p>
+<p>LSP comes with a compiler which compiles LSP pages into Java 
+<code>.class</code> files. The LSP compiler is contained in <code>lspc.jar</code>.</p>
 
-<p>For a programmatic interface to the LSP compiler, look at the class
-<code>nu.staldal.lsp.compiler.LSPCompilerHelper</code>.</p>
+<p>For a programmatic Java interface to the LSP compiler, look at the 
+<a href="javadoc/nu/staldal/lsp/compiler/package-summary.html"><code>nu.staldal.lsp.compiler</code></a> package.</p>
 
 <p>The LSP compiler uses the third-party library <a href="http://jakarta.apache.org/bcel/">BCEL</a>.
 The BCEL library is only needed when compiling LSP pages, not when 
-executing the compiled code.</p>
+executing the compiled code. <code>lsprt.jar</code> is also needed by the compiler.</p>
 
 
 <h3>Running LSP compiler from command line</h3>
@@ -565,8 +567,8 @@ recompile). If <code>-xhtml</code> is specified,
 the default output method for XHTML pages will be <code>xhtml</code>, 
 otherwise it will be <code>html</code>.</p> 
 
-<p>You have to put bcel.jar in CLASSPATH. If you use any extension libraries, 
-you have to include them in the CLASSPATH as well.</p>
+<p>You have to put <code>bcel.jar</code> and <code>lsprt.jar</code> in CLASSPATH. 
+If you use any <a href="extlib">extension libraries</a>, you have to include them in the CLASSPATH as well.</p>
 
 
 <h3>Using LSP compiler from within Apache Ant</h3>
@@ -583,7 +585,7 @@ build file like this:</p>
 &lt;/taskdef&gt;  
 </pre>
 
-<p>If you use any extension libraries, you have to include them in the 
+<p>If you use any <a href="#extlib">extension libraries</a>, you have to include them in the 
 classpath as well.</p>
 
 <p>and use the following syntax:</p>
@@ -606,6 +608,49 @@ the source file is newer than the target file (imported files are also checked,
 changing an imported file will trigger recompile). If <code>xhtml</code> is set, 
 the default output method for XHTML pages will be <code>xhtml</code>, 
 otherwise it will be <code>html</code>.</p>
+
+
+<h2>The LSP runtime</h2>
+
+<p>The LSP runtime is contained in <code>lsprt.jar</code>.</p>
+
+<p>For a general Java interface to the LSP runtime, look at the 
+<a href="javadoc/nu/staldal/lsp/package-summary.html"><code>nu.staldal.lsp</code></a> 
+package, especially the <code>LSPHelper</code> class.</p>
+
+<p>For a Java Servlet interface to the LSP runtime, look at the 
+<a href="javadoc/nu/staldal/lsp/servlet/package-summary.html"><code>nu.staldal.lsp.servlet</code></a> 
+package. A <a href="lsp-servlet.html">description</a> how to setup LSP for use with Java Servlets.
+Extension libraries will get the <code>javax.servlet.ServletContext</code> as external context.</p>
+
+<h2><a name="extlib">Extension libraries</a></h2>
+
+<p>Extension function and extension elements are implemented in Java with 
+extension libraries. An extension library is a Java class implementing 
+the <a href="javadoc/nu/staldal/lsp/LSPExtLib.html"><code>nu.staldal.lsp.LSPExtLib</code></a> 
+interface.</p>
+
+<p>Choose an namespace URL for your extension library, and plug it in to LSP by
+making a file <code>/nu/staldal/lsp/extlib/<em>encodedURL</em></code>
+visible in the CLASSPATH. That file should contain the fully qualified class
+name of your implementation.</p>
+
+<p>The URL is encoded by doing the following replacements:</p>
+<ul>
+<li>- =&gt; --</li>
+<li>$ =&gt; $$</li>
+<li>~ =&gt; ~~</li>
+
+<li>/ =&gt; -</li>
+<li>? =&gt; $</li>
+<li>: =&gt; ~</li>
+</ul>
+
+<p>This encoding is performed by the method <code>nu.staldal.lsp.Utils.encodePath(String)</code>.</p>
+
+<p>E.g. <code>http://acme.com/TheExtLib</code> =&gt; <code>http~--acme.com-TheExtLib</code></p> 
+  
+<p>The extension library must be available to both compiler and runtime.</p>
 
 </body>
 </html>
