@@ -57,7 +57,7 @@ import nu.staldal.lagoon.util.LagoonUtil;
 
 public class LSPCompiler
 {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
