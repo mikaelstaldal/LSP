@@ -51,6 +51,7 @@ import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 
 import nu.staldal.lagoon.core.Target;
+import nu.staldal.lagoon.core.SourceManager;
 
 
 public class LSPInterpreter implements LSPPage
@@ -70,6 +71,8 @@ public class LSPInterpreter implements LSPPage
     private transient URLResolver resolver = null;
     private transient Hashtable params = null;
 	private transient Target target = null;
+	private transient SourceManager sourceMan = null;
+	private transient Hashtable extLibs = null;
 
     public LSPInterpreter(LSPNode theTree, Hashtable importedFiles,
         Vector includedFiles, boolean compileDynamic, boolean executeDynamic)
@@ -111,13 +114,17 @@ public class LSPInterpreter implements LSPPage
 
 
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params, Target target)
+        Hashtable params, Target target, SourceManager sourceMan)
         throws SAXException
     {
         this.params = params;
         this.resolver = resolver;
 		this.target = target;
+		this.sourceMan = sourceMan; 
+		this.extLibs = new Hashtable();
         processNode(theTree, ch);
+		this.extLibs = null;
+		this.sourceMan = null;
 		this.target = null;
         this.resolver = null;
         this.params = null;
@@ -167,8 +174,13 @@ public class LSPInterpreter implements LSPPage
     {
 		LSPExtLib extLib;
 		try {
-			Class extClass = Class.forName(el.getClassName());
-			extLib = (LSPExtLib)extClass.newInstance();
+			extLib = (LSPExtLib)extLibs.get(el.getClassName());
+			if (extLib == null)
+			{
+				Class extClass = Class.forName(el.getClassName());
+				extLib = (LSPExtLib)extClass.newInstance();
+				extLibs.put(el.getClassName(), extLib);
+			}
 		}
 		catch (ClassNotFoundException e)
 		{
@@ -192,7 +204,7 @@ public class LSPInterpreter implements LSPPage
 		}
 		
 		try {
-			ContentHandler in = extLib.beforeElement(sax, target);
+			ContentHandler in = extLib.beforeElement(sax, target, sourceMan);
 		
 			processNode((LSPElement)el, in);
 		

@@ -51,7 +51,7 @@ import org.apache.batik.dom.svg.*;
 
 import nu.staldal.lsp.*;
 import nu.staldal.lagoon.core.*;
-import nu.staldal.lagoon.util.ContentHandlerFixer;
+import nu.staldal.lagoon.util.*;
 
 
 public class BatikSVGExtension implements LSPExtLib
@@ -62,13 +62,18 @@ public class BatikSVGExtension implements LSPExtLib
 	private SAXSVGDocumentFactory docFactory;
 	private ContentHandler out;
 	private Target target;
+	private SourceManager sourceMan;
+	private int imageNumber;
 	
 	public BatikSVGExtension()
 	{
+		if (DEBUG) System.out.println("new BatikSVGExtension");
 		transcoder = new PNGTranscoder();
+		imageNumber = 0;
 		docFactory = null;
 		out = null;
-		target = null;		
+		target = null;
+		sourceMan = null;		
 	}
 	
 	
@@ -80,11 +85,13 @@ public class BatikSVGExtension implements LSPExtLib
 	 *
 	 * @return  a ContentHandler to send input to.
 	 */
-	public ContentHandler beforeElement(ContentHandler out, Target target)
+	public ContentHandler beforeElement(ContentHandler out, 
+		Target target, SourceManager sourceMan)
 		throws SAXException
 	{
 		this.out = out;
 		this.target = target;
+		this.sourceMan = sourceMan;
 		docFactory = new SAXSVGDocumentFactory();
 		docFactory.prepareDocument();
 		docFactory.startDocument();
@@ -100,23 +107,23 @@ public class BatikSVGExtension implements LSPExtLib
 	public String afterElement()
 		throws SAXException, IOException
 	{	
-		URL sourceURL = new URL("http://www.foo.bar/baz.html");
-
-/*
-		String _sourceURL = getSourceMan().getSourceURL();
+		URL sourceURL;
+		String _sourceURL = sourceMan.getSourceURL();
 		if (LagoonUtil.absoluteURL(_sourceURL))
 			sourceURL = new URL(_sourceURL);
 		else if (LagoonUtil.pseudoAbsoluteURL(_sourceURL))
-			sourceURL = new java.net.URL(getSourceMan().getRootDir().toURL(),
+			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
 				_sourceURL.substring(1));
 		else
-			sourceURL = new java.net.URL(getSourceMan().getRootDir().toURL(),
+			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
 				_sourceURL);
 							
 		if (DEBUG) System.out.println("The source URL: " + sourceURL);
-*/
 		
-		String imageName = "img" + System.currentTimeMillis() + ".png";
+		int slash = _sourceURL.lastIndexOf('/');
+		String sourceName = 
+			(slash < 0) ? _sourceURL : _sourceURL.substring(slash+1); 
+		String imageName = sourceName + "_image" + (++imageNumber) + ".png";
 
 		docFactory.endDocument();
 		
@@ -141,6 +148,11 @@ public class BatikSVGExtension implements LSPExtLib
 		atts.addAttribute("", "alt", "", "CDATA", "");
 		out.startElement("" /* *** "http://www.w3.org/1999/xhtml" */, "img", "", atts);
 		out.endElement("" /* *** "http://www.w3.org/1999/xhtml" */, "img", "");
+
+		docFactory = null;
+		out = null;
+		target = null;		
+		sourceMan = null;		
 	
 		return null;
 	}

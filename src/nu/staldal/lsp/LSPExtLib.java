@@ -49,6 +49,7 @@ import nu.staldal.xtree.*;
 import nu.staldal.syntax.ParseException;
 
 import nu.staldal.lagoon.core.Target;
+import nu.staldal.lagoon.core.SourceManager;
 
 /**
  * LSP Extension Library.
@@ -78,7 +79,8 @@ public interface LSPExtLib
 	 *
 	 * @return  a ContentHandler to send input to.
 	 */
-	public ContentHandler beforeElement(ContentHandler out, Target target)
+	public ContentHandler beforeElement(ContentHandler out, 
+			Target target, SourceManager sourceMan)
 		throws SAXException, java.io.IOException;
 	
 	

@@ -409,7 +409,7 @@ public class LSPCompiler
 			
 			if ((el.getNamespaceURI() != null)
 					&& !el.getNamespaceURI().equals(extNamespace)
-					&& (el.getNamespaceURI().startsWith("java:") // ***
+					&& (el.getNamespaceURI().startsWith("java:")
 						|| (el.getNamespaceURI().equals("http://www.w3.org/2000/svg"))))
 			{	// extension element
 				// *** register extension namespaces
