@@ -52,28 +52,19 @@ import org.xml.sax.SAXException;
 /**
  * An LSP Page.
  *
- * <p>An LSP page may be reused, but is not thread-safe. 
- * If it needs to be executed concurrently by several threads, 
- * create one clone for each thread.
+ * <p>An LSP page instance may be reused and is thread safe.
  */
-public interface LSPPage extends Serializable, Cloneable
+public interface LSPPage
 {
-    public Iterator getCompileDependentFiles();
+    public String[] getCompileDependentFiles();
 
-    public Iterator getExecuteDependentFiles();
+    public String[] getExecuteDependentFiles();
 
     public boolean isCompileDynamic();
 
     public boolean isExecuteDynamic();
 
     public long getTimeCompiled();
-
-
-	/**
-	 * Create an independent clone of this LSP Page.
-	 * Useful for executing by several threads.
-	 */
-	public Object clone();
 
 	
     /**

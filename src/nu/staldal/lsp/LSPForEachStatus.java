@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,88 +40,29 @@
 
 package nu.staldal.lsp;
 
-import org.xml.sax.*;
-
-class StringHandler implements ContentHandler
+public class LSPForEachStatus implements LSPTuple
 {
-    private StringBuffer sb;
+    private LSPList theList;
 
-    public StringHandler()
+    public LSPForEachStatus(LSPList list)
     {
-        sb = new StringBuffer();
+        theList = list;
     }
-
-    public StringBuffer getBuf()
+    
+    public Object get(String key)
     {
-        return sb;
-    }
-
-    // SAX ContentHandler implementation
-
-    public void setDocumentLocator(Locator locator)
-    {
-        // nothing to do
-    }
-
-    public final void startDocument()
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public final void endDocument()
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public void startElement(String namespaceURI, String localName,
-                             String qname, Attributes atts)
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public void endElement(String namespaceURI, String localName,
-                           String qname)
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public void startPrefixMapping(String prefix, String uri)
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public void endPrefixMapping(String prefix)
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public void characters(char ch[], int start, int length)
-        throws SAXException
-    {
-        sb.append(ch, start, length);
-    }
-
-    public void ignorableWhitespace(char ch[], int start, int length)
-        throws SAXException
-    {
-        sb.append(ch, start, length);
-    }
-
-    public void processingInstruction(String target, String data)
-        throws SAXException
-    {
-        // nothing to do
-    }
-
-    public void skippedEntity(String name)
-        throws SAXException
-    {
-        // nothing to do
+        if (key.equals("index"))
+            return new Double(theList.index());
+        else if (key.equals("first"))
+            return new Boolean(theList.index() == 1);
+        else if (key.equals("last"))
+            return new Boolean(!theList.hasNext());
+        else if (key.equals("even"))
+            return new Boolean(theList.index() % 2 == 0);
+        else if (key.equals("odd"))
+            return new Boolean(theList.index() % 2 != 0);
+        else
+            return null;
     }
 }
+

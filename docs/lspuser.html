@@ -39,8 +39,7 @@ However, some LSP element can alter the output of parts of the LSP page.
 Comments in the LSP page are ignored. Any DTD in the LSP page is not sent 
 to the output.</p>
 
-<p>To ensure high performance, LSP pages are compiled into some code which 
-is more efficient to interpret than the XML source format, 
+<p>To ensure high performance, LSP pages are compiled into Java bytecode, 
 which can then be executed several times, possibly with a different set 
 of parameters. Unless otherwise stated, all processing occurs when the page is
 executed.</p>
@@ -305,7 +304,7 @@ actually include a literal curly brace, use a double curly brace.</p>
 <h2>LSP Expressions</h2>
 
 <p>The expression language used in LSP is based on <a href="http://www.w3.org/TR/xpath">XPath</a>.
-It's essentially XPath 1.0 without nodesets, with the conditional expression "if ... then ... else ..." from XPath 2.0</p>
+It's essentially XPath 1.0 without nodesets, with the conditional expression "if ... then ... else ..." from XPath 2.0.</p>
 
 <h3>Types</h3>
 
@@ -464,13 +463,17 @@ in the outermost scope.</p>
 
 <h2>The stand-alone LSP compiler</h2>
 
-<p>LSP comes with a stand-alone compiler, which compiles LSP pages into files
-with <code>.lspc</code> extension. This is currently not useful together with 
+<p>LSP comes with a stand-alone compiler, which compiles LSP pages into Java 
+<code>.class</code> files. This is currently not useful together with 
 Lagoon, but might be useful if LSP is integrated into another system. It is
 also useful to check LSP pages for errors.</p>
 
 <p>For a programmatic interface to the LSP compiler, look at the class
 <code>nu.staldal.lsp.LSPCompilerHelper</code>.</p>
+
+<p>The LSP compiler uses the third-party library <a href="http://jakarta.apache.org/bcel/">BCEL</a>.
+The BCEL library is only needed when compiling LSP pages, not when 
+executing the compiled code.</p>
 
 
 <h3>Running LSP compiler from command line</h3>
@@ -486,12 +489,12 @@ pseudo-absolute URL:s, default is current directory. <em>destpath</em>
 specifies where place generated files, default is current directory.
 Multiple input files can be specified. If <code>-force</code> is not specified, 
 files are only compiled if the source file is newer than the target file 
-(<strong>Note:</strong> imported files are not checked, changing an imported 
-file will not trigger recompile).</p> 
+(imported files are also checked, changing an imported file will trigger 
+recompile).</p> 
 
 
-<p>If you use any extension libraries, you have to include them in the 
-CLASSPATH.</p>
+<p>You have to put bcel.jar in CLASSPATH. If you use any extension libraries, 
+you have to include them in the CLASSPATH as well.</p>
 
 
 <h3>Using LSP compiler from within Apache Ant</h3>
@@ -503,6 +506,7 @@ build file like this:</p>
   &lt;classpath&gt;
     &lt;pathelement location="<em>locationOfLSPJars</em>/lsp.jar" /&gt;
     &lt;pathelement location="<em>locationOfLSPJars</em>/xmlutil.jar" /&gt;
+    &lt;pathelement location="<em>locationOfBCELJars</em>/bcel.jar" /&gt;
   &lt;/classpath&gt;
 &lt;/taskdef&gt;  
 </pre>
@@ -523,9 +527,8 @@ classpath as well.</p>
 
 <p>If the <code>sourcepath</code> attriute is omitted, the project base 
 path is used. If <code>force</code> is not set, files are only compiled if 
-the source file is newer than the target file (<strong>Note:</strong> 
-imported files are not checked, changing an imported file will not trigger 
-recompile).</p>
+the source file is newer than the target file (imported files are also checked, 
+changing an imported file will trigger recompile).</p>
 
 </body>
 </html>

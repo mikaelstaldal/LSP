@@ -43,6 +43,9 @@ package nu.staldal.lsp;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.MalformedURLException;
 
 import org.xml.sax.*;
 import javax.xml.parsers.*;
@@ -106,6 +109,78 @@ public class LSPCompilerHelper
 		sourceDir = new File(System.getProperty("user.dir", "."));
 		targetDir = new File(System.getProperty("user.dir", "."));
 	}
+
+
+	private boolean checkDepend(boolean force, File outputFile, File inputFile)
+	{
+		if (force) 
+		{ 
+			return true; 
+		}
+		
+		if (!outputFile.isFile())
+		{
+			return true;
+		}
+		
+		if (outputFile.lastModified() < inputFile.lastModified())
+		{
+			return true;
+		}
+
+		try {
+			ClassLoader classLoader = new URLClassLoader(
+				new URL[] { targetDir.toURL() }, getClass().getClassLoader());
+			Class pageClass = Class.forName(
+				"_LSP_"+getPageName(inputFile.getName()),
+				true,
+				classLoader);
+			LSPPage thePage = (LSPPage)pageClass.newInstance();
+			if (thePage.isCompileDynamic())
+			{
+				return true;
+			}
+			
+			String[] compDepFiles = thePage.getCompileDependentFiles();
+			for (int i = 0; i<compDepFiles.length; i++)
+			{
+				File f = new File(sourceDir, compDepFiles[i]);
+				
+				if (!f.isFile()) return false;
+				
+				if (f.lastModified() > thePage.getTimeCompiled())
+				{
+					return true;
+				}
+			}
+		}
+		catch (MalformedURLException e)
+		{
+			return false;
+		}
+		catch (ClassNotFoundException e)
+		{
+			return true;
+		}
+		catch (InstantiationException e)
+		{
+			return true;
+		}
+		catch (IllegalAccessException e)
+		{
+			return true;
+		}
+		catch (VerifyError e)
+		{
+			return true;
+		}
+		catch (LinkageError e)
+		{
+			return true;
+		}
+		
+		return false;
+	}
 	
 	
 	/**
@@ -125,15 +200,14 @@ public class LSPCompilerHelper
 		currentMainPage = mainPage;
 		File inputFile = new File(startDir, currentMainPage);
 		currentPagePath = inputFile.getParentFile();
-		File outputFile = new File(targetDir, targetFilename(inputFile.getName()));
+		File outputFile = new File(targetDir, "_LSP_"+getPageName(inputFile.getName())+".class");
 		
-		if (!(force 
-				|| !outputFile.isFile()
-				|| outputFile.lastModified() < inputFile.lastModified()))
-			return false; // *** check imported files + compileDynamic
+		if (!checkDepend(force, outputFile, inputFile))
+			return false;
 		
 		try {
 			ContentHandler sax = compiler.startCompile(
+				getPageName(inputFile.getName()),
 				new URLResolver() {
 					public void resolve(String url, ContentHandler ch) 
 						throws IOException, SAXException
@@ -143,13 +217,23 @@ public class LSPCompilerHelper
 				});
 			
 			getFileAsSAX(inputFile.toURL().toString(), sax);
-		
-			LSPPage page = compiler.finishCompile();
-			
+					
 			FileOutputStream fos = new FileOutputStream(outputFile);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(page);
-			oos.close();
+			try {
+				compiler.finishCompile(fos);
+			}
+			catch (Exception e)
+			{
+				fos.close();
+				outputFile.delete();				
+				if (e instanceof SAXException)
+					throw (SAXException)e;
+				else if (e instanceof IOException)
+					throw (IOException)e;
+				else
+					throw (RuntimeException)e;
+			}
+			fos.close();
 			return true;
 		}
 		catch (SAXParseException spe)
@@ -241,14 +325,14 @@ public class LSPCompilerHelper
 
 
 	/**
-	 * Generates a target filename with <code>.lspc</code> extension.
+	 * Get pageName.
 	 */
-	public static String targetFilename(String sourceFilename)
+	public static String getPageName(String sourceFilename)
 	{
 		int dot = sourceFilename.lastIndexOf('.');
 		String basename = (dot > -1) ? sourceFilename.substring(0, dot) 
 									 : sourceFilename;
-		return basename+".lspc";		
+		return basename;		
 	}
 
 }

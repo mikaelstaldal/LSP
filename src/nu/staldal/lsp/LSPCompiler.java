@@ -55,8 +55,9 @@ import nu.staldal.lsp.compiledexpr.*;
 import nu.staldal.util.Utils;
 
 /**
- * Compiles an LSP page into a tree representaton which can be Serialized and
- * executed several times.
+ * Compiles an LSP page into JVM bytecode.
+ *<p>
+ * An instance of this class may be reused, but is not thread safe.
  */
 public class LSPCompiler
 {
@@ -65,8 +66,10 @@ public class LSPCompiler
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
 
-    private TreeBuilder tb;
+	private TreeBuilder tb;
+	private String pageName;
     private URLResolver resolver;
+	private LSPJVMCompiler jvmCompiler;
 
     private HashMap importedFiles;
     private ArrayList includedFiles;
@@ -86,6 +89,97 @@ public class LSPCompiler
 	private HashMap extDict = new HashMap(); 
 
 
+    /**
+	 * Create a new LSP compiler. The instance may be reused, 
+	 * but may <em>not</em> be used from several threads concurrently.
+	 * Create several instances if multiple threads needs to compile 
+	 * concurrently.
+	 */
+	public LSPCompiler()
+    {
+        tb = null;
+		pageName = null;
+        resolver = null;
+		jvmCompiler = new LSPJVMCompiler();
+    }
+
+
+    /**
+	 * Start compilation of an LSP page.
+	 *
+	 * @param page  page name
+	 * @param r  URLResolver to use for resolving <lsp:import>
+	 *
+	 * @return SAX2 ContentHandler to feed the LSP source into
+	 */
+	public ContentHandler startCompile(String page, URLResolver r)
+    {
+    	importedFiles = new HashMap();
+	    includedFiles = new ArrayList();
+        compileDynamic = false;
+        executeDynamic = false;
+		extLibsInPage = new HashMap();
+
+		pageName = page;
+        resolver = r;
+        tb = new TreeBuilder();
+
+        return tb;
+    }
+
+
+    /**
+	 * Finish the compilation.
+	 * 
+	 * @param out  where to write the compiled code
+	 *
+	 * @throws SAXException if any compilation error occurs
+	 * @throws IOException if any I/O error occurs when reading 
+	 *         <lsp:import>ed files, or when writing compiled code
+	 */
+	public void finishCompile(OutputStream out)
+    	throws SAXException, IOException
+    {
+        if (tb == null) throw new IllegalStateException(
+            "startCompile() must be invoked before finishCompile()");
+
+        Element tree = tb.getTree();
+
+		long startTime = System.currentTimeMillis();
+		if (DEBUG) System.out.println("LSP Compile...");
+
+        processImports(tree);
+		
+		for (int i = 0; i<tree.numberOfNamespaceMappings(); i++)
+		{
+			String namespace = tree.getNamespaceMapping(i)[1];
+			
+			if (DEBUG) System.out.println("Namespace URI: " + namespace); 
+			
+			lookupExtensionHandler(tree, namespace);
+		}
+		
+		inExtElement = false;
+        inPi = false;
+		currentElement = null;
+		currentSourceElement = null;
+
+        LSPNode compiledTree = compileNode(tree);
+
+		jvmCompiler.compileToByteCode(pageName, compiledTree, 
+			importedFiles, includedFiles, 
+			compileDynamic,	executeDynamic,
+			extLibsInPage, out);
+
+		tb = null;
+		pageName = null;
+        resolver = null;
+
+		long timeElapsed = System.currentTimeMillis()-startTime;
+		if (DEBUG) System.out.println("in " + timeElapsed + " ms");
+    }
+	
+	
 	private static SAXException fixSourceException(Node node, String msg)
 	{
 		return new SAXParseException(msg, null,
@@ -287,69 +381,6 @@ public class LSPCompiler
 
 		return vector;
 	}
-
-
-    public LSPCompiler()
-    {
-        tb = null;
-        resolver = null;
-    }
-
-
-    public ContentHandler startCompile(URLResolver r)
-    {
-    	importedFiles = new HashMap();
-	    includedFiles = new ArrayList();
-        compileDynamic = false;
-        executeDynamic = false;
-		extLibsInPage = new HashMap();
-
-        resolver = r;
-        tb = new TreeBuilder();
-
-        return tb;
-    }
-
-
-    public LSPPage finishCompile()
-    	throws SAXException, IOException
-    {
-        if (tb == null) throw new IllegalStateException(
-            "startCompile() must be invoked before finishCompile()");
-
-        Element tree = tb.getTree();
-
-		long startTime = System.currentTimeMillis();
-		if (DEBUG) System.out.println("LSP Compile...");
-
-        processImports(tree);
-		
-		for (int i = 0; i<tree.numberOfNamespaceMappings(); i++)
-		{
-			String namespace = tree.getNamespaceMapping(i)[1];
-			
-			if (DEBUG) System.out.println("Namespace URI: " + namespace); 
-			
-			lookupExtensionHandler(tree, namespace);
-		}
-
-		
-		inExtElement = false;
-        inPi = false;
-		currentElement = null;
-		currentSourceElement = null;
-
-        LSPNode compiledTree = compileNode(tree);
-
-        tb = null;
-        resolver = null;
-
-		long timeElapsed = System.currentTimeMillis()-startTime;
-		if (DEBUG) System.out.println("in " + timeElapsed + " ms");
-
-        return new LSPInterpreter(compiledTree, importedFiles, includedFiles,
-            compileDynamic, executeDynamic, extLibsInPage);
-    }
 
 
     private void processImports(Element el)

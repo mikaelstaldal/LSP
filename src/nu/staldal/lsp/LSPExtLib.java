@@ -108,7 +108,7 @@ public interface LSPExtLib
 	 * @return  a ContentHandler to send input to.
 	 */
 	public ContentHandler beforeElement(ContentHandler out)			
-		throws SAXException, java.io.IOException;
+		throws SAXException;
 	
 	
 	/**
@@ -117,7 +117,7 @@ public interface LSPExtLib
 	 * @return  a string output.
 	 */
 	public String afterElement()
-		throws SAXException, java.io.IOException;
+		throws SAXException;
 		
 
 	/**
@@ -127,7 +127,7 @@ public interface LSPExtLib
 	 * @param args  arguments to the function
 	 */		
 	public Object function(String name, Object[] args)
-		throws SAXException, java.io.IOException;
+		throws SAXException;
 	
 
 	/**
