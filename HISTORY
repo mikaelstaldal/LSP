@@ -59,3 +59,10 @@
 * Transform LSP output with XSLT stylesheet.
 * Improved documentation.
 
+
+1.2.1
+-----
+* Can be compiled and used with both Java 1.4 and 
+  Java 1.5 (also known as 5.0).
+* Small change in Servlet code to allow for future enhancements.
+
