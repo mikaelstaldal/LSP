@@ -38,24 +38,29 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.wrapper;
 
 import java.util.*;
 
+import nu.staldal.lsp.*;
+
 
 /**
- * Interface for the LSP tuple data type.
+ * Implementation of LSPTuple for {@link java.util.Map}.
  */
-public interface LSPTuple
+public class LSPMapTuple implements LSPTuple
 {
-	/**
-	 * Get the value mapped to the given key.
-	 *
-	 * @param key  the key
-	 * @return the value mapped to the given key, 
-	 * or <code>null</code> if no value is mapped to the given key.
-	 */
-	public Object get(String key);
+    private Map map;
+
+    public LSPMapTuple(Map map)
+    {
+		this.map = map;
+    }   
+
+	public Object get(String key)
+	{
+		return map.get(key);	
+	}
 
 }
 

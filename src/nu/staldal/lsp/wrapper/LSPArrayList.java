@@ -38,24 +38,55 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.wrapper;
 
-import java.util.*;
+import nu.staldal.lsp.*;
 
 
 /**
- * Interface for the LSP tuple data type.
+ * Implementation of LSPList for Object[].
  */
-public interface LSPTuple
+public class LSPArrayList implements LSPList
 {
-	/**
-	 * Get the value mapped to the given key.
-	 *
-	 * @param key  the key
-	 * @return the value mapped to the given key, 
-	 * or <code>null</code> if no value is mapped to the given key.
-	 */
-	public Object get(String key);
+	private Object[] arr;
+	private int curr;
 
+	public LSPArrayList(Object[] arr)
+	{
+		this.arr = arr;
+		curr = 0;
+	}
+	
+	public boolean hasNext()
+	{
+		return (curr < arr.length);
+	}
+
+	public Object next() throws java.util.NoSuchElementException
+	{
+		try {
+			return arr[curr++];
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			throw new java.util.NoSuchElementException();
+		}
+	}
+
+	public int index()
+	{
+		return curr;	
+	}
+
+    public int length()
+	{
+		return arr.length;	
+	}
+
+	public void reset()
+	{
+		curr = 0;	
+	}	
+	
 }
 

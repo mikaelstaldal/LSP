@@ -38,24 +38,56 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.wrapper;
 
 import java.util.*;
 
+import nu.staldal.lsp.*;
 
 /**
- * Interface for the LSP tuple data type.
+ * Implementation of LSPList for {@link java.util.Vector}.
  */
-public interface LSPTuple
+public class LSPVectorList implements LSPList
 {
-	/**
-	 * Get the value mapped to the given key.
-	 *
-	 * @param key  the key
-	 * @return the value mapped to the given key, 
-	 * or <code>null</code> if no value is mapped to the given key.
-	 */
-	public Object get(String key);
+	private Vector vec;
+	private int curr;
 
+	public LSPVectorList(Vector vec)
+	{
+		this.vec = vec;
+		curr = 0;
+	}
+	
+	public boolean hasNext()
+	{
+		return (curr < vec.size());
+	}
+
+	public Object next() throws java.util.NoSuchElementException
+	{
+		try {
+			return vec.elementAt(curr++);
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			throw new java.util.NoSuchElementException();
+		}
+	}
+
+	public int index()
+	{
+		return curr;	
+	}
+
+    public int length()
+	{
+		return vec.size();	
+	}
+
+	public void reset()
+	{
+		curr = 0;	
+	}	
+	
 }
 

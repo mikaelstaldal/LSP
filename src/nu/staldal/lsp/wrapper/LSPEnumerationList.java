@@ -38,24 +38,66 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.wrapper;
 
 import java.util.*;
 
+import nu.staldal.lsp.*;
+
 
 /**
- * Interface for the LSP tuple data type.
+ * Implementation of LSPList for {@link java.util.Enumeration}.
  */
-public interface LSPTuple
+public class LSPEnumerationList implements LSPList
 {
-	/**
-	 * Get the value mapped to the given key.
-	 *
-	 * @param key  the key
-	 * @return the value mapped to the given key, 
-	 * or <code>null</code> if no value is mapped to the given key.
-	 */
-	public Object get(String key);
+    private int theLength = 0;
+	private Enumeration enum;
+	private boolean atEnd = false;
 
+	public LSPEnumerationList(Enumeration enum)
+	{
+		this.enum = enum;
+	}
+
+	public boolean hasNext()
+	{
+		return enum.hasMoreElements();
+	}
+
+	public Object next() throws NoSuchElementException
+	{
+		try {
+			Object o = enum.nextElement();
+			theLength++;
+			return o;
+		}
+		catch (NoSuchElementException e)
+		{
+			atEnd = true;
+			throw e;
+		}
+	}
+
+	public int index()
+	{
+		return theLength;	
+	}
+
+    public int length() throws IllegalArgumentException
+	{
+		if (atEnd)
+			return theLength;
+		else
+			throw new IllegalArgumentException(
+				"not possible to check length of an Enumeration");
+	}
+
+	public void reset() throws IllegalArgumentException
+	{
+		if (theLength > 0)
+			throw new IllegalArgumentException(
+				"not possible to reset an Enumeration");
+	}
+	
 }
 

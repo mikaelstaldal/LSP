@@ -50,6 +50,7 @@ import nu.staldal.xtree.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
+import nu.staldal.lsp.wrapper.*;
 
 import nu.staldal.lagoon.core.Target;
 import nu.staldal.lagoon.core.SourceManager;
@@ -761,11 +762,8 @@ public class LSPInterpreter implements LSPPage
 				vec.addElement(new Double(start));
 			
 			if (DEBUG) System.out.println("seq of length " + vec.size()); 
-			// Object[] arr = new Object[vec.size()];
-			// vec.copyInto(arr);
-			
-			// return new LSPArrayList(arr);
-			return new LSPEnumerationList(vec.elements());
+
+			return new LSPVectorList(vec);
 		}
 		else
 		{
@@ -918,10 +916,10 @@ public class LSPInterpreter implements LSPPage
 			return (LSPList)value;
 		else if (value instanceof Object[]) 
 			return new LSPArrayList((Object[])value);
+		else if (value instanceof Vector) 
+			return new LSPVectorList((Vector)value);
 		else if (value instanceof Enumeration) 
 			return new LSPEnumerationList((Enumeration)value);
-		else if (value instanceof Iterator) 
-			return new LSPIteratorList((Iterator)value);
 		else
 			throw new LSPException(
 				"Convert to list not implemented for type "
@@ -935,8 +933,6 @@ public class LSPInterpreter implements LSPPage
 			return (LSPTuple)value;
 		else if (value instanceof Dictionary) 
 			return new LSPDictionaryTuple((Dictionary)value);
-		else if (value instanceof Map) 
-			return new LSPMapTuple((Map)value);
 		else
 			throw new LSPException(
 				"Convert to tuple not implemented for type "

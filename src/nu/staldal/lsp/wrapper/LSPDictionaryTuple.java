@@ -38,24 +38,30 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.wrapper;
 
 import java.util.*;
 
+import nu.staldal.lsp.*;
+
 
 /**
- * Interface for the LSP tuple data type.
+ * Implementation of LSPTuple for {@link java.util.Dictionary} 
+ * (the interface of {@link java.util.Hashtable}).
  */
-public interface LSPTuple
+public class LSPDictionaryTuple implements LSPTuple
 {
-	/**
-	 * Get the value mapped to the given key.
-	 *
-	 * @param key  the key
-	 * @return the value mapped to the given key, 
-	 * or <code>null</code> if no value is mapped to the given key.
-	 */
-	public Object get(String key);
+    private Dictionary dict;
+
+    public LSPDictionaryTuple(Dictionary dict)
+    {
+		this.dict = dict;
+    }   
+
+	public Object get(String key)
+	{
+		return dict.get(key);	
+	}
 
 }
 
