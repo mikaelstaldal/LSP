@@ -64,8 +64,6 @@ public class LSPRequestProcessor extends RequestProcessor
             {                
                 String name = (String)e.nextElement();
                 Object value = request.getAttribute(name);
-                System.out.println("reqAttr: " + name 
-                    + " -- " + value.getClass().getName());
                 lspParams.put(name, value);
             }
     
