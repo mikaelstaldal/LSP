@@ -989,8 +989,12 @@ public class LSPInterpreter implements LSPPage
 			return new LSPArrayList((Object[])value);
 		else if (value instanceof Vector) 
 			return new LSPVectorList((Vector)value);
+		else if (value instanceof List) 
+			return new LSPCollectionList((Collection)value);
 		else if (value instanceof Enumeration) 
 			return new LSPEnumerationList((Enumeration)value);
+		else if (value instanceof Iterator) 
+			return new LSPIteratorList((Iterator)value);
 		else
 			throw new LSPException(
 				"Convert to list not implemented for type "
@@ -1004,6 +1008,8 @@ public class LSPInterpreter implements LSPPage
 			return (LSPTuple)value;
 		else if (value instanceof Dictionary) 
 			return new LSPDictionaryTuple((Dictionary)value);
+		else if (value instanceof Map) 
+			return new LSPMapTuple((Map)value);
 		else
 			throw new LSPException(
 				"Convert to tuple not implemented for type "
