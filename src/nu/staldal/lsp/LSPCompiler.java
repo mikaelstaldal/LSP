@@ -79,6 +79,7 @@ public class LSPCompiler
 	private boolean inPi;
 	private boolean inExtElement;
 	
+	private Element currentSourceElement;
 	private LSPElement currentElement;
 	
 	// (String)namespaceURI -> (String)className
@@ -336,6 +337,7 @@ public class LSPCompiler
 		inExtElement = false;
         inPi = false;
 		currentElement = null;
+		currentSourceElement = null;
 
         LSPNode compiledTree = compileNode(tree);
 
@@ -502,6 +504,7 @@ public class LSPCompiler
 			}
 
 			currentElement = newEl;
+			currentSourceElement = el;
 			compileChildren(el, newEl);
 			
 			if (inExtElementNow) inExtElement = false;
@@ -682,6 +685,7 @@ public class LSPCompiler
 		LSPElement newEl = new LSPElement(ns, name, -1, el.numberOfChildren());
 
 		currentElement = newEl;
+		currentSourceElement = el;
 		compileChildren(el, newEl);
 
 		return newEl;
@@ -695,6 +699,8 @@ public class LSPCompiler
 			"<lsp:attribute> may not be nested in <lsp:processing-instruction>");
 		if (currentElement == null) throw fixSourceException(el,
 			"<lsp:attribute> must be inside element");
+		if (el.getParent() != currentSourceElement) throw fixSourceException(el,
+			"<lsp:attribute> must be directly inside element");
 		
 		if (el.numberOfChildren() > 0) throw fixSourceException(el,
 			"<lsp:attribute> must be empty");
@@ -930,6 +936,13 @@ public class LSPCompiler
 		{
 			return new TupleExpr(compileExpr(el, ((TupleExpr)expr).getBase()), 
 								 ((TupleExpr)expr).getName());
+		}
+		else if (expr instanceof ConditionalExpr)
+		{
+			return new ConditionalExpr(
+				compileExpr(el, ((ConditionalExpr)expr).getTest()), 
+				compileExpr(el, ((ConditionalExpr)expr).getThen()), 
+				compileExpr(el, ((ConditionalExpr)expr).getElse())); 
 		}
         else
         {

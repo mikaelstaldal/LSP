@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -238,19 +238,44 @@ public class LSPExprParser extends Parser
 	}
 
 	/**
-	 * AndExpr ::= EqualityExpr
-	 *	    	 | AndExpr 'or' EqualityExpr
+	 * AndExpr ::= IfExpr
+	 *	    	 | AndExpr 'or' IfExpr
 	 */
 	LSPExpr andExpr() throws ParseException, java.io.IOException
 	{
-		LSPExpr ret = equalityExpr();
+		LSPExpr ret = ifExpr();
 		while (consumeDelimiter(DelimiterToken.AND))
 		{
-			ret = new BinaryExpr(ret, equalityExpr(), BinaryExpr.AND);
+			ret = new BinaryExpr(ret, ifExpr(), BinaryExpr.AND);
 		}
 		return ret;
 	}
 
+	/**
+	 * IfExpr ::= EqualityExpr
+     *   	    | 'if' '(' Expr ')' 'then' Expr 'else' EqualityExpr 
+	 */
+	LSPExpr ifExpr() throws ParseException, java.io.IOException
+	{
+		if (consumeDelimiter(DelimiterToken.IF))
+		{
+			consumeDelimiter(DelimiterToken.LPAREN, "( expected");
+			LSPExpr testExpr = expr();
+			consumeDelimiter(DelimiterToken.RPAREN, ") expected");
+			consumeDelimiter(DelimiterToken.THEN, "then expected");
+			LSPExpr thenExpr = expr();
+			consumeDelimiter(DelimiterToken.ELSE, "else expected");
+			LSPExpr elseExpr = equalityExpr();
+			
+			return new ConditionalExpr(testExpr, thenExpr, elseExpr);
+		}
+		else
+		{
+			return equalityExpr();
+		}
+	}
+	
+	
 	/**
 	 * EqualtyExpr ::= RelaionalExpr
 	 *		         | EqualityExpr '=' RelationalExpr

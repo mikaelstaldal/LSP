@@ -152,12 +152,13 @@ XSLT, the value of the <code>name</code> attribute may not be a QName.</p>
 computed name in the output. The attribute is attached to the enclosing 
 element (which may be either an <code>lsp:element</code> or a normal literal element).
 The <code>name</code> attribute is used as the local name of the attribute. The <code>namespace</code> attribute
-is used as the namespace URI of the atribute (if omitted, the generated attribute
+is used as the namespace URI of the atribute (if omitted, the created attribute
 will be in the null namespace). May not be used to create namespace 
 declarations, the value of the <code>name</code> attribute may not be "<code>xmlns</code>".
 It's an error to add an attribute with the same name as an already 
 existing attribute, this error cannot be detected at compile time, and will 
-result in undefined behaviour at runtime.
+result in undefined behaviour at runtime. If the <code>name</code> 
+expression evaluates to the empty string, no attribute will be created.
 <em>Note:</em> unlike the similar element in XSLT, the value of the 
 <code>name</code> attribute may not be a QName.</p>
 
@@ -336,8 +337,11 @@ Argument ::= Expr
 OrExpr ::= AndExpr
          | OrExpr 'or' AndExpr
 
-AndExpr ::= EqualityExpr
-          | AndExpr 'and' EqualiyExpr
+AndExpr ::= IfExpr
+          | AndExpr 'and' IfExpr
+
+IfExpr ::= EqualityExpr
+         | 'if' '(' Expr ')' 'then' Expr 'else' EqualityExpr 
 
 EqualityExpr ::= RelationalExpr
                | EqualityExpr '=' RelationalExpr

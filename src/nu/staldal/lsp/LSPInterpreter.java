@@ -264,6 +264,8 @@ public class LSPInterpreter implements LSPPage
 
 			String local = evalExprAsString(el.getAttributeLocalName(i));
 
+			if (local.length() == 0) continue; // ignore attributes with empty name
+			
 			if (local.indexOf(':') > -1)
 				throw new LSPException("<lsp:attribute> may not use QName");
 			if (local.equals("xmlns"))
@@ -479,6 +481,10 @@ public class LSPInterpreter implements LSPPage
 		else if (expr instanceof TupleExpr)
 		{
 			return evalExpr((TupleExpr)expr);
+		}
+		else if (expr instanceof ConditionalExpr)
+		{
+			return evalExpr((ConditionalExpr)expr);
 		}
         else
         {
@@ -884,7 +890,17 @@ public class LSPInterpreter implements LSPPage
 		else
 			return convertObjectToLSP(o);
 	}
+	
+	
+	private Object evalExpr(ConditionalExpr expr) throws SAXException
+	{
+		if (evalExprAsBoolean(expr.getTest()))
+			return evalExpr(expr.getThen());	
+		else
+			return evalExpr(expr.getElse());	
+	}
 
+	
 	private String convertToString(Object value) throws LSPException
 	{
 		if (value instanceof String)

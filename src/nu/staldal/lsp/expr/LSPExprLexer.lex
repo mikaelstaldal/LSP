@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,6 +89,9 @@ mod  { return new DelimiterToken(yychar+1, DelimiterToken.MOD); }
 "."  { return new DelimiterToken(yychar+1, DelimiterToken.DOT); }
 "$"  { return new DelimiterToken(yychar+1, DelimiterToken.DOLLAR); }
 ":"  { return new DelimiterToken(yychar+1, DelimiterToken.COLON); }
+if   { return new DelimiterToken(yychar+1, DelimiterToken.IF); }
+then { return new DelimiterToken(yychar+1, DelimiterToken.THEN); }
+else { return new DelimiterToken(yychar+1, DelimiterToken.ELSE); }
 
 
 \"[^\"]*\"|'[^']*' { 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,9 @@ class DelimiterToken extends Token
 	public static final int DOT = 17;
 	public static final int DOLLAR = 18;
 	public static final int COLON = 19;
+	public static final int IF = 20;
+	public static final int THEN = 21;
+	public static final int ELSE = 22;
 
 
 	protected int type;
