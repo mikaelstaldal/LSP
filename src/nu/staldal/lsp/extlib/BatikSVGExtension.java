@@ -56,7 +56,9 @@ import nu.staldal.lagoon.util.*;
 
 public class BatikSVGExtension implements LSPExtLib
 {
-	private static boolean DEBUG = true;	
+	private static boolean DEBUG = true;
+
+	private static String XHTML = "http://www.w3.org/1999/xhtml"; 	
 	
 	private ImageTranscoder transcoder;
 	private SAXSVGDocumentFactory docFactory;
@@ -146,8 +148,8 @@ public class BatikSVGExtension implements LSPExtLib
 		AttributesImpl atts = new AttributesImpl();
 		atts.addAttribute("", "src", "", "CDATA", imageName);
 		atts.addAttribute("", "alt", "", "CDATA", "");
-		out.startElement("" /* *** "http://www.w3.org/1999/xhtml" */, "img", "", atts);
-		out.endElement("" /* *** "http://www.w3.org/1999/xhtml" */, "img", "");
+		out.startElement(XHTML, "img", "", atts);
+		out.endElement(XHTML, "img", "");
 
 		docFactory = null;
 		out = null;
