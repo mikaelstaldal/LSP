@@ -58,6 +58,7 @@ import nu.staldal.lsp.*;
 
 /**
  * Handle execution of LSP pages in a Servlet environment.
+ * This class is thread-safe.
  *
  * There is one instance of LSPManager per {@link javax.servlet.ServletContext},
  * use the {@link #getInstance} method to obtain it.
