@@ -59,9 +59,7 @@ public abstract class LSPPageBase implements LSPPage
 	protected final String[] extLibsURLs;
 	protected final String[] extLibsClassNames;
 	protected final String[] compileDependentFiles;
-	protected final String[] executeDependentFiles;
 	protected final boolean compileDynamic;
-	protected final boolean executeDynamic;
 	protected final long timeCompiled;
 	protected final String pageName;
 	protected final String compiledVersionName;
@@ -69,16 +67,13 @@ public abstract class LSPPageBase implements LSPPage
 
 	
 	protected LSPPageBase(String[] extLibsURLs, String[] extLibsClassNames,
-		String[] compileDependentFiles, String[] executeDependentFiles,
-		boolean compileDynamic, boolean executeDynamic, long timeCompiled,
-		String pageName, String versionName, int versionNum)
+		String[] compileDependentFiles, boolean compileDynamic, 
+        long timeCompiled, String pageName, String versionName, int versionNum)
 	{
 		this.extLibsURLs = extLibsURLs;
 		this.extLibsClassNames = extLibsClassNames;
 		this.compileDependentFiles = compileDependentFiles;
-		this.executeDependentFiles = executeDependentFiles;
 		this.compileDynamic = compileDynamic;
-		this.executeDynamic = executeDynamic;
 		this.timeCompiled = timeCompiled;
 		this.pageName = pageName;
 		this.compiledVersionName = versionName;
@@ -90,19 +85,9 @@ public abstract class LSPPageBase implements LSPPage
 		return compileDependentFiles;	
 	}
 
-    public final String[] getExecuteDependentFiles()
-	{
-		return executeDependentFiles;	
-	}
-
     public final boolean isCompileDynamic()
 	{
 		return compileDynamic;	
-	}
-
-    public final boolean isExecuteDynamic()
-	{
-		return executeDynamic;	
 	}
 
     public final long getTimeCompiled()
@@ -115,8 +100,7 @@ public abstract class LSPPageBase implements LSPPage
 		return pageName;
 	}
 	
-    public final void execute(ContentHandler sax, URLResolver resolver,
-        	Map params, Object extContext)
+    public final void execute(ContentHandler sax, Map params, Object extContext)
         throws SAXException
 	{
         if (compiledVersionNum > LSPPage.LSP_VERSION_NUM)
@@ -145,11 +129,11 @@ public abstract class LSPPageBase implements LSPPage
 			
 			LSPExtLib extLib = lookupExtensionHandler(extLibs, nsURI, className);			
 			
-			extLib.startPage(resolver, extContext, pageName);
+			extLib.startPage(extContext, pageName);
 		}
 
 		try {
-			_execute(sax, resolver, env, extLibs, sax, new AttributesImpl());
+			_execute(sax, env, extLibs, sax, new AttributesImpl());
 		}
 		catch (IllegalArgumentException e)
 		{
@@ -415,22 +399,6 @@ public abstract class LSPPageBase implements LSPPage
 	}
 		
 
-	protected static void processInclude(
-			String url, ContentHandler sax, URLResolver resolver)
-		throws SAXException
-	{
-		try {
-			IncludeHandler ih = new IncludeHandler(sax);
-
-            resolver.resolve(url, ih);
-		}
-		catch (IOException e)
-		{
-			throw new SAXException(e);
-		}
-	}		
-
-		
 	protected static boolean compareEqual(Object left, Object right)
 		throws LSPException
 	{		
@@ -569,7 +537,7 @@ public abstract class LSPPageBase implements LSPPage
 
 		
 	protected abstract void _execute(
-			ContentHandler sax, URLResolver resolver, Environment env,
+			ContentHandler sax, Environment env,
 			Map extLibs, ContentHandler _sax, AttributesImpl attrs)
 		throws SAXException, IllegalArgumentException;	
 }

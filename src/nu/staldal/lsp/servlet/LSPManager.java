@@ -237,15 +237,7 @@ public class LSPManager
 		}
 					
 		sax.startDocument();
-		thePage.execute(sax,
-					new URLResolver() {
-						public void resolve(String url, ContentHandler ch) 
-							throws IOException, SAXException
-						{
-							getFileAsSAX(url, ch);	
-						}
-					},
-					lspParams, context);
+		thePage.execute(sax, lspParams, context);
 		sax.endDocument();
     }
 	
@@ -356,42 +348,6 @@ public class LSPManager
 			context.log("Invalid LSP page: " + pageName, e);
 			return null;
 		}				
-	}
-
-
-	private void getFileAsSAX(String url, ContentHandler ch)
-		throws SAXException, IOException
-	{
-		InputSource is;
-		
-		if (Utils.absoluteURL(url))
-		{
-			is = new InputSource(url);
-		}
-		else if (Utils.pseudoAbsoluteURL(url))
-		{
-			InputStream istream = context.getResourceAsStream(url);
-			if (istream == null) throw new FileNotFoundException(url);
-			is = new InputSource(istream);
-		}
-		else // relative URL 	
-		{
-			InputStream istream = context.getResourceAsStream(url); 
-			if (istream == null) throw new FileNotFoundException(url);
-			is = new InputSource(istream);
-		}
-
-		try {
-			XMLReader parser = spf.newSAXParser().getXMLReader(); 
-
-			parser.setContentHandler(ch);
-
-			parser.parse(is);
-		}
-		catch (ParserConfigurationException e)
-		{
-			throw new SAXException(e);
-		}		
 	}
 
 }

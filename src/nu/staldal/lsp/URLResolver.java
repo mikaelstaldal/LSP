@@ -46,7 +46,7 @@ import org.xml.sax.ContentHandler;
 /**
  * Resolvs an URL into an XML resource.
  *
- * <p>Used for import and include in an LSP page.
+ * <p>Used for import in an LSP page.
  */
 public interface URLResolver
 {

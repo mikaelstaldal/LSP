@@ -75,9 +75,7 @@ public class LSPCompiler
 	private LSPJVMCompiler jvmCompiler;
 
     private HashMap importedFiles;
-    private ArrayList includedFiles;
     private boolean compileDynamic;
-    private boolean executeDynamic;
 
 	// (String)namespaceURI -> (String)className
 	private HashMap extLibsInPage; 
@@ -118,9 +116,7 @@ public class LSPCompiler
 	public ContentHandler startCompile(String page, URLResolver r)
     {
     	importedFiles = new HashMap();
-	    includedFiles = new ArrayList();
         compileDynamic = false;
-        executeDynamic = false;
 		extLibsInPage = new HashMap();
 
 		pageName = page;
@@ -170,8 +166,7 @@ public class LSPCompiler
         LSPNode compiledTree = compileNode(tree);
 
 		jvmCompiler.compileToByteCode(pageName, compiledTree, 
-			importedFiles, includedFiles, 
-			compileDynamic,	executeDynamic,
+			importedFiles, compileDynamic,
 			extLibsInPage, out);
 
 		tb = null;
@@ -464,10 +459,6 @@ public class LSPCompiler
 			else if (el.getLocalName().equals("processing-instruction"))
 			{
 				return process_processing_instruction(el);
-			}
-			else if (el.getLocalName().equals("include"))
-			{
-				return process_include(el);
 			}
 			else if (el.getLocalName().equals("if"))
 			{
@@ -828,24 +819,6 @@ public class LSPCompiler
 	}
 
 	
-	private LSPNode process_include(Element el)
-		throws SAXException
-	{
-        LSPExpr file = processTemplateExpr(el, getAttr("file", el, true));
-
-		if (file instanceof StringLiteral)
-		{
-			includedFiles.add(((StringLiteral)file).getValue());
-		}
-		else
-		{
-			executeDynamic = true;
-		}
-
-		return new LSPInclude(file, el);
-	}
-
-
 	private LSPNode process_if(Element el)
 		throws SAXException
 	{

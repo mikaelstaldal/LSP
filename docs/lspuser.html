@@ -78,20 +78,6 @@ compiled. Any LSP elements and templates in the included file are
 processed.</p>
 
 
-<h4>lsp:include</h4>
-
-<p class="element-syntax">
-<a name="element-include"></a>&lt;lsp:include<br />
-&#160;&#160;<b>file</b> = { <var>URL</var> }&#160;/&gt;
-</p>
-
-<p>The <code>lsp:include</code> includes a file when the page is
-executed. Any elements in the LSP namespace in the included file
-are stripped, but their content is keept (this allows the
-<code>lsp:root</code> element to be used normally). Any templates in
-the included file are not processed.</p>
-
-
 <h4>lsp:root</h4>
 
 <p class="element-syntax">
@@ -101,9 +87,8 @@ the included file are not processed.</p>
 </p>
 
 <p>The <code>lsp:root</code> element simply outputs all of its content.
-Useful as document root element in files to be <code>import</code>ed or
-<code>include</code>d. The <code>lsp:root</code> element can be
-nested.</p>
+Useful as document root element in files to be <code>import</code>ed. 
+The <code>lsp:root</code> element can be nested.</p>
 
 
 <h4>lsp:processing-instruction</h4>

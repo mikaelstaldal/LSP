@@ -116,7 +116,7 @@ public class LSPRunner
 	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
 	 * @param doctypePublic the XML DOCTYPE PUBLIC (<code>null</code> for default)
 	 * @param doctypeSystem the XML DOCTYPE SYSTEM (<code>null</code> for default)
-	 * @param doctypeSystem character encoding to use (<code>null</code> for default)
+	 * @param encoding    character encoding to use (<code>null</code> for default)
      *
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
@@ -183,15 +183,7 @@ public class LSPRunner
 		}
 					
 		sax.startDocument();
-		thePage.execute(sax,
-					new URLResolver() {
-						public void resolve(String url, ContentHandler ch) 
-							throws IOException, SAXException
-						{
-							getFileAsSAX(url, ch);	
-						}
-					},
-					lspParams, null);
+		thePage.execute(sax, lspParams, null);
 		sax.endDocument();
     }
 	
@@ -238,42 +230,6 @@ public class LSPRunner
 		}				
 	}
 
-
-	private void getFileAsSAX(String url, ContentHandler ch)
-		throws SAXException, IOException
-	{
-		InputSource is;
-		
-		if (Utils.absoluteURL(url))
-		{
-			is = new InputSource(url);
-		}
-		else if (Utils.pseudoAbsoluteURL(url))
-		{
-			InputStream istream = LSPRunner.class.getResourceAsStream(url);
-			if (istream == null) throw new FileNotFoundException(url);
-			is = new InputSource(istream);
-		}
-		else // relative URL 	
-		{
-			InputStream istream = LSPRunner.class.getResourceAsStream(url); 
-			if (istream == null) throw new FileNotFoundException(url);
-			is = new InputSource(istream);
-		}
-
-		try {
-			XMLReader parser = spf.newSAXParser().getXMLReader(); 
-
-			parser.setContentHandler(ch);
-
-			parser.parse(is);
-		}
-		catch (ParserConfigurationException e)
-		{
-			throw new SAXException(e);
-		}		
-	}
-        
     
     public static void main(String[] args)
         throws InstantiationException, IllegalAccessException, 
@@ -307,4 +263,3 @@ public class LSPRunner
     }
 
 }
-
