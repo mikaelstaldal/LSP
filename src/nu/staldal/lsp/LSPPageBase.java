@@ -108,7 +108,7 @@ public abstract class LSPPageBase implements LSPPage
 	}	
 	
     public final void execute(ContentHandler sax, URLResolver resolver,
-        	Map params, Object extContext, String targetURL)
+        	Map params, Object extContext)
         throws SAXException
 	{
         Environment env = new Environment();
@@ -129,7 +129,7 @@ public abstract class LSPPageBase implements LSPPage
 			
 			LSPExtLib extLib = lookupExtensionHandler(extLibs, nsURI, className);			
 			
-			extLib.startPage(resolver, extContext, targetURL);
+			extLib.startPage(resolver, extContext);
 		}
 
 		try {

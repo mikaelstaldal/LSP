@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 
 
 /**
- * An LSP Page.
+ * A compiled LSP Page.
  *
  * <p>An LSP page instance may be reused and is thread safe.
  */
@@ -76,11 +76,9 @@ public interface LSPPage
 	 * @param resolver    Used to resolve included files
 	 * @param params      Parameters to the LSP page
 	 * @param extContext  external context which will be passed to ExtLibs
-	 * @param targetURL   the current target URL, pseudo-absolute URL string,
-	 *					  passed to ExtLibs
      */
     public void execute(ContentHandler ch, URLResolver resolver,
-        	Map params, Object extContext, String targetURL)
+        	Map params, Object extContext)
         throws SAXException;
 }
 
