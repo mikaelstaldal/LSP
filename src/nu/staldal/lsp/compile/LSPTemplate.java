@@ -38,49 +38,23 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.expr;
+package nu.staldal.lsp.compile;
 
 import nu.staldal.lsp.LSPExpr;
 
-/**
- * A string literal.
- */
-public class StringLiteral extends LSPExpr
+public class LSPTemplate implements LSPNode
 {
-	protected String value;
+	static final long serialVersionUID = -1804355746259L;
 
-	/**
-	 * Create an StringLiteral from a corresponding token.
-	 *
-	 * @param t  the token
-	 */
-	public StringLiteral(StringToken t)
+	private LSPExpr expr;
+
+	public LSPTemplate(LSPExpr expr)
 	{
-		this.value = t.getValue();
+		this.expr = expr;
 	}
 
-
-	/**
-	 * Create an StringLiteral from a string.
-	 *
-	 * @param s  the string
-	 */
-	public StringLiteral(String s)
+	public LSPExpr getExpr()
 	{
-		this.value = s;
-	}
-
-
-	/**
-	 * Get the string value.
-	 */
-	public String getValue()
-	{
-		return value;
-	}
-
-	public String toString()
-	{
-		return "StringLiteral(" + value + ")";
+		return expr;
 	}
 }

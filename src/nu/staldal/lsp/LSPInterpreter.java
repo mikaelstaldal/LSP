@@ -43,9 +43,13 @@ package nu.staldal.lsp;
 import java.io.IOException;
 import java.util.*;
 
+import javax.xml.parsers.*;
 import org.xml.sax.*;
 
 import nu.staldal.xtree.*;
+
+import nu.staldal.lsp.expr.*;
+import nu.staldal.lsp.compile.*;
 
 public class LSPInterpreter implements LSPPage
 {
@@ -55,7 +59,7 @@ public class LSPInterpreter implements LSPPage
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
 
     private long timeCompiled;
-    private Element theTree;
+    private LSPNode theTree;
     private Hashtable importedFiles;
     private Vector includedFiles;
     private boolean compileDynamic;
@@ -63,9 +67,8 @@ public class LSPInterpreter implements LSPPage
 
     private transient URLResolver resolver = null;
     private transient Hashtable params = null;
-    private transient int raw = 0;
 
-    public LSPInterpreter(Element theTree, Hashtable importedFiles,
+    public LSPInterpreter(LSPNode theTree, Hashtable importedFiles,
         Vector includedFiles, boolean compileDynamic, boolean executeDynamic)
         throws LSPException
     {
@@ -116,186 +119,124 @@ public class LSPInterpreter implements LSPPage
     }
 
 
-	private XMLReader createParser() throws SAXException
+	private XMLReader createParser()
 	{
-        XMLReader saxParser =
-            new org.apache.xerces.parsers.SAXParser();
+		try {
+			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+			parserFactory.setNamespaceAware(true);
+			parserFactory.setValidating(false);
 
-        saxParser.setFeature(
-            "http://xml.org/sax/features/validation",
-            false);
-        saxParser.setFeature(
-            "http://xml.org/sax/features/external-general-entities",
-            true);
-        //saxParser.setFeature(
-        // 	"http://xml.org/sax/features/external-parameter-entities",
-        //   false); // not supported by Xerces
-        saxParser.setFeature(
-            "http://xml.org/sax/features/namespaces",
-            true);
-
-        return saxParser;
+			return parserFactory.newSAXParser().getXMLReader();
+		}
+		catch (SAXException e)
+		{
+			throw new Error(e.toString());
+		}
+		catch (javax.xml.parsers.ParserConfigurationException e)
+		{
+			throw new Error(e.toString());
+		}
 	}
 
-    private String processTemplate(String template)
-        throws LSPException
-    {
-        try {
-            return TemplateProcessor.processTemplate('{', '}', '\'', '\"',
-                template,
-                new ExpressionEvaluator() {
-                    public String eval(String expr) throws LSPException
-                    {
-                        return evalExprAsString(expr);
-                    }
-                });
-        }
-        catch (TemplateException e)
-        {
-            Exception ee = e.getException();
-            if (ee != null)
-                throw (LSPException)ee;
-            else
-                throw new LSPException("Illegal template: " + e.getMessage());
-        }
-    }
 
-    private void processNode(Node node, ContentHandler sax)
+    private void processNode(LSPNode node, ContentHandler sax)
         throws SAXException
     {
-        if (node instanceof Element)
-            processNode((Element)node, sax);
-        else if (node instanceof Text)
-            processNode((Text)node, sax);
-        else if (node instanceof ProcessingInstruction)
-            ; // processNode((ProcessingInstruction)node);
+        if (node instanceof LSPElement)
+            processNode((LSPElement)node, sax);
+        else if (node instanceof LSPText)
+            processNode((LSPText)node, sax);
+        else if (node instanceof LSPIf)
+            processNode((LSPIf)node, sax);
+        else if (node instanceof LSPInclude)
+            processNode((LSPInclude)node, sax);
+        else if (node instanceof LSPProcessingInstruction)
+            processNode((LSPProcessingInstruction)node, sax);
+        else if (node instanceof LSPTemplate)
+            processNode((LSPTemplate)node, sax);
+        else if (node instanceof LSPContainer)
+            processNode((LSPContainer)node, sax); // ***
+        else
+			throw new LSPException("Unrecognized LSPNode: "
+				+ node.getClass().getName());
     }
 
-	private void processChildren(Element el, ContentHandler sax)
+	private void processChildren(LSPContainer el, ContentHandler sax)
 		throws SAXException
 	{
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
-			Node child = el.getChild(i);
+			LSPNode child = el.getChild(i);
 			processNode(child, sax);
 		}
 	}
 
-
-    private void processNode(Element el, ContentHandler sax)
+    private void processNode(LSPElement el, ContentHandler sax)
         throws SAXException
     {
-		if ((el.getNamespaceURI() != null)
-				&& el.getNamespaceURI().equals(LSP_CORE_NS))
+		// Copy element to output verbatim
+
+		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 		{
-			// Dispatch LSP command
-			if (el.getLocalName().equals("root"))
-			{
-				process_root(el, sax);
-			}
-			else if (el.getLocalName().equals("processing-instruction"))
-			{
-				process_processing_instruction(el, sax);
-			}
-			else if (el.getLocalName().equals("include"))
-			{
-				process_include(el, sax);
-			}
-			else if (el.getLocalName().equals("if"))
-			{
-				process_if(el, sax);
-			}
-			else if (el.getLocalName().equals("raw"))
-			{
-				process_raw(el, sax);
-			}
-			// *** more to implement
-			else
-			{
-				throw new LSPException("unrecognized LSP command "
-						+ "(should have been detected by compilation): "
-						+ el.getLocalName());
-			}
+			String[] m = el.getNamespaceMapping(i);
+			if (!m[1].equals(LSP_CORE_NS))
+				sax.startPrefixMapping(m[0], m[1]);
 		}
-		else
+
+		org.xml.sax.helpers.AttributesImpl saxAtts =
+			new org.xml.sax.helpers.AttributesImpl();
+
+		for (int i = 0; i < el.numberOfAttributes(); i++)
 		{
-			// Copy element to output verbatim
+			String URI = el.getAttributeNamespaceURI(i);
+			String local = el.getAttributeLocalName(i);
+			String type = el.getAttributeType(i);
+			LSPExpr value = el.getAttributeValue(i);
 
-			for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
-			{
-				String[] m = el.getNamespaceMapping(i);
-				if (!m[1].equals(LSP_CORE_NS))
-					sax.startPrefixMapping(m[0], m[1]);
-			}
-
-			org.xml.sax.helpers.AttributesImpl saxAtts =
-				new org.xml.sax.helpers.AttributesImpl();
-
-			for (int i = 0; i < el.numberOfAttributes(); i++)
-			{
-				String URI = el.getAttributeNamespaceURI(i);
-				String local = el.getAttributeLocalName(i);
-				String type = el.getAttributeType(i);
-				String value = el.getAttributeValue(i);
-
-				String newValue = (raw > 0)
-                    ? value
-                    : processTemplate(value);
-
-				saxAtts.addAttribute(URI, local, "", type, newValue);
-			}
-			// *** include qName
-			sax.startElement(el.getNamespaceURI(), el.getLocalName(), "",
-				saxAtts);
-
-			processChildren(el, sax);
-
-			sax.endElement(el.getNamespaceURI(), el.getLocalName(), "");
-
-			for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
-			{
-				String[] m = el.getNamespaceMapping(i);
-				if (!m[1].equals(LSP_CORE_NS))
-					sax.endPrefixMapping(m[0]);
-			}
+			saxAtts.addAttribute(URI, local, "", type,
+				evalExprAsString(value));
 		}
-    }
+		// *** include qName
+		sax.startElement(el.getNamespaceURI(), el.getLocalName(), "",
+			saxAtts);
 
-    private void processNode(Text text, ContentHandler sax)
-        throws SAXException
-    {
-        String newValue = (raw > 0)
-            ? text.getValue()
-            : processTemplate(text.getValue());
-
-        sax.characters(newValue.toCharArray(), 0, newValue.length());
-    }
-
-
-	private void process_root(Element el, ContentHandler sax)
-		throws SAXException
-	{
 		processChildren(el, sax);
-	}
+
+		sax.endElement(el.getNamespaceURI(), el.getLocalName(), "");
+
+		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
+		{
+			String[] m = el.getNamespaceMapping(i);
+			if (!m[1].equals(LSP_CORE_NS))
+				sax.endPrefixMapping(m[0]);
+		}
+    }
+
+    private void processNode(LSPText text, ContentHandler sax)
+        throws SAXException
+    {
+		char[] chars = text.asCharArray();
+        sax.characters(chars, 0, chars.length);
+    }
 
 
-	private void process_processing_instruction(Element el, ContentHandler sax)
+	private void processNode(LSPProcessingInstruction el, ContentHandler sax)
 		throws SAXException
 	{
-		String target = processTemplate(LSPUtil.getAttr("name", el, true));
-
 		StringHandler sh = new StringHandler();
 
-		processChildren(el, sh);
+		processNode(el.getData(), sh);
 
-		sax.processingInstruction(target, sh.getBuf().toString());
+		sax.processingInstruction(
+			evalExprAsString(el.getName()),
+			sh.getBuf().toString());
 	}
 
 
-	private void process_include(Element el, ContentHandler sax)
+	private void processNode(LSPInclude el, ContentHandler sax)
 		throws SAXException
 	{
-        String url = processTemplate(LSPUtil.getAttr("file", el, true));
+        String url = evalExprAsString(el.getFile());
 		try {
             InputSource inputSource = resolver.resolve(url);
 
@@ -314,66 +255,498 @@ public class LSPInterpreter implements LSPPage
 	}
 
 
-	private void process_if(Element el, ContentHandler sax)
+	private void processNode(LSPIf el, ContentHandler sax)
 		throws SAXException
 	{
-		String expr = LSPUtil.getAttr("test", el, true);
+		LSPExpr expr = el.getTest();
 
 		if (evalExprAsBoolean(expr))
 		{
-			processChildren(el, sax);
+			processNode(el.getBody(), sax);
 		}
 	}
 
 
-	private void process_raw(Element el, ContentHandler sax)
+	private void processNode(LSPTemplate el, ContentHandler sax)
 		throws SAXException
 	{
-        raw++;
-        processChildren(el, sax);
-        raw--;
+		LSPExpr expr = el.getExpr();
+
+		String text = evalExprAsString(expr);
+
+		char[] chars = text.toCharArray();
+        sax.characters(chars, 0, chars.length);
 	}
 
 
-	private String evalExprAsString(String expr) throws LSPException
-	{
-		// *** more to implement
 
-        if (expr.charAt(0) == '$')
-        {
-            String value = (String)params.get(expr.substring(1));
-            if (value == null)
-                return "";
-            else
-                return value;
-        }
+	private Object evalExpr(LSPExpr expr) throws LSPException
+	{
+		if (expr instanceof StringLiteral)
+		{
+			return evalExpr((StringLiteral)expr);
+		}
+		else if (expr instanceof NumberLiteral)
+		{
+			return evalExpr((NumberLiteral)expr);
+		}
+		else if (expr instanceof BinaryExpr)
+		{
+			return evalExpr((BinaryExpr)expr);
+		}
+		else if (expr instanceof UnaryExpr)
+		{
+			return evalExpr((UnaryExpr)expr);
+		}
+		else if (expr instanceof FunctionCall)
+		{
+			return evalExpr((FunctionCall)expr);
+		}
+		else if (expr instanceof VariableReference)
+		{
+			return evalExpr((VariableReference)expr);
+		}
         else
-            throw new LSPException("Illegal LSP expression: " + expr);
-	}
-
-
-	private boolean evalExprAsBoolean(String expr) throws LSPException
-	{
-		// *** more to implement
-
-        if (expr.charAt(0) == '$')
         {
-            String value = (String)params.get(expr.substring(1));
-            if (value == null)
-                return false;
-            else
-                return (value.length() > 0);
-        }
-        else
-            throw new LSPException("Illegal LSP expression: " + expr);
+			throw new LSPException("Unrecognized LSPExpr: "
+				+ expr.getClass().getName());
+		}
 	}
 
 
-	private double evalExprAsNumber(String expr) throws LSPException
+	private String evalExpr(StringLiteral expr) throws LSPException
 	{
-		// *** dummy implementation
+		return expr.getValue();
+	}
 
-		return 0.0;
+
+	private Double evalExpr(NumberLiteral expr) throws LSPException
+	{
+		return new Double(expr.getValue());
+	}
+
+
+	private Object evalExpr(BinaryExpr expr) throws LSPException
+	{
+		switch (expr.getOp())
+		{
+		case BinaryExpr.OR:
+			if (evalExprAsBoolean(expr.getLeft()))
+				return Boolean.TRUE;
+			else
+				return new Boolean(evalExprAsBoolean(expr.getRight()));
+
+		case BinaryExpr.AND:
+			if (!evalExprAsBoolean(expr.getLeft()))
+				return Boolean.FALSE;
+			else
+				return new Boolean(evalExprAsBoolean(expr.getRight()));
+
+		case BinaryExpr.EQ:
+		case BinaryExpr.NE:
+		{
+			Object left = evalExpr(expr.getLeft());
+			Object right = evalExpr(expr.getRight());
+			boolean res;
+			if ((left instanceof Boolean) || (right instanceof Boolean))
+			{
+				res = convertToBoolean(left) == convertToBoolean(right);
+			}
+			else if ((left instanceof Number) || (right instanceof Number))
+			{
+				res = convertToNumber(left) == convertToNumber(right);
+			}
+			else
+			{
+				res = convertToString(left).equals(convertToString(right));
+			}
+			if (expr.isOp(BinaryExpr.EQ))
+				return new Boolean(res);
+			else
+				return new Boolean(!res);
+		}
+
+		case BinaryExpr.LT:
+			return new Boolean(evalExprAsNumber(expr.getLeft()) < evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.LE:
+			return new Boolean(evalExprAsNumber(expr.getLeft()) <= evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.GT:
+			return new Boolean(evalExprAsNumber(expr.getLeft()) > evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.GE:
+			return new Boolean(evalExprAsNumber(expr.getLeft()) >= evalExprAsNumber(expr.getRight()));
+
+		case BinaryExpr.PLUS:
+			return new Double(evalExprAsNumber(expr.getLeft()) + evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.MINUS:
+			return new Double(evalExprAsNumber(expr.getLeft()) - evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.TIMES:
+			return new Double(evalExprAsNumber(expr.getLeft()) * evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.DIV:
+			return new Double(evalExprAsNumber(expr.getLeft()) / evalExprAsNumber(expr.getRight()));
+		case BinaryExpr.MOD:
+			return new Double(evalExprAsNumber(expr.getLeft()) % evalExprAsNumber(expr.getRight()));
+
+		default: throw new LSPException("Unrecognized binary operator: "
+			+ expr.getOp());
+		}
+	}
+
+
+	private Object evalExpr(UnaryExpr expr) throws LSPException
+	{
+		return new Double(-evalExprAsNumber(expr.getLeft()));
+	}
+
+
+	private Object evalExpr(FunctionCall expr) throws LSPException
+	{
+		if (expr.getPrefix() == null)
+		{	// built-in function
+			if (expr.getName().equals("string"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"string() function must have 1 argument");
+
+				return convertToString(expr.getArg(0));
+			}
+			else if (expr.getName().equals("concat"))
+			{
+				if (expr.numberOfArgs() < 2)
+					throw new LSPException(
+						"concat() function must have at least 2 argument");
+
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i<expr.numberOfArgs(); i++)
+				{
+					sb.append(convertToString(expr.getArg(i)));
+				}
+				return sb.toString();
+			}
+			else if (expr.getName().equals("starts-with"))
+			{
+				if (expr.numberOfArgs() != 2)
+					throw new LSPException(
+						"starts-with() function must have 2 arguments");
+
+				String a = convertToString(expr.getArg(0));
+				String b = convertToString(expr.getArg(1));
+
+				return new Boolean(a.startsWith(b));
+			}
+			else if (expr.getName().equals("contains"))
+			{
+				if (expr.numberOfArgs() != 2)
+					throw new LSPException(
+						"contains() function must have 2 arguments");
+
+				String a = convertToString(expr.getArg(0));
+				String b = convertToString(expr.getArg(1));
+
+				return new Boolean(a.indexOf(b) > -1);
+			}
+			else if (expr.getName().equals("substring-before"))
+			{
+				if (expr.numberOfArgs() != 2)
+					throw new LSPException(
+						"substring-before() function must have 2 arguments");
+
+				String a = convertToString(expr.getArg(0));
+				String b = convertToString(expr.getArg(1));
+
+				int index = a.indexOf(b);
+
+				if (index < 0)
+					return "";
+				else
+					return a.substring(0, index);
+			}
+			else if (expr.getName().equals("substring-after"))
+			{
+				if (expr.numberOfArgs() != 2)
+					throw new LSPException(
+						"substring-after() function must have 2 arguments");
+
+				String a = convertToString(expr.getArg(0));
+				String b = convertToString(expr.getArg(1));
+
+				int index = a.indexOf(b);
+
+				if (index < 0)
+					return "";
+				else
+					return a.substring(index+1);
+			}
+			else if (expr.getName().equals("substring"))
+			{
+				if ((expr.numberOfArgs() != 2) && (expr.numberOfArgs() != 3))
+					throw new LSPException(
+						"substring() function must have 2 or 3 arguments");
+
+				String a = convertToString(expr.getArg(0));
+				int b = (int)Math.round(convertToNumber(expr.getArg(1)));
+				int c = (expr.numberOfArgs() == 3)
+					? (int)Math.round(convertToNumber(expr.getArg(2)))
+					: -1;
+
+				if (b < 1) b = 1;
+				if (b > a.length()) b = a.length();
+				if (c < 1) return "";
+				if (c > (a.length()-b+1)) c = a.length()-b+1;
+
+				return a.substring(b-1, b-1+c);
+			}
+			else if (expr.getName().equals("string-length"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"string-length() function must have 1 argument");
+
+				String a = convertToString(expr.getArg(0));
+
+				return new Double(a.length());
+			}
+			else if (expr.getName().equals("normalize-space"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"normalize-space() function must have 1 argument");
+
+				String a = convertToString(expr.getArg(0)).trim();
+
+				StringBuffer sb = new StringBuffer(a.length());
+				boolean inSpace = false;
+				for (int i = 0; i<a.length(); i++)
+				{
+					char c = a.charAt(i);
+					if (c > ' ')
+					{
+						inSpace = false;
+						sb.append(c);
+					}
+					else
+					{
+						if (!inSpace)
+						{
+							sb.append(' ');
+							inSpace = true;
+						}
+					}
+				}
+				return sb.toString();
+			}
+			else if (expr.getName().equals("translate"))
+			{
+				if (expr.numberOfArgs() != 3)
+					throw new LSPException(
+						"translate() function must have 3 arguments");
+
+				String a = convertToString(expr.getArg(0));
+				String b = convertToString(expr.getArg(1));
+				String c = convertToString(expr.getArg(2));
+
+				StringBuffer sb = new StringBuffer(a.length());
+				for (int i = 0; i<a.length(); i++)
+				{
+					char ch = a.charAt(i);
+					int index = b.indexOf(ch);
+					if (index < 0)
+						sb.append(c);
+					else if (index >= c.length())
+						;
+					else
+						sb.append(c.charAt(index));
+				}
+				return sb.toString();
+			}
+			else if (expr.getName().equals("boolean"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"boolean() function must have 1 argument");
+
+				return new Boolean(convertToBoolean(expr.getArg(0)));
+			}
+			else if (expr.getName().equals("not"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"not() function must have 1 argument");
+
+				return new Boolean(!convertToBoolean(expr.getArg(0)));
+			}
+			else if (expr.getName().equals("true"))
+			{
+				if (expr.numberOfArgs() != 0)
+					throw new LSPException(
+						"true() function must have no arguments");
+
+				return Boolean.TRUE;
+			}
+			else if (expr.getName().equals("false"))
+			{
+				if (expr.numberOfArgs() != 0)
+					throw new LSPException(
+						"false() function must have no arguments");
+
+				return Boolean.FALSE;
+			}
+			else if (expr.getName().equals("number"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"number() function must have 1 argument");
+
+				return new Double(convertToNumber(expr.getArg(0)));
+			}
+			else if (expr.getName().equals("floor"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"floor() function must have 1 argument");
+
+				return new Double(Math.floor(convertToNumber(expr.getArg(0))));
+			}
+			else if (expr.getName().equals("ceiling"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"ceiling() function must have 1 argument");
+
+				return new Double(Math.ceil(convertToNumber(expr.getArg(0))));
+			}
+			else if (expr.getName().equals("round"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"round() function must have 1 argument");
+
+				double a = convertToNumber(expr.getArg(0));
+
+				return new Double(Math.floor(a + 0.5d));
+			}
+			else
+			{
+				throw new LSPException("Unrecognized built-in function: "
+					+ expr.getName());
+			}
+		}
+		else
+		{	// extension function
+			throw new LSPException("Extension FunctionCall not implemented");
+			// ***
+		}
+
+	}
+
+
+	private Object evalExpr(VariableReference expr) throws LSPException
+	{
+		if (expr.getField() == null)
+		{	// Simple variable
+			Object o = params.get(expr.getName());
+			if (o == null)
+				return "";
+			else
+				return o;
+		}
+		else
+		{	// Compound variable
+			throw new LSPException("Compound VariableReference not implemented");
+			// ***
+		}
+	}
+
+
+	private String convertToString(Object value) throws LSPException
+	{
+		if (value instanceof String)
+		{
+			return (String)value;
+		}
+		else if (value instanceof Double)
+		{
+			if (((Double)value).doubleValue() == 0)
+				return "0";
+			else
+				return value.toString();
+		}
+		else if (value instanceof Boolean)
+		{
+			return value.toString();
+		}
+		else
+		{
+			return value.toString();
+		}
+	}
+
+	private String evalExprAsString(LSPExpr expr) throws LSPException
+	{
+		return convertToString(evalExpr(expr));
+	}
+
+
+	private boolean convertToBoolean(Object value) throws LSPException
+	{
+		if (value instanceof Boolean)
+		{
+			return ((Boolean)value).booleanValue();
+		}
+		if (value instanceof Double)
+		{
+			double d = ((Double)value).doubleValue();
+			return !((d == 0) || Double.isNaN(d));
+		}
+		if (value instanceof String)
+		{
+			return ((String)value).length() > 0;
+		}
+		else
+		{
+			throw new LSPException(
+				"Convert to Boolean not implemented for type"
+				+ value.getClass().getName());
+		}
+	}
+
+	private boolean evalExprAsBoolean(LSPExpr expr) throws LSPException
+	{
+		return convertToBoolean(evalExpr(expr));
+	}
+
+
+	private double convertToNumber(Object value) throws LSPException
+	{
+		if (value instanceof Double)
+		{
+			return ((Double)value).doubleValue();
+		}
+		else if (value instanceof Boolean)
+		{
+			return ((Boolean)value).booleanValue() ? 1.0 : 0.0;
+		}
+		else if (value instanceof String)
+		{
+			try {
+				return Double.parseDouble((String)value);
+			}
+			catch (NumberFormatException e)
+			{
+				return Double.NaN;
+			}
+		}
+		else
+		{
+			throw new LSPException(
+				"Convert to Number not implemented for type"
+				+ value.getClass().getName());
+		}
+	}
+
+	private double evalExprAsNumber(LSPExpr expr) throws LSPException
+	{
+		return convertToNumber(evalExpr(expr));
 	}
 
 }

@@ -38,10 +38,23 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compile;
 
-public interface ExpressionEvaluator
+import nu.staldal.lsp.LSPExpr;
+
+public class LSPInclude implements LSPNode
 {
-    public String eval(String expr) throws Exception;
-}
+	static final long serialVersionUID = -180435574625934L;
 
+	private LSPExpr file;
+
+	public LSPInclude(LSPExpr file)
+	{
+		this.file = file;
+	}
+
+	public LSPExpr getFile()
+	{
+		return file;
+	}
+}

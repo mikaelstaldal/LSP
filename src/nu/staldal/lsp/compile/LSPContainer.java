@@ -38,49 +38,65 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.expr;
+package nu.staldal.lsp.compile;
 
-import nu.staldal.lsp.LSPExpr;
+import java.util.Vector;
 
-/**
- * A string literal.
- */
-public class StringLiteral extends LSPExpr
+public class LSPContainer implements LSPNode
 {
-	protected String value;
+	static final long serialVersionUID = -180435574625934957L;
 
-	/**
-	 * Create an StringLiteral from a corresponding token.
-	 *
-	 * @param t  the token
-	 */
-	public StringLiteral(StringToken t)
-	{
-		this.value = t.getValue();
-	}
+    private Vector children;
 
+    public LSPContainer(int capacity)
+    {
+        if (capacity >= 0)
+            children = new Vector(capacity);
+        else
+            children = new Vector();
+    }
 
-	/**
-	 * Create an StringLiteral from a string.
-	 *
-	 * @param s  the string
-	 */
-	public StringLiteral(String s)
-	{
-		this.value = s;
-	}
+    public int numberOfChildren()
+    {
+        return children.size();
+    }
 
+    public LSPNode getChild(int index)
+        throws ArrayIndexOutOfBoundsException
+    {
+        return (LSPNode)children.elementAt(index);
+    }
 
-	/**
-	 * Get the string value.
-	 */
-	public String getValue()
-	{
-		return value;
-	}
+    public void addChild(LSPNode newChild)
+    {
+        children.addElement(newChild);
+    }
 
-	public String toString()
-	{
-		return "StringLiteral(" + value + ")";
-	}
+    public LSPNode replaceChild(LSPNode newChild, int index)
+        throws ArrayIndexOutOfBoundsException
+    {
+        LSPNode oldChild = (LSPNode)children.elementAt(index);
+        children.setElementAt(newChild, index);
+        return oldChild;
+    }
+
+    /**
+     * Inefficient
+     */
+    public LSPNode removeChild(int index)
+        throws ArrayIndexOutOfBoundsException
+    {
+        LSPNode child = (LSPNode)children.elementAt(index);
+        children.removeElementAt(index);
+        return child;
+    }
+
+    /**
+     * Inefficient
+     */
+    public void insertChild(LSPNode newChild, int index)
+        throws ArrayIndexOutOfBoundsException
+    {
+        children.insertElementAt(newChild, index);
+    }
 }

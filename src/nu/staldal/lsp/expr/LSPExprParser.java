@@ -105,11 +105,17 @@ public class LSPExprParser extends Parser
 
 
 	public LSPExpr parse(String s)
-		throws ParseException, java.io.IOException
+		throws ParseException
 	{
 		LSPExprLexer lexer = new LSPExprLexer(new StringReader(s));
 
-		return parse(lexer);
+		try {
+			return parse(lexer);
+		}
+		catch (java.io.IOException e)
+		{
+			throw new Error("IOException when reading from String: " + e);
+		}
 	}
 
 

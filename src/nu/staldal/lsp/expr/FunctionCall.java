@@ -65,6 +65,18 @@ public class FunctionCall extends LSPExpr
 		args = new Vector(4);
 	}
 
+
+	/**
+	 * Create an FuncionCall
+	 */
+	public FunctionCall(String prefix, String name, int numArgs)
+	{
+		this.prefix = prefix;
+		this.name = name;
+		args = new Vector(numArgs);
+	}
+
+
 	/**
 	 * Add an argument to the function
 	 *

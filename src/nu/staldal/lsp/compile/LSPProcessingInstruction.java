@@ -38,28 +38,30 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compile;
 
-public class TemplateException extends Exception
+import nu.staldal.lsp.LSPExpr;
+
+public class LSPProcessingInstruction implements LSPNode
 {
-    private Exception wrapped = null;
+	static final long serialVersionUID = -18043557462593L;
 
-    public TemplateException()
-    {
-    }
+	private LSPExpr name;
+	private LSPNode data;
 
-    public TemplateException(String template)
-    {
-        super(template);
-    }
+	public LSPProcessingInstruction(LSPExpr name, LSPNode data)
+	{
+		this.name = name;
+		this.data = data;
+	}
 
-    public TemplateException(Exception e)
-    {
-        this.wrapped = e;
-    }
+	public LSPExpr getName()
+	{
+		return name;
+	}
 
-    public Exception getException()
-    {
-        return wrapped;
-    }
+	public LSPNode getData()
+	{
+		return data;
+	}
 }

@@ -43,10 +43,10 @@ package nu.staldal.lsp;
 import nu.staldal.syntax.ParseException;
 import nu.staldal.lsp.expr.LSPExprParser;
 
-public abstract class LSPExpr
+public abstract class LSPExpr implements java.io.Serializable
 {
 	public static LSPExpr parseFromString(String s)
-		throws ParseException, java.io.IOException
+		throws ParseException
 	{
 		LSPExprParser parser = new LSPExprParser();
 
