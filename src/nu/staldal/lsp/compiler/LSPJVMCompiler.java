@@ -50,7 +50,6 @@ import nu.staldal.lsp.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
-import nu.staldal.lsp.wrapper.*;
 
 import org.apache.bcel.Constants;
 import org.apache.bcel.util.InstructionFinder;
