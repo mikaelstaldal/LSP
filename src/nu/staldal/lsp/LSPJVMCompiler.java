@@ -937,14 +937,7 @@ class LSPJVMCompiler implements Constants
 		
 		String var = el.getVariable();
 		
-		// env.bind(var, convertObjectToLSP(o, var));
-		instrList.append(new PUSH(constGen, var));		
-		instrList.append(instrFactory.createInvoke(
-			LSPPageBase.class.getName(),
-			"convertObjectToLSP",
-			Type.OBJECT,
-			new Type[] { Type.OBJECT, Type.STRING },
-			INVOKESTATIC));
+		// env.bind(var, o);
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Environment.class), PARAM_env));
 		instrList.append(InstructionConstants.SWAP);

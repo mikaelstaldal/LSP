@@ -116,15 +116,18 @@ public abstract class LSPPageBase implements LSPPage
         	Map params, Object extContext)
         throws SAXException
 	{
-        Environment env = new Environment();
+        Environment env = new Environment(params);
+/*
 		for (Iterator it = params.entrySet().iterator(); it.hasNext(); )
 		{
 			Map.Entry ent = (Map.Entry)it.next();
 			String key = (String)ent.getKey();
 			Object value = ent.getValue();						
-			env.bind(key, convertObjectToLSP(value, key));
+			// env.bind(key, convertObjectToLSP(value, key));
+			env.bind(key, value);
 		}
 		params = null;
+*/                
 
 		Map extLibs = new HashMap();
 		
@@ -407,7 +410,7 @@ public abstract class LSPPageBase implements LSPPage
 			throw new LSPException(
 				"Attempt to reference unbound variable: " + varName);
 		else
-			return o;
+			return convertObjectToLSP(o, varName);
 	}
 		
 
