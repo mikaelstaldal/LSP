@@ -461,12 +461,20 @@ public class LSPInterpreter implements LSPPage
 	{
 		LSPExpr expr = el.getExpr();
 
-		String text = evalExprAsString(expr);
+		Object o = evalExpr(expr);
+		
+		if (o instanceof Node)
+		{
+			((Node)o).toSAX(sax);	
+		}
+		else
+		{		
+			String text = convertToString(o);
 
-		char[] chars = text.toCharArray();
-        sax.characters(chars, 0, chars.length);
+			char[] chars = text.toCharArray();
+			sax.characters(chars, 0, chars.length);
+		}
 	}
-
 
 
 	private Object evalExpr(LSPExpr expr) throws SAXException
@@ -1058,6 +1066,8 @@ public class LSPInterpreter implements LSPPage
 		else if (value instanceof LSPList) 
 			return value;
 		else if (value instanceof LSPTuple) 
+			return value;
+		else if (value instanceof Node)
 			return value;
 		else if (value instanceof Object[]) 
 			return new LSPArrayList((Object[])value);
