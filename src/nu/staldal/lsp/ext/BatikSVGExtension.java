@@ -132,7 +132,7 @@ public class BatikSVGExtension implements LSPExtLib
 		if (DEBUG) System.out.println("Batik SVG DOM building complete");
         TranscoderInput input = new TranscoderInput(doc);
 
-		OutputHandler oh = ((FileTarget)target).newAsyncTarget(imageName);
+		OutputHandler oh = ((FileTarget)target).newAsyncTarget(imageName, false);
 		
         TranscoderOutput output = new TranscoderOutput(oh.getOutputStream());
         try {
