@@ -119,7 +119,7 @@ public class LSPCompilerHelper
 	/**
 	 * Compiles an LSP file.
 	 *
-	 * @return <code>true</code> if successful, <code>false</code>otherwise.
+	 * @return <code>true</code> if successful, <code>false</code> otherwise.
 	 */
 	public boolean doCompile(String mainPage)
 	{
@@ -266,6 +266,9 @@ public class LSPCompilerHelper
 	}
 	
 
+	/**
+	 * Generates a target filename with <code>.lspc</code> extension.
+	 */
 	public static String targetFilename(String sourceFilename)
 	{
 		int dot = sourceFilename.lastIndexOf('.');
