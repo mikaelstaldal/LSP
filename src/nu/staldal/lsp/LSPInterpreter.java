@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,14 +124,15 @@ public class LSPInterpreter implements LSPPage
 
 
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params, Object extContext, String targetURL)
+        Map params, Object extContext, String targetURL)
         throws SAXException
     {
         this.env = new Environment();
-		for (Enumeration e = params.keys(); e.hasMoreElements(); )
+		for (Iterator it = params.entrySet().iterator(); it.hasNext(); )
 		{
-			String key = (String)e.nextElement();
-			env.bind(key, params.get(key));
+			Map.Entry ent = (Map.Entry)it.next();
+			String key = (String)ent.getKey();
+			env.bind(key, ent.getValue());
 		}
 
         this.resolver = resolver;

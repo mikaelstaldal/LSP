@@ -43,7 +43,7 @@ package nu.staldal.lsp;
 import java.io.Serializable;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -66,12 +66,15 @@ public interface LSPPage extends Serializable
      * supplied ContentHandler. Does <em>not</em> output startDocument()
      * or endDocument() events.
 	 *
+	 * @param ch		  SAX ContentHandler to send output to
+	 * @param resolver    Used to resolve included files
+	 * @param params      Parameters to the LSP page
 	 * @param extContext  external context which will be passed to ExtLibs
 	 * @param targetURL   the current target URL, pseudo-absolute URL string,
 	 *					  passed to ExtLibs
      */
     public void execute(ContentHandler ch, URLResolver resolver,
-        	Hashtable params, Object extContext, String targetURL)
+        	Map params, Object extContext, String targetURL)
         throws SAXException;
 }
 
