@@ -181,6 +181,25 @@ is outputted, otherwise nothing outputted.</p>
 evaluated in turn, and converted to boolean (as if by a call to the <code>boolean()</code> function). The content of the first, and only the first, <code>lsp:when</code> element whose test is true is outputted. If no <code>lsp:when</code> element is true, the content of the <code>lsp:otherwise</code> element is outputted. If no <code>lsp:when</code> element is true and if there is no <code>lsp:otherwise</code> element, nothing is outputted.</p>
 
 
+<h4>lsp:for-each</h4>
+
+<p class="element-syntax">
+<a name="element-for-each"></a>
+&lt;lsp:for-each<br />
+&#160;&#160;<b>select</b> = <var>list-expression</var><br />
+&#160;&#160;<b>var</b> = <var>variable name</var>&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:for-each&gt;
+</p>
+
+<p>The <code>select</code> expression is evaulated, and is expected to be of
+type list, otherwise an error occurs. The content of the <code>lsp:for-each</code> element
+is outputted once for each object in the list, with the variable
+specified in the <code>var</code> attribute bound to the current object in
+the list. Any variable with the same name in the enclosing scope is
+shadowed.</p>
+
+
 <a name="template"><h2>Templates</h2></a>
 
 <p>All attribute values to non-LSP elements, all character content
@@ -194,17 +213,31 @@ actually include a literal curly brace, use a double curly brace.</p>
 
 <h2>LSP Expressions</h2>
 
-<p>The expression language used in LSP is based on <a href="http://www.w3.org/TR/xpath">XPath</a>. It's essentially XPath without nodesets.</p>
+<p>The expression language used in LSP is based on <a href="http://www.w3.org/TR/xpath">XPath</a>.
+It's essentially XPath without nodesets.</p>
 
 <h3>Basic types</h3>
 
-<p>The expression language has three basic types:</p>
+<p>The expression language has five basic types:</p>
 
 <ul>
 <li>boolean (true or false)</li>
 <li>number (an IEEE 754 floating-point number)</li>
 <li>string (a sequence of UCS characters)</li>
+<li>list (an ordered sequence of objects)</li>
+<li>tuple (an unordered set of named objects)</li>
 </ul>
+
+<p>The boolean, number and string types can be implicitly converted into
+each other, as if using the <code>boolean()</code>, <code>number()</code>
+and <code>string()</code> functions.</p>
+
+<p>An object can be extracted from a tuple using the '.' notation,
+e.g.<br />
+<code>$tupleVar.foo</code><br />
+or<br />
+<code>functionReturningTuple().bar</code><br />
+.</p>
 
 
 <h3>Grammar</h3>
@@ -217,7 +250,11 @@ PrimaryExpr ::= VariableReference
               | Number
               | FunctionCall
 
+VariableReference ::= '$' LSPName
+
 FunctionCall ::= FunctionName '(' ( Argument ( ',' Argument )* )? ')'
+
+FunctionName ::= LSPName ( ':' LSPName )?  /* not NodeType */
 
 Argument ::= Expr
 
@@ -246,16 +283,17 @@ MultiplicativeExpr ::= UnaryExpr
                      | MultiplicativeExpr 'div' UnaryExpr
                      | MultiplicativeExpr 'mod' UnaryExpr
 
-UnaryExpr ::= PrimaryExpr
+UnaryExpr ::= TupleExpr
             | '-' UnaryExpr
+
+TupleExpr ::= PrimaryExpr
+            | TupleExpr '.' LSPName
 </pre>
 
 <h3>Lexical</h3>
 
 <pre>
-VariableReference ::= '$' VarName ('.' VarName)?
-
-FunctionName ::= QName - NodeType
+LSPName ::= NCName not containing any '.'
 
 Literal ::= '"' [^"]* '"'
           | "'" [^']* "'"
@@ -270,8 +308,6 @@ NodeType ::= 'comment'
            | 'node'
 
 Digits ::= [0-9]+
-
-VarName ::= Name not containing any ':' or '.'
 </pre>
 
 <h3>Functions</h3>
@@ -302,16 +338,24 @@ VarName ::= Name not containing any ':' or '.'
 <li>number ceiling(number)</li>
 <li>number round(number)</li>
 </ul>
+<ul>
+<li>number count(list) - the number of objects in the list</li>
+</ul>
 
-<p>Namespaced functions are extension functions, not currently supported.</p>
+<p>Namespaced functions are extension functions,
+not currently supported.</p>
 
-<h4>Variables</h4>
+<h3>Variables</h3>
 
-<p>Unlike XPath, variable name may not be namespaced. Variables without a dot (<code>.</code>) are <em>simple variables</em> and with a dot are <em>compound variables</em>.
+<p>Unlike XPath, variable name may not be namespaced.</p>
 
-<p>The variable binding available in simple variables are the parameters passed to the LSP page. Attempting to reference a non-existing parameter gives the empty string.</p>
+<p>The parameters passed to the LSP page are bound to variables as
+strings.</p>
 
-<p>Compound variables are currently not supported.</p>
+<p>Attempting to reference an unbound variable gives the empty string
+(which may be implicitly converted to the boolean value <code>false</code>
+or to the number <code>NaN</code>).</p>
 
 </body>
 </html>
+
