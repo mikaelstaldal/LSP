@@ -53,6 +53,7 @@ import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
 import nu.staldal.lsp.wrapper.*;
 
+import nu.staldal.lagoon.core.LagoonContext;
 import nu.staldal.lagoon.core.Target;
 import nu.staldal.lagoon.core.SourceManager;
 
@@ -61,26 +62,32 @@ public class LSPInterpreter implements LSPPage
 {
 	private static final boolean DEBUG = false;
 	
-    static final long serialVersionUID = -1168364109491726217L;
+    static final long serialVersionUID = -1168364109491726218L;
 
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
 
+	// (String)className -> (LSPExtLib)extLib
+	private static Hashtable extLibs = new Hashtable();	
+	
     private long timeCompiled;
     private LSPNode theTree;
     private Hashtable importedFiles;
     private Vector includedFiles;
     private boolean compileDynamic;
     private boolean executeDynamic;
+	private Hashtable extLibsInPage;
 
     private transient URLResolver resolver = null;
     private transient Environment env = null;
+	private transient LagoonContext context = null;
 	private transient Target target = null;
 	private transient SourceManager sourceMan = null;
-	private transient Hashtable extLibs = null;
 
-    public LSPInterpreter(LSPNode theTree, Hashtable importedFiles,
-        Vector includedFiles, boolean compileDynamic, boolean executeDynamic)
+    public LSPInterpreter(LSPNode theTree, 
+		Hashtable importedFiles, Vector includedFiles, 
+		boolean compileDynamic,	boolean executeDynamic,
+		Hashtable extLibsInPage)
         throws LSPException
     {
         this.timeCompiled = System.currentTimeMillis();
@@ -89,6 +96,7 @@ public class LSPInterpreter implements LSPPage
         this.includedFiles = includedFiles;
         this.compileDynamic = compileDynamic;
         this.executeDynamic = executeDynamic;
+		this.extLibsInPage = extLibsInPage;
     }
 
 
@@ -119,7 +127,8 @@ public class LSPInterpreter implements LSPPage
 
 
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params, Target target, SourceManager sourceMan)
+        Hashtable params, LagoonContext context, Target target, 
+		SourceManager sourceMan)
         throws SAXException
     {
         this.env = new Environment();
@@ -128,15 +137,37 @@ public class LSPInterpreter implements LSPPage
 			String key = (String)e.nextElement();
 			env.bind(key, params.get(key));
 		}
-		
+
+		this.context = context;
         this.resolver = resolver;
 		this.target = target;
-		this.sourceMan = sourceMan; 
-		this.extLibs = new Hashtable();
+		this.sourceMan = sourceMan;
+		
+		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
+		{
+			String nsURI = (String)e.nextElement();
+			String className = (String)extLibsInPage.get(nsURI);
+			
+			LSPExtLib extLib = lookupExtensionHandler(nsURI, className);			
+			
+			extLib.startPage(target, sourceMan);
+		}
+		
         processNode(theTree, ch);
-		this.extLibs = null;
+
+		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
+		{
+			String nsURI = (String)e.nextElement();
+			String className = (String)extLibsInPage.get(nsURI);
+			
+			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);			
+			
+			extLib.endPage();
+		}
+		
 		this.sourceMan = null;
 		this.target = null;
+		this.context = null;
         this.resolver = null;
         this.env = null;
     }
@@ -185,10 +216,10 @@ public class LSPInterpreter implements LSPPage
     private void processNode(LSPExtElement el, ContentHandler sax)
         throws SAXException
     {
-		LSPExtLib extLib = lookupExtensionHandler(el.getClassName());
+		LSPExtLib extLib = (LSPExtLib)extLibs.get(el.getClassName()); 
 		
 		try {
-			ContentHandler in = extLib.beforeElement(sax, target, sourceMan);
+			ContentHandler in = extLib.beforeElement(sax);
 		
 			processNode((LSPElement)el, in);
 		
@@ -785,7 +816,7 @@ public class LSPInterpreter implements LSPPage
 
 	private Object evalExpr(ExtensionFunctionCall expr) throws SAXException
 	{
-		LSPExtLib extLib = lookupExtensionHandler(expr.getClassName());
+		LSPExtLib extLib = (LSPExtLib)extLibs.get(expr.getClassName());
 		
 		Object[] args = new Object[expr.numberOfArgs()];
 		for (int i = 0; i<expr.numberOfArgs(); i++)
@@ -949,7 +980,7 @@ public class LSPInterpreter implements LSPPage
 				+ value.getClass().getName());
 	}
 
-	private LSPExtLib lookupExtensionHandler(String className)
+	private LSPExtLib lookupExtensionHandler(String nsURI, String className)
 		throws LSPException
 	{
 		try {
@@ -958,6 +989,7 @@ public class LSPInterpreter implements LSPPage
 			{
 				Class extClass = Class.forName(className);
 				extLib = (LSPExtLib)extClass.newInstance();
+				extLib.init(context, nsURI);
 				extLibs.put(className, extLib);
 			}
 			return extLib;

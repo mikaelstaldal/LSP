@@ -64,21 +64,40 @@ public class BatikSVGExtension implements LSPExtLib
 	private ImageTranscoder transcoder;
 	private MySVGDocumentFactory docFactory;
 	private ContentHandler out;
+	private LagoonContext context;
 	private Target target;
 	private SourceManager sourceMan;
 	private int imageNumber;
 	private URL sourceURL;
 	private String _sourceURL;
 	
-	public BatikSVGExtension() throws SAXException
+	public BatikSVGExtension() {}
+
+	public void init(LagoonContext context, String namespaceURI)
+		throws LSPException
 	{
-		if (DEBUG) System.out.println("new BatikSVGExtension");
+		if (DEBUG) System.out.println("BatikSVGExtension.init()");
+		
+		this.context = context;
 		transcoder = new PNGTranscoder();
 		imageNumber = 0;
 		docFactory = null;
 		out = null;
 		target = null;
 		sourceMan = null;
+	}
+
+	/**
+	 * Indicate the start of an LSP page.
+	 * 
+	 * @param target     the current Target
+	 * @param sourceMan  the current SourceManager
+	 */
+	public void startPage(Target target, SourceManager sourceMan)
+		throws LSPException
+	{	
+		this.target = target;
+		this.sourceMan = sourceMan;
 	}
 	
 	
@@ -90,25 +109,22 @@ public class BatikSVGExtension implements LSPExtLib
 	 *
 	 * @return  a ContentHandler to send input to.
 	 */
-	public ContentHandler beforeElement(ContentHandler out, 
-		Target target, SourceManager sourceMan)
+	public ContentHandler beforeElement(ContentHandler out) 
 		throws SAXException, IOException
-	{		
+	{	
 		_sourceURL = sourceMan.getSourceURL();
 		if (LagoonUtil.absoluteURL(_sourceURL))
 			sourceURL = new URL(_sourceURL);
 		else if (LagoonUtil.pseudoAbsoluteURL(_sourceURL))
-			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
+			sourceURL = new java.net.URL(context.getSourceRootDir().toURL(),
 				_sourceURL.substring(1));
 		else
-			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
+			sourceURL = new java.net.URL(context.getSourceRootDir().toURL(),
 				_sourceURL);
 							
 		if (DEBUG) System.out.println("The source URL: " + sourceURL);
 		
 		this.out = out;
-		this.target = target;
-		this.sourceMan = sourceMan;
 		docFactory = new MySVGDocumentFactory(sourceURL);
 		docFactory.startDocument();
 		return new ContentHandlerFixer(docFactory);
@@ -155,8 +171,6 @@ public class BatikSVGExtension implements LSPExtLib
 
 		docFactory = null;
 		out = null;
-		target = null;		
-		sourceMan = null;		
 	
 		return null;
 	}
@@ -166,6 +180,17 @@ public class BatikSVGExtension implements LSPExtLib
 		throws LSPException
 	{
 		throw new LSPException("This extension doesn't handle functions");
+	}
+
+	
+	/**
+	 * Indicate the end of an LSP page.
+	 */
+	public void endPage()
+		throws LSPException
+	{		
+		sourceMan = null;
+		target = null;
 	}
 
 }

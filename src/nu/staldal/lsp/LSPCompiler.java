@@ -54,7 +54,10 @@ import nu.staldal.lsp.compiledexpr.*;
 
 import nu.staldal.lagoon.util.LagoonUtil;
 
-
+/**
+ * Compiles an LSP page into a tree representaton which can be Serialized and
+ * executed several times.
+ */
 public class LSPCompiler
 {
 	private static final boolean DEBUG = false;
@@ -70,9 +73,14 @@ public class LSPCompiler
     private boolean compileDynamic;
     private boolean executeDynamic;
 
+	// (String)namespaceURI -> (String)className
+	private Hashtable extLibsInPage; 
+
 	private boolean inPi;
 	private boolean inExtElement;
-	private Hashtable extDict = new Hashtable();
+	
+	// (String)namespaceURI -> (String)className
+	private Hashtable extDict = new Hashtable(); 
 
 
 	private static SAXException fixSourceException(Node node, String msg)
@@ -269,6 +277,7 @@ public class LSPCompiler
 	    includedFiles = new Vector();
         compileDynamic = false;
         executeDynamic = false;
+		extLibsInPage = new Hashtable();
 		
 		inExtElement = false;
 
@@ -291,6 +300,15 @@ public class LSPCompiler
 		if (DEBUG) System.out.println("LSP Compile...");
 
         processImports(tree);
+		
+		for (int i = 0; i<tree.numberOfNamespaceMappings(); i++)
+		{
+			String namespace = tree.getNamespaceMapping(i)[1];
+			
+			if (DEBUG) System.out.println("Namespace URI: " + namespace); 
+			
+			lookupExtensionHandler(tree, namespace);
+		}
 
         inPi = false;
         LSPNode compiledTree = compileNode(tree);
@@ -302,7 +320,7 @@ public class LSPCompiler
 		if (DEBUG) System.out.println("in " + timeElapsed + " ms");
 
         return new LSPInterpreter(compiledTree, importedFiles, includedFiles,
-            compileDynamic, executeDynamic);
+            compileDynamic, executeDynamic, extLibsInPage);
     }
 
 
@@ -322,7 +340,7 @@ public class LSPCompiler
 				String url = getAttr("file", child, true);
 				if (importedFiles.put(url, url) != null)
 				{
-					// *** check for circular import
+					// check for circular import
 				}
 
 				TreeBuilder tb = new TreeBuilder();
@@ -402,7 +420,6 @@ public class LSPCompiler
 			{
 				return process_let(el);
 			}
-			// *** more to implement
 			else
 			{
 				throw fixSourceException(el,
@@ -414,12 +431,12 @@ public class LSPCompiler
 			LSPElement newEl;
 			boolean inExtElementNow = false; 			
 			
-			Class extClass = lookupExtensionHandler(el, el.getNamespaceURI());
+			String extClass = lookupExtensionHandler(el, el.getNamespaceURI());
 			if (!inExtElement && (extClass != null))
 			{
 				inExtElement = true;
 				inExtElementNow = true;
-				newEl = new LSPExtElement(extClass.getName(), 
+				newEl = new LSPExtElement(extClass, 
 					el.getNamespaceURI(), el.getLocalName(),
 					el.numberOfAttributes(), el.numberOfChildren()); 
 			}
@@ -457,17 +474,15 @@ public class LSPCompiler
     }
 
 	
-	private Class lookupExtensionHandler(Node el, String ns)
+	private String lookupExtensionHandler(Node el, String ns)
 		throws SAXException
 	{
 		if (ns == null || ns.length() == 0) 
 			return null;
 		
-        Class cls = (Class)extDict.get(ns);
+        String className = (String)extDict.get(ns);
 		
-		if (cls != null) return cls;
-		
-		String className = null;
+		if (className == null)
         try
         {
 			String fileName = "/nu/staldal/lsp/extlib/" 
@@ -477,18 +492,18 @@ public class LSPCompiler
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			className = br.readLine();
+			br.close();
 			if (className == null)
 				throw fixSourceException(el,
 					"Illegal LSP Extension config file: " + fileName);
 
-			cls = Class.forName(className);
+			Class cls = Class.forName(className);
 			if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(cls))
 			throw fixSourceException(el, 
 				"LSP extension class " + className 
 				+ " must implement nu.staldal.lsp.LSPExtLib");
 				
-			extDict.put(ns, cls);
-			return cls;
+			extDict.put(ns, className);
 		}
 		catch (ClassNotFoundException e)
 		{
@@ -500,6 +515,9 @@ public class LSPCompiler
             throw fixSourceException(el,
                 "Unable to read producer config file: " + e.toString());
         }
+
+		extLibsInPage.put(ns, className);
+		return className;
 	}
 	
 
@@ -801,14 +819,14 @@ public class LSPCompiler
 						"no mapping for namespace prefix " + fc.getPrefix()); 
 				}
 					
-				Class extClass = lookupExtensionHandler(el, ns); 
+				String extClass = lookupExtensionHandler(el, ns); 
 				if (extClass == null)
 					throw fixSourceException(el, 
 						"no handler found for extension namespace " + ns);			
 				
 				ExtensionFunctionCall call = 
 					new ExtensionFunctionCall(
-						extClass.getName(), fc.getName(), fc.numberOfArgs());
+						extClass, fc.getName(), fc.numberOfArgs());
 					
 				for (int i = 0; i<fc.numberOfArgs(); i++)
 				{

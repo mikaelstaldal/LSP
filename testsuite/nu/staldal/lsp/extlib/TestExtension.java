@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,39 +43,57 @@ package nu.staldal.lsp.extlib;
 import org.xml.sax.*;
 
 import nu.staldal.lsp.*;
+import nu.staldal.lagoon.core.LagoonContext;
 import nu.staldal.lagoon.core.Target;
 import nu.staldal.lagoon.core.SourceManager;
 
 public class TestExtension implements LSPExtLib, ContentHandler
 {
 	private ContentHandler sax;
-	private int n = 0;
+	private int funcCalls;
+	private int pageHits = 0;
+	private Target target;
+
+	public void init(LagoonContext context, String namespaceURI)
+		throws LSPException
+	{
+		System.out.println("TestExtension.init(" + namespaceURI + ")");	
+	}
+
+
+	public void startPage(Target target, SourceManager sourceMan)
+		throws LSPException
+	{
+		this.target = target;
+		funcCalls = 0;
+		
+		System.out.println("TestExtension.startPage(" 
+			+ target.getCurrentTargetURL() + ") for the " 
+			+ (++pageHits) + " time");	
+	}
 	
-	/**
-	 * Invoked before the element is sent.
-	 *
-	 * @param out     where to write XML output.
-	 * @param target  the current target
-	 *
-	 * @return  a ContentHandler to send input to.
-	 */
-	public ContentHandler beforeElement(ContentHandler out, Target target, SourceManager source)
+
+	public void endPage()
+		throws LSPException
+	{
+		System.out.println("TestExtension.endPage(" 
+			+ target.getCurrentTargetURL() + ")");	
+	}
+
+
+	public ContentHandler beforeElement(ContentHandler out)
 		throws SAXException
 	{
+		System.out.println("TestExtension.beforeElement()");	
 		this.sax = out;
 		
 		return this;
 	}
 	
-	
-	/**
-	 * Invoked after the element is sent.
-	 *
-	 * @return  a string output.
-	 */
 	public String afterElement()
 		throws SAXException
 	{
+		System.out.println("TestExtension.afterElement()");	
 		return null;
 	}
 		
@@ -147,7 +165,8 @@ public class TestExtension implements LSPExtLib, ContentHandler
 
 	public Object function(String name, Object[] args)
 	{
-		return "[Function " + name + " invoked with " + args.length + " parameters for the " + (++n) + " time]";
+		System.out.println("TestExtension.function(" + name + ")");	
+		return "[Function " + name + " invoked with " + args.length + " parameters for the " + (++funcCalls) + " time]";
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,34 +43,51 @@ package nu.staldal.lsp.extlib;
 import org.xml.sax.*;
 
 import nu.staldal.lsp.*;
+import nu.staldal.lagoon.core.LagoonContext;
 import nu.staldal.lagoon.core.Target;
 import nu.staldal.lagoon.core.SourceManager;
 
 public class StringExtension implements LSPExtLib, ContentHandler
 {
-	/**
-	 * Invoked before the element is sent.
-	 *
-	 * @param out     where to write XML output.
-	 * @param target  the current target
-	 *
-	 * @return  a ContentHandler to send input to.
-	 */
-	public ContentHandler beforeElement(ContentHandler out, Target target, SourceManager source)
+	private int pageHits = 0;
+	private Target target;
+
+	public void init(LagoonContext context, String namespaceURI)
+		throws LSPException
+	{
+		System.out.println("StringExtension.init(" + namespaceURI + ")");	
+	}
+
+
+	public void startPage(Target target, SourceManager sourceMan)
+		throws LSPException
+	{
+		this.target = target;
+		
+		System.out.println("StringExtension.startPage(" 
+			+ target.getCurrentTargetURL() + ") for the " 
+			+ (++pageHits) + " time");	
+	}
+	
+
+	public void endPage()
+		throws LSPException
+	{
+		System.out.println("StringExtension.endPage(" 
+			+ target.getCurrentTargetURL() + ")");	
+	}
+
+	public ContentHandler beforeElement(ContentHandler out)
 		throws SAXException
 	{
+		System.out.println("StringExtension.beforeElement()"); 
 		return this;
 	}
 	
-	
-	/**
-	 * Invoked after the element is sent.
-	 *
-	 * @return  a string output.
-	 */
 	public String afterElement()
 		throws SAXException
 	{
+		System.out.println("StringExtension.afterElement()"); 
 		return "StringExtension";
 	}
 		
