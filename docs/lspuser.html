@@ -474,10 +474,11 @@ in the outermost scope.</p>
 <h2>The stand-alone LSP compiler</h2>
 
 <p>LSP comes with a stand-alone compiler, which compiles LSP pages into Java 
-<code>.class</code> files. It is also useful to check LSP pages for errors.</p>
+<code>.class</code> files. It is also useful to check LSP pages for errors.
+The LSP compiler is contained in <code>lspc.jar</code>.</p>
 
 <p>For a programmatic interface to the LSP compiler, look at the class
-<code>nu.staldal.lsp.LSPCompilerHelper</code>.</p>
+<code>nu.staldal.lsp.compiler.LSPCompilerHelper</code>.</p>
 
 <p>The LSP compiler uses the third-party library <a href="http://jakarta.apache.org/bcel/">BCEL</a>.
 The BCEL library is only needed when compiling LSP pages, not when 
@@ -487,7 +488,7 @@ executing the compiled code.</p>
 <h3>Running LSP compiler from command line</h3>
 
 <p>The LSP compiler is invoked by the application class
-<code>nu.staldal.lsp.LSPCompilerCLI</code>. The syntax is:</p>
+<code>nu.staldal.lsp.compiler.LSPCompilerCLI</code>. The syntax is:</p>
 <pre>
 lspc [-verbose] [-force] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] <em>inputFile</em> ...
 </pre>
@@ -510,9 +511,10 @@ you have to include them in the CLASSPATH as well.</p>
 <p>Define the LSP compiler Ant task in the Ant
 build file like this:</p>
 <pre>
-&lt;taskdef name="lspc" classname="nu.staldal.lsp.LSPCompilerAntTask"&gt;
+&lt;taskdef name="lspc" classname="nu.staldal.lsp.compiler.LSPCompilerAntTask"&gt;
   &lt;classpath&gt;
-    &lt;pathelement location="<em>locationOfLSPJars</em>/lsp.jar" /&gt;
+    &lt;pathelement location="<em>locationOfLSPJars</em>/lspc.jar" /&gt;
+    &lt;pathelement location="<em>locationOfLSPJars</em>/lsprt.jar" /&gt;
     &lt;pathelement location="<em>locationOfLSPJars</em>/xmlutil.jar" /&gt;
     &lt;pathelement location="<em>locationOfBCELJars</em>/bcel.jar" /&gt;
   &lt;/classpath&gt;
