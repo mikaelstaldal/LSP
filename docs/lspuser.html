@@ -196,18 +196,6 @@ existing attribute, this error cannot be detected at compile time, and will
 result in undefined behaviour at runtime. If the <code>name</code> 
 expression evaluates to the empty string, no attribute will be created.</p>
 
-<p>Note that it's not possible to nest an <code>lsp:attribute</code> element
-inside <code>lsp:if</code> or <code>lsp:choose</code>. To conditionally add 
-an attribute, use the <code>if ... then ... else ...</code> expression and
-the fact that <code>lsp:attribute</code> will not add any attribute if 
-<code>name</code> is the empty string. E.g.</p>
-
-<pre>
-&lt;option value="4711"&gt;
-&lt;lsp:attribute name="{if (cond) then 'selected' else ''}" value="selected"/&gt;
-foo&lt;/option&gt;
-</pre>
-
 <p>Any whitespace immediately before an <code>lsp:attribute</code> element 
 will be stripped, unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
 

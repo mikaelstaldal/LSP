@@ -44,6 +44,12 @@ public class LSPTestServlet extends HttpServlet
             req.setAttribute("alist", new Object[] { "one", "two", "three" });
             lspManager.getRequestDispatcher("Func2").forward(req, resp);
         }
+        else if (function.equals("/FUNC3"))
+        {
+            String flag = req.getParameter("flag");
+            req.setAttribute("flag", (flag == null) ? "" : flag);
+            lspManager.getRequestDispatcher("Func3").forward(req, resp);
+        }
         else
         {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, 

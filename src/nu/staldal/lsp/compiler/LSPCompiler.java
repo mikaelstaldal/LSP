@@ -847,17 +847,31 @@ public class LSPCompiler
 	private LSPNode process_attribute(Element el)
 		throws SAXException
 	{
+        return process_attribute(el, null);
+    }
+    
+    
+    private LSPNode process_attribute(Element el, LSPExpr test)
+		throws SAXException
+	{
 		if (inPi) throw fixSourceException(el,
 			"<lsp:attribute> may not be nested in <lsp:processing-instruction>");
 		if (currentElement == null) throw fixSourceException(el,
 			"<lsp:attribute> must be inside element");
-		if (el.getParent() != currentSourceElement) throw fixSourceException(el,
-			"<lsp:attribute> must be directly inside element");
+		if ((test == null) && (el.getParent() != currentSourceElement))
+            throw fixSourceException(el,
+			    "<lsp:attribute> must be directly inside element");
 		
 		if (el.numberOfChildren() > 0) throw fixSourceException(el,
 			"<lsp:attribute> must be empty");
 		
 		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
+        
+        if (test != null)
+        {
+            name = new ConditionalExpr(test, name, new StringLiteral(""));
+        }
+        
 		String nsAttr = getAttrWithEmpty("namespace", el, false);
 		LSPExpr ns = (nsAttr != null) 
 			? processTemplateExpr(el, nsAttr)
@@ -879,9 +893,22 @@ public class LSPCompiler
 		
         String exp = getAttr("test", el, true);
 		try {                        
-			LSPExpr test = LSPExpr.parseFromString(exp);
+			LSPExpr test = compileExpr(el, LSPExpr.parseFromString(exp));            
+            
+            if (el.numberOfChildren() == 1 
+                    && el.getChild(0) instanceof Element)
+            {
+                Element theChild = (Element)el.getChild(0);
 
-			return new LSPIf(compileExpr(el, test), compileChildren(el), el);
+                if (theChild.getNamespaceURI() != null
+                        && theChild.getNamespaceURI().equals(LSP_CORE_NS)
+                        && theChild.getLocalName().equals("attribute"))
+                {
+                    return process_attribute(theChild, test);
+                }
+            }
+
+			return new LSPIf(test, compileChildren(el), el);
 		}
 		catch (ParseException e)
 		{
