@@ -888,6 +888,11 @@ public class LSPCompiler
 			}
 		}
 
+        if (choose.getNWhens() < 1)
+            throw fixSourceException(el,
+                "content of <lsp:choose> must match "
+                + "(lsp:when+, lsp:otherwise?)");
+        
 		return choose;
 	}
 
