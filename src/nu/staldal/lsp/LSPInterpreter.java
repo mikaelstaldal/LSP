@@ -46,6 +46,7 @@ import java.util.*;
 import org.xml.sax.*;
 
 import nu.staldal.xtree.*;
+import nu.staldal.util.*;
 
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
@@ -73,7 +74,7 @@ public class LSPInterpreter implements LSPPage
     private boolean executeDynamic;
 
     private transient URLResolver resolver = null;
-    private transient Hashtable params = null;
+    private transient Environment env = null;
 	private transient Target target = null;
 	private transient SourceManager sourceMan = null;
 	private transient Hashtable extLibs = null;
@@ -121,7 +122,13 @@ public class LSPInterpreter implements LSPPage
         Hashtable params, Target target, SourceManager sourceMan)
         throws SAXException
     {
-        this.params = params;
+        this.env = new Environment();
+		for (Enumeration e = params.keys(); e.hasMoreElements(); )
+		{
+			String key = (String)e.nextElement();
+			env.bind(key, params.get(key));
+		}
+		
         this.resolver = resolver;
 		this.target = target;
 		this.sourceMan = sourceMan; 
@@ -131,7 +138,7 @@ public class LSPInterpreter implements LSPPage
 		this.sourceMan = null;
 		this.target = null;
         this.resolver = null;
-        this.params = null;
+        this.env = null;
     }
 
 
@@ -321,14 +328,11 @@ public class LSPInterpreter implements LSPPage
 		while (theList.hasNext())
 		{
 			Object o = theList.next();
-			Object oldVar = params.get(el.getVariable());
-			Object oldStatus = null;
-			params.put(el.getVariable(), o);
+			env.pushFrame();
+			env.bind(el.getVariable(), o);
 			if (el.getStatusObject() != null)
 			{
-				oldStatus = params.get(el.getStatusObject());
-
-				params.put(el.getStatusObject(), new LSPTuple()
+				env.bind(el.getStatusObject(), new LSPTuple()
 					{
 						public Object get(String key)
 						{
@@ -348,17 +352,7 @@ public class LSPInterpreter implements LSPPage
 					});
 			}
 			processNode(el.getBody(), sax);
-			if (oldVar == null)
-				params.remove(el.getVariable());
-			else
-				params.put(el.getVariable(), oldVar);
-			if (el.getStatusObject() != null)
-			{
-				if (oldStatus == null)
-					params.remove(el.getStatusObject());
-				else
-					params.put(el.getStatusObject(), oldStatus);
-			}				
+			env.popFrame();
 		}
 	}
 		
@@ -804,7 +798,7 @@ public class LSPInterpreter implements LSPPage
 
 	private Object evalExpr(VariableReference expr) throws LSPException
 	{
-		Object o = params.get(expr.getName());
+		Object o = env.lookup(expr.getName());
 		if (o == null)
 			return "";
 		else
