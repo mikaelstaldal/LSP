@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <html>
 <head><title>LSP User Guide</title></head>
-<link rel="stylesheet" type="text/css" href="manual.css" /> 
+<link rel="stylesheet" type="text/css" href="manual.css" />
 <body>
 <h1>LSP User Guide</h1>
 
@@ -62,8 +62,8 @@ href="#template">template</a>.</p>
 <h4>lsp:import</h4>
 
 <p class="element-syntax">
-<a name="element-import"></a>&lt;lsp:import<br>
-&nbsp;&nbsp;<b>file</b> = <var>URL</var>&nbsp;/&gt;
+<a name="element-import"></a>&lt;lsp:import<br />
+&#160;&#160;<b>file</b> = <var>URL</var>&#160;/&gt;
 </p>
 
 <p>The <code>lsp:import</code> includes a file when the page is
@@ -74,8 +74,8 @@ processed.</p>
 <h4>lsp:include</h4>
 
 <p class="element-syntax">
-<a name="element-include"></a>&lt;lsp:include<br>
-&nbsp;&nbsp;<b>file</b> = { <var>URL</var> }&nbsp;/&gt;
+<a name="element-include"></a>&lt;lsp:include<br />
+&#160;&#160;<b>file</b> = { <var>URL</var> }&#160;/&gt;
 </p>
 
 <p>The <code>lsp:include</code> includes a file when the page is
@@ -88,8 +88,8 @@ the included file are not processed.</p>
 <h4>lsp:root</h4>
 
 <p class="element-syntax">
-<a name="element-root"></a>&lt;lsp:root&gt;<br>
-&nbsp;&nbsp;&lt;!-- Content: <var>any</var> --&gt;<br>
+<a name="element-root"></a>&lt;lsp:root&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
 &lt;/lsp:root&gt;
 </p>
 
@@ -102,8 +102,8 @@ nested.</p>
 <h4>lsp:raw</h4>
 
 <p class="element-syntax">
-<a name="element-raw"></a>&lt;lsp:raw&gt;<br>
-&nbsp;&nbsp;&lt;!-- Content: <var>any</var> --&gt;<br>
+<a name="element-raw"></a>&lt;lsp:raw&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
 &lt;/lsp:raw&gt;
 </p>
 
@@ -118,9 +118,9 @@ nested, nesting has no additional meaning.</p>
 
 <p class="element-syntax">
 <a name="element-processing-instruction"></a>
-&lt;lsp:processing-instruction<br>
-&nbsp;&nbsp;<b>name</b> = { <var>ncname</var> }&gt;<br>
-&nbsp;&nbsp;&lt;!-- Content: <var>any</var> &nbsp; -(lsp:processing-instruction) --&gt;<br>
+&lt;lsp:processing-instruction<br />
+&#160;&#160;<b>name</b> = { <var>ncname</var> }&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction) --&gt;<br />
 &lt;/lsp:processing-instruction&gt;
 </p>
 
@@ -135,9 +135,9 @@ the content is used as the processing instruction data.
 
 <p class="element-syntax">
 <a name="element-if"></a>
-&lt;lsp:if<br>
-&nbsp;&nbsp;<b>test</b> = <var>boolean-expression</var>&gt;<br>
-&nbsp;&nbsp;&lt;!-- Content: <var>any</var> --&gt;<br>
+&lt;lsp:if<br />
+&#160;&#160;<b>test</b> = <var>boolean-expression</var>&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
 &lt;/lsp:if&gt;
 </p>
 
@@ -160,18 +160,124 @@ actually include a literal curly brace, use a double curly brace.</p>
 
 <h2>LSP Expressions</h2>
 
-<p>Currently, the only type of expression supported is a variable
-reference, which consists of a '$' followed by the variable name. The
-variable name must be an XML Name, and may not contain any ':' or any
-'.'.</p>
+<p>The expression language used in LSP is based on <a href="http://www.w3.org/TR/xpath">XPath</a>. It's essentially XPath without nodesets.</p>
 
-<p>The variable binding available are the parameters passed to the LSP
-page. Attempting to reference a non-existing parameter gives the empty
-string. This is converted to boolean by considering any non-empty
-string as true, and the empty string as false.</p>
+<h3>Basic types</h3>
 
-<p>Future versions will have a more comprehensive expression
-language.</p>
+<p>The expression language has three basic types:</p>
+
+<ul>
+<li>boolean (true or false)</li>
+<li>number (an IEEE 754 floating-point number)</li>
+<li>string (a sequence of UCS characters)</li>
+</ul>
+
+
+<h3>Grammar</h3>
+<pre>
+Expr ::= OrExpr
+
+PrimaryExpr ::= VariableReference
+              | '(' Expr ')'
+              | Literal
+              | Number
+              | FunctionCall
+
+FunctionCall ::= FunctionName '(' ( Argument ( ',' Argument )* )? ')'
+
+Argument ::= Expr
+
+OrExpr ::= AndExpr
+         | OrExpr 'or' AndExpr
+
+AndExpr ::= EqualityExpr
+          | AndExpr 'and' EqualiyExpr
+
+EqualityExpr ::= RelationalExpr
+               | EqualityExpr '=' RelationalExpr
+               | EqualityExpr '!=' RelationalExpr
+
+RelationalExpr ::= AdditiveExpr
+                 | RelationalExpr '&lt;' AdditiveExpr
+                 | RelationalExpr '>' AdditiveExpr
+                 | RelationalExpr '&lt;=' AdditiveExpr
+                 | RelationalExpr '>=' AdditiveExpr
+
+AdditiveExpr ::= MultiplicativeExpr
+               | AdditiveExpr '+' MultiplicativeExpr
+               | AdditiveExpr '-' MultiplicativeExpr
+
+MultiplicativeExpr ::= UnaryExpr
+                     | MultiplicativeExpr '*' UnaryExpr
+                     | MultiplicativeExpr 'div' UnaryExpr
+                     | MultiplicativeExpr 'mod' UnaryExpr
+
+UnaryExpr ::= PrimaryExpr
+            | '-' UnaryExpr
+</pre>
+
+<h3>Lexical</h3>
+
+<pre>
+VariableReference ::= '$' VarName ('.' VarName)?
+
+FunctionName ::= QName - NodeType
+
+Literal ::= '"' [^"]* '"'
+          | "'" [^']* "'"
+
+Number ::= Digits ('.' Digits?)?
+         | '.' Digits
+
+
+NodeType ::= 'comment'
+           | 'text'
+           | 'processing-instruction'
+           | 'node'
+
+Digits ::= [0-9]+
+
+VarName ::= Name not containing any ':' or '.'
+</pre>
+
+<h3>Functions</h3>
+
+<p>Non-namespaced functions are the core functions, defined as in <a href="http://www.w3.org/TR/xpath">XPath</a>:</p>
+
+<ul>
+<li>string string(object)</li>
+<li>string concat(string, string, string*)</li>
+<li>boolean starts-with(string, string)</li>
+<li>boolean contains(string, string)</li>
+<li>string substring-before(string, string)</li>
+<li>string substring-after(string, string)</li>
+<li>string substring(string, string, number?)</li>
+<li>number string-length(string)</li>
+<li>string normalize-space(string)</li>
+<li>string translate(string, string, string)</li>
+</ul>
+<ul>
+<li>boolean boolean(object)</li>
+<li>boolean not(boolean)</li>
+<li>boolean true()</li>
+<li>boolean false()</li>
+</ul>
+<ul>
+<li>number number(object)</li>
+<li>number floor(number)</li>
+<li>number ceiling(number)</li>
+<li>number round(number)</li>
+</ul>
+
+<p>Namespaced functions are extension functions, not currently supported.</p>
+
+<h4>Variables</h4>
+
+<p>Unlike XPath, variable name may not be namespaced. Variables without a dot (<code>.</code>) are <em>simple variables</em> and with a dot are <em>compound variables</em>.
+
+<p>The variable binding available in simple variables are the parameters passed to the LSP page. Attempting to reference a non-existing parameter gives the empty string.</p>
+
+<p>Compound variables are currently not supported.</p>
 
 </body>
 </html>
