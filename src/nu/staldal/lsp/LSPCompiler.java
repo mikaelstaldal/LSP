@@ -401,9 +401,33 @@ public class LSPCompiler
 		}
 		else
 		{
-			LSPElement newEl = new LSPElement(
-				el.getNamespaceURI(), el.getLocalName(),
-				el.numberOfAttributes(), el.numberOfChildren());
+			LSPElement newEl; 			
+			
+			if ((el.getNamespaceURI() != null)
+					&& el.getNamespaceURI().startsWith("java:"))
+			{	// extension element
+				String className = el.getNamespaceURI().substring(5);
+				try {
+					Class theClass = Class.forName(className);
+					if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(theClass))
+					throw fixSourceException(el, 
+						"extension class " + className 
+						+ " must implement nu.staldal.lsp.LSPExtLib"); 
+				}
+				catch (ClassNotFoundException e)
+				{
+					throw fixSourceException(el, 
+						"extension class " + className + " not found"); 
+				}
+				newEl = new LSPExtElement(className, 
+					el.getNamespaceURI(), el.getLocalName(),
+					el.numberOfAttributes(), el.numberOfChildren()); 
+			}
+			else
+			{
+				newEl = new LSPElement(el.getNamespaceURI(), el.getLocalName(),
+					el.numberOfAttributes(), el.numberOfChildren());
+			}
 
 			for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 			{

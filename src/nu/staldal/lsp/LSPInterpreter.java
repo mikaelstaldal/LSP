@@ -121,7 +121,9 @@ public class LSPInterpreter implements LSPPage
     private void processNode(LSPNode node, ContentHandler sax)
         throws SAXException
     {
-        if (node instanceof LSPElement)
+        if (node instanceof LSPExtElement)
+            processNode((LSPExtElement)node, sax);
+        else if (node instanceof LSPElement)
             processNode((LSPElement)node, sax);
         else if (node instanceof LSPText)
             processNode((LSPText)node, sax);
@@ -154,7 +156,44 @@ public class LSPInterpreter implements LSPPage
 		}
 	}
 
-    private void processNode(LSPElement el, ContentHandler sax)
+    private void processNode(LSPExtElement el, ContentHandler sax)
+        throws SAXException
+    {
+		LSPExtLib extLib;
+		try {
+			Class extClass = Class.forName(el.getClassName());
+			extLib = (LSPExtLib)extClass.newInstance();
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw new LSPException("Extension class not found: " 
+				+ el.getClassName());
+		}
+		catch (InstantiationException e)
+		{
+			throw new LSPException("Unable to instantiate extension class: " 
+				+ e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			throw new LSPException("Unable to instantiate extension class: " 
+				+ e.getMessage());
+		}
+		catch (ClassCastException e)
+		{
+			throw new LSPException("Extension class " + el.getClassName() 
+				+ " does not implement the required interface");
+		}
+		
+		ContentHandler in = extLib.beforeElement(sax, null /* *** */);
+		
+		processNode((LSPElement)el, in);
+		
+		String res = extLib.afterElement();
+		if (res != null) sax.characters(res.toCharArray(), 0, res.length());
+	}
+		
+	private void processNode(LSPElement el, ContentHandler sax)
         throws SAXException
     {
 		// Copy element to output verbatim
