@@ -1412,7 +1412,7 @@ class LSPJVMCompiler implements Constants
 			// if (evalExprAsBoolean(expr.getLeft()))
 			//	return Boolean.TRUE;
 			// else
-			//	return new Boolean(evalExprAsBoolean(expr.getRight()));
+			//	return Boolean.valueOf(evalExprAsBoolean(expr.getRight()));
 			compileSubExprAsBooleanValue(expr.getLeft(), methodGen, instrList);
 			BranchInstruction branch1 = instrFactory.createBranchInstruction(
 				IFEQ, null);
@@ -1437,7 +1437,7 @@ class LSPJVMCompiler implements Constants
 			// if (!evalExprAsBoolean(expr.getLeft()))
 			//	return Boolean.FALSE;
 			// else
-			// 	return new Boolean(evalExprAsBoolean(expr.getRight()));
+			// 	return Boolean.valueOf(evalExprAsBoolean(expr.getRight()));
 			compileSubExprAsBooleanValue(expr.getLeft(), methodGen, instrList);
 			BranchInstruction branch1 = instrFactory.createBranchInstruction(
 				IFNE, null);
@@ -1499,9 +1499,9 @@ class LSPJVMCompiler implements Constants
 					INVOKESTATIC));		
 			}
 			// if (expr.isOp(BinaryExpr.EQ))
-			// 	return new Boolean(res);
+			// 	return Boolean.valueOf(res);
 			// else
-			// 	return new Boolean(!res);
+			// 	return Boolean.valueOf(!res);
 			if (expr.isOp(BinaryExpr.NE))
 			{
 				BranchInstruction branch1 = instrFactory.createBranchInstruction(
@@ -1525,7 +1525,7 @@ class LSPJVMCompiler implements Constants
 			}
 
 		case BinaryExpr.LT: {
-			// return new Boolean(evalExprAsNumber(expr.getLeft()) < evalExprAsNumber(expr.getRight()));
+			// return Boolean.valueOf(evalExprAsNumber(expr.getLeft()) < evalExprAsNumber(expr.getRight()));
 			compileSubExprAsNumberValue(expr.getLeft(), methodGen, instrList);
 			compileSubExprAsNumberValue(expr.getRight(), methodGen, instrList);
 			instrList.append(InstructionConstants.DCMPG);
@@ -1548,7 +1548,7 @@ class LSPJVMCompiler implements Constants
 			}
 			
 		case BinaryExpr.LE: {
-			// return new Boolean(evalExprAsNumber(expr.getLeft()) <= evalExprAsNumber(expr.getRight()));
+			// return Boolean.valueOf(evalExprAsNumber(expr.getLeft()) <= evalExprAsNumber(expr.getRight()));
 			compileSubExprAsNumberValue(expr.getLeft(), methodGen, instrList);
 			compileSubExprAsNumberValue(expr.getRight(), methodGen, instrList);
 			instrList.append(InstructionConstants.DCMPG);
@@ -1571,7 +1571,7 @@ class LSPJVMCompiler implements Constants
 			}
 			
 		case BinaryExpr.GT: {
-			// return new Boolean(evalExprAsNumber(expr.getLeft()) > evalExprAsNumber(expr.getRight()));
+			// return Boolean.valueOf(evalExprAsNumber(expr.getLeft()) > evalExprAsNumber(expr.getRight()));
 			compileSubExprAsNumberValue(expr.getLeft(), methodGen, instrList);
 			compileSubExprAsNumberValue(expr.getRight(), methodGen, instrList);
 			instrList.append(InstructionConstants.DCMPL);
@@ -1594,7 +1594,7 @@ class LSPJVMCompiler implements Constants
 			}
 
 		case BinaryExpr.GE: {
-			// return new Boolean(evalExprAsNumber(expr.getLeft()) >= evalExprAsNumber(expr.getRight()));
+			// return Boolean.valueOf(evalExprAsNumber(expr.getLeft()) >= evalExprAsNumber(expr.getRight()));
 			compileSubExprAsNumberValue(expr.getLeft(), methodGen, instrList);
 			compileSubExprAsNumberValue(expr.getRight(), methodGen, instrList);
 			instrList.append(InstructionConstants.DCMPL);
@@ -1948,7 +1948,7 @@ class LSPJVMCompiler implements Constants
 				throw new LSPException(
 					"boolean() function must have 1 argument");
 
-			// return new Boolean(evalExprAsBoolean(expr.getArg(0)));
+			// return Boolean.valueOf(evalExprAsBoolean(expr.getArg(0)));
 			Class type = compileSubExpr(expr.getArg(0), methodGen, instrList);
 			if (type != Boolean.class)
 			{
@@ -1972,7 +1972,7 @@ class LSPJVMCompiler implements Constants
 				throw new LSPException(
 					"not() function must have 1 argument");
 
-			// return new Boolean(!evalExprAsBoolean(expr.getArg(0)));
+			// return Boolean.valueOf(!evalExprAsBoolean(expr.getArg(0)));
 			compileSubExprAsBooleanValue(expr.getArg(0), methodGen, instrList);
 			BranchInstruction branch1 = instrFactory.createBranchInstruction(
 				IFNE, null);

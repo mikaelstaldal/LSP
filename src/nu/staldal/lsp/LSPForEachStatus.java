@@ -56,13 +56,13 @@ public class LSPForEachStatus implements Map
         if (key.equals("index"))
             return new Double(theList.index());
         else if (key.equals("first"))
-            return new Boolean(theList.index() == 1);
+            return Boolean.valueOf(theList.index() == 1);
         else if (key.equals("last"))
-            return new Boolean(!theList.hasNext());
+            return Boolean.valueOf(!theList.hasNext());
         else if (key.equals("even"))
-            return new Boolean(theList.index() % 2 == 0);
+            return Boolean.valueOf(theList.index() % 2 == 0);
         else if (key.equals("odd"))
-            return new Boolean(theList.index() % 2 != 0);
+            return Boolean.valueOf(theList.index() % 2 != 0);
         else
             return null;
     }
