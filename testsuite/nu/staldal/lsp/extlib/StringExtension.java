@@ -44,6 +44,7 @@ import org.xml.sax.*;
 
 import nu.staldal.lsp.*;
 import nu.staldal.lagoon.core.Target;
+import nu.staldal.lagoon.core.SourceManager;
 
 public class StringExtension implements LSPExtLib, ContentHandler
 {
@@ -55,7 +56,7 @@ public class StringExtension implements LSPExtLib, ContentHandler
 	 *
 	 * @return  a ContentHandler to send input to.
 	 */
-	public ContentHandler beforeElement(ContentHandler out, Target target)
+	public ContentHandler beforeElement(ContentHandler out, Target target, SourceManager source)
 		throws SAXException
 	{
 		return this;
@@ -121,6 +122,13 @@ public class StringExtension implements LSPExtLib, ContentHandler
     public void skippedEntity(String name)
     {
     }
+
+	
+	public Object function(String name, Object[] args)
+		throws LSPException
+	{
+		throw new LSPException("StringExtension doesn't do functions");
+	}
 
 }
 

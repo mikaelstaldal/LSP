@@ -38,69 +38,109 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
+package nu.staldal.lsp.compiledexpr;
 
-import java.io.*;
-import java.util.*;
+import nu.staldal.lsp.LSPExpr;
 
-import org.xml.sax.*;
-
-import nu.staldal.xtree.*;
-import nu.staldal.syntax.ParseException;
-
-import nu.staldal.lagoon.core.Target;
-import nu.staldal.lagoon.core.SourceManager;
+import java.util.Vector;
 
 /**
- * LSP Extension Library.
- *
- * Will be invoked as follows:
- * <ol>
- * <li>beforeElement() is invoked, which returns a ContentHandler "in"
- * <li>the extension element is sent to the ContentHandler "in"
- * 	   (startDocument() and endDocument() will not be invoked).
- * <li>afterElement() is invoked, which may return a String.
- * </ol>
- *
- * LSP will not use the "in" ContentHandler after invoking the 
- * afterElement() method.
- *
- * The extlib can return data in one of two ways, write to the supplied 
- * ContentHandler "out" (it must not invoke startDocument() or endDocument()), 
- * or return a string from the afterElement() method. It may not do both.
+ * An extension function call
  */
-public interface LSPExtLib
+public class ExtensionFunctionCall extends LSPExpr
 {
-	/**
-	 * Invoked before the element is sent.
-	 *
-	 * @param out     where to write XML output.
-	 * @param target  the current target
-	 *
-	 * @return  a ContentHandler to send input to.
-	 */
-	public ContentHandler beforeElement(ContentHandler out, 
-			Target target, SourceManager sourceMan)
-		throws SAXException, java.io.IOException;
-	
+	protected String className;
+    protected String name;
+	protected Vector args;
+
 	
 	/**
-	 * Invoked after the element is sent.
-	 *
-	 * @return  a string output.
+	 * Create a ExtensionFunctionCall
 	 */
-	public String afterElement()
-		throws SAXException, java.io.IOException;
-		
+	public ExtensionFunctionCall(String className, String name, int numArgs)
+	{
+		this.className = className;
+        this.name = name;
+		args = new Vector(numArgs);
+	}
+
+	
+	/**
+	 * Create a ExtensionFunctionCall
+	 */
+	public ExtensionFunctionCall(String className, String name)
+	{
+		this.className = className;
+        this.name = name;
+		args = new Vector();
+	}
+	
 
 	/**
-	 * Invoked when an extension function is called.
+	 * Add an argument to the function
 	 *
-	 * @param name  the name of the function
-	 * @param args  arguments to the function
-	 */		
-	public Object function(String name, Object[] args)
-		throws SAXException, java.io.IOException;
-	
+	 * @param arg  the argument
+	 */
+	public void addArgument(LSPExpr arg)
+	{
+		args.addElement(arg);
+	}
+
+
+
+	/**
+	 * Get the class name 
+	 */
+	public String getClassName()
+	{
+		return className;
+	}
+
+
+	/**
+	 * Get the function name
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+
+	/**
+	 * Get the number of arguments to the function.
+	 */
+	public int numberOfArgs()
+	{
+		return args.size();
+	}
+
+
+	/**
+	 * Get one argument to the function
+	 */
+	public LSPExpr getArg(int index)
+		throws ArrayIndexOutOfBoundsException
+	{
+		return (LSPExpr)args.elementAt(index);
+	}
+
+
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append("ExtensionFunctionCall(");
+        sb.append(className);
+        sb.append(',');
+		sb.append(name);
+		sb.append(",[");
+		for (int i = 0; i < numberOfArgs(); i++)
+		{
+			sb.append(getArg(i).toString());
+			if (i < numberOfArgs()-1) sb.append(",");
+		}
+		sb.append("])");
+		return sb.toString();
+	}
+
 }
 

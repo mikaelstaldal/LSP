@@ -49,6 +49,7 @@ import nu.staldal.xtree.*;
 
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
+import nu.staldal.lsp.compiledexpr.*;
 
 import nu.staldal.lagoon.core.Target;
 import nu.staldal.lagoon.core.SourceManager;
@@ -172,36 +173,7 @@ public class LSPInterpreter implements LSPPage
     private void processNode(LSPExtElement el, ContentHandler sax)
         throws SAXException
     {
-		LSPExtLib extLib;
-		try {
-			extLib = (LSPExtLib)extLibs.get(el.getClassName());
-			if (extLib == null)
-			{
-				Class extClass = Class.forName(el.getClassName());
-				extLib = (LSPExtLib)extClass.newInstance();
-				extLibs.put(el.getClassName(), extLib);
-			}
-		}
-		catch (ClassNotFoundException e)
-		{
-			throw new LSPException("Extension class not found: " 
-				+ el.getClassName());
-		}
-		catch (InstantiationException e)
-		{
-			throw new LSPException("Unable to instantiate extension class: " 
-				+ e.getMessage());
-		}
-		catch (IllegalAccessException e)
-		{
-			throw new LSPException("Unable to instantiate extension class: " 
-				+ e.getMessage());
-		}
-		catch (ClassCastException e)
-		{
-			throw new LSPException("Extension class " + el.getClassName() 
-				+ " does not implement the required interface");
-		}
+		LSPExtLib extLib = lookupExtensionHandler(el.getClassName());
 		
 		try {
 			ContentHandler in = extLib.beforeElement(sax, target, sourceMan);
@@ -361,7 +333,7 @@ public class LSPInterpreter implements LSPPage
 
 
 
-	private Object evalExpr(LSPExpr expr) throws LSPException
+	private Object evalExpr(LSPExpr expr) throws SAXException
 	{
 		if (expr instanceof StringLiteral)
 		{
@@ -379,9 +351,13 @@ public class LSPInterpreter implements LSPPage
 		{
 			return evalExpr((UnaryExpr)expr);
 		}
-		else if (expr instanceof FunctionCall)
+		else if (expr instanceof BuiltInFunctionCall)
 		{
-			return evalExpr((FunctionCall)expr);
+			return evalExpr((BuiltInFunctionCall)expr);
+		}
+		else if (expr instanceof ExtensionFunctionCall)
+		{
+			return evalExpr((ExtensionFunctionCall)expr);
 		}
 		else if (expr instanceof VariableReference)
 		{
@@ -411,7 +387,7 @@ public class LSPInterpreter implements LSPPage
 	}
 
 
-	private Object evalExpr(BinaryExpr expr) throws LSPException
+	private Object evalExpr(BinaryExpr expr) throws SAXException
 	{
 		switch (expr.getOp())
 		{
@@ -477,266 +453,276 @@ public class LSPInterpreter implements LSPPage
 	}
 
 
-	private Object evalExpr(UnaryExpr expr) throws LSPException
+	private Object evalExpr(UnaryExpr expr) throws SAXException
 	{
 		return new Double(-evalExprAsNumber(expr.getLeft()));
 	}
 
 
-	private Object evalExpr(FunctionCall expr) throws LSPException
+	private Object evalExpr(BuiltInFunctionCall expr) throws SAXException
 	{
-		if (expr.getPrefix() == null)
-		{	// built-in function
-			if (expr.getName().equals("string"))
+		if (expr.getName().equals("string"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"string() function must have 1 argument");
+
+			return evalExprAsString(expr.getArg(0));
+		}
+		else if (expr.getName().equals("concat"))
+		{
+			if (expr.numberOfArgs() < 2)
+				throw new LSPException(
+					"concat() function must have at least 2 argument");
+
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i<expr.numberOfArgs(); i++)
 			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"string() function must have 1 argument");
-
-				return evalExprAsString(expr.getArg(0));
+				sb.append(evalExprAsString(expr.getArg(i)));
 			}
-			else if (expr.getName().equals("concat"))
-			{
-				if (expr.numberOfArgs() < 2)
-					throw new LSPException(
-						"concat() function must have at least 2 argument");
+			return sb.toString();
+		}
+		else if (expr.getName().equals("starts-with"))
+		{
+			if (expr.numberOfArgs() != 2)
+				throw new LSPException(
+					"starts-with() function must have 2 arguments");
 
-				StringBuffer sb = new StringBuffer();
-				for (int i = 0; i<expr.numberOfArgs(); i++)
-				{
-					sb.append(evalExprAsString(expr.getArg(i)));
-				}
-				return sb.toString();
-			}
-			else if (expr.getName().equals("starts-with"))
-			{
-				if (expr.numberOfArgs() != 2)
-					throw new LSPException(
-						"starts-with() function must have 2 arguments");
+			String a = evalExprAsString(expr.getArg(0));
+			String b = evalExprAsString(expr.getArg(1));
 
-				String a = evalExprAsString(expr.getArg(0));
-				String b = evalExprAsString(expr.getArg(1));
+			return new Boolean(a.startsWith(b));
+		}
+		else if (expr.getName().equals("contains"))
+		{
+			if (expr.numberOfArgs() != 2)
+				throw new LSPException(
+					"contains() function must have 2 arguments");
 
-				return new Boolean(a.startsWith(b));
-			}
-			else if (expr.getName().equals("contains"))
-			{
-				if (expr.numberOfArgs() != 2)
-					throw new LSPException(
-						"contains() function must have 2 arguments");
+			String a = evalExprAsString(expr.getArg(0));
+			String b = evalExprAsString(expr.getArg(1));
 
-				String a = evalExprAsString(expr.getArg(0));
-				String b = evalExprAsString(expr.getArg(1));
+			return new Boolean(a.indexOf(b) > -1);
+		}
+		else if (expr.getName().equals("substring-before"))
+		{
+			if (expr.numberOfArgs() != 2)
+				throw new LSPException(
+					"substring-before() function must have 2 arguments");
 
-				return new Boolean(a.indexOf(b) > -1);
-			}
-			else if (expr.getName().equals("substring-before"))
-			{
-				if (expr.numberOfArgs() != 2)
-					throw new LSPException(
-						"substring-before() function must have 2 arguments");
+			String a = evalExprAsString(expr.getArg(0));
+			String b = evalExprAsString(expr.getArg(1));
 
-				String a = evalExprAsString(expr.getArg(0));
-				String b = evalExprAsString(expr.getArg(1));
+			int index = a.indexOf(b);
 
-				int index = a.indexOf(b);
-
-				if (index < 0)
-					return "";
-				else
-					return a.substring(0, index);
-			}
-			else if (expr.getName().equals("substring-after"))
-			{
-				if (expr.numberOfArgs() != 2)
-					throw new LSPException(
-						"substring-after() function must have 2 arguments");
-
-				String a = evalExprAsString(expr.getArg(0));
-				String b = evalExprAsString(expr.getArg(1));
-
-				int index = a.indexOf(b);
-
-				if (index < 0)
-					return "";
-				else
-					return a.substring(index+1);
-			}
-			else if (expr.getName().equals("substring"))
-			{
-				if ((expr.numberOfArgs() != 2) && (expr.numberOfArgs() != 3))
-					throw new LSPException(
-						"substring() function must have 2 or 3 arguments");
-
-				String a = evalExprAsString(expr.getArg(0));
-				double bd = evalExprAsNumber(expr.getArg(1));
-				double cd = (expr.numberOfArgs() == 3)
-					? evalExprAsNumber(expr.getArg(2))
-					: (a.length()+1);
-				if (Double.isNaN(bd) || Double.isNaN(cd)) return "";
-
-				int b = (int)Math.round(bd);
-				int c = (int)Math.round(cd);
-
-				if (b > a.length()) b = a.length();
-				if (c < 1) return "";
-				if (c > (a.length()-b+1)) c = a.length()-b+1;
-
-				return a.substring((b-1 < 0) ? 0 : (b-1), b-1+c);
-			}
-			else if (expr.getName().equals("string-length"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"string-length() function must have 1 argument");
-
-				String a = evalExprAsString(expr.getArg(0));
-
-				return new Double(a.length());
-			}
-			else if (expr.getName().equals("normalize-space"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"normalize-space() function must have 1 argument");
-
-				String a = evalExprAsString(expr.getArg(0)).trim();
-
-				StringBuffer sb = new StringBuffer(a.length());
-				boolean inSpace = false;
-				for (int i = 0; i<a.length(); i++)
-				{
-					char c = a.charAt(i);
-					if (c > ' ')
-					{
-						inSpace = false;
-						sb.append(c);
-					}
-					else
-					{
-						if (!inSpace)
-						{
-							sb.append(' ');
-							inSpace = true;
-						}
-					}
-				}
-				return sb.toString();
-			}
-			else if (expr.getName().equals("translate"))
-			{
-				if (expr.numberOfArgs() != 3)
-					throw new LSPException(
-						"translate() function must have 3 arguments");
-
-				String a = evalExprAsString(expr.getArg(0));
-				String b = evalExprAsString(expr.getArg(1));
-				String c = evalExprAsString(expr.getArg(2));
-
-				StringBuffer sb = new StringBuffer(a.length());
-				for (int i = 0; i<a.length(); i++)
-				{
-					char ch = a.charAt(i);
-					int index = b.indexOf(ch);
-					if (index < 0)
-						sb.append(c);
-					else if (index >= c.length())
-						;
-					else
-						sb.append(c.charAt(index));
-				}
-				return sb.toString();
-			}
-			else if (expr.getName().equals("boolean"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"boolean() function must have 1 argument");
-
-				return new Boolean(evalExprAsBoolean(expr.getArg(0)));
-			}
-			else if (expr.getName().equals("not"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"not() function must have 1 argument");
-
-				return new Boolean(!evalExprAsBoolean(expr.getArg(0)));
-			}
-			else if (expr.getName().equals("true"))
-			{
-				if (expr.numberOfArgs() != 0)
-					throw new LSPException(
-						"true() function must have no arguments");
-
-				return Boolean.TRUE;
-			}
-			else if (expr.getName().equals("false"))
-			{
-				if (expr.numberOfArgs() != 0)
-					throw new LSPException(
-						"false() function must have no arguments");
-
-				return Boolean.FALSE;
-			}
-			else if (expr.getName().equals("number"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"number() function must have 1 argument");
-
-				return new Double(evalExprAsNumber(expr.getArg(0)));
-			}
-			else if (expr.getName().equals("floor"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"floor() function must have 1 argument");
-
-				return new Double(Math.floor(evalExprAsNumber(expr.getArg(0))));
-			}
-			else if (expr.getName().equals("ceiling"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"ceiling() function must have 1 argument");
-
-				return new Double(Math.ceil(evalExprAsNumber(expr.getArg(0))));
-			}
-			else if (expr.getName().equals("round"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"round() function must have 1 argument");
-
-				double a = evalExprAsNumber(expr.getArg(0));
-
-				return new Double(Math.floor(a + 0.5d));
-			}
-			else if (expr.getName().equals("count"))
-			{
-				if (expr.numberOfArgs() != 1)
-					throw new LSPException(
-						"count() function must have 1 argument");
-
-				LSPList list = evalExprAsList(expr.getArg(0));
-
-				return new Double(list.length());
-			}
+			if (index < 0)
+				return "";
 			else
+				return a.substring(0, index);
+		}
+		else if (expr.getName().equals("substring-after"))
+		{
+			if (expr.numberOfArgs() != 2)
+				throw new LSPException(
+					"substring-after() function must have 2 arguments");
+
+			String a = evalExprAsString(expr.getArg(0));
+			String b = evalExprAsString(expr.getArg(1));
+
+			int index = a.indexOf(b);
+
+			if (index < 0)
+				return "";
+			else
+				return a.substring(index+1);
+		}
+		else if (expr.getName().equals("substring"))
+		{
+			if ((expr.numberOfArgs() != 2) && (expr.numberOfArgs() != 3))
+				throw new LSPException(
+					"substring() function must have 2 or 3 arguments");
+
+			String a = evalExprAsString(expr.getArg(0));
+			double bd = evalExprAsNumber(expr.getArg(1));
+			double cd = (expr.numberOfArgs() == 3)
+				? evalExprAsNumber(expr.getArg(2))
+				: (a.length()+1);
+			if (Double.isNaN(bd) || Double.isNaN(cd)) return "";
+
+			int b = (int)Math.round(bd);
+			int c = (int)Math.round(cd);
+
+			if (b > a.length()) b = a.length();
+			if (c < 1) return "";
+			if (c > (a.length()-b+1)) c = a.length()-b+1;
+
+			return a.substring((b-1 < 0) ? 0 : (b-1), b-1+c);
+		}
+		else if (expr.getName().equals("string-length"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"string-length() function must have 1 argument");
+
+			String a = evalExprAsString(expr.getArg(0));
+
+			return new Double(a.length());
+		}
+		else if (expr.getName().equals("normalize-space"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"normalize-space() function must have 1 argument");
+
+			String a = evalExprAsString(expr.getArg(0)).trim();
+
+			StringBuffer sb = new StringBuffer(a.length());
+			boolean inSpace = false;
+			for (int i = 0; i<a.length(); i++)
 			{
-				throw new LSPException("Unrecognized built-in function: "
-					+ expr.getName());
+				char c = a.charAt(i);
+				if (c > ' ')
+				{
+					inSpace = false;
+					sb.append(c);
+				}
+				else
+				{
+					if (!inSpace)
+					{
+						sb.append(' ');
+						inSpace = true;
+					}
+				}
 			}
+			return sb.toString();
+		}
+		else if (expr.getName().equals("translate"))
+		{
+			if (expr.numberOfArgs() != 3)
+				throw new LSPException(
+					"translate() function must have 3 arguments");
+
+			String a = evalExprAsString(expr.getArg(0));
+			String b = evalExprAsString(expr.getArg(1));
+			String c = evalExprAsString(expr.getArg(2));
+
+			StringBuffer sb = new StringBuffer(a.length());
+			for (int i = 0; i<a.length(); i++)
+			{
+				char ch = a.charAt(i);
+				int index = b.indexOf(ch);
+				if (index < 0)
+					sb.append(c);
+				else if (index >= c.length())
+					;
+				else
+					sb.append(c.charAt(index));
+			}
+			return sb.toString();
+		}
+		else if (expr.getName().equals("boolean"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"boolean() function must have 1 argument");
+
+			return new Boolean(evalExprAsBoolean(expr.getArg(0)));
+		}
+		else if (expr.getName().equals("not"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"not() function must have 1 argument");
+
+			return new Boolean(!evalExprAsBoolean(expr.getArg(0)));
+		}
+		else if (expr.getName().equals("true"))
+		{
+			if (expr.numberOfArgs() != 0)
+				throw new LSPException(
+					"true() function must have no arguments");
+
+			return Boolean.TRUE;
+		}
+		else if (expr.getName().equals("false"))
+		{
+			if (expr.numberOfArgs() != 0)
+				throw new LSPException(
+					"false() function must have no arguments");
+
+			return Boolean.FALSE;
+		}
+		else if (expr.getName().equals("number"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"number() function must have 1 argument");
+
+			return new Double(evalExprAsNumber(expr.getArg(0)));
+		}
+		else if (expr.getName().equals("floor"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"floor() function must have 1 argument");
+
+			return new Double(Math.floor(evalExprAsNumber(expr.getArg(0))));
+		}
+		else if (expr.getName().equals("ceiling"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"ceiling() function must have 1 argument");
+
+			return new Double(Math.ceil(evalExprAsNumber(expr.getArg(0))));
+		}
+		else if (expr.getName().equals("round"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"round() function must have 1 argument");
+
+			double a = evalExprAsNumber(expr.getArg(0));
+
+			return new Double(Math.floor(a + 0.5d));
+		}
+		else if (expr.getName().equals("count"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"count() function must have 1 argument");
+
+			LSPList list = evalExprAsList(expr.getArg(0));
+
+			return new Double(list.length());
 		}
 		else
-		{	// extension function
-			throw new LSPException("Extension FunctionCall not implemented");
-			// ***
+		{
+			throw new LSPException("Unrecognized built-in function: "
+				+ expr.getName());
 		}
-
 	}
 
+
+	private Object evalExpr(ExtensionFunctionCall expr) throws SAXException
+	{
+		LSPExtLib extLib = lookupExtensionHandler(expr.getClassName());
+		
+		Object[] args = new Object[expr.numberOfArgs()];
+		for (int i = 0; i<expr.numberOfArgs(); i++)
+		{
+			args[i] = evalExpr(expr.getArg(i));
+		}
+		try {
+			return extLib.function(expr.getName(), args);
+		}
+		catch (IOException e)
+		{
+			throw new SAXException(e);
+		}
+	}
+	
 
 	private Object evalExpr(VariableReference expr) throws LSPException
 	{
@@ -748,7 +734,7 @@ public class LSPInterpreter implements LSPPage
 	}
 
 	
-	private Object evalExpr(TupleExpr expr) throws LSPException
+	private Object evalExpr(TupleExpr expr) throws SAXException
 	{
 		Hashtable tuple = evalExprAsTuple(expr.getBase());
 		Object o = tuple.get(expr.getName());
@@ -787,7 +773,7 @@ public class LSPInterpreter implements LSPPage
 		}
 	}
 
-	private String evalExprAsString(LSPExpr expr) throws LSPException
+	private String evalExprAsString(LSPExpr expr) throws SAXException
 	{
 		return convertToString(evalExpr(expr));
 	}
@@ -816,7 +802,7 @@ public class LSPInterpreter implements LSPPage
 		}
 	}
 
-	private boolean evalExprAsBoolean(LSPExpr expr) throws LSPException
+	private boolean evalExprAsBoolean(LSPExpr expr) throws SAXException
 	{
 		return convertToBoolean(evalExpr(expr));
 	}
@@ -850,12 +836,12 @@ public class LSPInterpreter implements LSPPage
 		}
 	}
 
-	private double evalExprAsNumber(LSPExpr expr) throws LSPException
+	private double evalExprAsNumber(LSPExpr expr) throws SAXException
 	{
 		return convertToNumber(evalExpr(expr));
 	}
 
-	private LSPList evalExprAsList(LSPExpr expr) throws LSPException
+	private LSPList evalExprAsList(LSPExpr expr) throws SAXException
 	{
 		Object value = evalExpr(expr);
 		if (value instanceof LSPList) 
@@ -866,7 +852,7 @@ public class LSPInterpreter implements LSPPage
 				+ value.getClass().getName());
 	}
 
-	private Hashtable evalExprAsTuple(LSPExpr expr) throws LSPException
+	private Hashtable evalExprAsTuple(LSPExpr expr) throws SAXException
 	{
 		Object value = evalExpr(expr);
 		if (value instanceof Hashtable) 
@@ -877,5 +863,40 @@ public class LSPInterpreter implements LSPPage
 				+ value.getClass().getName());
 	}
 
+	private LSPExtLib lookupExtensionHandler(String className)
+		throws LSPException
+	{
+		try {
+			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);
+			if (extLib == null)
+			{
+				Class extClass = Class.forName(className);
+				extLib = (LSPExtLib)extClass.newInstance();
+				extLibs.put(className, extLib);
+			}
+			return extLib;
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw new LSPException("Extension class not found: " 
+				+ className);
+		}
+		catch (InstantiationException e)
+		{
+			throw new LSPException("Unable to instantiate extension class: " 
+				+ e.getMessage());
+		}
+		catch (IllegalAccessException e)
+		{
+			throw new LSPException("Unable to instantiate extension class: " 
+				+ e.getMessage());
+		}
+		catch (ClassCastException e)
+		{
+			throw new LSPException("Extension class " + className 
+				+ " does not implement the required interface");
+		}
+	}
+	
 }
 

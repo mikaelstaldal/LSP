@@ -50,6 +50,7 @@ import nu.staldal.syntax.ParseException;
 
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.expr.*;
+import nu.staldal.lsp.compiledexpr.*;
 
 import nu.staldal.lagoon.util.LagoonUtil;
 
@@ -411,7 +412,7 @@ public class LSPCompiler
 			LSPElement newEl;
 			boolean inExtElementNow = false; 			
 			
-			Class extClass = lookupExtensionHandler(el);
+			Class extClass = lookupExtensionHandler(el, el.getNamespaceURI());
 			if (!inExtElement && (extClass != null))
 			{
 				inExtElement = true;
@@ -456,13 +457,13 @@ public class LSPCompiler
     }
 
 	
-	private Class lookupExtensionHandler(Element el)
+	private Class lookupExtensionHandler(Node el, String ns)
 		throws SAXException
 	{
-		if (el.getNamespaceURI() == null || el.getNamespaceURI().length() == 0) 
+		if (ns == null || ns.length() == 0) 
 			return null;
 		
-        Class cls = (Class)extDict.get(el.getNamespaceURI());
+        Class cls = (Class)extDict.get(ns);
 		
 		if (cls != null) return cls;
 		
@@ -470,7 +471,7 @@ public class LSPCompiler
         try
         {
 			String fileName = "/nu/staldal/lsp/extlib/" 
-				+ LagoonUtil.encodePath(el.getNamespaceURI());
+				+ LagoonUtil.encodePath(ns);
 			InputStream is = getClass().getResourceAsStream(fileName);
 			if (is == null) return null;
 
@@ -486,7 +487,7 @@ public class LSPCompiler
 				"LSP extension class " + className 
 				+ " must implement nu.staldal.lsp.LSPExtLib");
 				
-			extDict.put(el.getNamespaceURI(), cls);
+			extDict.put(ns, cls);
 			return cls;
 		}
 		catch (ClassNotFoundException e)
@@ -525,7 +526,8 @@ public class LSPCompiler
 				}
 				else if (o instanceof LSPExpr)
 				{
-					container.addChild(new LSPTemplate((LSPExpr)o));
+					container.addChild(
+						new LSPTemplate(compileExpr(text, (LSPExpr)o)));
 				}
 			}
 
@@ -549,7 +551,7 @@ public class LSPCompiler
     {
 		Vector vec = processTemplate(n, '{', '}', '\'', '\"', template);
 
-		FunctionCall expr = new FunctionCall(null, "concat", vec.size());
+		BuiltInFunctionCall expr = new BuiltInFunctionCall("concat", vec.size());
 
 		for (Enumeration e = vec.elements(); e.hasMoreElements(); )
 		{
@@ -560,7 +562,7 @@ public class LSPCompiler
 			}
 			else if (o instanceof LSPExpr)
 			{
-				expr.addArgument((LSPExpr)o);
+				expr.addArgument(compileExpr(n, (LSPExpr)o));
 			}
 		}
 
@@ -656,7 +658,7 @@ public class LSPCompiler
 		try {
 			LSPExpr test = LSPExpr.parseFromString(exp);
 
-			return new LSPIf(test, compileChildren(el));
+			return new LSPIf(compileExpr(el, test), compileChildren(el));
 		}
 		catch (ParseException e)
 		{
@@ -685,7 +687,7 @@ public class LSPCompiler
 					try {
 						LSPExpr test = LSPExpr.parseFromString(exp);
 
-						choose.addWhen(test, compileChildren(child));
+						choose.addWhen(compileExpr(el, test), compileChildren(child));
 					}
 					catch (ParseException e)
 					{
@@ -739,12 +741,91 @@ public class LSPCompiler
 		try {
 			LSPExpr theList = LSPExpr.parseFromString(exp);
 
-			return new LSPForEach(theList, var, compileChildren(el));
+			return new LSPForEach(compileExpr(el, theList), var, compileChildren(el));
 		}
 		catch (ParseException e)
 		{
 			throw fixParseException(el, exp, e);
 		}
-	}	
+	}
+
+
+	private LSPExpr compileExpr(Node el, LSPExpr expr)
+		throws SAXException
+	{
+		if (expr instanceof StringLiteral)
+		{
+			return expr;
+		}
+		else if (expr instanceof NumberLiteral)
+		{
+			return expr;
+		}
+		else if (expr instanceof BinaryExpr)
+		{
+			return new BinaryExpr(
+				compileExpr(el, ((BinaryExpr)expr).getLeft()), 
+							compileExpr(el, ((BinaryExpr)expr).getRight()), 
+							((BinaryExpr)expr).getOp()); 
+		}
+		else if (expr instanceof UnaryExpr)
+		{
+			return new UnaryExpr(compileExpr(el, ((UnaryExpr)expr).getLeft()));
+		}
+		else if (expr instanceof FunctionCall)
+		{
+			FunctionCall fc = (FunctionCall)expr;
+			if (fc.getPrefix() == null || fc.getPrefix() == "")
+			{	// built-in function
+				BuiltInFunctionCall call = 
+					new BuiltInFunctionCall(fc.getName(), fc.numberOfArgs());
+					
+				for (int i = 0; i<fc.numberOfArgs(); i++)
+				{
+					call.addArgument(compileExpr(el, fc.getArg(i)));
+				}
+				return call;
+			}
+			else
+			{	// extension function
+				String ns = el.lookupNamespaceURI(fc.getPrefix());
+				if (ns == null)
+				{
+					throw fixSourceException(el, 
+						"no mapping for namespace prefix " + fc.getPrefix()); 
+				}
+					
+				Class extClass = lookupExtensionHandler(el, ns); 
+				if (extClass == null)
+					throw fixSourceException(el, 
+						"no handler found for extension namespace " + ns);			
+				
+				ExtensionFunctionCall call = 
+					new ExtensionFunctionCall(
+						extClass.getName(), fc.getName(), fc.numberOfArgs());
+					
+				for (int i = 0; i<fc.numberOfArgs(); i++)
+				{
+					call.addArgument(compileExpr(el, fc.getArg(i)));
+				}
+				return call;
+				
+			}
+		}
+		else if (expr instanceof VariableReference)
+		{
+			return expr;
+		}
+		else if (expr instanceof TupleExpr)
+		{
+			return new TupleExpr(compileExpr(el, ((TupleExpr)expr).getBase()), 
+								 ((TupleExpr)expr).getName());
+		}
+        else
+        {
+			throw new LSPException("Unrecognized LSPExpr: "
+				+ expr.getClass().getName());
+		}
+	}
 	
 }

@@ -66,7 +66,7 @@ public class FunctionCall extends LSPExpr
 	
 	
 	/**
-	 * Create an FuncionCall
+	 * Create an FunctionCall
 	 */
 	public FunctionCall(String prefix, String name, int numArgs)
 	{
@@ -77,7 +77,7 @@ public class FunctionCall extends LSPExpr
 
 	
 	/**
-	 * Create an FuncionCall from NameTokens
+	 * Create an FunctionCall from NameTokens
 	 */
 	public FunctionCall(NameToken prefix, NameToken name)
 	{
@@ -88,7 +88,7 @@ public class FunctionCall extends LSPExpr
 	
 	
 	/**
-	 * Create an FuncionCall
+	 * Create an FunctionCall
 	 */
 	public FunctionCall(String prefix, String name)
 	{

@@ -44,10 +44,12 @@ import org.xml.sax.*;
 
 import nu.staldal.lsp.*;
 import nu.staldal.lagoon.core.Target;
+import nu.staldal.lagoon.core.SourceManager;
 
 public class TestExtension implements LSPExtLib, ContentHandler
 {
 	private ContentHandler sax;
+	private int n = 0;
 	
 	/**
 	 * Invoked before the element is sent.
@@ -57,7 +59,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	 *
 	 * @return  a ContentHandler to send input to.
 	 */
-	public ContentHandler beforeElement(ContentHandler out, Target target)
+	public ContentHandler beforeElement(ContentHandler out, Target target, SourceManager source)
 		throws SAXException
 	{
 		this.sax = out;
@@ -145,7 +147,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 
 	public Object function(String name, Object[] args)
 	{
-		return "[Function " + name + " invoked with " + args.length + " parameters]";
+		return "[Function " + name + " invoked with " + args.length + " parameters for the " + (++n) + " time]";
 	}
 
 }

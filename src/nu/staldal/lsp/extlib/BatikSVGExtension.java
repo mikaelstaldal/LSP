@@ -156,5 +156,13 @@ public class BatikSVGExtension implements LSPExtLib
 	
 		return null;
 	}
-		
+	
+	
+	public Object function(String name, Object[] args)
+		throws LSPException
+	{
+		throw new LSPException("This extension doesn't handle functions");
+	}
+
 }
+
