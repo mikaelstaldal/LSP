@@ -331,6 +331,10 @@ public class LSPInterpreter implements LSPPage
 		{
 			return evalExpr((VariableReference)expr);
 		}
+		else if (expr instanceof TupleExpr)
+		{
+			return evalExpr((TupleExpr)expr);
+		}
         else
         {
 			throw new LSPException("Unrecognized LSPExpr: "
@@ -670,21 +674,19 @@ public class LSPInterpreter implements LSPPage
 
 	private Object evalExpr(VariableReference expr) throws LSPException
 	{
-		if (expr.getField() == null)
-		{	// Simple variable
-			Object o = params.get(expr.getName());
-			if (o == null)
-				return "";
-			else
-				return o;
-		}
+		Object o = params.get(expr.getName());
+		if (o == null)
+			return "";
 		else
-		{	// Compound variable
-			throw new LSPException("Compound VariableReference not implemented");
-			// ***
-		}
+			return o;
 	}
 
+	
+	private Object evalExpr(TupleExpr expr) throws LSPException
+	{
+		throw new LSPException("Tuple not implemented");
+		// ***
+	}
 
 	private String convertToString(Object value) throws LSPException
 	{
