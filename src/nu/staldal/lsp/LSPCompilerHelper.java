@@ -99,9 +99,22 @@ public class LSPCompilerHelper
 
 	public LSPCompilerHelper()
 	{
-		spf = SAXParserFactory.newInstance();
-		spf.setNamespaceAware(true);
-		spf.setValidating(false);
+		try {
+			spf = SAXParserFactory.newInstance();
+			spf.setNamespaceAware(true);
+			spf.setValidating(false);
+			spf.setFeature("http://xml.org/sax/features/namespaces", true);
+			spf.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+			spf.setFeature("http://xml.org/sax/features/validation", false);
+		}
+		catch (ParserConfigurationException e)
+		{
+			throw new Error("Unable to configure XML parser");	
+		}
+		catch (SAXException e)
+		{
+			throw new Error("Unable to configure XML parser");	
+		}
 
 		compiler = new LSPCompiler();
 				
