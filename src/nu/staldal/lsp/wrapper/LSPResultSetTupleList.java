@@ -41,13 +41,14 @@
 package nu.staldal.lsp.wrapper;
 
 import java.util.NoSuchElementException;
+import java.util.Map;
 import java.sql.*;
 
 import nu.staldal.lsp.*;
 
 
 /**
- * Implementation of LSPList and LSPTuple for {@link java.sql.ResultSet}.
+ * Implementation of LSPList and Map for {@link java.sql.ResultSet}.
  * <p>
  * The ResultSet can be traversed once only, and will be closed after the 
  * last element has been read.
@@ -138,7 +139,7 @@ public class LSPResultSetTupleList implements LSPList
 	}
 
 
-	static class ResultSetTuple implements LSPTuple
+	static class ResultSetTuple implements Map
 	{
 		ResultSet rs;
 		
@@ -148,10 +149,10 @@ public class LSPResultSetTupleList implements LSPList
 		}
 		
 		
-		public Object get(String key)
+		public Object get(Object key)
 		{
 			try {
-				Object o = rs.getObject(key);
+				Object o = rs.getObject((String)key);
 
 				if (o == null) 
 					return "";
@@ -163,6 +164,62 @@ public class LSPResultSetTupleList implements LSPList
 				throw new RuntimeException(e.toString());
 			}
 		}
+        
+        public boolean containsKey(Object key)
+        {
+            throw new UnsupportedOperationException();    
+        }
+    
+        public int size()
+        {   
+            throw new UnsupportedOperationException();    
+        }
+    
+        public boolean isEmpty()
+        {
+            return size() == 0;    
+        }
+    
+        public boolean containsValue(Object value)
+        {
+            throw new UnsupportedOperationException();    
+        }
+        
+        public Object put(Object key, Object value)
+        {
+            throw new UnsupportedOperationException();    
+        }
+        
+    
+        public Object remove(Object key)
+        {
+            throw new UnsupportedOperationException();    
+        }
+    
+        public void putAll(Map t)
+        {
+            throw new UnsupportedOperationException();    
+        }
+    
+        public void clear()
+        {
+            throw new UnsupportedOperationException();    
+        }
+    
+        public java.util.Set keySet()
+        {
+            throw new UnsupportedOperationException();    
+        }
+    
+        public java.util.Collection values()
+        {
+            throw new UnsupportedOperationException();    
+        }
+    
+        public java.util.Set entrySet()
+        {
+            throw new UnsupportedOperationException();    
+        }
 	}
 	
 }

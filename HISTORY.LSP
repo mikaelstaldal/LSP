@@ -14,3 +14,10 @@
 ----------
 * Strip more whitespace in LSP.
 * More efficient compilation of large LSP pages.
+
+
+1.0 beta 4
+----------
+* Support for Jakarta Struts.
+* Show line number in LSP source in stack trace.
+* Check version of compiled code against runtime.

@@ -55,6 +55,10 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage
 {
+    public static final String LSP_VERSION_NAME = "1.0b4";
+    public static final int LSP_VERSION_NUM = 104;
+    
+
     /**
 	 * Get a list of files which was imported with this page was compiled.
 	 */

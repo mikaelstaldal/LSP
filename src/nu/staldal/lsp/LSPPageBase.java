@@ -65,12 +65,14 @@ public abstract class LSPPageBase implements LSPPage
 	protected final boolean executeDynamic;
 	protected final long timeCompiled;
 	protected final String pageName;
+	protected final String compiledVersionName;
+	protected final int compiledVersionNum;
 
 	
 	protected LSPPageBase(String[] extLibsURLs, String[] extLibsClassNames,
 		String[] compileDependentFiles, String[] executeDependentFiles,
 		boolean compileDynamic, boolean executeDynamic, long timeCompiled,
-		String pageName)
+		String pageName, String versionName, int versionNum)
 	{
 		this.extLibsURLs = extLibsURLs;
 		this.extLibsClassNames = extLibsClassNames;
@@ -80,6 +82,8 @@ public abstract class LSPPageBase implements LSPPage
 		this.executeDynamic = executeDynamic;
 		this.timeCompiled = timeCompiled;
 		this.pageName = pageName;
+		this.compiledVersionName = versionName;
+		this.compiledVersionNum = versionNum;
 	}
 
     public final String[] getCompileDependentFiles()
@@ -116,18 +120,22 @@ public abstract class LSPPageBase implements LSPPage
         	Map params, Object extContext)
         throws SAXException
 	{
+        if (compiledVersionNum > LSPPage.LSP_VERSION_NUM)
+        {
+            throw new LSPException(
+                "LSP version mismatch: compiled="+compiledVersionName
+                + ", runtime="+LSPPage.LSP_VERSION_NAME
+                + ". Please update your LSP runtime.");
+        }
+        else if (compiledVersionNum < LSPPage.LSP_VERSION_NUM)
+        {
+            throw new LSPException(
+                "LSP version mismatch: compiled="+compiledVersionName
+                + ", runtime="+LSPPage.LSP_VERSION_NAME
+                + ". Please recompile this LSP page.");
+        }
+        
         Environment env = new Environment(params);
-/*
-		for (Iterator it = params.entrySet().iterator(); it.hasNext(); )
-		{
-			Map.Entry ent = (Map.Entry)it.next();
-			String key = (String)ent.getKey();
-			Object value = ent.getValue();						
-			// env.bind(key, convertObjectToLSP(value, key));
-			env.bind(key, value);
-		}
-		params = null;
-*/                
 
 		Map extLibs = new HashMap();
 		
@@ -211,7 +219,7 @@ public abstract class LSPPageBase implements LSPPage
 			return value;
 		else if (value instanceof LSPList) 
 			return value;
-		else if (value instanceof LSPTuple) 
+		else if (value instanceof Map) 
 			return value;
 		else if (value instanceof Node)
 			return value;
@@ -227,10 +235,6 @@ public abstract class LSPPageBase implements LSPPage
 			return new LSPIteratorList((Iterator)value);
 		else if (value instanceof java.sql.ResultSet) 
 			return new LSPResultSetTupleList((java.sql.ResultSet)value);
-		else if (value instanceof Dictionary) 
-			return new LSPDictionaryTuple((Dictionary)value);
-		else if (value instanceof Map) 
-			return new LSPMapTuple((Map)value);
 		else if (value instanceof char[])
 			return new String((char[])value);
 		else if (value instanceof byte[])
@@ -348,10 +352,10 @@ public abstract class LSPPageBase implements LSPPage
 	}
 	
 
-	protected static LSPTuple convertToTuple(Object value) throws LSPException
+	protected static Map convertToTuple(Object value) throws LSPException
 	{
-		if (value instanceof LSPTuple) 
-			return (LSPTuple)value;
+		if (value instanceof Map) 
+			return (Map)value;
 		else
 			throw new LSPException(
 				"Convert to tuple not implemented for type "
@@ -391,7 +395,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 		
 
-	protected static Object getElementFromTuple(LSPTuple tuple, String key)
+	protected static Object getElementFromTuple(Map tuple, String key)
 		throws LSPException
 	{
 		Object o = tuple.get(key);

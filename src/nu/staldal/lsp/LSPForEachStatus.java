@@ -40,7 +40,9 @@
 
 package nu.staldal.lsp;
 
-public class LSPForEachStatus implements LSPTuple
+import java.util.Map;
+
+public class LSPForEachStatus implements Map
 {
     private LSPList theList;
 
@@ -49,7 +51,7 @@ public class LSPForEachStatus implements LSPTuple
         theList = list;
     }
     
-    public Object get(String key)
+    public Object get(Object key)
     {
         if (key.equals("index"))
             return new Double(theList.index());
@@ -64,5 +66,73 @@ public class LSPForEachStatus implements LSPTuple
         else
             return null;
     }
+    
+    public boolean containsKey(Object key)
+    {
+        if (key.equals("index"))
+            return true;
+        else if (key.equals("first"))
+            return true;
+        else if (key.equals("last"))
+            return true;
+        else if (key.equals("even"))
+            return true;
+        else if (key.equals("odd"))
+            return true;
+        else
+            return false;
+    }
+
+    public int size()
+    {   
+        return 5;
+    }
+
+    public boolean isEmpty()
+    {
+        return size() == 0;    
+    }
+
+    public boolean containsValue(Object value)
+    {
+        throw new UnsupportedOperationException();    
+    }
+    
+    public Object put(Object key, Object value)
+    {
+        throw new UnsupportedOperationException();    
+    }
+    
+
+    public Object remove(Object key)
+    {
+        throw new UnsupportedOperationException();    
+    }
+
+    public void putAll(Map t)
+    {
+        throw new UnsupportedOperationException();    
+    }
+
+    public void clear()
+    {
+        throw new UnsupportedOperationException();    
+    }
+
+    public java.util.Set keySet()
+    {
+        throw new UnsupportedOperationException();    
+    }
+
+    public java.util.Collection values()
+    {
+        throw new UnsupportedOperationException();    
+    }
+
+    public java.util.Set entrySet()
+    {
+        throw new UnsupportedOperationException();    
+    }
+
 }
 

@@ -134,9 +134,11 @@ class LSPJVMCompiler implements Constants
 		instrList.append(new PUSH(constGen, executeDynamic ? 1 : 0));
 		instrList.append(new PUSH(constGen, System.currentTimeMillis()));
 		instrList.append(new PUSH(constGen, pageName));
+		instrList.append(new PUSH(constGen, LSPPage.LSP_VERSION_NAME));
+		instrList.append(new PUSH(constGen, LSPPage.LSP_VERSION_NUM));
 		instrList.append(instrFactory.createInvoke(LSPPageBase.class.getName(), 
 			"<init>", Type.VOID, 
-			new Type[] { new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), Type.BOOLEAN, Type.BOOLEAN, Type.LONG, Type.STRING }, 
+			new Type[] { new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), Type.BOOLEAN, Type.BOOLEAN, Type.LONG, Type.STRING, Type.STRING, Type.INT }, 
 			INVOKESPECIAL));
 		instrList.append(instrFactory.createReturn(Type.VOID));
 		constr.setMaxStack();
@@ -1276,12 +1278,12 @@ class LSPJVMCompiler implements Constants
 		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
-		if (type != LSPTuple.class)
+		if (type != Map.class)
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToTuple",
-				Type.getType(LSPTuple.class),
+				Type.getType(Map.class),
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
 		}
@@ -2206,7 +2208,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
-		// LSPTuple tuple = evalExprAsTuple(expr.getBase());
+		// Map tuple = evalExprAsTuple(expr.getBase());
 		compileSubExprAsTuple(expr.getBase(), methodGen, instrList);
 		// String key = evalSubExprAsString(expr.getKey());
 		compileSubExprAsString(expr.getKey(), methodGen, instrList); 		
@@ -2215,7 +2217,7 @@ class LSPJVMCompiler implements Constants
 			LSPPageBase.class.getName(),
 			"getElementFromTuple",
 			Type.OBJECT,
-			new Type[] { Type.getType(LSPTuple.class), Type.STRING },
+			new Type[] { Type.getType(Map.class), Type.STRING },
 			INVOKESTATIC));		
 
 		return Object.class;
@@ -2345,12 +2347,12 @@ class LSPJVMCompiler implements Constants
 		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
-		if (type != LSPTuple.class)
+		if (type != Map.class)
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToTuple",
-				Type.getType(LSPTuple.class),
+				Type.getType(Map.class),
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
 		}
