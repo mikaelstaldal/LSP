@@ -916,9 +916,15 @@ public class LSPInterpreter implements LSPPage
 		Object value = evalExpr(expr);
 		if (value instanceof LSPList) 
 			return (LSPList)value;
+		else if (value instanceof Object[]) 
+			return new LSPArrayList((Object[])value);
+		else if (value instanceof Enumeration) 
+			return new LSPEnumerationList((Enumeration)value);
+		else if (value instanceof Iterator) 
+			return new LSPIteratorList((Iterator)value);
 		else
 			throw new LSPException(
-				"Convert to List not implemented for type "
+				"Convert to list not implemented for type "
 				+ value.getClass().getName());
 	}
 
@@ -927,9 +933,13 @@ public class LSPInterpreter implements LSPPage
 		Object value = evalExpr(expr);
 		if (value instanceof LSPTuple) 
 			return (LSPTuple)value;
+		else if (value instanceof Dictionary) 
+			return new LSPDictionaryTuple((Dictionary)value);
+		else if (value instanceof Map) 
+			return new LSPMapTuple((Map)value);
 		else
 			throw new LSPException(
-				"Convert to Tuple not implemented for type "
+				"Convert to tuple not implemented for type "
 				+ value.getClass().getName());
 	}
 

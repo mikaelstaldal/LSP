@@ -40,6 +40,9 @@
 
 package nu.staldal.lsp;
 
+import java.util.*;
+
+
 /**
  * Interface for the LSP list data type.
  * <p>
@@ -99,5 +102,167 @@ public interface LSPList
 	 *         reset this list.
 	 */
 	public void reset() throws java.lang.IllegalArgumentException;	
+}
+
+
+/**
+ * Implementation of LSPList for Object[].
+ */
+class LSPArrayList implements LSPList
+{
+	private Object[] arr;
+	private int curr;
+
+	public LSPArrayList(Object[] arr)
+	{
+		this.arr = arr;
+		curr = 0;
+	}
+	
+	public boolean hasNext()
+	{
+		return (curr < arr.length);
+	}
+
+	public Object next() throws java.util.NoSuchElementException
+	{
+		try {
+			return arr[curr++];
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			throw new java.util.NoSuchElementException();
+		}
+	}
+
+	public int index()
+	{
+		return curr;	
+	}
+
+    public int length()
+	{
+		return arr.length;	
+	}
+
+	public void reset()
+	{
+		curr = 0;	
+	}	
+	
+}
+
+
+/**
+ * Implementation of LSPList for {@link java.util.Enumeration}.
+ */
+class LSPEnumerationList implements LSPList
+{
+    private int theLength = 0;
+	private Enumeration enum;
+	private boolean atEnd = false;
+
+	public LSPEnumerationList(Enumeration enum)
+	{
+		this.enum = enum;
+	}
+
+	public boolean hasNext()
+	{
+		return enum.hasMoreElements();
+	}
+
+	public Object next() throws NoSuchElementException
+	{
+		try {
+			Object o = enum.nextElement();
+			theLength++;
+			return o;
+		}
+		catch (NoSuchElementException e)
+		{
+			atEnd = true;
+			throw e;
+		}
+	}
+
+	public int index()
+	{
+		return theLength;	
+	}
+
+    public int length() throws IllegalArgumentException
+	{
+		if (atEnd)
+			return theLength;
+		else
+			throw new IllegalArgumentException(
+				"not possible to check length of an Enumeration");
+	}
+
+	public void reset() throws IllegalArgumentException
+	{
+		if (theLength > 0)
+			throw new IllegalArgumentException(
+				"not possible to reset an Enumeration");
+	}
+	
+}
+
+
+/**
+ * Implementation of LSPList for {@link java.util.Iterator}.
+ */
+class LSPIteratorList implements LSPList
+{
+    private int theLength = 0;
+	private Iterator iter;
+	private boolean atEnd = false;
+
+	public LSPIteratorList(Iterator iter)
+	{
+		this.iter = iter;
+	}
+
+	public boolean hasNext()
+	{
+		return iter.hasNext();
+	}
+
+	public Object next() throws NoSuchElementException
+	{
+		try {
+			Object o = iter.next();
+			theLength++;
+			return o;
+		}
+		catch (NoSuchElementException e)
+		{
+			atEnd = true;
+			throw e;
+		}
+	}
+
+	public int index()
+	{
+		return theLength;	
+	}
+
+    public int length() throws IllegalArgumentException
+	{
+		if (atEnd)
+			return theLength;
+		else
+			throw new IllegalArgumentException(
+				"not possible to check length of an Enumeration");
+	}
+
+	public void reset() throws IllegalArgumentException
+	{
+		if (theLength > 0)
+			throw new IllegalArgumentException(
+				"not possible to reset an Enumeration");
+	}
+	
 }
 

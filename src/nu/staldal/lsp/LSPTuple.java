@@ -40,6 +40,9 @@
 
 package nu.staldal.lsp;
 
+import java.util.*;
+
+
 /**
  * Interface for the LSP tuple data type.
  */
@@ -53,6 +56,46 @@ public interface LSPTuple
 	 * or <code>null</code> if no value is mapped to the given key.
 	 */
 	public Object get(String key);
+
+}
+
+
+/**
+ * Implementation of LSPTuple for {@link java.util.Dictionary}.
+ */
+class LSPDictionaryTuple implements LSPTuple
+{
+    private Dictionary dict;
+
+    public LSPDictionaryTuple(Dictionary dict)
+    {
+		this.dict = dict;
+    }   
+
+	public Object get(String key)
+	{
+		return dict.get(key);	
+	}
+
+}
+
+
+/**
+ * Implementation of LSPTuple for {@link java.util.Map}.
+ */
+class LSPMapTuple implements LSPTuple
+{
+    private Map map;
+
+    public LSPMapTuple(Map map)
+    {
+		this.map = map;
+    }   
+
+	public Object get(String key)
+	{
+		return map.get(key);	
+	}
 
 }
 
