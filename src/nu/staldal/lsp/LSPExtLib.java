@@ -48,9 +48,6 @@ import org.xml.sax.*;
 import nu.staldal.xtree.*;
 import nu.staldal.syntax.ParseException;
 
-import nu.staldal.lagoon.core.LagoonContext;
-import nu.staldal.lagoon.core.SourceManager;
-import nu.staldal.lagoon.core.Target;
 
 /**
  * LSP Extension Library.
@@ -84,20 +81,18 @@ public interface LSPExtLib
 	/**
 	 * Initialize this Extension Library.
 	 *
-	 * @param context    	the current LagoonContext
 	 * @param namespaceURI  the namespace URI to serve
 	 */
-	public void init(LagoonContext context, String namespaceURI)
+	public void init(String namespaceURI)
 		throws LSPException;
 
 
 	/**
 	 * Indicate the start of an LSP page.
-	 * 
-	 * @param target     the current Target
-	 * @param sourceMan  the current SourceManager
+	 *
+	 * @param resolver  the current URLResolver
 	 */
-	public void startPage(Target target, SourceManager sourceMan)
+	public void startPage(URLResolver resolver)
 		throws LSPException;
 	
 

@@ -48,10 +48,6 @@ import java.util.Hashtable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import nu.staldal.lagoon.core.LagoonContext;
-import nu.staldal.lagoon.core.Target;
-import nu.staldal.lagoon.core.SourceManager;
-
 
 public interface LSPPage extends Serializable
 {
@@ -71,7 +67,7 @@ public interface LSPPage extends Serializable
      * or endDocument() events.
      */
     public void execute(ContentHandler ch, URLResolver resolver,
-        	Hashtable params, LagoonContext context, Target target, 
-			SourceManager sourceMan)
+        	Hashtable params)
         throws SAXException;
 }
+

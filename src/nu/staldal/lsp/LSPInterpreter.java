@@ -54,10 +54,6 @@ import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
 import nu.staldal.lsp.wrapper.*;
 
-import nu.staldal.lagoon.core.LagoonContext;
-import nu.staldal.lagoon.core.Target;
-import nu.staldal.lagoon.core.SourceManager;
-
 
 public class LSPInterpreter implements LSPPage
 {
@@ -81,10 +77,8 @@ public class LSPInterpreter implements LSPPage
 
     private transient URLResolver resolver = null;
     private transient Environment env = null;
-	private transient LagoonContext context = null;
-	private transient Target target = null;
-	private transient SourceManager sourceMan = null;
 
+	
     public LSPInterpreter(LSPNode theTree, 
 		Hashtable importedFiles, Vector includedFiles, 
 		boolean compileDynamic,	boolean executeDynamic,
@@ -128,8 +122,7 @@ public class LSPInterpreter implements LSPPage
 
 
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params, LagoonContext context, Target target, 
-		SourceManager sourceMan)
+        Hashtable params)
         throws SAXException
     {
         this.env = new Environment();
@@ -139,10 +132,7 @@ public class LSPInterpreter implements LSPPage
 			env.bind(key, params.get(key));
 		}
 
-		this.context = context;
         this.resolver = resolver;
-		this.target = target;
-		this.sourceMan = sourceMan;
 		
 		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
 		{
@@ -151,7 +141,7 @@ public class LSPInterpreter implements LSPPage
 			
 			LSPExtLib extLib = lookupExtensionHandler(nsURI, className);			
 			
-			extLib.startPage(target, sourceMan);
+			extLib.startPage(resolver);
 		}
 		
 		
@@ -181,9 +171,6 @@ public class LSPInterpreter implements LSPPage
 			extLib.endPage();
 		}
 		
-		this.sourceMan = null;
-		this.target = null;
-		this.context = null;
         this.resolver = null;
         this.env = null;
     }
@@ -1025,7 +1012,7 @@ public class LSPInterpreter implements LSPPage
 			{
 				Class extClass = Class.forName(className);
 				extLib = (LSPExtLib)extClass.newInstance();
-				extLib.init(context, nsURI);
+				extLib.init(nsURI);
 				extLibs.put(className, extLib);
 			}
 			return extLib;
