@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,29 +40,29 @@
 
 package nu.staldal.lsp;
 
-import java.util.Map;
+import java.util.*;
 
 public class LSPForEachStatus implements Map
 {
-    private LSPList theList;
+    private ListIterator theIterator;
 
-    public LSPForEachStatus(LSPList list)
+    public LSPForEachStatus(ListIterator iterator)
     {
-        theList = list;
+        theIterator = iterator;
     }
     
     public Object get(Object key)
     {
         if (key.equals("index"))
-            return new Double(theList.index());
+            return new Double(theIterator.nextIndex());
         else if (key.equals("first"))
-            return Boolean.valueOf(theList.index() == 1);
+            return Boolean.valueOf(theIterator.nextIndex() == 1);
         else if (key.equals("last"))
-            return Boolean.valueOf(!theList.hasNext());
+            return Boolean.valueOf(!theIterator.hasNext());
         else if (key.equals("even"))
-            return Boolean.valueOf(theList.index() % 2 == 0);
+            return Boolean.valueOf(theIterator.nextIndex() % 2 == 0);
         else if (key.equals("odd"))
-            return Boolean.valueOf(theList.index() % 2 != 0);
+            return Boolean.valueOf(theIterator.nextIndex() % 2 != 0);
         else
             return null;
     }

@@ -48,7 +48,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import nu.staldal.util.*;
 
-import nu.staldal.lsp.wrapper.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
@@ -216,22 +215,20 @@ public abstract class LSPPageBase implements LSPPage
 			return value;
 		else if (value instanceof Number)
 			return value;
-		else if (value instanceof LSPList) 
+		else if (value instanceof List) 
 			return value;
 		else if (value instanceof Map) 
 			return value;
-		else if (value instanceof Object[]) 
-			return new LSPArrayList((Object[])value);
-		else if (value instanceof Vector) 
-			return new LSPVectorList((Vector)value);
-		else if (value instanceof Collection) 
-			return new LSPCollectionList((Collection)value);
-		else if (value instanceof Enumeration) 
-			return new LSPEnumerationList((Enumeration)value);
-		else if (value instanceof Iterator) 
-			return new LSPIteratorList((Iterator)value);
+		else if (value instanceof Object[])
+        {
+            Object[] arr = (Object[])value;
+            if (arr.length == 0)
+                return Collections.EMPTY_LIST;
+            else
+                return Arrays.asList(arr);
+        }
 		else if (value instanceof java.sql.ResultSet) 
-			return new LSPResultSetTupleList((java.sql.ResultSet)value);
+			return new nu.staldal.lsp.wrapper.LSPResultSetTupleList((java.sql.ResultSet)value);
 		else if (value instanceof char[])
 			return new String((char[])value);
 		else if (value instanceof byte[])
@@ -324,9 +321,9 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return ((String)value).length() > 0;
 		}
-		if (value instanceof LSPList)
+		if (value instanceof List)
 		{
-			return ((LSPList)value).length() > 0;
+			return !(((List)value).isEmpty());
 		}
 		else
 		{
@@ -338,10 +335,10 @@ public abstract class LSPPageBase implements LSPPage
 
 
 
-	protected static LSPList convertToList(Object value) throws LSPException
+	protected static List convertToList(Object value) throws LSPException
 	{
-		if (value instanceof LSPList) 
-			return (LSPList)value;
+		if (value instanceof List) 
+			return (List)value;
 		else
 			throw new LSPException(
 				"Convert to list not implemented for type "
@@ -558,13 +555,13 @@ public abstract class LSPPageBase implements LSPPage
 	}
 	
 
-	protected static LSPList fnSeq(double start, double end, double step)
+	protected static List fnSeq(double start, double end, double step)
 	{
 		ArrayList vec = new ArrayList((int)((end-start)/step));
 		for (; start <= end; start+=step)
 		 	vec.add(new Double(start));
 		
-		return new LSPCollectionList(vec);
+		return vec;
 	}
 
 		

@@ -972,30 +972,28 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-		// final LSPList theList = evalExprAsList(el.getList());
+		// final List theList = evalExprAsList(el.getList());
 		compileExprAsList(el.getList(), methodGen, instrList);
 
-		instrList.append(InstructionConstants.DUP); // DUP theList
-		
-		// theList.reset();
-		InstructionHandle reset = instrList.append(instrFactory.createInvoke(
-			LSPList.class.getName(),
-			"reset",
-			Type.VOID,
+		// ListIterator theIter = theList.listIterator();
+		instrList.append(instrFactory.createInvoke(
+			List.class.getName(),
+			"listIterator",
+			Type.getType(ListIterator.class),
 			Type.NO_ARGS,
 			INVOKEINTERFACE));
 		
-		// while (theList.hasNext())
+		// while (theIter.hasNext())
 		BranchInstruction loopStart = 
 			instrFactory.createBranchInstruction(GOTO, null); 		
 		instrList.append(loopStart);		
 		InstructionHandle atStartOfLoop = 
 			instrList.append(InstructionConstants.NOP);
 				
-		// Object o = theList.next();
-		instrList.append(InstructionConstants.DUP); // DUP theList
+		// Object o = theIter.next();
+		instrList.append(InstructionConstants.DUP); // DUP theIter
 		instrList.append(instrFactory.createInvoke(
-			LSPList.class.getName(),
+			ListIterator.class.getName(),
 			"next",
 			Type.OBJECT,
 			Type.NO_ARGS,
@@ -1030,9 +1028,9 @@ class LSPJVMCompiler implements Constants
 			
 		if (el.getStatusObject() != null)
 		{
-			instrList.append(InstructionConstants.DUP); // DUP theList	
+			instrList.append(InstructionConstants.DUP); // DUP theIter	
 
-			// env.bind(el.getStatusObject(), new LSPForEachStatus(theList));
+			// env.bind(el.getStatusObject(), new LSPForEachStatus(theIter));
 			instrList.append(instrFactory.createLoad(
 				Type.getType(Environment.class), PARAM_env));
 			instrList.append(InstructionConstants.SWAP);
@@ -1045,7 +1043,7 @@ class LSPJVMCompiler implements Constants
 			instrList.append(instrFactory.createInvoke(
 				LSPForEachStatus.class.getName(),
 				"<init>", Type.VOID, 
-				new Type[] { Type.getType(LSPList.class) }, 
+				new Type[] { Type.getType(ListIterator.class) }, 
 				INVOKESPECIAL));			
 
 			instrList.append(instrFactory.createInvoke(
@@ -1071,9 +1069,9 @@ class LSPJVMCompiler implements Constants
 
 		// end while				
 		loopStart.setTarget(
-			instrList.append(InstructionConstants.DUP)); // DUP theList
+			instrList.append(InstructionConstants.DUP)); // DUP theIter
 		instrList.append(instrFactory.createInvoke(
-			LSPList.class.getName(),
+			ListIterator.class.getName(),
 			"hasNext",
 			Type.BOOLEAN,
 			Type.NO_ARGS,
@@ -1081,7 +1079,7 @@ class LSPJVMCompiler implements Constants
 		instrList.append(instrFactory.createBranchInstruction(
 				IFNE, atStartOfLoop));
 		
-		instrList.append(InstructionConstants.POP); // POP theList
+		instrList.append(InstructionConstants.POP); // POP theIter
 	}
 		
 
@@ -1280,12 +1278,12 @@ class LSPJVMCompiler implements Constants
 		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
-		if (type != LSPList.class)
+		if (type != List.class)
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToList",
-				Type.getType(LSPList.class),
+				Type.getType(List.class),
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
 		}
@@ -2122,13 +2120,13 @@ class LSPJVMCompiler implements Constants
 				throw new LSPException(
 					"count() function must have 1 argument");
 
-			// LSPList list = evalExprAsList(expr.getArg(0));
+			// List list = evalExprAsList(expr.getArg(0));
 			compileSubExprAsList(expr.getArg(0), methodGen, instrList);
 
 			// return new Double(list.length());
 			instrList.append(instrFactory.createInvoke(
-				LSPList.class.getName(),
-				"length",
+				List.class.getName(),
+				"size",
 				Type.INT,
 				Type.NO_ARGS,
 				INVOKEINTERFACE));
@@ -2163,11 +2161,11 @@ class LSPJVMCompiler implements Constants
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"fnSeq",
-				Type.getType(LSPList.class),
+				Type.getType(List.class),
 				new Type[] { Type.DOUBLE, Type.DOUBLE, Type.DOUBLE },
 				INVOKESTATIC));											
 
-			return LSPList.class;
+			return List.class;
 		}
 		else
 		{
@@ -2349,12 +2347,12 @@ class LSPJVMCompiler implements Constants
 		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
-		if (type != LSPList.class)
+		if (type != List.class)
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToList",
-				Type.getType(LSPList.class),
+				Type.getType(List.class),
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
 		}
