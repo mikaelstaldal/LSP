@@ -338,6 +338,30 @@ that it may contain LSP expressions surrounded by curly braces
 (together with the curly braces) is replaced with its string value. To
 actually include a literal curly brace, use a double curly brace.</p>
 
+<p>If the attribute value of an non-LSP element consists of an expression 
+yeilding a boolean value, it will be handled specially. If the expression
+evaulates to false the attribute will be removed, if the expression evaulates 
+to true the attribute will get its name as value. This is useful for handling
+the boolean attributes in HTML, such as <code>checked</code> and 
+<code>selected</code>. <em>Note:</em> the check if the expression yeilds a 
+boolean value is done at compile time, it won't work if the expression is a
+variable reference, a tuple expression or an extension function call. Wrap
+the expression with the <code>boolean</code> function to force handling as
+a boolean. Wrap the expression with the <code>string</code> function to 
+inhibit handling as a boolean.</p>
+
+<p>Example:</p>
+<pre>
+&lt;select&gt;
+  &lt;lsp:for-each select="$theList" var="ent"&gt;
+    &lt;option value="{$ent.value}" selected="{$ent.value=$currentVal}"&gt;
+      &lt;lsp:value-of select="$ent.text"/&gt;
+    &lt;/option&gt;
+  &lt;/lsp:for-each&gt;
+&lt;/select&gt;
+
+</pre>
+ 
 
 <h2>LSP Expressions</h2>
 

@@ -20,6 +20,9 @@
       </lsp:if>
     </input><br/>
 
+    Box 3: 
+    <input type="checkbox" name="box3" checked="{$flag='foobar'}"/><br/>
+
     </form>    
   </body>
 </html>

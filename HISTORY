@@ -49,3 +49,6 @@
 1.1
 ---
 * <lsp:output>.
+* Allow <lsp:attribute> inside <lsp:if>
+* Whitespace stripping after <lsp:attribute>.
+

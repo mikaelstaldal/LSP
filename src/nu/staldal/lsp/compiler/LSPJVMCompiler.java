@@ -586,7 +586,40 @@ class LSPJVMCompiler implements Constants
 			instrList.append(new PUSH(constGen, el.getAttributeType(i)));
 
 			// String value = evalExprAsString(el.getAttributeValue(i));
-			compileExprAsString(el.getAttributeValue(i), methodGen, instrList);
+            Class valueType = compileExpr(
+                el.getAttributeValue(i), methodGen, instrList);
+            if (valueType == Boolean.class)
+            {
+                try {
+                    instrList.delete(instrList.getEnd());
+                }
+                catch (TargetLostException e)
+                {
+                    throw new LSPException("Internal error in LSP compiler: " + e.getMessage());	
+                }
+                
+				BranchInstruction shortBranch = instrFactory.createBranchInstruction(
+					IFNE, null);
+				instrList.append(shortBranch);
+				instrList.append(InstructionConstants.POP2);
+				instrList.append(InstructionConstants.POP2);
+				instrList.append(InstructionConstants.POP);
+				longBranch = instrFactory.createBranchInstruction(GOTO, null);
+				instrList.append(longBranch);
+				shortBranch.setTarget(instrList.append(InstructionConstants.NOP));
+                compileExprAsString(localExpr, methodGen, instrList);
+            }            
+            else if (valueType == String.class)
+                ;
+            else
+            {
+                instrList.append(instrFactory.createInvoke(
+                    LSPPageBase.class.getName(),
+                    "convertToString",
+                    Type.STRING,
+                    new Type[] { Type.OBJECT },
+                    INVOKESTATIC));
+            }
 
 			// saxAtts.addAttribute(URI, local, qName, type, value);
 			instrList.append(instrFactory.createInvoke(
