@@ -68,13 +68,13 @@ public class LSPCompiler
     private TreeBuilder tb;
     private URLResolver resolver;
 
-    private Hashtable importedFiles;
-    private Vector includedFiles;
+    private HashMap importedFiles;
+    private ArrayList includedFiles;
     private boolean compileDynamic;
     private boolean executeDynamic;
 
 	// (String)namespaceURI -> (String)className
-	private Hashtable extLibsInPage; 
+	private HashMap extLibsInPage; 
 
 	private boolean inPi;
 	private boolean inExtElement;
@@ -83,7 +83,7 @@ public class LSPCompiler
 	private LSPElement currentElement;
 	
 	// (String)namespaceURI -> (String)className
-	private Hashtable extDict = new Hashtable(); 
+	private HashMap extDict = new HashMap(); 
 
 
 	private static SAXException fixSourceException(Node node, String msg)
@@ -162,12 +162,12 @@ public class LSPCompiler
 	}
 
 
-	private static Vector processTemplate(Node n,
+	private static ArrayList processTemplate(Node n,
         char left, char right, char quot1, char quot2,
         String template)
         throws SAXException
 	{
-		Vector vector = new Vector(template.length()/16);
+		ArrayList vector = new ArrayList(template.length()/16);
 		StringBuffer text = new StringBuffer();
 		StringBuffer expr = null;
 		char quote = 0;
@@ -215,7 +215,7 @@ public class LSPCompiler
 					if (brace == left)
 					{
 						if (text.length() > 0)
-							vector.addElement(text.toString());
+							vector.add(text.toString());
 						text = null;
 
 						expr = new StringBuffer();
@@ -260,7 +260,7 @@ public class LSPCompiler
                             throw fixParseException(
 								n, exp, (ParseException)e);
                         }
-                        vector.addElement(res);
+                        vector.add(res);
 						expr = null;
 						text = new StringBuffer();
 					}
@@ -282,7 +282,7 @@ public class LSPCompiler
 		}
 
 		if ((text != null) && (text.length() > 0))
-			vector.addElement(text.toString());
+			vector.add(text.toString());
 		text = null;
 
 		return vector;
@@ -298,11 +298,11 @@ public class LSPCompiler
 
     public ContentHandler startCompile(URLResolver r)
     {
-    	importedFiles = new Hashtable();
-	    includedFiles = new Vector();
+    	importedFiles = new HashMap();
+	    includedFiles = new ArrayList();
         compileDynamic = false;
         executeDynamic = false;
-		extLibsInPage = new Hashtable();
+		extLibsInPage = new HashMap();
 
         resolver = r;
         tb = new TreeBuilder();
@@ -595,13 +595,13 @@ public class LSPCompiler
     private LSPExpr processTemplateExpr(Node n, String template)
         throws SAXException
     {
-		Vector vec = processTemplate(n, '{', '}', '\'', '\"', template);
+		ArrayList vec = processTemplate(n, '{', '}', '\'', '\"', template);
 
 		BuiltInFunctionCall expr = new BuiltInFunctionCall("concat", vec.size());
 
-		for (Enumeration e = vec.elements(); e.hasMoreElements(); )
+		for (Iterator e = vec.iterator(); e.hasNext(); )
 		{
-			Object o = e.nextElement();
+			Object o = e.next();
 			if (o instanceof String)
 			{
 				expr.addArgument(new StringLiteral((String)o));
@@ -742,7 +742,7 @@ public class LSPCompiler
 
 		if (file instanceof StringLiteral)
 		{
-			includedFiles.addElement(((StringLiteral)file).getValue());
+			includedFiles.add(((StringLiteral)file).getValue());
 		}
 		else
 		{

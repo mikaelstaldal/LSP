@@ -42,7 +42,7 @@ package nu.staldal.lsp;
 
 import java.io.Serializable;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.xml.sax.ContentHandler;
@@ -58,9 +58,9 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage extends Serializable, Cloneable
 {
-    public Enumeration getCompileDependentFiles();
+    public Iterator getCompileDependentFiles();
 
-    public Enumeration getExecuteDependentFiles();
+    public Iterator getExecuteDependentFiles();
 
     public boolean isCompileDynamic();
 

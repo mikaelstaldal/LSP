@@ -63,14 +63,14 @@ public class LSPInterpreter implements LSPPage
 
     private final long timeCompiled;
     private final LSPNode theTree;
-    private final Hashtable importedFiles;
-    private final Vector includedFiles;
+    private final HashMap importedFiles;
+    private final ArrayList includedFiles;
     private final boolean compileDynamic;
     private final boolean executeDynamic;
-	private final Hashtable extLibsInPage;
+	private final HashMap extLibsInPage;
 
 	// (String)className -> (LSPExtLib)extLib
-	private transient Hashtable extLibs;		
+	private transient HashMap extLibs;		
 
     private transient URLResolver resolver;
     private transient Environment env;
@@ -79,9 +79,9 @@ public class LSPInterpreter implements LSPPage
 
 	
     public LSPInterpreter(LSPNode theTree, 
-		Hashtable importedFiles, Vector includedFiles, 
+		HashMap importedFiles, ArrayList includedFiles, 
 		boolean compileDynamic,	boolean executeDynamic,
-		Hashtable extLibsInPage)
+		HashMap extLibsInPage)
         throws LSPException
     {
         this.timeCompiled = System.currentTimeMillis();
@@ -112,7 +112,7 @@ public class LSPInterpreter implements LSPPage
 	
 	private void init()
 	{
-		extLibs = new Hashtable();
+		extLibs = new HashMap();
 		resolver = null;
 		env = null;
 		extContext = null;
@@ -120,14 +120,14 @@ public class LSPInterpreter implements LSPPage
 	}
 	
 	
-    public Enumeration getCompileDependentFiles()
+    public Iterator getCompileDependentFiles()
     {
-        return importedFiles.keys();
+        return importedFiles.keySet().iterator();
     }
 
-    public Enumeration getExecuteDependentFiles()
+    public Iterator getExecuteDependentFiles()
     {
-        return includedFiles.elements();
+        return includedFiles.iterator();
     }
 
     public boolean isCompileDynamic()
@@ -163,9 +163,9 @@ public class LSPInterpreter implements LSPPage
 		this.extContext = extContext;
 		this.targetURL = targetURL;
 				
-		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
+		for (Iterator e = extLibsInPage.keySet().iterator(); e.hasNext(); )
 		{
-			String nsURI = (String)e.nextElement();
+			String nsURI = (String)e.next();
 			String className = (String)extLibsInPage.get(nsURI);
 			
 			LSPExtLib extLib = lookupExtensionHandler(nsURI, className);			
@@ -190,9 +190,9 @@ public class LSPInterpreter implements LSPPage
 			
 		if (DEBUG) debug.close();
 
-		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
+		for (Iterator e = extLibsInPage.keySet().iterator(); e.hasNext(); )
 		{
-			String nsURI = (String)e.nextElement();
+			String nsURI = (String)e.next();
 			String className = (String)extLibsInPage.get(nsURI);
 			
 			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);			
@@ -856,13 +856,13 @@ public class LSPInterpreter implements LSPPage
 				? evalExprAsNumber(expr.getArg(2))
 				: 1.0;
 
-			Vector vec = new Vector((int)((end-start)/step));
+			ArrayList vec = new ArrayList((int)((end-start)/step));
 			for (; start <= end; start+=step)
-				vec.addElement(new Double(start));
+				vec.add(new Double(start));
 			
 			if (DEBUG) System.out.println("seq of length " + vec.size()); 
 
-			return new LSPVectorList(vec);
+			return new LSPCollectionList(vec);
 		}
 		else
 		{
