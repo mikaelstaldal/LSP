@@ -258,6 +258,24 @@ same name in the enclosing scope is shadowed.</p>
 </ul>
 </p>
 
+<h4>lsp:let</h4>
+
+<p class="element-syntax">
+<a name="element-let"></a>
+&lt;lsp:let<br />
+&#160;&#160;<i>var1</i> = <var>expression</var><br />
+&#160;&#160;<i>var2</i> = <var>expression</var><br />
+&#160;&#160;<i>...</i><br />
+&#160;&#160;<i>varn</i> = <var>expression</var>&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:let&gt;
+</p>
+
+<p>Each expression is evaulated, and the value is bound to a variable with the 
+same name as the attribute within the body of the <code>lsp:let</code> element.
+Any variables with the same name in the enclosing scope are shadowed.</p>
+
+
 <a name="template"><h2>Templates</h2></a>
 
 <p>All attribute values to non-LSP elements and the values of
