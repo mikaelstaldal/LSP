@@ -43,12 +43,156 @@ package nu.staldal.util;
 import java.util.*;
 
 /**
- * A stacked map used for scoped variable bindings.
+ * An Environment is used to store bindings from keys to values.
+ * <p>
+ * Keys and values are non-null Objects.
+ * <p>
+ * An environment consists of several <em>frames</em> in a stack.
+ * All modifications are made in the <em>current frame</em> 
+ * (top of the stack), but a lookup will search all other frames if
+ * a key is not found in the current frame. When a frame is poped,
+ * all modifications made since the last push is discarded and the original
+ * state of the Environment is restored. An Environment always has at least
+ * one frame, which cannot be popped.
+ * <p>
+ * This class is useful for handling variable bindings in an interpreter
+ * for language with scoped access to variables. 
  */
 public class Environment 
 {
-	private static final boolean DEBUG = true;
+	private Frame currentFrame;
 	
-	// ***
+	/**
+	 * Create a new Environment with one empty frame.
+	 */
+	public Environment()
+	{
+		currentFrame = new Frame();
+	}
+
+	/**
+	 * Lookup the value bound to the given key.
+	 *
+	 * @param key  the key
+	 *
+	 * @return the value bound to the given key, 
+	 * or <code>null</code> if no value is bound to the given key.
+	 */
+	public Object lookup(Object key)
+	{
+		if (key == null) 
+			throw new NullPointerException("Key may not be null");
+		
+		return currentFrame.lookup(key);
+	}
+	
+	/**
+	 * Bind a value to the given key. Will replace any previous value
+	 * for the given key in the current frame, or shadow any value for the
+	 * current key in any parent frame.
+	 *
+	 * @param key    the key, may not be <code>null</code>
+	 * @param value  the value, may not be <code>null</code>
+	 *
+	 * @return the previous value for the given key, 
+	 *         or <code>null</code> if the given key has no value
+	 *         <em>in the current frame</em>
+	 */
+	public Object bind(Object key, Object value)
+	{
+		if (key == null) 
+			throw new NullPointerException("Key may not be null");
+		if (value == null) 
+			throw new NullPointerException("Value may not be null");
+		
+		return currentFrame.bind(key, value);
+	}
+
+	/**
+	 * Unbind any value from the given key. Will only unbind values in the
+	 * current frame, has no effect if the key has a value in any parent
+	 * frame.
+	 *
+	 * @param key    the key, may not be <code>null</code>
+	 *
+	 * @return the previous value for the given key, 
+	 *         or <code>null</code> if the given key has no value
+	 *         <em>in the current frame</em>
+	 */
+	public Object unbind(Object key)
+	{
+		if (key == null) 
+			throw new NullPointerException("Key may not be null");
+		
+		return currentFrame.unbind(key);
+	}
+	
+	/**
+	 * Push a new frame on the frame stack.
+	 */
+	public void pushFrame()
+	{
+		currentFrame = new Frame(currentFrame);	
+	}
+
+
+	/**
+	 * Pop a frame from the frame stack. Any bindings in the current frame
+	 * will be discarded.
+	 *
+	 * @throws java.util.EmptyStackException if an attempt is made to
+	 * pop the last frame.
+	 */
+	public void popFrame()
+	{
+		Frame parentFrame = currentFrame.getParent();
+		if (parentFrame == null)
+			throw new EmptyStackException();
+		else
+			currentFrame = parentFrame;	
+	}
+
+
+	static class Frame
+	{
+		private Frame parent;
+		private Hashtable map;
+		
+		Frame(Frame p)
+		{
+			parent = p;
+			map = new Hashtable();
+		}
+	
+		Frame()
+		{
+			this(null);
+		}	
+
+		Frame getParent()
+		{
+			return parent;	
+		}
+		
+		Object lookup(Object key)
+		{
+			Object obj = map.get(key);
+			if (obj == null && parent != null)
+			{
+				obj = parent.lookup(key);	
+			}
+			return obj;
+		}
+		
+		Object bind(Object key, Object value)
+		{
+			return map.put(key, value);
+		}
+	
+		Object unbind(Object key)
+		{
+			return map.remove(key);
+		}			
+	}
 }
 
