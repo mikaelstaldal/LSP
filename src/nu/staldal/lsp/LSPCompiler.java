@@ -76,6 +76,13 @@ public class LSPCompiler
 		return new LSPException(e.toString());
 	}
 
+	private static LSPException fixSourceException(Node node, String msg)
+	{
+		return new LSPException(
+			((node.getSystemId() == null) ? "source" : node.getSystemId())
+			+ ':' + node.getLineNumber()
+			+ ':' + node.getColumnNumber() + ": " + msg);
+	}
 
 	private static LSPException fixParseException(
 		String expression, ParseException e)
@@ -92,6 +99,28 @@ public class LSPCompiler
         else
             return new LSPException("Illegal LSP template: " + template);
     }
+
+
+	public String getAttr(String name, Element el, boolean throwOnError)
+		throws LSPException
+	{
+		String value = el.getAttributeValue(el.lookupAttribute("", name));
+
+		if ((value == null) || (value.length() < 1))
+		{
+			if (throwOnError)
+			{
+				throw fixSourceException(el,
+					"lsp:" + el.getLocalName() + " element must have a "
+					+ name + " attribute");
+			}
+			else
+			{
+				return null;
+			}
+		}
+		return value;
+	}
 
 
 	private static Vector processTemplate(
@@ -282,7 +311,7 @@ public class LSPCompiler
 					&& child.getNamespaceURI().equals(LSP_CORE_NS)
 					&& child.getLocalName().equals("import"))
 			{
-				String url = LSPUtil.getAttr("file", child, true);
+				String url = getAttr("file", child, true);
 				if (LSPUtil.absoluteURL(url))
 				{
 					compileDynamic = true;
@@ -296,6 +325,7 @@ public class LSPCompiler
 				}
 
 				InputSource inputSource = resolver.resolve(url);
+				// *** inputSource.setSystemId() for error reporting
 				Element importedDoc;
 				try {
 					importedDoc = TreeBuilder.parseXML(inputSource, false);
@@ -366,19 +396,19 @@ public class LSPCompiler
 			}
 			else if (el.getLocalName().equals("when"))
 			{
-				throw new LSPException(
+				throw fixSourceException(el,
 					"<lsp:when> must occur inside <lsp:choose>");
 			}
 			else if (el.getLocalName().equals("otherwise"))
 			{
-				throw new LSPException(
+				throw fixSourceException(el,
 					"<lsp:otherwise> must occur inside <lsp:choose>");
 			}
 			// *** more to implement
 			else
 			{
-				throw new LSPException("unrecognized LSP command: "
-						+ el.getLocalName());
+				throw fixSourceException(el,
+					"unrecognized LSP command: " + el.getLocalName());
 			}
 		}
 		else
@@ -537,10 +567,10 @@ public class LSPCompiler
 	private LSPNode process_processing_instruction(Element el)
 		throws LSPException
 	{
-		if (inPi) throw new LSPException(
+		if (inPi) throw fixSourceException(el,
 			"<lsp:processing-instruction> may not be nested");
 
-		LSPExpr name = processTemplateExpr(LSPUtil.getAttr("name", el, true));
+		LSPExpr name = processTemplateExpr(getAttr("name", el, true));
 
 		inPi = true;
 		LSPNode data = compileChildren(el);
@@ -554,7 +584,7 @@ public class LSPCompiler
 		throws LSPException
 	{
         LSPExpr file = processTemplateExpr(
-			LSPUtil.getAttr("file", el, true));
+			getAttr("file", el, true));
 
 		if (file instanceof StringLiteral)
 		{
@@ -572,7 +602,7 @@ public class LSPCompiler
 	private LSPNode process_if(Element el)
 		throws LSPException
 	{
-		String exp = LSPUtil.getAttr("test", el, true);
+		String exp = getAttr("test", el, true);
 		try {
 			LSPExpr test = LSPExpr.parseFromString(exp);
 
@@ -601,7 +631,7 @@ public class LSPCompiler
 						&& child.getLocalName().equals("when")
 						&& (choose.getOtherwise() == null))
 				{
-					String exp = LSPUtil.getAttr("test", child, true);
+					String exp = getAttr("test", child, true);
 					try {
 						LSPExpr test = LSPExpr.parseFromString(exp);
 
@@ -621,15 +651,18 @@ public class LSPCompiler
 				}
 				else
 				{
-					throw new LSPException("content of <lsp:choose> must match "
-						+ "(lsp:when+, lsp:otherwise?): " + child.getLocalName());
+					throw fixSourceException(child,
+						"content of <lsp:choose> must match "
+						+ "(lsp:when+, lsp:otherwise?): "
+						+ child.getLocalName());
 				}
 			}
 			else if (_child instanceof Text)
 			{
 				Text child = (Text)_child;
 				if (child.getValue().trim().length() > 0)
-					throw new LSPException("content of <lsp:choose> must match "
+					throw fixSourceException(child,
+						"content of <lsp:choose> must match "
 						+ "(lsp:when+, lsp:otherwise?): CharacterData");
 				// ignore whitespace
 			}
@@ -639,7 +672,7 @@ public class LSPCompiler
 			}
 			else
 			{
-	        	throw new LSPException("Unrecognized XTree Node: "
+	        	throw fixSourceException(_child, "Unrecognized XTree Node: "
 	        		+ _child.getClass().getName());
 			}
 		}

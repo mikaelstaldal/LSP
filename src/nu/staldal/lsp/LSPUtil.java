@@ -67,28 +67,6 @@ public final class LSPUtil
     }
 
 
-	public static String getAttr(String name, Element el, boolean throwOnError)
-		throws LSPException
-	{
-		String value = el.getAttributeValue(el.lookupAttribute("", name));
-
-		if ((value == null) || (value.length() < 1))
-		{
-			if (throwOnError)
-			{
-				throw new LSPException(
-					"lsp:" + el.getLocalName() + " element must have a "
-					+ name + " attribute");
-			}
-			else
-			{
-				return null;
-			}
-		}
-		return value;
-	}
-
-
 	public static String nChars(int n, char c)
 	{
 		StringBuffer sb = new StringBuffer(n);
