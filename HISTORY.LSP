@@ -36,3 +36,5 @@
 * disable-output-escaping in <lsp:value-of>
 * Removed <lsp:include>. This was almost never used, and you can get the
   same functionallity using an Extension Library.
+* Use JFlex for parsing LSP expressions, full support for Unicode in 
+  identifiers (according to XPath 1.0).
