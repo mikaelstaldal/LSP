@@ -54,8 +54,8 @@ public class Element extends NodeWithChildren
 {
 	static final long serialVersionUID = -1804355746259349573L;
 
-    String namespaceURI;
-    String localName;
+    final String namespaceURI;
+    final String localName;
 
 	URL baseURI = null;
 
@@ -110,6 +110,12 @@ public class Element extends NodeWithChildren
                    int numberOfAttributes, int numberOfChildren)
     {
         super(numberOfChildren);
+        
+        if (namespaceURI == null)
+            namespaceURI = "";
+        if (localName == null)
+            throw new NullPointerException("LocalName may not be null");
+        
         if (numberOfAttributes >= 0)
         {
             attrName = new Vector(numberOfAttributes);

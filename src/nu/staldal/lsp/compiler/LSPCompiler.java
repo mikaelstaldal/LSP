@@ -430,8 +430,7 @@ public class LSPCompiler
 
 			Element child = (Element)el.getChild(i);
 
-			if ((child.getNamespaceURI() != null)
-					&& child.getNamespaceURI().equals(LSP_CORE_NS)
+			if (child.getNamespaceURI().equals(LSP_CORE_NS)
 					&& child.getLocalName().equals("import"))
 			{
 				String url = getAttr("file", child, true);
@@ -477,8 +476,7 @@ public class LSPCompiler
 
     private LSPNode compileNode(Element el) throws SAXException
     {
-		if ((el.getNamespaceURI() != null)
-				&& el.getNamespaceURI().equals(LSP_CORE_NS))
+		if (el.getNamespaceURI().equals(LSP_CORE_NS))
 		{
 			// Dispatch LSP command
 			if (el.getLocalName().equals("output"))
@@ -702,19 +700,52 @@ public class LSPCompiler
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
 			Node child = el.getChild(i);
+            
             if (child.isWhitespaceNode()
                     && (!child.getPreserveSpace())
                     && (i+1 < el.numberOfChildren())
-                    && el.getChild(i+1) instanceof Element
-                    && ((Element)el.getChild(i+1)).getNamespaceURI().equals(LSP_CORE_NS)
-                    && (((Element)el.getChild(i+1)).getLocalName().equals("attribute")
-                        || ((Element)el.getChild(i+1)).getLocalName().equals("output")))
-                ; // strip whitespace before <lsp:attribute> and <lsp:output>
-            else
-            {                                
-                LSPNode compiledNode = compileNode(child);
-                container.addChild(compiledNode);
+                    && el.getChild(i+1) instanceof Element)
+            {
+                Element child2 = (Element)el.getChild(i+1);
+
+                if (child2.getNamespaceURI().equals(LSP_CORE_NS))
+                {
+                    if (child2.getLocalName().equals("attribute")
+                            || child2.getLocalName().equals("output"))
+                    {               
+                        continue; // strip whitespace                        
+                    }
+                    
+                    if (child2.getLocalName().equals("if")
+                            && (child2.numberOfChildren() >= 1) 
+                            && (child2.getChild(0) instanceof Element))
+                    {
+                        Element child3 = (Element)child2.getChild(0);
+
+                        if (child3.getNamespaceURI().equals(LSP_CORE_NS)
+                                && child3.getLocalName().equals("attribute"))
+                        {
+                            continue; // strip whitespace                        
+                        }                                                
+                    }
+                    else if (child2.getLocalName().equals("if")
+                            && (child2.numberOfChildren() >= 2) 
+                            && (child2.getChild(0).isWhitespaceNode())
+                            && (child2.getChild(1) instanceof Element))
+                    {
+                        Element child3 = (Element)child2.getChild(1);
+
+                        if (child3.getNamespaceURI().equals(LSP_CORE_NS)
+                                && child3.getLocalName().equals("attribute"))
+                        {
+                            continue; // strip whitespace                        
+                        }                                                
+                    }
+                }
             }
+
+            LSPNode compiledNode = compileNode(child);
+            container.addChild(compiledNode);
 		}
 	}
 
@@ -900,8 +931,7 @@ public class LSPCompiler
             {
                 Element theChild = (Element)el.getChild(0);
 
-                if (theChild.getNamespaceURI() != null
-                        && theChild.getNamespaceURI().equals(LSP_CORE_NS)
+                if (theChild.getNamespaceURI().equals(LSP_CORE_NS)
                         && theChild.getLocalName().equals("attribute"))
                 {
                     return process_attribute(theChild, test);
@@ -928,8 +958,7 @@ public class LSPCompiler
 			{
 				Element child = (Element)_child;
 
-				if ((child.getNamespaceURI() != null)
-						&& child.getNamespaceURI().equals(LSP_CORE_NS)
+				if (child.getNamespaceURI().equals(LSP_CORE_NS)
 						&& child.getLocalName().equals("when")
 						&& (choose.getOtherwise() == null))
 				{
@@ -945,10 +974,9 @@ public class LSPCompiler
 						throw fixParseException(child, exp, e);
 					}
 				}
-				else if ((child.getNamespaceURI() != null)
-						&& child.getNamespaceURI().equals(LSP_CORE_NS)
-						&& child.getLocalName().equals("otherwise")
-						&& (choose.getOtherwise() == null))
+				else if (child.getNamespaceURI().equals(LSP_CORE_NS)
+						    && child.getLocalName().equals("otherwise")
+						    && (choose.getOtherwise() == null))
 				{
                     removeWhitespace(child);
 					choose.setOtherwise(compileChildren(child));

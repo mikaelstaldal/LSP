@@ -93,6 +93,9 @@ specification</a>.</p>
 
 <p>An LSP page may contain at most one <code>lsp:output</code> element.</p>
 
+<p>Any whitespace immediately before an <code>lsp:output</code> element 
+will be stripped, unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
+
 <p>If an LSP page contains no <code>lsp:output</code> element with a 
 <code>method</code> parameter, the output method is choosen as follows at
 compile time:</p>

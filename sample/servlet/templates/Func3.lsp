@@ -13,7 +13,8 @@
       <lsp:attribute name="{if ($flag='foobar') then 'checked' else ''}" value="checked"/></input><br/>
 
     Box 2: 
-    <input type="checkbox" name="box2"><lsp:if test="$flag='foobar'">
+    <input type="checkbox" name="box2">
+      <lsp:if test="$flag='foobar'">
         <lsp:attribute name="checked" value="checked"/>
       </lsp:if></input><br/>
 
