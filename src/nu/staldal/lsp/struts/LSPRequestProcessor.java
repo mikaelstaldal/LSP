@@ -66,7 +66,8 @@ public class LSPRequestProcessor extends RequestProcessor
     
             try {		
                 lspManager.executePage(thePage, 
-                                       lspParams, 
+                                       lspParams,
+                                       request,
                                        response);
             }
             catch (SAXException e)
