@@ -49,9 +49,10 @@ import org.apache.batik.transcoder.*;
 import org.apache.batik.transcoder.image.*;
 import org.apache.batik.dom.svg.*;
 
-import nu.staldal.lsp.*;
+import nu.staldal.xmlutil.*;
 import nu.staldal.lagoon.core.*;
 import nu.staldal.lagoon.util.*;
+import nu.staldal.lsp.*;
 
 
 public class BatikSVGExtension implements LSPExtLib
