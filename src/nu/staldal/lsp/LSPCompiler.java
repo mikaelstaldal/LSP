@@ -612,7 +612,7 @@ public class LSPCompiler
     private LSPNode compileNode(Text text)
         throws SAXException
     {
-		return new LSPText(text.getValue());
+        return new LSPText(text.getValue());
     }
 
 
@@ -660,7 +660,18 @@ public class LSPCompiler
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
 			Node child = el.getChild(i);
-			container.addChild(compileNode(child));
+            if (child.isWhitespaceNode()
+                    && (!child.getPreserveSpace())
+                    && (i+1 < el.numberOfChildren())
+                    && el.getChild(i+1) instanceof Element
+                    && ((Element)el.getChild(i+1)).getNamespaceURI().equals(LSP_CORE_NS)
+                    && ((Element)el.getChild(i+1)).getLocalName().equals("attribute"))
+                ; // strip whitespace before <lsp:attribute>
+            else
+            {                                
+                LSPNode compiledNode = compileNode(child);
+                container.addChild(compiledNode);
+            }
 		}
 	}
 
