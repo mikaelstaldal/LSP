@@ -200,7 +200,6 @@ public class LSPInterpreter implements LSPPage
 			saxAtts.addAttribute(URI, local, "", type,
 				evalExprAsString(value));
 		}
-		// *** include qName
 		sax.startElement(el.getNamespaceURI(), el.getLocalName(), "",
 			saxAtts);
 
