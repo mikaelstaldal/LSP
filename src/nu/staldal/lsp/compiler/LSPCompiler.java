@@ -53,7 +53,6 @@ import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compiledexpr.*;
 
-import nu.staldal.util.Utils;
 
 /**
  * Compiles an LSP page into JVM bytecode.

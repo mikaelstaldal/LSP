@@ -1,0 +1,203 @@
+<!-- Ant build file for LSP -->
+
+<!-- You need Apache Ant, version 1.5.1 or later, to use it -->
+<!-- Get Ant from http://ant.apache.org/ -->
+
+<!-- To compile and run the testcases, you need JUnit 3.7 and 
+     the Ant optional tasks installed -->
+<!-- Get Junit from http://sourceforge.net/projects/junit/ -->
+
+<!-- Assumes Java2 SDK 1.4 or later -->
+
+<project name="LSP" default="lspc">
+
+  <property file="build.properties"/>
+
+  <property name="Name" value="LSP"/>
+  <property name="name" value="lsp"/>
+  <property name="version" value="1.0.1"/>
+  <property name="ver" value="101"/>
+
+  <property name="src.dir" value="src"/>
+  <property name="src.testsuite" value="testsuite"/>
+  <property name="build.dir" value="build"/>
+  <property name="build.classes" value="${build.dir}/classes"/>
+  <property name="build.testsuite" value="${build.dir}/testsuite"/>
+
+  <taskdef classname="JFlex.anttask.JFlexTask" name="jflex">
+    <classpath>
+      <pathelement location="${JFlex}" />
+    </classpath>
+  </taskdef>
+  
+  <target name="init">
+    <tstamp>
+      <format property="TODAY_DATE" pattern="yyyy-MM-dd" locale="en"/>
+    </tstamp>
+
+    <mkdir dir="${build.classes}"/>
+    <mkdir dir="${build.testsuite}"/>
+    <mkdir dir="dist"/>
+  </target>
+  
+
+  <target name="lsprt" depends="init"
+  	description="Compiles LSP runtime">
+    <javac srcdir="${src.dir}"
+    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/util/*"
+           destdir="${build.classes}"
+           optimize="on" debug="on">
+       <classpath location="${Servlet}" />
+       <classpath location="${Struts}" />
+	</javac>
+
+    <copy todir="${build.classes}" includeEmptyDirs="no">
+      <fileset dir="${src.dir}">
+        <include name="nu/staldal/lsp/*" />
+        <include name="nu/staldal/lsp/wrapper/*" />
+        <include name="nu/staldal/lsp/servlet/**/*" />
+        <include name="nu/staldal/lsp/struts/**/*" />
+        <include name="nu/staldal/util/*" />
+        <exclude name="**/*.java" />
+        <exclude name="**/*.lex" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+
+    <jar jarfile="dist/lsprt.jar"
+         manifest="src/lsprt.mf">
+      <fileset dir="${build.classes}"> 
+         <include name="nu/staldal/lsp/*" />
+         <include name="nu/staldal/lsp/wrapper/*" />
+         <include name="nu/staldal/lsp/servlet/**/*" />
+         <include name="nu/staldal/lsp/struts/**/*" />
+         <include name="nu/staldal/util/*" />
+      </fileset>	 
+    </jar>
+  </target>
+
+
+  <target name="lspc" depends="init,lsprt"
+  	description="Compiles LSP compiler">
+
+    <jflex file="${src.dir}/nu/staldal/lsp/expr/LSPExprLexer.lex"
+        nobak="on"/>
+
+    <javac srcdir="${src.dir}"
+    	   includes="nu/staldal/lsp/compiler/*,nu/staldal/lsp/compile/*,nu/staldal/lsp/expr/*,nu/staldal/lsp/compiledexpr/*,nu/staldal/syntax/**/*,nu/staldal/xtree/**/*"
+           destdir="${build.classes}"
+           optimize="on" debug="on">
+       <classpath location="${Ant}" />
+       <classpath location="${BCEL}" />
+	</javac>
+
+    <copy todir="${build.classes}" includeEmptyDirs="no">
+      <fileset dir="${src.dir}">
+        <include name="nu/staldal/lsp/compiler/*" />
+        <include name="nu/staldal/lsp/compile/*" />
+        <include name="nu/staldal/lsp/expr/*" />
+        <include name="nu/staldal/lsp/compiledexpr/*" />
+        <include name="nu/staldal/syntax/**/*" />
+        <include name="nu/staldal/xtree/**/*" />
+        <exclude name="**/*.java" />
+        <exclude name="**/*.lex" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+
+    <jar jarfile="dist/lspc.jar"
+         manifest="src/lspc.mf">
+      <fileset dir="${build.classes}"> 
+         <include name="nu/staldal/lsp/compiler/*" />
+         <include name="nu/staldal/lsp/compile/*" />
+         <include name="nu/staldal/lsp/expr/*" />
+         <include name="nu/staldal/lsp/compiledexpr/*" />
+         <include name="nu/staldal/syntax/**/*" />
+         <include name="nu/staldal/xtree/**/*" />
+      </fileset>	 
+    </jar>
+  </target>
+
+
+  <target name="testsuite" depends="init,lspc"
+  	description="Compiles and run testsuite">
+    <javac srcdir="${src.testsuite}"
+    	   includes="nu/staldal/**/*"
+           destdir="${build.testsuite}"
+           optimize="off">
+    	<classpath>
+            <pathelement location="${build.classes}" />
+            <pathelement location="${JUnit}" />
+        </classpath>
+    </javac>
+
+    <copy todir="${build.testsuite}" includeEmptyDirs="no">
+      <fileset dir="${src.testsuite}">
+        <include name="nu/staldal/**/*" />
+        <exclude name="**/*.java" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+
+    <junit>
+        <formatter type="plain" usefile="no"/>  
+        <test name="nu.staldal.util.TestEnvironment"/>
+        <test name="nu.staldal.lsp.TestLSPParse"/>
+        <classpath>
+            <pathelement location="${build.classes}" />
+            <pathelement location="${build.testsuite}" />
+        </classpath>
+    </junit>
+  </target>
+
+
+  <target name="docs" depends="init" 
+  	description="Creates the LSP documentation">
+  	<copy todir="dist/docs">
+      <fileset dir="docs" includes="lspuser.html,lsp-servlet.html,manual.css"/>
+    </copy>
+    <mkdir dir="dist/docs/javadoc"/>
+    <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet"
+    	     sourcepath="${src.dir}"
+             classpath="${Ant};${BCEL};${Servlet}"
+             destdir="dist/docs/javadoc"
+             author="true"
+             version="true"
+             windowtitle="LSP API"
+             doctitle="LSP"/>
+  </target>
+
+
+  <target name="dist" depends="lsprt,lspc,docs"
+  		  description="Builds the LSP distribution">
+    <filter token="NAME" value="LSP" />
+    <filter token="VERSION" value="${version}" />
+    <filter token="DATE" value="${TODAY_DATE}" />
+    <copy file="README" todir="dist" 
+          overwrite="true"
+          filtering="on"/>
+    <copy file="HISTORY" todir="dist" />
+    <copy file="LICENSE" todir="dist" />
+    <copy todir="dist/bin">
+      <fileset dir="bin" includes="lspc*"/>
+    </copy>
+    <copy todir="dist">
+      <fileset dir="dist" includes="lsprt.jar lspc.jar"/>
+    </copy>    
+    <mkdir dir="dist/sample/servlet"/>
+  	<copy todir="dist/sample/servlet">
+      <fileset dir="sample/servlet"/>
+    </copy>
+
+    <zip zipfile="LSP${ver}.zip"
+    	 basedir="dist" />
+  </target>
+
+
+  <target name="clean" description="Remove built files">
+    <delete dir="${build.dir}"/>
+    <delete dir="dist"/>
+  </target>
+
+</project>
+

@@ -38,3 +38,10 @@
   same functionallity using an Extension Library.
 * Use JFlex for parsing LSP expressions, full support for Unicode in 
   identifiers (according to XPath 1.0).
+
+
+1.0.1
+-----
+* Move to separate project and change packaging a bit.
+* xmlutil.jar is no longer needed.
+

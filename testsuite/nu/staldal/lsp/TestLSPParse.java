@@ -3,7 +3,7 @@ package nu.staldal.lsp;
 import java.io.*;
 
 import nu.staldal.syntax.ParseException;
-import nu.staldal.util.Utils;
+import nu.staldal.lsp.Utils;
 import nu.staldal.lsp.compiler.*;
 
 import junit.framework.*;

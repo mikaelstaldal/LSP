@@ -43,9 +43,7 @@ package nu.staldal.lsp.extlib;
 import org.xml.sax.*;
 
 import nu.staldal.lsp.*;
-import nu.staldal.lagoon.core.LagoonContext;
-import nu.staldal.lagoon.core.Target;
-import nu.staldal.lagoon.core.SourceManager;
+
 
 public class TestExtension implements LSPExtLib, ContentHandler
 {

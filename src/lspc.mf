@@ -1,2 +1,2 @@
 Main-Class: nu.staldal.lsp.compiler.LSPCompilerCLI
-Class-Path: lsprt.jar xmlutil.jar bcel.jar
+Class-Path: lsprt.jar bcel.jar

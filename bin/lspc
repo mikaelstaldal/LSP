@@ -2,6 +2,6 @@
 
 # UNIX shell script for running lspc
 
-# export LAGOON_HOME=/usr/local/lagoon
+# export LSP_HOME=/usr/local/lsp
 
-java -classpath ${CLASSPATH}:bcel.jar:${LAGOON_HOME}/lspc.jar:${LAGOON_HOME}/lsprt.jar:${LAGOON_HOME}/xmlutil.jar nu.staldal.lsp.compiler.LSPCompilerCLI $*
+java -classpath ${CLASSPATH}:bcel.jar:${LSP_HOME}/lspc.jar:${LSP_HOME}/lsprt.jar nu.staldal.lsp.compiler.LSPCompilerCLI $*

@@ -49,10 +49,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.sax.*;
 import javax.xml.transform.stream.StreamResult;
 
-import nu.staldal.util.Utils;
-import nu.staldal.xmlutil.ContentHandlerFixer;
-import nu.staldal.lsp.*;
-
 
 /**
  * Execute LSP pages in a stand-alone environment.

@@ -1,32 +1,5 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<html>
-<head><title>LSP Servlet interface</title></head>
-<link rel="stylesheet" type="text/css" href="manual.css" />
-<body>
-<h1>LSP Servlet interface</h1>
+package test;
 
-<p>LSP pages can be used as an alternative to JSP in a 
-<a href="http://java.sun.com/products/servlet">Java Servlet</a> 
-based web application. This document assumes that version 2.3 
-of the Servlet API is used.</p>
-
-<p>Follow these steps to use LSP in your web application.</p>
-<ol>
-
-<li>Put <code>lsprt.jar</code> in some 
-shared CLASSPATH of your application server.</li>
-
-<li>Compile your LSP pages into the <code>WEB-INF/classes</code> directory
-of your web application.</li>
-
-<li>Use the <code>nu.staldal.lsp.servlet</code> package from 
-your Serlvets to execute LSP pages. See the <a href="javadoc/index.html">API documentation</a>.</li>
-
-</ol>
-
-<p>A sample Servlet might look like this:</p>
-
-<pre>
 import java.io.*;
 import java.util.*;
 
@@ -34,6 +7,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import nu.staldal.lsp.servlet.*;
+  
 
 public class LSPTestServlet extends HttpServlet
 {
@@ -76,11 +50,11 @@ public class LSPTestServlet extends HttpServlet
                 "Unknown function");    
         }
     }
+    
+    
+    public void destroy()
+    {
+        // nothing to do
+    }
 }
-</pre>
-
-<p>See the <code>sample/servlet</code> directory for a complete example.</p>
-
-</body>
-</html>
 

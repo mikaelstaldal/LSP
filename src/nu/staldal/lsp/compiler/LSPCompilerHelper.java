@@ -50,8 +50,6 @@ import java.net.MalformedURLException;
 import org.xml.sax.*;
 import javax.xml.parsers.*;
 
-import nu.staldal.util.Utils;
-
 import nu.staldal.lsp.*;
 
 

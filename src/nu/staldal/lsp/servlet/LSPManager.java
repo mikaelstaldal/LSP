@@ -51,8 +51,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import javax.servlet.*;
 
-import nu.staldal.util.Utils;
-import nu.staldal.xmlutil.ContentHandlerFixer;
 import nu.staldal.lsp.*;
 
 

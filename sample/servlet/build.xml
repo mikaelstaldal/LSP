@@ -7,7 +7,6 @@
   <property file="build.properties"/>
 
   <path id="project.class.path">
-        <pathelement location="${XMLUtil}" />
         <pathelement location="${LSP}" />
         <pathelement location="${Servlet}" />
   </path>
@@ -16,7 +15,6 @@
     <classpath>
       <pathelement location="${LSPC}" />
       <pathelement location="${LSP}" />
-      <pathelement location="${XMLUtil}" />
       <pathelement location="${BCEL}" />
     </classpath>
   </taskdef>  

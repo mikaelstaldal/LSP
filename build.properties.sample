@@ -1,0 +1,10 @@
+# Build propertes for LSP
+# Customize for your system
+
+JFlex=JFlex.jar
+Ant=ant.jar
+BCEL=bcel.jar
+JUnit=junit.jar
+Servlet=servlet.jar
+Struts=struts.jar
+

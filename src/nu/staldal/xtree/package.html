@@ -1,0 +1,18 @@
+<html><head><title>nu.staldal.xtree</title></head>
+<body>
+XTree is a lightweight tree representation of an XML document.
+
+<p>XTree is desiged to be compatible with SAX2. An XTree contains (almost)
+the same information as a SAX2 {@link org.xml.sax.ContentHandler}. It's easy
+to construct an XTree from SAX2 events using {@link
+nu.staldal.xtree.TreeBuilder} and to serialize an XTree into SAX2 events
+using the {@link nu.staldal.xtree.Node#toSAX} method.</p>
+
+<p>Unlike DOM, XTree has no concept of a document, a document is equvivalent
+to its root element. It's not possible to distinguish between a complete
+document and a document fragment, both are simply representated by an {@link
+nu.staldal.xtree.Element}.</p>
+
+</body>
+</html>
+
