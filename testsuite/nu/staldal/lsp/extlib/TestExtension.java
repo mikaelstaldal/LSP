@@ -61,7 +61,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	}
 
 
-	public void startPage(URLResolver resolver, Object extContext, String targetURL)
+	public void startPage(Object extContext, String targetURL)
 		throws LSPException
 	{
 		this.targetURL = targetURL;
