@@ -38,7 +38,7 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.extelement;
+package nu.staldal.lsp.extlib;
 
 import java.io.*;
 import java.net.URL;
@@ -158,4 +158,3 @@ public class BatikSVGExtension implements LSPExtLib
 	}
 		
 }
-
