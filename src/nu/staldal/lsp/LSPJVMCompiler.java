@@ -297,7 +297,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 
-	private String createSplitMethod(LSPNode theNode)
+	private Method createSplitMethod(LSPNode theNode)
 		throws LSPException	
 	{
 		String methodName = "_executeSplit" + (splitNumber++);
@@ -317,16 +317,20 @@ class LSPJVMCompiler implements Constants
 
 		if (methodLength > 65535)
 		{
-			theMethod = createExecuteMethod(methodName, theNode, 1);
-			methodLength = theMethod.getCode().getCode().length;
+            try {
+                theMethod = createExecuteMethod(methodName, theNode, 1);
+                methodLength = theMethod.getCode().getCode().length;
+            }
+            catch (ClassGenException e)
+            {
+				throw new LSPException("Generated split method too large: " + e.getMessage());
+            }
 			if (methodLength > 65535)
 				throw new LSPException("Generated split method too large: " + methodLength);
 		}
 		
-		classGen.addMethod(theMethod);
-
-		return methodName;		
-	}
+        return theMethod;
+   	}
 	
 
 	private void compileNode(LSPNode node, 
@@ -372,38 +376,47 @@ class LSPJVMCompiler implements Constants
 			LSPNode child = el.getChild(i);
 			if (split > 0)
 			{
-				String splitMethod = createSplitMethod(child);
-
-				instrList.append(instrFactory.createThis());
-				instrList.append(instrFactory.createLoad(
-					Type.getType(org.xml.sax.ContentHandler.class),
-					PARAM_origSax));
-				instrList.append(instrFactory.createLoad(
-					Type.getType(URLResolver.class),
-					PARAM_resolver));
-				instrList.append(instrFactory.createLoad(
-					Type.getType(Environment.class),
-					PARAM_env));
-				instrList.append(instrFactory.createLoad(
-					Type.getType(Map.class),
-					PARAM_extLibs));
-				instrList.append(instrFactory.createLoad(
-					Type.getType(org.xml.sax.ContentHandler.class),
-					PARAM_sax));
-				instrList.append(instrFactory.createLoad(
-					Type.getType(org.xml.sax.helpers.AttributesImpl.class),
-					PARAM_attrs));
-					
-				instrList.append(instrFactory.createInvoke(
-					className,
-					splitMethod, Type.VOID, 
-					new Type[] { Type.getType(ContentHandler.class),
-								 Type.getType(URLResolver.class),
-								 Type.getType(Environment.class),
-								 Type.getType(Map.class),     
-								 Type.getType(ContentHandler.class),     
-								 Type.getType(org.xml.sax.helpers.AttributesImpl.class) },     
-					INVOKEVIRTUAL));
+				Method splitMethod = createSplitMethod(child);
+                
+                if (splitMethod.getCode().getCode().length > 20)
+                {                
+                    classGen.addMethod(splitMethod);
+    
+                    instrList.append(instrFactory.createThis());
+                    instrList.append(instrFactory.createLoad(
+                        Type.getType(org.xml.sax.ContentHandler.class),
+                        PARAM_origSax));
+                    instrList.append(instrFactory.createLoad(
+                        Type.getType(URLResolver.class),
+                        PARAM_resolver));
+                    instrList.append(instrFactory.createLoad(
+                        Type.getType(Environment.class),
+                        PARAM_env));
+                    instrList.append(instrFactory.createLoad(
+                        Type.getType(Map.class),
+                        PARAM_extLibs));
+                    instrList.append(instrFactory.createLoad(
+                        Type.getType(org.xml.sax.ContentHandler.class),
+                        PARAM_sax));
+                    instrList.append(instrFactory.createLoad(
+                        Type.getType(org.xml.sax.helpers.AttributesImpl.class),
+                        PARAM_attrs));
+                        
+                    instrList.append(instrFactory.createInvoke(
+                        className,
+                        splitMethod.getName(), Type.VOID, 
+                        new Type[] { Type.getType(ContentHandler.class),
+                                     Type.getType(URLResolver.class),
+                                     Type.getType(Environment.class),
+                                     Type.getType(Map.class),     
+                                     Type.getType(ContentHandler.class),     
+                                     Type.getType(org.xml.sax.helpers.AttributesImpl.class) },     
+                        INVOKEVIRTUAL));
+                }
+                else
+                {
+                    compileNode(child, methodGen, instrList, 0);
+                }
 			}				
 			else
 			{
