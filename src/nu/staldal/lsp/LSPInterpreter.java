@@ -1049,6 +1049,18 @@ public class LSPInterpreter implements LSPPage
 			return new LSPDictionaryTuple((Dictionary)value);
 		else if (value instanceof Map) 
 			return new LSPMapTuple((Map)value);
+		else if (value instanceof char[])
+			return new String((char[])value);
+		else if (value instanceof byte[])
+		{
+			try {
+				return new String((byte[])value, "ISO-8859-1");
+			}
+			catch (UnsupportedEncodingException e)
+			{
+				throw new Error("JVM doesn't support ISO-8859-1 encoding");	
+			}
+		}
 		else
 			throw new LSPException(
 				"LSP cannot handle objects of type "
