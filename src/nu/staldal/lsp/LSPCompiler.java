@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2003, Mikael Ståldal
+ * Copyright (c) 2001-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ public class LSPCompiler
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
 
-	private TreeBuilder tb;
+    private TreeBuilder tb;
 	private String pageName;
     private URLResolver resolver;
 	private LSPJVMCompiler jvmCompiler;
@@ -109,8 +109,8 @@ public class LSPCompiler
     /**
 	 * Start compilation of an LSP page.
 	 *
-	 * @param page  page name
-	 * @param r  {@link URLResolver} to use for resolving <code>&lg;lsp:import&gt;</code>
+	 * @param page    page name
+	 * @param r       {@link URLResolver} to use for resolving <code>&lg;lsp:import&gt;</code>
 	 *
 	 * @return SAX2 ContentHandler to feed the LSP source into
 	 */
@@ -385,6 +385,17 @@ public class LSPCompiler
 	}
 
 
+    private static boolean containsSystemId(Node node, String systemId)
+    {
+        if (systemId.equals(node.getSystemId())) 
+            return true;
+        else if (node.getParent() != null)
+            return containsSystemId(node.getParent(), systemId);
+        else
+            return false;
+    }
+    
+    
     private void processImports(Element el)
     	throws SAXException, IOException
     {
@@ -399,14 +410,20 @@ public class LSPCompiler
 					&& child.getLocalName().equals("import"))
 			{
 				String url = getAttr("file", child, true);
+                boolean duplicate = false;
 				if (importedFiles.put(url, url) != null)
-				{
-					// check for circular import
-				}
+                    duplicate = true;
 
 				TreeBuilder tb = new TreeBuilder();
 				resolver.resolve(url, tb);
 				Element importedDoc = tb.getTree();
+                importedFiles.put(url, importedDoc.getSystemId());
+                
+                if (duplicate)
+                {
+                    if (containsSystemId(child, importedDoc.getSystemId()))
+                        throw fixSourceException(child, "circular import");
+                }
 
 				el.replaceChild(importedDoc, i);
 				processImports(importedDoc);
@@ -683,7 +700,7 @@ public class LSPCompiler
 			return compileNode(el.getChild(0)); // optimization
 		else
 		{
-			LSPContainer container = new LSPContainer(el.numberOfChildren(), el);
+			LSPContainer container = new LSPSimpleContainer(el.numberOfChildren(), el);
 			compileChildren(el, container);
 			return container;
 		}
@@ -795,7 +812,7 @@ public class LSPCompiler
 
 		currentElement.addAttribute(ns, name, "CDATA", value);		
 		
-		return new LSPContainer(0, null); // return empty container
+		return new LSPSimpleContainer(0, null); // return empty container
 	}
 
 	
