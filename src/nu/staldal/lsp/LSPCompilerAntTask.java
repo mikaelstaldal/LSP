@@ -50,9 +50,9 @@ import org.apache.tools.ant.types.FileSet;
  
 
 /**
- * Apache Ant interface to LSPCompiler.
+ * Apache Ant interface to the LSP compiler.
  *
- * @see LSPCompiler
+ * @see LSPCompilerHelper
  */
 public class LSPCompilerAntTask extends Task
 {

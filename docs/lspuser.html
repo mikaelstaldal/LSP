@@ -7,15 +7,15 @@
 
 <h2>Overview</h2>
 
-<p>LSP is a technology for pseudo-dynamic content processing.</p>
-
-<p>The design of LSP is inspired by dynamic content technologies,
-especially JSP, and by XML technologies, especially XSLT.</p>
+<p>LSP is a XML based web template language.</p>
 
 <p>LSP is fully based on XML and namespaces. This means that it's easy
 to efficiently use LSP together with other XML technologies, such as
-XSLT (for example, an LSP page can be constructed with XSLT, and you
-can process the output of LSP with XSLT).</p>
+XSLT (for example, you can process the output of LSP with XSLT).</p>
+
+<p>LSP pages can be used as an alternative to JSP in a 
+<a href="http://java.sun.com/products/servlet">Java Servlet</a> 
+based web application. See <a href="lsp-servlet.html">here</a>.</p>
 
 
 <h2>LSP basics</h2>
@@ -31,18 +31,17 @@ that this namespace is mapped to the prefix <code>lsp</code>, however
 any prefix may be used.</p>
 
 <p>An LSP page is processed by interpreting all LSP elements, and
-sending all non-LSP elements (unless they are extension elements, see
-the <a href="advuserguide.html">Advanced User Guide</a>), all character 
-data and all processing instructions to the output 
+sending all non-LSP elements (unless they are extension elements), 
+all character data and all processing instructions to the output 
 (subject to <a href="#template">template processing</a>). 
 However, some LSP element can alter the output of parts of the LSP page. 
 Comments in the LSP page are ignored. Any DTD in the LSP page is not sent 
 to the output.</p>
 
-<p>To ensure high performance, LSP pages are compiled into Java bytecode, 
+<p>To ensure high performance, LSP pages are compiled into bytecode, 
 which can then be executed several times, possibly with a different set 
-of parameters. Unless otherwise stated, all processing occurs when the page is
-executed.</p>
+of parameters. Unless otherwise stated, all processing occurs when the page 
+is executed.</p>
 
 <p>It's simple to start using LSP in a static HTML (or some XML
 based markup language) page. Just add a declaration for the LSP
@@ -448,8 +447,8 @@ Digits ::= [0-9]+
 specified sequence</li>
 </ul>
 
-<p>Namespaced functions are extension functions, see the <a
-href="advuserguide.html">Advanced User Guide</a></p>
+<p>Namespaced functions are extension functions in LSP Extension Libraries</p>
+
 
 <h3>Variables</h3>
 

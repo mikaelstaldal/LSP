@@ -42,6 +42,10 @@ package nu.staldal.lsp;
 
 import org.xml.sax.SAXException;
 
+
+/**
+ * An exception which occurs when compiling or executing and LSP page.
+ */
 public class LSPException extends SAXException
 {
 	public LSPException(String s)
@@ -49,3 +53,4 @@ public class LSPException extends SAXException
 		super(s);
 	}
 }
+

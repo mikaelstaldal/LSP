@@ -51,7 +51,7 @@ import java.util.*;
  * {@link #reset} method (as a no-op) on a newly constructed object, but
  * support for resetting efter some elements has been obtained is optional.
  * It's mandatory to support the {@link #length} method after all elements
- * has been obtains, but support for getting the length before the list has
+ * has been obtained, but support for getting the length before the list has
  * been fully traversed is optional.  
  */
 public interface LSPList

@@ -46,8 +46,6 @@ import nu.staldal.lsp.LSPExpr;
 
 public class LSPChoose implements LSPNode
 {
-	static final long serialVersionUID = -180435574625L;
-
 	private Vector whenTests;
 	private Vector whenBodies;
 	private LSPNode otherwise;

@@ -45,9 +45,6 @@ import java.util.*;
 
 import org.xml.sax.*;
 
-import nu.staldal.xtree.*;
-import nu.staldal.syntax.ParseException;
-
 
 /**
  * LSP Extension Library.

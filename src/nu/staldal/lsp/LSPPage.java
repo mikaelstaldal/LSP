@@ -40,7 +40,6 @@
 
 package nu.staldal.lsp;
 
-import java.io.Serializable;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,26 +55,56 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage
 {
-    public String[] getCompileDependentFiles();
-
-    public String[] getExecuteDependentFiles();
-
-    public boolean isCompileDynamic();
-
-    public boolean isExecuteDynamic();
-
-    public long getTimeCompiled();
+    /**
+	 * Get a list of files which was imported with this page was compiled.
+	 */
+	public String[] getCompileDependentFiles();
 
 	
     /**
-     * Execute this LSP page and sends the output as SAX events to the
-     * supplied ContentHandler. Does <em>not</em> output startDocument()
-     * or endDocument() events.
+	 * Currently not used.
+	 */
+    public boolean isCompileDynamic();
+
+
+    /**
+	 * Get a list of static files which was will be included when this page 
+	 * is executed.
+	 */
+    public String[] getExecuteDependentFiles();
+
+	
+    /**
+	 * If any files not present in the {@link #getExecuteDependentFiles}
+	 * list will be included when this page is executeed.
+	 */
+	public boolean isExecuteDynamic();
+
+    
+	/**
+	 * When this page was compiled.
+	 */
+	public long getTimeCompiled();
+
+
+    /**
+	 * The name of this page.
+	 */
+	public String getPageName();
+	
+
+    /**
+     * Execute this LSP page and sends the output as SAX2 events to the
+     * supplied {@link org.xml.sax.ContentHandler}. 
+	 * Does <em>not</em> output <code>startDocument()</code>/<code>endDocument()</code>
+	 * events.
 	 *
-	 * @param ch		  SAX ContentHandler to send output to
+	 * @param ch		  SAX2 {@link org.xml.sax.ContentHandler} to send output to
 	 * @param resolver    Used to resolve included files
 	 * @param params      Parameters to the LSP page
 	 * @param extContext  external context which will be passed to ExtLibs
+	 *
+	 * @throws SAXException  may throw {@link org.xml.sax.SAXException}
      */
     public void execute(ContentHandler ch, URLResolver resolver,
         	Map params, Object extContext)

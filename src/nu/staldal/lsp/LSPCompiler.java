@@ -56,8 +56,10 @@ import nu.staldal.util.Utils;
 
 /**
  * Compiles an LSP page into JVM bytecode.
- *<p>
- * An instance of this class may be reused, but is not thread safe.
+ *
+ * <p>An instance of this class may be reused, but is not thread safe.
+ *
+ * @see LSPCompilerHelper
  */
 public class LSPCompiler
 {
@@ -108,7 +110,7 @@ public class LSPCompiler
 	 * Start compilation of an LSP page.
 	 *
 	 * @param page  page name
-	 * @param r  URLResolver to use for resolving <lsp:import>
+	 * @param r  {@link URLResolver} to use for resolving <code>&lg;lsp:import&gt;</code>
 	 *
 	 * @return SAX2 ContentHandler to feed the LSP source into
 	 */
@@ -131,11 +133,11 @@ public class LSPCompiler
     /**
 	 * Finish the compilation.
 	 * 
-	 * @param out  where to write the compiled code
+	 * @param out  where to write the compiled code (as JVM bytecode).
 	 *
 	 * @throws SAXException if any compilation error occurs
 	 * @throws IOException if any I/O error occurs when reading 
-	 *         <lsp:import>ed files, or when writing compiled code
+	 *         &lt;lsp:import&gt;ed files, or when writing compiled code
 	 */
 	public void finishCompile(OutputStream out)
     	throws SAXException, IOException
@@ -192,7 +194,7 @@ public class LSPCompiler
 	{
 		return new SAXParseException(
 			"Illegal LSP expression:\n"
-				+ expression + "\n" + LSPUtil.nChars(e.getColumn()-1,' ')
+				+ expression + "\n" + Utils.nChars(e.getColumn()-1,' ')
 				+ "^ "+ e.getMessage(),
 			null,
 			node.getSystemId(),

@@ -46,6 +46,8 @@ import java.util.*;
 
 /**
  * Command Line interface to the LSP compiler.
+ *
+ * @see LSPCompilerHelper
  */
 public class LSPCompilerCLI
 {

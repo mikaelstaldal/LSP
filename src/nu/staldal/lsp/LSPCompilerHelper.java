@@ -84,6 +84,12 @@ public class LSPCompilerHelper
 	public File targetDir;
 
 
+    /**
+	 * Create a new LSP compiler. The instance may be reused, 
+	 * but may <em>not</em> be used from several threads concurrently.
+	 * Create several instances if multiple threads needs to compile 
+	 * concurrently.
+	 */
 	public LSPCompilerHelper()
 	{
 		try {

@@ -44,8 +44,6 @@ import java.util.Vector;
 
 public class LSPContainer implements LSPNode
 {
-	static final long serialVersionUID = -180435574625934957L;
-
     private Vector children;
 
     public LSPContainer(int capacity)

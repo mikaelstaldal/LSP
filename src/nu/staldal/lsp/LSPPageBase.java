@@ -55,9 +55,6 @@ import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
 
 
-/**
- * Abstract base class for compiled LSP pages.
- */
 public abstract class LSPPageBase implements LSPPage
 {
 	protected final String[] extLibsURLs;
@@ -110,6 +107,11 @@ public abstract class LSPPageBase implements LSPPage
 		return timeCompiled;
 	}	
 	
+    public final String getPageName()
+	{	
+		return pageName;
+	}
+	
     public final void execute(ContentHandler sax, URLResolver resolver,
         	Map params, Object extContext)
         throws SAXException
@@ -122,6 +124,7 @@ public abstract class LSPPageBase implements LSPPage
 			Object value = ent.getValue();						
 			env.bind(key, convertObjectToLSP(value, key));
 		}
+		params = null;
 
 		Map extLibs = new HashMap();
 		

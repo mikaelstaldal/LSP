@@ -44,8 +44,6 @@ import nu.staldal.lsp.LSPExpr;
 
 public class LSPTemplate implements LSPNode
 {
-	static final long serialVersionUID = -1804355746259L;
-
 	private LSPExpr expr;
 
 	public LSPTemplate(LSPExpr expr)

@@ -43,8 +43,6 @@ package nu.staldal.lsp.compile;
 
 public class LSPText implements LSPNode
 {
-	static final long serialVersionUID = -18043557462L;
-
 	private String value;
     transient char[] charArrayCache;
 

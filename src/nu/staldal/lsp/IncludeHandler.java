@@ -42,14 +42,14 @@ package nu.staldal.lsp;
 
 import org.xml.sax.*;
 
-public class IncludeHandler implements ContentHandler, ErrorHandler
+class IncludeHandler implements ContentHandler, ErrorHandler
 {
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
 
     private String lspPrefix = null;
     private ContentHandler sax;
 
-    public IncludeHandler(ContentHandler ch)
+    IncludeHandler(ContentHandler ch)
     {
         sax = ch;
     }

@@ -46,6 +46,7 @@ import java.util.*;
 import org.xml.sax.*;
 
 import nu.staldal.util.Environment;
+import nu.staldal.xmlutil.StringHandler;
 import nu.staldal.xtree.Node;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
@@ -58,6 +59,7 @@ import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.*;
+
 
 /**
  * Compiles an LSP page into JVM bytecode.

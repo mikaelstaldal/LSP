@@ -42,8 +42,26 @@ package nu.staldal.lsp;
 
 import org.xml.sax.ContentHandler;
 
+
+/**
+ * Resolvs an URL into an XML resource.
+ *
+ * <p>Used for import and include in an LSP page.
+ */
 public interface URLResolver
 {
+	
+	/**
+	 * Resolvs an URL and feed the XML data into the supplied 
+	 * SAX2 {@link org.xml.sax.ContentHandler}. May invoke
+	 * <code>startDocument</code>/<code>endDocument</code>.
+	 *
+	 * @param url  the URL
+	 * @param ch   the {@link org.xml.sax.ContentHandler}
+	 *
+	 * @throws java.io.IOException  may throw this exception
+	 * @throws org.xml.sax.SAXException  may throw this exception
+	 */
     public void resolve(String url, ContentHandler ch)
         throws java.io.IOException, org.xml.sax.SAXException;
 }

@@ -46,8 +46,6 @@ import nu.staldal.lsp.LSPExpr;
 
 public class LSPElement extends LSPContainer
 {
-	static final long serialVersionUID = -18043557462593496L;
-
     String namespaceURI = null;
     String localName = null;
 	
