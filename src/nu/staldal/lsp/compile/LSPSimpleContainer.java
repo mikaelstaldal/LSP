@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2004, Mikael Ståldal
+ * Copyright (c) 2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,61 +45,12 @@ import java.util.Vector;
 import org.xml.sax.Locator;
 
 
-public abstract class LSPContainer extends LSPNode
+public class LSPSimpleContainer extends LSPContainer
 {
-    private Vector children;
-
-    public LSPContainer(int capacity, Locator locator)
+    public LSPSimpleContainer(int capacity, Locator locator)
     {
-        super(locator);
-        
-        if (capacity >= 0)
-            children = new Vector(capacity);
-        else
-            children = new Vector();
+        super(capacity, locator);
     }
 
-    public int numberOfChildren()
-    {
-        return children.size();
-    }
-
-    public LSPNode getChild(int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        return (LSPNode)children.elementAt(index);
-    }
-
-    public void addChild(LSPNode newChild)
-    {
-        children.addElement(newChild);
-    }
-
-    public LSPNode replaceChild(LSPNode newChild, int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        LSPNode oldChild = (LSPNode)children.elementAt(index);
-        children.setElementAt(newChild, index);
-        return oldChild;
-    }
-
-    /**
-     * Inefficient
-     */
-    public LSPNode removeChild(int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        LSPNode child = (LSPNode)children.elementAt(index);
-        children.removeElementAt(index);
-        return child;
-    }
-
-    /**
-     * Inefficient
-     */
-    public void insertChild(LSPNode newChild, int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        children.insertElementAt(newChild, index);
-    }
 }
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,6 +58,7 @@ import org.apache.bcel.util.InstructionFinder;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Unknown;
 import org.apache.bcel.generic.*;
 
 
@@ -80,17 +81,29 @@ class LSPJVMCompiler implements Constants
 	private static final int PARAM_extLibs = 4;
 	private static final int PARAM_sax = 5;
 	private static final int PARAM_attrs = 6;
-		
+
 	private String className = null;
 	private ClassGen classGen = null;
 	private ConstantPoolGen constGen = null;
 	private InstructionFactory instrFactory = null;
+    private HashMap sourceFiles = null;
+    private int[] maxLineNumber = null;
 	
 	private int splitNumber;
 
 
     LSPJVMCompiler()
     {
+    }
+
+
+    private String getFileName(String path)
+    {
+        int i = path.lastIndexOf('/');
+        if (i == -1)
+            return path;
+        else
+            return path.substring(i+1);
     }
     
 	
@@ -109,13 +122,33 @@ class LSPJVMCompiler implements Constants
 		
 		classGen = new ClassGen(className, 
 			"nu.staldal.lsp.LSPPageBase",
-			pageName+".lsp", 
+			getFileName(theTree.getSystemId()), 
 			ACC_PUBLIC | ACC_FINAL | ACC_SUPER,
 			new String[] {}); 
 
 		constGen = classGen.getConstantPool();
 
 		instrFactory = new InstructionFactory(classGen, constGen);
+        
+        sourceFiles = new HashMap(importedFiles.size());
+        
+        StringBuffer sourceMap = new StringBuffer();
+        sourceMap.append("SMAP\n");
+        sourceMap.append(getFileName(theTree.getSystemId()) + '\n');
+        sourceMap.append("LSP\n");        
+        sourceMap.append("*S LSP\n");        
+        sourceMap.append("*F\n");        
+        {
+            int i = 1;
+            sourceMap.append(i + " " + getFileName(theTree.getSystemId()) + '\n');
+            for (Iterator it = importedFiles.keySet().iterator(); it.hasNext(); )
+            {
+                String key = (String)it.next();
+                i++;
+                sourceMap.append(i + " " + getFileName(key) + '\n');
+                sourceFiles.put(importedFiles.get(key), new Integer(i));
+            }
+        }
 			
 		classGen.addField(makeStringArrayField(EXT_LIBS_URLS, constGen));
 		classGen.addField(makeStringArrayField(EXT_LIBS_CLASS_NAMES, constGen));
@@ -217,7 +250,8 @@ class LSPJVMCompiler implements Constants
 		int methodLength;
 
 		try {
-			theMethod = createExecuteMethod("_execute", theTree, 0);
+			maxLineNumber = new int[sourceFiles.size()+2];
+            theMethod = createExecuteMethod("_execute", theTree, 0);
 			methodLength = theMethod.getCode().getCode().length;
 		}
 		catch (ClassGenException e)
@@ -228,6 +262,7 @@ class LSPJVMCompiler implements Constants
 
 		if (methodLength > 65535)
 		{
+			maxLineNumber = new int[sourceFiles.size()+2];
 			theMethod = createExecuteMethod("_execute", theTree, 1);
 			methodLength = theMethod.getCode().getCode().length;
 			if (methodLength > 65535)
@@ -235,6 +270,23 @@ class LSPJVMCompiler implements Constants
 		}
 		
 		classGen.addMethod(theMethod);
+        
+        sourceMap.append("*L\n");
+
+        for (int i = 1; i<maxLineNumber.length; i++)
+        {
+            int fakeLineNumber = (i==1) ? 1 : 10000+1000*i+1;
+            sourceMap.append("1#"+i+","+maxLineNumber[i]+":"+fakeLineNumber+",1\n");                    
+        }
+        sourceMap.append("*V\n");
+        sourceMap.append("nu.staldal.lsp\n");
+        sourceMap.append("*E\n");
+        byte[] smap = sourceMap.toString().getBytes("UTF-8");
+        sourceMap = null;
+        classGen.addAttribute(new Unknown(constGen.addUtf8("SourceDebugExtension"),
+            smap.length, smap, 
+            constGen.getConstantPool()));
+        smap = null;
 			
 		JavaClass generatedClass = classGen.getJavaClass();
 		generatedClass.dump(out);
@@ -340,31 +392,56 @@ class LSPJVMCompiler implements Constants
 			int split)
         throws SAXException
     {
-        if (node instanceof LSPExtElement)
-            compileNode((LSPExtElement)node, methodGen, instrList, split);
-        else if (node instanceof LSPElement)
-            compileNode((LSPElement)node, methodGen, instrList, split);
-        else if (node instanceof LSPText)
-            compileNode((LSPText)node, methodGen, instrList, split);
-		else if (node instanceof LSPIf)
-            compileNode((LSPIf)node, methodGen, instrList, split);
-        else if (node instanceof LSPChoose)
-            compileNode((LSPChoose)node, methodGen, instrList, split);
-        else if (node instanceof LSPForEach)
-            compileNode((LSPForEach)node, methodGen, instrList, split);
-        else if (node instanceof LSPLet)
-            compileNode((LSPLet)node, methodGen, instrList, split);
-        else if (node instanceof LSPTemplate)
-            compileNode((LSPTemplate)node, methodGen, instrList, split);
-        else if (node instanceof LSPInclude)
-            compileNode((LSPInclude)node, methodGen, instrList, split);
-        else if (node instanceof LSPProcessingInstruction)
-            compileNode((LSPProcessingInstruction)node, methodGen, instrList, split);
-        else if (node instanceof LSPContainer)
-            compileChildren((LSPContainer)node, methodGen, instrList, split);
+        if (node instanceof LSPSimpleContainer)
+        {
+            compileChildren((LSPSimpleContainer)node, methodGen, instrList, split);
+        }
         else
-			throw new SAXParseException("Unrecognized LSPNode: "
-				+ node.getClass().getName(), node);
+        {
+            Integer _fileId = (Integer)sourceFiles.get(node.getSystemId());
+            
+            if (_fileId != null)
+            {
+                int fakeLineNumber = 
+                    10000+1000*_fileId.intValue()+node.getLineNumber(); 
+                
+                methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+                    fakeLineNumber);
+                    
+                maxLineNumber[_fileId.intValue()] = node.getLineNumber();
+            }
+            else
+            {
+                methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+                    node.getLineNumber());
+                    
+                maxLineNumber[1] = node.getLineNumber();
+            }            
+            
+            if (node instanceof LSPExtElement)
+                compileNode((LSPExtElement)node, methodGen, instrList, split);
+            else if (node instanceof LSPElement)
+                compileNode((LSPElement)node, methodGen, instrList, split);
+            else if (node instanceof LSPText)
+                compileNode((LSPText)node, methodGen, instrList, split);
+            else if (node instanceof LSPIf)
+                compileNode((LSPIf)node, methodGen, instrList, split);
+            else if (node instanceof LSPChoose)
+                compileNode((LSPChoose)node, methodGen, instrList, split);
+            else if (node instanceof LSPForEach)
+                compileNode((LSPForEach)node, methodGen, instrList, split);
+            else if (node instanceof LSPLet)
+                compileNode((LSPLet)node, methodGen, instrList, split);
+            else if (node instanceof LSPTemplate)
+                compileNode((LSPTemplate)node, methodGen, instrList, split);
+            else if (node instanceof LSPInclude)
+                compileNode((LSPInclude)node, methodGen, instrList, split);
+            else if (node instanceof LSPProcessingInstruction)
+                compileNode((LSPProcessingInstruction)node, methodGen, instrList, split);
+            else
+                throw new SAXParseException("Unrecognized LSPNode: "
+                    + node.getClass().getName(), node);
+        }
     }
 
 	
@@ -433,9 +510,6 @@ class LSPJVMCompiler implements Constants
 			int split)
         throws SAXException
     {
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-            
 		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 		{
 			instrList.append(instrFactory.createLoad(
@@ -647,9 +721,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
         throws SAXException
     {		
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-            
 		// LSPExtLib extLib = (LSPExtLib)extLibs.get(el.getClassName());
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Map.class), PARAM_extLibs));
@@ -726,9 +797,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
         throws SAXException
     {
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            text.getLineNumber());
-
         String chars = text.getValue();
         
 		instrList.append(instrFactory.createLoad(
@@ -756,9 +824,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-
         // StringHandler sh = new StringHandler();
 		instrList.append(instrFactory.createNew(
 			(ObjectType)Type.getType(StringHandler.class)));
@@ -813,9 +878,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-
         // String url = evalExprAsString(el.getFile());		
 		compileExprAsString(el.getFile(), methodGen, instrList);
 		
@@ -840,9 +902,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-            
 		LSPExpr expr = el.getTest();
 		compileExprAsBooleanValue(expr, methodGen, instrList);
 
@@ -862,9 +921,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-            
 		InstructionHandle[] testCase = new InstructionHandle[el.getNWhens()];
 		BranchInstruction[] branch1 = new BranchInstruction[el.getNWhens()];
 		BranchInstruction[] branch2 = new BranchInstruction[el.getNWhens()];
@@ -918,9 +974,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-        
 		// final LSPList theList = evalExprAsList(el.getList());
 		compileExprAsList(el.getList(), methodGen, instrList);
 
@@ -1039,9 +1092,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-
         // env.pushFrame();
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Environment.class), PARAM_env));
@@ -1087,9 +1137,6 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
-            el.getLineNumber());
-            
 		LSPExpr expr = el.getExpr();
 
 		// Object o = evalExpr(expr);

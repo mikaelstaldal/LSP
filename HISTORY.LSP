@@ -21,3 +21,10 @@
 * Support for Jakarta Struts.
 * Show line number in LSP source in stack trace.
 * Check version of compiled code against runtime.
+
+
+1.0 beta 5
+----------
+* Check for circular import.
+* Add JSR-45 (Debugging Support for Other Languages) information 
+  to generated class files.
