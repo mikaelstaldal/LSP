@@ -43,7 +43,6 @@ package nu.staldal.lsp;
 import java.io.IOException;
 import java.util.*;
 
-import javax.xml.parsers.*;
 import org.xml.sax.*;
 
 import nu.staldal.xtree.*;
@@ -117,26 +116,6 @@ public class LSPInterpreter implements LSPPage
         this.resolver = null;
         this.params = null;
     }
-
-
-	private XMLReader createParser()
-	{
-		try {
-			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-			parserFactory.setNamespaceAware(true);
-			parserFactory.setValidating(false);
-
-			return parserFactory.newSAXParser().getXMLReader();
-		}
-		catch (SAXException e)
-		{
-			throw new Error(e.toString());
-		}
-		catch (javax.xml.parsers.ParserConfigurationException e)
-		{
-			throw new Error(e.toString());
-		}
-	}
 
 
     private void processNode(LSPNode node, ContentHandler sax)
@@ -241,15 +220,9 @@ public class LSPInterpreter implements LSPPage
 	{
         String url = evalExprAsString(el.getFile());
 		try {
-            InputSource inputSource = resolver.resolve(url);
-
 			IncludeHandler ih = new IncludeHandler(sax);
 
-			XMLReader saxParser = createParser();
-			saxParser.setContentHandler(ih);
-			saxParser.setErrorHandler(ih);
-
-			saxParser.parse(inputSource);
+            resolver.resolve(url, ih);
 		}
 		catch (IOException e)
 		{

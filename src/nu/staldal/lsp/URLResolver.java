@@ -40,8 +40,11 @@
 
 package nu.staldal.lsp;
 
+import org.xml.sax.ContentHandler;
+
 public interface URLResolver
 {
-    public org.xml.sax.InputSource resolve(String url)
-        throws java.io.IOException;
+    public void resolve(String url, ContentHandler ch)
+        throws java.io.IOException, org.xml.sax.SAXException;
 }
+

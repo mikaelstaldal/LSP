@@ -314,28 +314,14 @@ public class LSPCompiler
 					&& child.getLocalName().equals("import"))
 			{
 				String url = getAttr("file", child, true);
-				if (LSPUtil.absoluteURL(url))
+				if (importedFiles.put(url, url) != null)
 				{
-					compileDynamic = true;
-				}
-				else
-				{
-					if (importedFiles.put(url, url) != null)
-					{
-						// *** check for circular import
-					}
+					// *** check for circular import
 				}
 
-				InputSource inputSource = resolver.resolve(url);
-				// *** inputSource.setSystemId() for error reporting
-				Element importedDoc;
-				try {
-					importedDoc = TreeBuilder.parseXML(inputSource, false);
-				}
-				catch (javax.xml.parsers.ParserConfigurationException e)
-				{
-					throw new Error(e.toString());
-				}
+				TreeBuilder tb = new TreeBuilder();
+				resolver.resolve(url, tb);
+				Element importedDoc = tb.getTree();
 
 				el.replaceChild(importedDoc, i);
 				processImports(importedDoc);
@@ -583,7 +569,7 @@ public class LSPCompiler
 
 		if (file instanceof StringLiteral)
 		{
-			// nothing to do
+			includedFiles.addElement(((StringLiteral)file).getValue());
 		}
 		else
 		{
