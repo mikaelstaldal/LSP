@@ -8,3 +8,9 @@
 ----------
 * Strip whitespace in LSP.
 * Search for <import>ed files in multiple directories.
+
+
+1.0 beta 3
+----------
+* Strip more whitespace in LSP.
+* More efficient compilation of large LSP pages.
