@@ -52,23 +52,23 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	private ContentHandler sax;
 	private int funcCalls;
 	private int pageHits = 0;
-	private Target target;
+	private String targetURL;
 
-	public void init(LagoonContext context, String namespaceURI)
+	public void init(String namespaceURI)
 		throws LSPException
 	{
 		System.out.println("TestExtension.init(" + namespaceURI + ")");	
 	}
 
 
-	public void startPage(Target target, SourceManager sourceMan)
+	public void startPage(URLResolver resolver, Object extContext, String targetURL)
 		throws LSPException
 	{
-		this.target = target;
+		this.targetURL = targetURL;
 		funcCalls = 0;
 		
 		System.out.println("TestExtension.startPage(" 
-			+ target.getCurrentTargetURL() + ") for the " 
+			+ targetURL + ") for the " 
 			+ (++pageHits) + " time");	
 	}
 	
@@ -77,7 +77,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 		throws LSPException
 	{
 		System.out.println("TestExtension.endPage(" 
-			+ target.getCurrentTargetURL() + ")");	
+			+ targetURL + ")");	
 	}
 
 

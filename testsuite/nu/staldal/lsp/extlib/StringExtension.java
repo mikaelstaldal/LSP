@@ -50,22 +50,22 @@ import nu.staldal.lagoon.core.SourceManager;
 public class StringExtension implements LSPExtLib, ContentHandler
 {
 	private int pageHits = 0;
-	private Target target;
+	private String targetURL;
 
-	public void init(LagoonContext context, String namespaceURI)
+	public void init(String namespaceURI)
 		throws LSPException
 	{
 		System.out.println("StringExtension.init(" + namespaceURI + ")");	
 	}
 
 
-	public void startPage(Target target, SourceManager sourceMan)
+	public void startPage(URLResolver resolver, Object extContext, String targetURL)
 		throws LSPException
 	{
-		this.target = target;
+		this.targetURL = targetURL;
 		
 		System.out.println("StringExtension.startPage(" 
-			+ target.getCurrentTargetURL() + ") for the " 
+			+ targetURL + ") for the " 
 			+ (++pageHits) + " time");	
 	}
 	
@@ -74,7 +74,7 @@ public class StringExtension implements LSPExtLib, ContentHandler
 		throws LSPException
 	{
 		System.out.println("StringExtension.endPage(" 
-			+ target.getCurrentTargetURL() + ")");	
+			+ targetURL + ")");	
 	}
 
 	public ContentHandler beforeElement(ContentHandler out)
