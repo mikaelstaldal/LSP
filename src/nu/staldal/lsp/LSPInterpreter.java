@@ -50,6 +50,9 @@ import nu.staldal.xtree.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 
+import nu.staldal.lagoon.core.Target;
+
+
 public class LSPInterpreter implements LSPPage
 {
     static final long serialVersionUID = -1168364109491726217L;
@@ -66,6 +69,7 @@ public class LSPInterpreter implements LSPPage
 
     private transient URLResolver resolver = null;
     private transient Hashtable params = null;
+	private transient Target target = null;
 
     public LSPInterpreter(LSPNode theTree, Hashtable importedFiles,
         Vector includedFiles, boolean compileDynamic, boolean executeDynamic)
@@ -107,12 +111,14 @@ public class LSPInterpreter implements LSPPage
 
 
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params)
+        Hashtable params, Target target)
         throws SAXException
     {
         this.params = params;
         this.resolver = resolver;
+		this.target = target;
         processNode(theTree, ch);
+		this.target = null;
         this.resolver = null;
         this.params = null;
     }
@@ -185,12 +191,18 @@ public class LSPInterpreter implements LSPPage
 				+ " does not implement the required interface");
 		}
 		
-		ContentHandler in = extLib.beforeElement(sax, null /* *** */);
+		try {
+			ContentHandler in = extLib.beforeElement(sax, target);
 		
-		processNode((LSPElement)el, in);
+			processNode((LSPElement)el, in);
 		
-		String res = extLib.afterElement();
-		if (res != null) sax.characters(res.toCharArray(), 0, res.length());
+			String res = extLib.afterElement();
+			if (res != null) sax.characters(res.toCharArray(), 0, res.length());
+		}
+		catch (IOException e)
+		{
+			throw new SAXException(e);
+		}
 	}
 		
 	private void processNode(LSPElement el, ContentHandler sax)

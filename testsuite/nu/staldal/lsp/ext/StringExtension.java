@@ -38,37 +38,14 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
-
-import java.io.*;
-import java.util.*;
+package nu.staldal.lsp.ext;
 
 import org.xml.sax.*;
 
-import nu.staldal.xtree.*;
-import nu.staldal.syntax.ParseException;
-
+import nu.staldal.lsp.*;
 import nu.staldal.lagoon.core.Target;
 
-/**
- * LSP Extension Library.
- *
- * Will be invoked as follows:
- * <ol>
- * <li>beforeElement() is invoked, which returns a ContentHandler "in"
- * <li>the extension element is sent to the ContentHandler "in"
- * 	   (startDocument() and endDocument() will not be invoked).
- * <li>afterElement() is invoked, which may return a String.
- * </ol>
- *
- * LSP will not use the "in" ContentHandler after invoking the 
- * afterElement() method.
- *
- * The extlib can return data in one of two ways, write to the supplied 
- * ContentHandler "out" (it must not invoke startDocument() or endDocument()), 
- * or return a string from the afterElement() method. It may not do both.
- */
-public interface LSPExtLib
+public class StringExtension implements LSPExtLib, ContentHandler
 {
 	/**
 	 * Invoked before the element is sent.
@@ -79,7 +56,10 @@ public interface LSPExtLib
 	 * @return  a ContentHandler to send input to.
 	 */
 	public ContentHandler beforeElement(ContentHandler out, Target target)
-		throws SAXException, java.io.IOException;
+		throws SAXException
+	{
+		return this;
+	}
 	
 	
 	/**
@@ -88,7 +68,59 @@ public interface LSPExtLib
 	 * @return  a string output.
 	 */
 	public String afterElement()
-		throws SAXException, java.io.IOException;
-	
+		throws SAXException
+	{
+		return "StringExtension";
+	}
+		
+
+    // ContentHandler implementation
+
+    public void setDocumentLocator(Locator locator)
+    {
+    }
+
+    public void startDocument()
+    {
+    }
+
+    public void endDocument()
+    {
+    }
+
+    public void startElement(String namespaceURI, String localName,
+                             String qname, Attributes atts)
+    {
+    }
+
+    public void endElement(String namespaceURI, String localName,
+                           String qname)
+    {
+    }
+
+    public void startPrefixMapping(String prefix, String uri)
+    {
+    }
+
+    public void endPrefixMapping(String prefix)
+    {
+    }
+
+    public void characters(char[] chars, int start, int length)
+    {
+    }
+
+    public void ignorableWhitespace(char[] chars, int start, int length)
+    {
+    }
+
+    public void processingInstruction(String target, String data)
+    {
+    }
+
+    public void skippedEntity(String name)
+    {
+    }
+
 }
 

@@ -68,6 +68,7 @@ public class LSPCompiler
 
 	private int raw;
 	private boolean inPi;
+	private String extNamespace;
 
 
 	private static SAXException fixSourceException(Node node, String msg)
@@ -264,6 +265,8 @@ public class LSPCompiler
 	    includedFiles = new Vector();
         compileDynamic = false;
         executeDynamic = false;
+		
+		extNamespace = null;
 
         resolver = r;
         tb = new TreeBuilder();
@@ -401,12 +404,20 @@ public class LSPCompiler
 		}
 		else
 		{
-			LSPElement newEl; 			
+			LSPElement newEl;
+			boolean extElement = false; 			
 			
 			if ((el.getNamespaceURI() != null)
-					&& el.getNamespaceURI().startsWith("java:"))
+					&& !el.getNamespaceURI().equals(extNamespace)
+					&& (el.getNamespaceURI().startsWith("java:") // ***
+						|| (el.getNamespaceURI().equals("http://www.w3.org/2000/svg"))))
 			{	// extension element
+				// *** register extension namespaces
+				extNamespace = el.getNamespaceURI();
+				extElement = true;
 				String className = el.getNamespaceURI().substring(5);
+				if (className.equals("//www.w3.org/2000/svg"))
+					className = "nu.staldal.lsp.ext.BatikSVGExtension";
 				try {
 					Class theClass = Class.forName(className);
 					if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(theClass))
@@ -451,6 +462,8 @@ public class LSPCompiler
 			}
 
 			compileChildren(el, newEl);
+			
+			if (extElement) extNamespace = null;
 
 			return newEl;
 		}

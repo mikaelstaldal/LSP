@@ -38,38 +38,17 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp;
-
-import java.io.*;
-import java.util.*;
+package nu.staldal.lsp.ext;
 
 import org.xml.sax.*;
 
-import nu.staldal.xtree.*;
-import nu.staldal.syntax.ParseException;
-
+import nu.staldal.lsp.*;
 import nu.staldal.lagoon.core.Target;
 
-/**
- * LSP Extension Library.
- *
- * Will be invoked as follows:
- * <ol>
- * <li>beforeElement() is invoked, which returns a ContentHandler "in"
- * <li>the extension element is sent to the ContentHandler "in"
- * 	   (startDocument() and endDocument() will not be invoked).
- * <li>afterElement() is invoked, which may return a String.
- * </ol>
- *
- * LSP will not use the "in" ContentHandler after invoking the 
- * afterElement() method.
- *
- * The extlib can return data in one of two ways, write to the supplied 
- * ContentHandler "out" (it must not invoke startDocument() or endDocument()), 
- * or return a string from the afterElement() method. It may not do both.
- */
-public interface LSPExtLib
+public class TestExtension implements LSPExtLib, ContentHandler
 {
+	private ContentHandler sax;
+	
 	/**
 	 * Invoked before the element is sent.
 	 *
@@ -79,7 +58,12 @@ public interface LSPExtLib
 	 * @return  a ContentHandler to send input to.
 	 */
 	public ContentHandler beforeElement(ContentHandler out, Target target)
-		throws SAXException, java.io.IOException;
+		throws SAXException
+	{
+		this.sax = out;
+		
+		return this;
+	}
 	
 	
 	/**
@@ -88,7 +72,75 @@ public interface LSPExtLib
 	 * @return  a string output.
 	 */
 	public String afterElement()
-		throws SAXException, java.io.IOException;
-	
+		throws SAXException
+	{
+		return null;
+	}
+		
+
+    // ContentHandler implementation
+
+    public void setDocumentLocator(Locator locator)
+    {
+    }
+
+    public void startDocument()
+    {
+    }
+
+    public void endDocument()
+    {
+    }
+
+    public void startElement(String namespaceURI, String localName,
+                             String qname, Attributes atts)
+        throws SAXException
+    {
+        sax.startElement(namespaceURI, localName+"foo", "", atts);
+    }
+
+    public void endElement(String namespaceURI, String localName,
+                           String qname)
+        throws SAXException
+    {
+        sax.endElement(namespaceURI, localName+"foo", "");
+    }
+
+    public void startPrefixMapping(String prefix, String uri)
+        throws SAXException
+    {
+		sax.startPrefixMapping(prefix, uri);
+    }
+
+    public void endPrefixMapping(String prefix)
+        throws SAXException
+    {
+		sax.endPrefixMapping(prefix);
+    }
+
+    public void characters(char[] chars, int start, int length)
+        throws SAXException
+    {
+        sax.characters(chars, start, length);
+    }
+
+    public void ignorableWhitespace(char[] chars, int start, int length)
+        throws SAXException
+    {
+        sax.ignorableWhitespace(chars, start, length);
+    }
+
+    public void processingInstruction(String target, String data)
+        throws SAXException
+    {
+        sax.processingInstruction(target, data);
+    }
+
+    public void skippedEntity(String name)
+        throws SAXException
+    {
+        sax.skippedEntity(name);
+    }
+
 }
 

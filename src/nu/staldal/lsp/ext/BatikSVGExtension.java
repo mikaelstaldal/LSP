@@ -40,13 +40,38 @@
 
 package nu.staldal.lsp.ext;
 
+import java.io.*;
+import java.net.URL;
+
 import org.xml.sax.*;
+import org.xml.sax.helpers.AttributesImpl;
+import org.apache.batik.transcoder.*;
+import org.apache.batik.transcoder.image.*;
+import org.apache.batik.dom.svg.*;
 
 import nu.staldal.lsp.*;
-import nu.staldal.lagoon.core.Target;
+import nu.staldal.lagoon.core.*;
+import nu.staldal.lagoon.util.ContentHandlerFixer;
+
 
 public class BatikSVGExtension implements LSPExtLib
 {
+	private static boolean DEBUG = true;	
+	
+	private ImageTranscoder transcoder;
+	private SAXSVGDocumentFactory docFactory;
+	private ContentHandler out;
+	private Target target;
+	
+	public BatikSVGExtension()
+	{
+		transcoder = new PNGTranscoder();
+		docFactory = null;
+		out = null;
+		target = null;		
+	}
+	
+	
 	/**
 	 * Invoked before the element is sent.
 	 *
@@ -58,9 +83,14 @@ public class BatikSVGExtension implements LSPExtLib
 	public ContentHandler beforeElement(ContentHandler out, Target target)
 		throws SAXException
 	{
-		throw new Error("Not implemented");
+		this.out = out;
+		this.target = target;
+		docFactory = new SAXSVGDocumentFactory();
+		docFactory.prepareDocument();
+		docFactory.startDocument();
+		return new ContentHandlerFixer(docFactory);
 	}
-	
+
 	
 	/**
 	 * Invoked after the element is sent.
@@ -68,9 +98,51 @@ public class BatikSVGExtension implements LSPExtLib
 	 * @return  a string output.
 	 */
 	public String afterElement()
-		throws SAXException
-	{
-		throw new Error("Not implemented");
+		throws SAXException, IOException
+	{	
+		URL sourceURL = new URL("http://www.foo.bar/baz.html");
+
+/*
+		String _sourceURL = getSourceMan().getSourceURL();
+		if (LagoonUtil.absoluteURL(_sourceURL))
+			sourceURL = new URL(_sourceURL);
+		else if (LagoonUtil.pseudoAbsoluteURL(_sourceURL))
+			sourceURL = new java.net.URL(getSourceMan().getRootDir().toURL(),
+				_sourceURL.substring(1));
+		else
+			sourceURL = new java.net.URL(getSourceMan().getRootDir().toURL(),
+				_sourceURL);
+							
+		if (DEBUG) System.out.println("The source URL: " + sourceURL);
+*/
+		
+		String imageName = "img" + System.currentTimeMillis() + ".png";
+
+		docFactory.endDocument();
+		
+		SVGOMDocument doc = docFactory.getDocument(sourceURL); 
+
+		if (DEBUG) System.out.println("Batik SVG DOM building complete");
+        TranscoderInput input = new TranscoderInput(doc);
+
+		OutputHandler oh = ((FileTarget)target).newAsyncTarget(imageName);
+		
+        TranscoderOutput output = new TranscoderOutput(oh.getOutputStream());
+        try {
+			if (DEBUG) System.out.println("about to transcode");
+			transcoder.transcode(input, output);
+			if (DEBUG) System.out.println("transcoding complete");
+		} catch(TranscoderException e) {
+			throw new SAXException(e);
+		}
+		
+		AttributesImpl atts = new AttributesImpl();
+		atts.addAttribute("", "src", "", "CDATA", imageName);
+		atts.addAttribute("", "alt", "", "CDATA", "");
+		out.startElement("" /* *** "http://www.w3.org/1999/xhtml" */, "img", "", atts);
+		out.endElement("" /* *** "http://www.w3.org/1999/xhtml" */, "img", "");
+	
+		return null;
 	}
 		
 }

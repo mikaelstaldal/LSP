@@ -48,6 +48,9 @@ import java.util.Hashtable;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import nu.staldal.lagoon.core.Target;
+
+
 public interface LSPPage extends Serializable
 {
     public Enumeration getCompileDependentFiles();
@@ -66,6 +69,6 @@ public interface LSPPage extends Serializable
      * or endDocument() events.
      */
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params)
+        Hashtable params, Target target)
         throws SAXException;
 }
