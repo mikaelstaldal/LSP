@@ -46,7 +46,9 @@
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/util/*"
            destdir="${build.classes}"
-           optimize="on" debug="on">
+           optimize="on" debug="on"
+           source="1.4" target="1.4"
+           deprecation="on">
        <classpath location="${Servlet}" />
        <classpath location="${Struts}" />
 	</javac>
@@ -86,7 +88,9 @@
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/compiler/*,nu/staldal/lsp/compile/*,nu/staldal/lsp/expr/*,nu/staldal/lsp/compiledexpr/*,nu/staldal/syntax/**/*,nu/staldal/xtree/**/*"
            destdir="${build.classes}"
-           optimize="on" debug="on">
+           optimize="on" debug="on"
+           source="1.4" target="1.4"
+           deprecation="on">
        <classpath location="${Ant}" />
        <classpath location="${BCEL}" />
 	</javac>
@@ -124,7 +128,9 @@
     <javac srcdir="${src.testsuite}"
     	   includes="nu/staldal/**/*"
            destdir="${build.testsuite}"
-           optimize="off">
+           optimize="off" debug="on"
+           source="1.4" target="1.4"
+           deprecation="on">
     	<classpath>
             <pathelement location="${build.classes}" />
             <pathelement location="${JUnit}" />
