@@ -3,6 +3,7 @@ package nu.staldal.lsp;
 import java.io.*;
 
 import nu.staldal.syntax.ParseException;
+import nu.staldal.util.Utils;
 
 import junit.framework.*;
 
@@ -61,7 +62,7 @@ public class TestLSPParse extends TestCase
         }
         catch (ParseException e)
         {
-			System.out.println(LSPUtil.nChars(e.getColumn()-1,' ') 
+			System.out.println(Utils.nChars(e.getColumn()-1,' ') 
 				+ "^ "+ e.getMessage());
 		}
 		
