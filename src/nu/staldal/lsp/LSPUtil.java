@@ -88,4 +88,13 @@ public final class LSPUtil
 		return value;
 	}
 
+
+	public static String nChars(int n, char c)
+	{
+		StringBuffer sb = new StringBuffer(n);
+		for (int i = 0; i<n; i++)
+			sb.append(c);
+		return sb.toString();
+	}
+
 }

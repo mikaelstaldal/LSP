@@ -408,7 +408,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"string() function must have 1 argument");
 
-				return convertToString(expr.getArg(0));
+				return evalExprAsString(expr.getArg(0));
 			}
 			else if (expr.getName().equals("concat"))
 			{
@@ -419,7 +419,7 @@ public class LSPInterpreter implements LSPPage
 				StringBuffer sb = new StringBuffer();
 				for (int i = 0; i<expr.numberOfArgs(); i++)
 				{
-					sb.append(convertToString(expr.getArg(i)));
+					sb.append(evalExprAsString(expr.getArg(i)));
 				}
 				return sb.toString();
 			}
@@ -429,8 +429,8 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"starts-with() function must have 2 arguments");
 
-				String a = convertToString(expr.getArg(0));
-				String b = convertToString(expr.getArg(1));
+				String a = evalExprAsString(expr.getArg(0));
+				String b = evalExprAsString(expr.getArg(1));
 
 				return new Boolean(a.startsWith(b));
 			}
@@ -440,8 +440,8 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"contains() function must have 2 arguments");
 
-				String a = convertToString(expr.getArg(0));
-				String b = convertToString(expr.getArg(1));
+				String a = evalExprAsString(expr.getArg(0));
+				String b = evalExprAsString(expr.getArg(1));
 
 				return new Boolean(a.indexOf(b) > -1);
 			}
@@ -451,8 +451,8 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"substring-before() function must have 2 arguments");
 
-				String a = convertToString(expr.getArg(0));
-				String b = convertToString(expr.getArg(1));
+				String a = evalExprAsString(expr.getArg(0));
+				String b = evalExprAsString(expr.getArg(1));
 
 				int index = a.indexOf(b);
 
@@ -467,8 +467,8 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"substring-after() function must have 2 arguments");
 
-				String a = convertToString(expr.getArg(0));
-				String b = convertToString(expr.getArg(1));
+				String a = evalExprAsString(expr.getArg(0));
+				String b = evalExprAsString(expr.getArg(1));
 
 				int index = a.indexOf(b);
 
@@ -483,18 +483,21 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"substring() function must have 2 or 3 arguments");
 
-				String a = convertToString(expr.getArg(0));
-				int b = (int)Math.round(convertToNumber(expr.getArg(1)));
-				int c = (expr.numberOfArgs() == 3)
-					? (int)Math.round(convertToNumber(expr.getArg(2)))
-					: -1;
+				String a = evalExprAsString(expr.getArg(0));
+				double bd = evalExprAsNumber(expr.getArg(1));
+				double cd = (expr.numberOfArgs() == 3)
+					? evalExprAsNumber(expr.getArg(2))
+					: (a.length()+1);
+				if (Double.isNaN(bd) || Double.isNaN(cd)) return "";
 
-				if (b < 1) b = 1;
+				int b = (int)Math.round(bd);
+				int c = (int)Math.round(cd);
+
 				if (b > a.length()) b = a.length();
 				if (c < 1) return "";
 				if (c > (a.length()-b+1)) c = a.length()-b+1;
 
-				return a.substring(b-1, b-1+c);
+				return a.substring((b-1 < 0) ? 0 : (b-1), b-1+c);
 			}
 			else if (expr.getName().equals("string-length"))
 			{
@@ -502,7 +505,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"string-length() function must have 1 argument");
 
-				String a = convertToString(expr.getArg(0));
+				String a = evalExprAsString(expr.getArg(0));
 
 				return new Double(a.length());
 			}
@@ -512,7 +515,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"normalize-space() function must have 1 argument");
 
-				String a = convertToString(expr.getArg(0)).trim();
+				String a = evalExprAsString(expr.getArg(0)).trim();
 
 				StringBuffer sb = new StringBuffer(a.length());
 				boolean inSpace = false;
@@ -541,9 +544,9 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"translate() function must have 3 arguments");
 
-				String a = convertToString(expr.getArg(0));
-				String b = convertToString(expr.getArg(1));
-				String c = convertToString(expr.getArg(2));
+				String a = evalExprAsString(expr.getArg(0));
+				String b = evalExprAsString(expr.getArg(1));
+				String c = evalExprAsString(expr.getArg(2));
 
 				StringBuffer sb = new StringBuffer(a.length());
 				for (int i = 0; i<a.length(); i++)
@@ -565,7 +568,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"boolean() function must have 1 argument");
 
-				return new Boolean(convertToBoolean(expr.getArg(0)));
+				return new Boolean(evalExprAsBoolean(expr.getArg(0)));
 			}
 			else if (expr.getName().equals("not"))
 			{
@@ -573,7 +576,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"not() function must have 1 argument");
 
-				return new Boolean(!convertToBoolean(expr.getArg(0)));
+				return new Boolean(!evalExprAsBoolean(expr.getArg(0)));
 			}
 			else if (expr.getName().equals("true"))
 			{
@@ -597,7 +600,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"number() function must have 1 argument");
 
-				return new Double(convertToNumber(expr.getArg(0)));
+				return new Double(evalExprAsNumber(expr.getArg(0)));
 			}
 			else if (expr.getName().equals("floor"))
 			{
@@ -605,7 +608,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"floor() function must have 1 argument");
 
-				return new Double(Math.floor(convertToNumber(expr.getArg(0))));
+				return new Double(Math.floor(evalExprAsNumber(expr.getArg(0))));
 			}
 			else if (expr.getName().equals("ceiling"))
 			{
@@ -613,7 +616,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"ceiling() function must have 1 argument");
 
-				return new Double(Math.ceil(convertToNumber(expr.getArg(0))));
+				return new Double(Math.ceil(evalExprAsNumber(expr.getArg(0))));
 			}
 			else if (expr.getName().equals("round"))
 			{
@@ -621,7 +624,7 @@ public class LSPInterpreter implements LSPPage
 					throw new LSPException(
 						"round() function must have 1 argument");
 
-				double a = convertToNumber(expr.getArg(0));
+				double a = evalExprAsNumber(expr.getArg(0));
 
 				return new Double(Math.floor(a + 0.5d));
 			}
@@ -666,10 +669,13 @@ public class LSPInterpreter implements LSPPage
 		}
 		else if (value instanceof Double)
 		{
-			if (((Double)value).doubleValue() == 0)
+			double d = ((Double)value).doubleValue();
+			if (d == 0)
 				return "0";
+			else if (d == Math.rint(d))
+				return Long.toString(Math.round(d));
 			else
-				return value.toString();
+				return Double.toString(d);
 		}
 		else if (value instanceof Boolean)
 		{
@@ -677,7 +683,9 @@ public class LSPInterpreter implements LSPPage
 		}
 		else
 		{
-			return value.toString();
+			throw new LSPException(
+				"Convert to String not implemented for type "
+				+ value.getClass().getName());
 		}
 	}
 
@@ -705,7 +713,7 @@ public class LSPInterpreter implements LSPPage
 		else
 		{
 			throw new LSPException(
-				"Convert to Boolean not implemented for type"
+				"Convert to Boolean not implemented for type "
 				+ value.getClass().getName());
 		}
 	}
@@ -729,7 +737,7 @@ public class LSPInterpreter implements LSPPage
 		else if (value instanceof String)
 		{
 			try {
-				return Double.parseDouble((String)value);
+				return Double.valueOf((String)value).doubleValue();
 			}
 			catch (NumberFormatException e)
 			{
@@ -739,7 +747,7 @@ public class LSPInterpreter implements LSPPage
 		else
 		{
 			throw new LSPException(
-				"Convert to Number not implemented for type"
+				"Convert to Number not implemented for type "
 				+ value.getClass().getName());
 		}
 	}

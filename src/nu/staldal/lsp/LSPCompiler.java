@@ -77,19 +77,20 @@ public class LSPCompiler
 	}
 
 
-	private static LSPException fixParseException(ParseException e)
+	private static LSPException fixParseException(
+		String expression, ParseException e)
 	{
-		// *** better error message
-		return new LSPException("Illegal expression: " + e.getMessage());
+		return new LSPException("Illegal LSP expression:\n" + expression +
+			"\n" + LSPUtil.nChars(e.getColumn()-1,' ') + "^ "+ e.getMessage());
 	}
 
 
     private static LSPException fixIllegalTemplate(String template)
     {
         if (template.length() > 64)
-            return new LSPException("Illegal template");
+            return new LSPException("Illegal LSP template");
         else
-            return new LSPException("Illegal template: " + template);
+            return new LSPException("Illegal LSP template: " + template);
     }
 
 
@@ -188,7 +189,7 @@ public class LSPCompiler
                         }
                         catch (ParseException e)
                         {
-                            throw fixParseException((ParseException)e);
+                            throw fixParseException(exp, (ParseException)e);
                         }
                         vector.addElement(res);
 						expr = null;
@@ -557,15 +558,15 @@ public class LSPCompiler
 	private LSPNode process_if(Element el)
 		throws LSPException
 	{
+		String exp = LSPUtil.getAttr("test", el, true);
 		try {
-			LSPExpr test = LSPExpr.parseFromString(
-				LSPUtil.getAttr("test", el, true));
+			LSPExpr test = LSPExpr.parseFromString(exp);
 
 			return new LSPIf(test, compileChildren(el));
 		}
 		catch (ParseException e)
 		{
-			throw fixParseException(e);
+			throw fixParseException(exp, e);
 		}
 	}
 
