@@ -4,4 +4,4 @@
 
 # export LAGOON_HOME=/usr/local/lagoon
 
-java -classpath ${CLASSPATH}:bcel.jar:${LAGOON_HOME}/lspc.jar:${LAGOON_HOME}/lsprt.jar:${LAGOON_HOME}/xmlutil.jar nu.staldal.lsp.LSPCompilerCLI $*
+java -classpath ${CLASSPATH}:bcel.jar:${LAGOON_HOME}/lspc.jar:${LAGOON_HOME}/lsprt.jar:${LAGOON_HOME}/xmlutil.jar nu.staldal.lsp.compiler.LSPCompilerCLI $*
