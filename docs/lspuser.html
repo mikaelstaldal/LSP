@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html>
+<head><title>LSP User Guide</title></head>
+<link rel="stylesheet" type="text/css" href="manual.css" /> 
+<body>
+<h1>LSP User Guide</h1>
+
+<h2>Overview</h2>
+
+<p>LSP is a technology for pseudo-dynamic content processing.</p>
+
+<p>The design of LSP is inspired by dynamic content technologies,
+especially JSP, and by XML technologies, especially XSLT.</p>
+
+<p>LSP is fully based on XML and namespaces. This means that it's easy
+to efficiently use LSP together with other XML technologies, such as
+XSLT (for example, an LSP page can be constructed with XSLT, and you
+can process the output of LSP with XSLT).</p>
+
+
+<h2>LSP basics</h2>
+
+<p>An LSP page is a well-formed XML document, composed of elements from
+the LSP namespace and from other namespaces (including the null
+namespace). The document root element may, but doesn't have to, be in
+the LSP namespace.</p>
+
+<p>The namespace URI for LSP is
+<code>http://staldal.nu/LSP/core</code>. In this document, it's assumed
+that this namespace is mapped to the prefix <code>lsp</code>, however
+any prefix may be used.</p>
+
+<p>An LSP page is processed by interpreting all LSP elements, and
+sending all non-LSP elements and all character data to the output
+(subject to <a href="#template">template processing</a>). However, some
+LSP element (such as <code>lsp:if</code>) can inhibit the output of
+parts of the LSP page. Comments and processing instructions in the
+LSP page are ignored. Any DTD in the LSP page is not sent to the
+output.</p>
+
+<p>To allow high-performance implementation of LSP, an LSP page may be
+compiled into some code (for example Java byte code), which can then be
+executed several times, possibly with a different set of parameters.
+Unless otherwise stated, all processing occurs when the page is
+executed.</p>
+
+<p>It's simple to start using LSP in a static HTML (or some XML
+based markup language) page. Just add a declaration for the LSP
+namespace (<code>xmlns:lsp="http://staldal.nu/LSP/core"</code>) in the
+root element and add LSP elements and templates. However, you must
+ensure that the HTML page is in well-formed XML format.</p>
+
+
+<h2>LSP elements</h2>
+
+<p>This section describes all elements in the LSP namespace. An
+attribute name in <b>bold</b> means this attribute is required. An
+attribute value specification surrounded by curly braces
+(<code>{}</code>) means that the attribute value is processed as a <a
+href="#template">template</a>.</p>
+
+<h4>lsp:import</h4>
+
+<p class="element-syntax">
+<a name="element-import"></a>&lt;lsp:import<br>
+&nbsp;&nbsp;<b>file</b> = <var>URL</var>&nbsp;/&gt;
+</p>
+
+<p>The <code>lsp:import</code> includes a file when the page is
+compiled. Any LSP elements and templates in the included file are
+processed.</p>
+
+
+<h4>lsp:include</h4>
+
+<p class="element-syntax">
+<a name="element-include"></a>&lt;lsp:include<br>
+&nbsp;&nbsp;<b>file</b> = { <var>URL</var> }&nbsp;/&gt;
+</p>
+
+<p>The <code>lsp:include</code> includes a file when the page is
+executed. Any elements in the LSP namespace in the included file
+are stripped, but their content is keep (this allows the
+<code>lsp:root</code> element to be used normally). Any templates in
+the included file are not processed.</p>
+
+
+<h4>lsp:root</h4>
+
+<p class="element-syntax">
+<a name="element-root"></a>&lt;lsp:root&gt;<br>
+&nbsp;&nbsp;&lt;!-- Content: <var>any</var> --&gt;<br>
+&lt;/lsp:root&gt;
+</p>
+
+<p>The <code>lsp:root</code> element simply outputs all of its content.
+Useful as document root element in files to be <code>import</code>ed or
+<code>include</code>d. The <code>lsp:root</code> element can be
+nested.</p>
+
+
+<h4>lsp:raw</h4>
+
+<p class="element-syntax">
+<a name="element-raw"></a>&lt;lsp:raw&gt;<br>
+&nbsp;&nbsp;&lt;!-- Content: <var>any</var> --&gt;<br>
+&lt;/lsp:raw&gt;
+</p>
+
+<p>The <code>lsp:raw</code> element outputs all of its content, without
+processing templates in character data or in attribute values on
+non-LSP elements. However, templates are still processed in attribute
+values on LSP elements. The <code>lsp:raw</code> element can be
+nested, nesting has no additional meaning.</p>
+
+
+<h4>lsp:processing-instruction</h4>
+
+<p class="element-syntax">
+<a name="element-processing-instruction"></a>
+&lt;lsp:processing-instruction<br>
+&nbsp;&nbsp;<b>name</b> = { <var>ncname</var> }&gt;<br>
+&nbsp;&nbsp;&lt;!-- Content: <var>any</var> &nbsp; -(lsp:processing-instruction) --&gt;<br>
+&lt;/lsp:processing-instruction&gt;
+</p>
+
+<p>The <code>lsp:processing-instruction</code> element creates a
+processing instruction in the output. The <code>name</code> attribute
+is used as the processing instruction target, and the character data of
+the content is used as the processing instruction data.
+<code>lsp:processing-instruction</code> may <em>not</em> be nested.</p>
+
+
+<h4>lsp:if</h4>
+
+<p class="element-syntax">
+<a name="element-if"></a>
+&lt;lsp:if<br>
+&nbsp;&nbsp;<b>test</b> = <var>boolean-expression</var>&gt;<br>
+&nbsp;&nbsp;&lt;!-- Content: <var>any</var> --&gt;<br>
+&lt;/lsp:if&gt;
+</p>
+
+<p>The <code>test</code> expression is evaluated, and converted to
+boolean<!-- as if by a call to the <code>boolean()</code> function -->.
+If the result is true, the content of the <code>lsp:if</code> element
+is outputted, otherwise nothing outputted.</p>
+
+
+<a name="template"><h2>Templates</h2></a>
+
+<p>All attribute values to non-LSP elements, all character content
+(unless contained in an <code>lsp:raw</code> element) and the values of
+some attributes to LSP elements are processed as templates. This means
+that it may contain LSP expressions surrounded by curly braces
+(<code>{}</code>). A such expression is evaluated and the expression
+(together with the curly braces) is replaced with its string value. To
+actually include a literal curly brace, use a double curly brace.</p>
+
+
+<h2>LSP Expressions</h2>
+
+<p>Currently, the only type of expression supported is a variable
+reference, which consists of a '$' followed by the variable name. The
+variable name must be an XML Name, and may not contain any ':' or any
+'.'.</p>
+
+<p>The variable binding available are the parameters passed to the LSP
+page. Attempting to reference a non-existing parameter gives the empty
+string. This is converted to boolean by considering any non-empty
+string as true, and the empty string as false.</p>
+
+<p>Future versions will have a more comprehensive expression
+language.</p>
+
+</body>
+</html>
