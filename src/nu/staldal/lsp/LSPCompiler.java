@@ -51,6 +51,9 @@ import nu.staldal.syntax.ParseException;
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.expr.*;
 
+import nu.staldal.lagoon.util.LagoonUtil;
+
+
 public class LSPCompiler
 {
 	private static final boolean DEBUG = true;
@@ -68,7 +71,8 @@ public class LSPCompiler
 
 	private int raw;
 	private boolean inPi;
-	private String extNamespace;
+	private boolean inExtElement;
+	private Hashtable extDict = new Hashtable();
 
 
 	private static SAXException fixSourceException(Node node, String msg)
@@ -266,7 +270,7 @@ public class LSPCompiler
         compileDynamic = false;
         executeDynamic = false;
 		
-		extNamespace = null;
+		inExtElement = false;
 
         resolver = r;
         tb = new TreeBuilder();
@@ -405,32 +409,14 @@ public class LSPCompiler
 		else
 		{
 			LSPElement newEl;
-			boolean extElement = false; 			
+			boolean inExtElementNow = false; 			
 			
-			if ((el.getNamespaceURI() != null)
-					&& !el.getNamespaceURI().equals(extNamespace)
-					&& (el.getNamespaceURI().startsWith("java:")
-						|| (el.getNamespaceURI().equals("http://www.w3.org/2000/svg"))))
-			{	// extension element
-				// *** register extension namespaces
-				extNamespace = el.getNamespaceURI();
-				extElement = true;
-				String className = el.getNamespaceURI().substring(5);
-				if (className.equals("//www.w3.org/2000/svg"))
-					className = "nu.staldal.lsp.ext.BatikSVGExtension";
-				try {
-					Class theClass = Class.forName(className);
-					if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(theClass))
-					throw fixSourceException(el, 
-						"extension class " + className 
-						+ " must implement nu.staldal.lsp.LSPExtLib"); 
-				}
-				catch (ClassNotFoundException e)
-				{
-					throw fixSourceException(el, 
-						"extension class " + className + " not found"); 
-				}
-				newEl = new LSPExtElement(className, 
+			Class extClass = lookupExtensionHandler(el);
+			if (!inExtElement && (extClass != null))
+			{
+				inExtElement = true;
+				inExtElementNow = true;
+				newEl = new LSPExtElement(extClass.getName(), 
 					el.getNamespaceURI(), el.getLocalName(),
 					el.numberOfAttributes(), el.numberOfChildren()); 
 			}
@@ -463,12 +449,58 @@ public class LSPCompiler
 
 			compileChildren(el, newEl);
 			
-			if (extElement) extNamespace = null;
+			if (inExtElementNow) inExtElement = false;
 
 			return newEl;
 		}
     }
 
+	
+	private Class lookupExtensionHandler(Element el)
+		throws SAXException
+	{
+		if (el.getNamespaceURI() == null || el.getNamespaceURI().length() == 0) 
+			return null;
+		
+        Class cls = (Class)extDict.get(el.getNamespaceURI());
+		
+		if (cls != null) return cls;
+		
+		String className = null;
+        try
+        {
+			String fileName = "/nu/staldal/lsp/ext/" 
+				+ LagoonUtil.encodePath(el.getNamespaceURI());
+			InputStream is = getClass().getResourceAsStream(fileName);
+			if (is == null) return null;
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			className = br.readLine();
+			if (className == null)
+				throw fixSourceException(el,
+					"Illegal LSP Extension config file: " + fileName);
+
+			cls = Class.forName(className);
+			if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(cls))
+			throw fixSourceException(el, 
+				"LSP extension class " + className 
+				+ " must implement nu.staldal.lsp.LSPExtLib");
+				
+			extDict.put(el.getNamespaceURI(), cls);
+			return cls;
+		}
+		catch (ClassNotFoundException e)
+		{
+			throw fixSourceException(el, 
+				"extension class " + className + " not found"); 
+		}
+        catch (IOException e)
+        {
+            throw fixSourceException(el,
+                "Unable to read producer config file: " + e.toString());
+        }
+	}
+	
 
     private LSPNode compileNode(Text text)
         throws SAXException
