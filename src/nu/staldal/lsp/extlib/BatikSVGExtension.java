@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,12 +64,14 @@ public class BatikSVGExtension implements LSPExtLib
 	private static String XHTML = "http://www.w3.org/1999/xhtml"; 	
 	
 	private ImageTranscoder transcoder;
-	private SAXSVGDocumentFactory docFactory;
+	private MySVGDocumentFactory docFactory;
 	private ContentHandler out;
 	private Target target;
 	private SourceManager sourceMan;
 	private int imageNumber;
 	private String xmlReaderClassName;
+	private URL sourceURL;
+	private String _sourceURL;
 	
 	public BatikSVGExtension() throws ParserConfigurationException, SAXException
 	{
@@ -84,6 +86,9 @@ public class BatikSVGExtension implements LSPExtLib
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		XMLReader parser = spf.newSAXParser().getXMLReader();
 		xmlReaderClassName = parser.getClass().getName();
+		
+		org.apache.batik.util.XMLResourceDescriptor.setXMLParserClassName(
+			 xmlReaderClassName);
 	}
 	
 	
@@ -97,13 +102,25 @@ public class BatikSVGExtension implements LSPExtLib
 	 */
 	public ContentHandler beforeElement(ContentHandler out, 
 		Target target, SourceManager sourceMan)
-		throws SAXException
-	{
+		throws SAXException, IOException
+	{		
+		_sourceURL = sourceMan.getSourceURL();
+		if (LagoonUtil.absoluteURL(_sourceURL))
+			sourceURL = new URL(_sourceURL);
+		else if (LagoonUtil.pseudoAbsoluteURL(_sourceURL))
+			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
+				_sourceURL.substring(1));
+		else
+			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
+				_sourceURL);
+							
+		if (DEBUG) System.out.println("The source URL: " + sourceURL);
+		
 		this.out = out;
 		this.target = target;
 		this.sourceMan = sourceMan;
-		docFactory = new SAXSVGDocumentFactory(xmlReaderClassName);
-		// docFactory.prepareDocument();
+		docFactory = new MySVGDocumentFactory(
+			xmlReaderClassName, sourceURL);
 		docFactory.startDocument();
 		return new ContentHandlerFixer(docFactory);
 	}
@@ -117,19 +134,6 @@ public class BatikSVGExtension implements LSPExtLib
 	public String afterElement()
 		throws SAXException, IOException
 	{	
-		URL sourceURL;
-		String _sourceURL = sourceMan.getSourceURL();
-		if (LagoonUtil.absoluteURL(_sourceURL))
-			sourceURL = new URL(_sourceURL);
-		else if (LagoonUtil.pseudoAbsoluteURL(_sourceURL))
-			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
-				_sourceURL.substring(1));
-		else
-			sourceURL = new java.net.URL(sourceMan.getRootDir().toURL(),
-				_sourceURL);
-							
-		if (DEBUG) System.out.println("The source URL: " + sourceURL);
-		
 		int slash = _sourceURL.lastIndexOf('/');
 		String sourceName = 
 			(slash < 0) ? _sourceURL : _sourceURL.substring(slash+1); 
@@ -137,12 +141,12 @@ public class BatikSVGExtension implements LSPExtLib
 
 		docFactory.endDocument();
 		
-		// *** will not work!
-		SVGOMDocument doc = docFactory.createDocument(sourceURL.toString()); 
+		SVGOMDocument doc = docFactory.getDocument(); 
 
 		if (DEBUG) System.out.println("Batik SVG DOM building complete");
         TranscoderInput input = new TranscoderInput(doc);
-
+		input.setURI(sourceURL.toString());
+		
 		OutputHandler oh = ((FileTarget)target).newAsyncTarget(imageName, false);
 		
         TranscoderOutput output = new TranscoderOutput(oh.getOutputStream());
