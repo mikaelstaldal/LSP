@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, Mikael Ståldal
+ * Copyright (c) 2002-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,7 +56,9 @@ import java.util.*;
  * one frame, which cannot be popped.
  * <p>
  * This class is useful for handling variable bindings in an interpreter
- * for language with scoped access to variables. 
+ * for language with scoped access to variables.
+ * <p>
+ * This class is not thread-safe, you need to synchronize concurrent access.
  */
 public class Environment 
 {
@@ -68,6 +70,16 @@ public class Environment
 	public Environment()
 	{
 		currentFrame = new Frame();
+	}
+
+	/**
+	 * Create a new Environment initialized with the binding in a Map.
+     *
+     * @param initial  the Map with initial bindings
+	 */
+	public Environment(Map initial)
+	{
+		currentFrame = new Frame(initial);
 	}
 
 	/**
@@ -156,17 +168,24 @@ public class Environment
 	static class Frame
 	{
 		private Frame parent;
-		private Hashtable map;
+		private Map map;
 		
 		Frame(Frame p)
 		{
 			parent = p;
-			map = new Hashtable();
+			map = new HashMap();
 		}
 	
 		Frame()
 		{
-			this(null);
+			parent = null;
+			map = new HashMap();
+		}	
+
+		Frame(Map initial)
+		{
+			parent = null;
+            map = initial;
 		}	
 
 		Frame getParent()
