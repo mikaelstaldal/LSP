@@ -20,6 +20,11 @@ public class TestLSPParse extends TestCase
     public static final String correctTest2 =
 		"ConditionalExpr(BinaryExpr(NumberLiteral(2.0),6,NumberLiteral(3.0)),BinaryExpr(NumberLiteral(5.0),12,NumberLiteral(8.0)),StringLiteral(foo))";
 
+    public static final String correctExpr3 = 
+		"$Räksmörgåsëüû";
+    public static final String correctTest3 =
+		"VariableReference(Räksmörgåsëüû)";
+        
     public static final String invalidExpr = "1+2-a-3.2*f($a.b,$c)";
     public static final String invalidExpr2 = "if 5 else 8";
 
@@ -36,6 +41,9 @@ public class TestLSPParse extends TestCase
         LSPExpr correctParsed2 = LSPExpr.parseFromString(correctExpr2);
         assertEquals(correctTest2, correctParsed2.toString());
     
+        LSPExpr correctParsed3 = LSPExpr.parseFromString(correctExpr3);
+        assertEquals(correctTest3, correctParsed3.toString());
+
         try {
     		LSPExpr invalidParsed = LSPExpr.parseFromString(invalidExpr);
             fail("Parser did not signal error in invalid expression: "

@@ -31,8 +31,8 @@
 * Split lsp.jar into lsprt.jar and lspc.jar.
 
 
-1.0 beta 6
-----------
+1.0 final
+---------
 * disable-output-escaping in <lsp:value-of>
 * Removed <lsp:include>. This was almost never used, and you can get the
   same functionallity using an Extension Library.
