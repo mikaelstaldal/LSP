@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,6 +57,8 @@ import nu.staldal.lagoon.core.SourceManager;
 
 public class LSPInterpreter implements LSPPage
 {
+	private static final boolean DEBUG = false;
+	
     static final long serialVersionUID = -1168364109491726217L;
 
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
@@ -304,18 +306,56 @@ public class LSPInterpreter implements LSPPage
 	private void processNode(LSPForEach el, ContentHandler sax)
 		throws SAXException
 	{
-		LSPList theList = evalExprAsList(el.getList());
-		
+		final LSPList theList = evalExprAsList(el.getList());
+
+		try {
+			theList.reset();
+		}
+		catch (IllegalArgumentException e)
+		{
+			throw new LSPException("Cannot traverse list: " + e.getMessage());	
+		}
 		while (theList.hasNext())
 		{
 			Object o = theList.next();
-			Object old = params.get(el.getVariable());
+			Object oldVar = params.get(el.getVariable());
+			Object oldStatus = null;
 			params.put(el.getVariable(), o);
+			if (el.getStatusObject() != null)
+			{
+				oldStatus = params.get(el.getStatusObject());
+
+				params.put(el.getStatusObject(), new LSPTuple()
+					{
+						public Object get(String key)
+						{
+							if (key.equals("index"))
+								return new Double(theList.index());
+							else if (key.equals("first"))
+								return new Boolean(theList.index() == 1);
+							else if (key.equals("last"))
+								return new Boolean(!theList.hasNext());
+							else if (key.equals("even"))
+								return new Boolean(theList.index() % 2 == 0);
+							else if (key.equals("odd"))
+								return new Boolean(theList.index() % 2 != 0);
+							else
+								return null;
+						}
+					});
+			}
 			processNode(el.getBody(), sax);
-			if (old == null)
+			if (oldVar == null)
 				params.remove(el.getVariable());
 			else
-				params.put(el.getVariable(), old);
+				params.put(el.getVariable(), oldVar);
+			if (el.getStatusObject() != null)
+			{
+				if (oldStatus == null)
+					params.remove(el.getStatusObject());
+				else
+					params.put(el.getStatusObject(), oldStatus);
+			}				
 		}
 	}
 		
@@ -695,7 +735,37 @@ public class LSPInterpreter implements LSPPage
 
 			LSPList list = evalExprAsList(expr.getArg(0));
 
-			return new Double(list.length());
+			try {
+				return new Double(list.length());
+			}
+			catch (IllegalArgumentException e)
+			{
+				throw new LSPException(
+					"Cannot check length of list: " + e.getMessage());	
+			}				
+		}
+		else if (expr.getName().equals("seq"))
+		{
+			if (expr.numberOfArgs() < 2)
+				throw new LSPException(
+					"seq() function must have at least 2 arguments");
+					
+			double start = evalExprAsNumber(expr.getArg(0));
+			double end = evalExprAsNumber(expr.getArg(1));
+			double step = (expr.numberOfArgs() > 2) 
+				? evalExprAsNumber(expr.getArg(2))
+				: 1.0;
+
+			Vector vec = new Vector((int)((end-start)/step));
+			for (; start <= end; start+=step)
+				vec.addElement(new Double(start));
+			
+			if (DEBUG) System.out.println("seq of length " + vec.size()); 
+			// Object[] arr = new Object[vec.size()];
+			// vec.copyInto(arr);
+			
+			// return new LSPArrayList(arr);
+			return new LSPEnumerationList(vec.elements());
 		}
 		else
 		{
@@ -736,7 +806,7 @@ public class LSPInterpreter implements LSPPage
 	
 	private Object evalExpr(TupleExpr expr) throws SAXException
 	{
-		Hashtable tuple = evalExprAsTuple(expr.getBase());
+		LSPTuple tuple = evalExprAsTuple(expr.getBase());
 		Object o = tuple.get(expr.getName());
 		if (o == null)
 			throw new LSPException("Element \'" + expr.getName() 
@@ -852,11 +922,11 @@ public class LSPInterpreter implements LSPPage
 				+ value.getClass().getName());
 	}
 
-	private Hashtable evalExprAsTuple(LSPExpr expr) throws SAXException
+	private LSPTuple evalExprAsTuple(LSPExpr expr) throws SAXException
 	{
 		Object value = evalExpr(expr);
-		if (value instanceof Hashtable) 
-			return (Hashtable)value;
+		if (value instanceof LSPTuple) 
+			return (LSPTuple)value;
 		else
 			throw new LSPException(
 				"Convert to Tuple not implemented for type "

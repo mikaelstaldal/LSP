@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,63 +41,18 @@
 package nu.staldal.lsp;
 
 /**
- * Interface for the LSP list data type.
- * <p>
- * All LSPList implementation must implement the {@link #hasNext}, 
- * {@link #next} and {@link #index} methods. It's mandatory to support the 
- * {@link #reset} method (as a no-op) on a newly constructed object, but
- * support for resetting efter some elements has been obtained is optional.
- * It's mandatory to support the {@link #length} method after all elements
- * has been obtains, but support for getting the length before the list has
- * been fully traversed is optional.  
+ * Interface for the LSP tuple data type.
  */
-public interface LSPList
+public interface LSPTuple
 {
-
 	/**
-	 * Check if the list has more elements.
-	 * This method must be idempotent, i.e. it must be possible to invoke 
-	 * it several times without any side effects.
+	 * Get the value mapped to the given key.
 	 *
-	 * @return <code>true</code> if there are more elements in the list.
+	 * @param key  the key
+	 * @return the value mapped to the given key, 
+	 * or <code>null</code> if no value is mapped to the given key.
 	 */
-	public boolean hasNext();
+	public Object get(String key);
 
-
-	/**
-	 * Obtain the next element in the list.
-	 *
-	 * @return the next element in the list.
-	 * @throws java.util.NoSuchElementException if there are no more 
-	 *  elements in the list
-	 */
-	public Object next() throws java.util.NoSuchElementException;
-
-
-	/**
-	 * Get the number of elements obtained so far.
-	 *
-	 * @return the next element obtained so far.
-	 */
-	public int index();
-
-
-	/**
-	 * Obtain the length of the list.
-	 *
-	 * @return the length of the list.
-	 * @throws java.lang.IllegalArgumentException if it's currently
-	 *         not possible to check the number of elements in the list.
-	 */
-    public int length() throws java.lang.IllegalArgumentException;
-
-
-	/**
-	 * Reset the list and start over from the first element.
-	 *
-	 * @throws java.lang.IllegalArgumentException  if it's not possible to
-	 *         reset this list.
-	 */
-	public void reset() throws java.lang.IllegalArgumentException;	
 }
 

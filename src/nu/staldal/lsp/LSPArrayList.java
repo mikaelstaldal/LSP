@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,49 +38,50 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.compile;
+package nu.staldal.lsp;
 
-import nu.staldal.lsp.LSPExpr;
 
-public class LSPForEach implements LSPNode
+public class LSPArrayList implements LSPList
 {
-	static final long serialVersionUID = -1804355L;
+	private Object[] arr;
+	private int curr;
 
-	private LSPExpr theList;
-    private String variable;
-	private String statusObject;
-	private LSPNode body;
-
-	public LSPForEach(LSPExpr theList, String variable, String statusObject, 
-		LSPNode body)
+	public LSPArrayList(Object[] arr)
 	{
-		this.theList = theList;
-        this.variable = variable;
-		this.statusObject = statusObject; // may be null 
-		this.body = body;
+		this.arr = arr;
+		curr = 0;
+	}
+	
+	public boolean hasNext()
+	{
+		return (curr < arr.length);
 	}
 
-	public LSPExpr getList()
+	public Object next() throws java.util.NoSuchElementException
 	{
-		return theList;
+		try {
+			return arr[curr++];
+		}
+		catch (ArrayIndexOutOfBoundsException e)
+		{
+			throw new java.util.NoSuchElementException();
+		}
 	}
 
-   	public String getVariable()
+	public int index()
 	{
-		return variable;
+		return curr;	
 	}
 
-	/**
-	 * May be <code>null</code>.
-	 */
-   	public String getStatusObject()
+    public int length()
 	{
-		return statusObject;
+		return arr.length;	
 	}
 
-	public LSPNode getBody()
+	public void reset()
 	{
-		return body;
-	}
+		curr = 0;	
+	}	
+	
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -711,10 +711,12 @@ public class LSPCompiler
 	{
 		String exp = getAttr("select", el, true);
 		String var = getAttr("var", el, true); 
+		String status = getAttr("status", el, false); 
 		try {
 			LSPExpr theList = LSPExpr.parseFromString(exp);
 
-			return new LSPForEach(compileExpr(el, theList), var, compileChildren(el));
+			return new LSPForEach(compileExpr(el, theList), var, 
+				status, compileChildren(el));
 		}
 		catch (ParseException e)
 		{

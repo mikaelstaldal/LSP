@@ -189,6 +189,7 @@ evaluated in turn, and converted to boolean (as if by a call to the <code>boolea
 &lt;lsp:for-each<br />
 &#160;&#160;<b>select</b> = <var>list-expression</var><br />
 &#160;&#160;<b>var</b> = <var>variable name</var>&gt;<br />
+&#160;&#160;status = <var>variable name</var>&gt;<br />
 &#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
 &lt;/lsp:for-each&gt;
 </p>
@@ -197,9 +198,18 @@ evaluated in turn, and converted to boolean (as if by a call to the <code>boolea
 type list, otherwise an error occurs. The content of the <code>lsp:for-each</code> element
 is outputted once for each object in the list, with the variable
 specified in the <code>var</code> attribute bound to the current object in
-the list. Any variable with the same name in the enclosing scope is
-shadowed.</p>
+the list. If the <code>status</code> attribute is specified, a variable with 
+that name is bound to an interator status object. Any variable with the 
+same name in the enclosing scope is shadowed.</p>
 
+<p>An iterator status object is a tuple with the following elements:
+<ul>
+<li><code>index</code> - a number the position in the list, starting from 1</li>
+<li><code>first</code> - a boolean indicating if this is the first element</li>
+<li><code>last</code> - a boolean indicating if this is the last element</li>
+<li><code>even</code> - a boolean indicating if this is an even element</li>
+<li><code>odd</code> - a boolean indicating if this is an odd element</li>
+</ul>
 
 <a name="template"><h2>Templates</h2></a>
 
@@ -340,6 +350,8 @@ Digits ::= [0-9]+
 </ul>
 <ul>
 <li>number count(list) - the number of objects in the list</li>
+<li>list seq(start, end, step?) - generate a list of numbers with the
+specified sequence</li>
 </ul>
 
 <p>Namespaced functions are extension functions, see the <a

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,49 +38,61 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.compile;
+package nu.staldal.lsp;
 
-import nu.staldal.lsp.LSPExpr;
+import java.util.*;
 
-public class LSPForEach implements LSPNode
+
+public class LSPEnumerationList implements LSPList
 {
-	static final long serialVersionUID = -1804355L;
+    private int theLength = 0;
+	private Enumeration enum;
+	private boolean atEnd = false;
 
-	private LSPExpr theList;
-    private String variable;
-	private String statusObject;
-	private LSPNode body;
-
-	public LSPForEach(LSPExpr theList, String variable, String statusObject, 
-		LSPNode body)
+	public LSPEnumerationList(Enumeration enum)
 	{
-		this.theList = theList;
-        this.variable = variable;
-		this.statusObject = statusObject; // may be null 
-		this.body = body;
+		this.enum = enum;
 	}
 
-	public LSPExpr getList()
+	public boolean hasNext()
 	{
-		return theList;
+		return enum.hasMoreElements();
 	}
 
-   	public String getVariable()
+	public Object next() throws NoSuchElementException
 	{
-		return variable;
+		try {
+			Object o = enum.nextElement();
+			theLength++;
+			return o;
+		}
+		catch (NoSuchElementException e)
+		{
+			atEnd = true;
+			throw e;
+		}
 	}
 
-	/**
-	 * May be <code>null</code>.
-	 */
-   	public String getStatusObject()
+	public int index()
 	{
-		return statusObject;
+		return theLength;	
 	}
 
-	public LSPNode getBody()
+    public int length() throws IllegalArgumentException
 	{
-		return body;
+		if (atEnd)
+			return theLength;
+		else
+			throw new IllegalArgumentException(
+				"not possible to check length of an Enumeration");
 	}
+
+	public void reset() throws IllegalArgumentException
+	{
+		if (theLength > 0)
+			throw new IllegalArgumentException(
+				"not possible to reset an Enumeration");
+	}
+	
 }
 
