@@ -54,14 +54,13 @@ public class LSPCompilerCLI
 
 	public static void main(String[] args)
 	{
-		LSPCompilerHelper compiler = new LSPCompilerHelper();
-		
 		ArrayList mainPages = new ArrayList();
 		
 		boolean verbose = false;
 		boolean force = false;
         
-        String sourcePathSpec = null;
+		String sourcePathSpec = null;
+		File targetDir = null;
 
 		for (int i = 0; i<args.length; i++)
 		{
@@ -78,12 +77,12 @@ public class LSPCompilerCLI
 				else if (args[i].equals("-sourcepath"))
 				{
 					i++;
-                    sourcePathSpec = args[i];
+					sourcePathSpec = args[i];
 				}
 				else if (args[i].equals("-d"))
 				{
 					i++;
-					compiler.targetDir = new File(args[i]);
+					targetDir = new File(args[i]);
 				}
 				else
 				{
@@ -102,6 +101,9 @@ public class LSPCompilerCLI
 			syntaxError();
 			return;
 		}			
+
+                LSPCompilerHelper compiler = new LSPCompilerHelper();
+		if (targetDir != null) compiler.targetDir = targetDir;
 
         if (sourcePathSpec != null)
         {
@@ -133,7 +135,8 @@ public class LSPCompilerCLI
 		
 	private static void syntaxError()
 	{
-		System.err.println("Syntax: lspc [-verbose] [-force] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
+	    System.err.println("LSP compiler version " + LSPPage.LSP_VERSION_NAME);
+	    System.err.println("Syntax: lspc [-verbose] [-force] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
 	}
 
 }
