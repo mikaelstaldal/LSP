@@ -411,7 +411,7 @@ public class LSPCompiler
 			LSPElement newEl;
 			boolean inExtElementNow = false; 			
 			
-			Class extClass = lookupExtensionHandler(el);
+			Class extClass = lookupExtensionElementHandler(el);
 			if (!inExtElement && (extClass != null))
 			{
 				inExtElement = true;
@@ -456,7 +456,7 @@ public class LSPCompiler
     }
 
 	
-	private Class lookupExtensionHandler(Element el)
+	private Class lookupExtensionElementHandler(Element el)
 		throws SAXException
 	{
 		if (el.getNamespaceURI() == null || el.getNamespaceURI().length() == 0) 
@@ -469,7 +469,7 @@ public class LSPCompiler
 		String className = null;
         try
         {
-			String fileName = "/nu/staldal/lsp/ext/" 
+			String fileName = "/nu/staldal/lsp/extelement/" 
 				+ LagoonUtil.encodePath(el.getNamespaceURI());
 			InputStream is = getClass().getResourceAsStream(fileName);
 			if (is == null) return null;
