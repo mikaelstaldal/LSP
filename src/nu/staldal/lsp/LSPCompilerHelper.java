@@ -58,9 +58,8 @@ import nu.staldal.util.Utils;
  */
 public class LSPCompilerHelper
 {
-	private SAXParserFactory spf;
-
-	private LSPCompiler compiler;
+	private final SAXParserFactory spf;
+	private final LSPCompiler compiler;
 	
 	private String currentMainPage;
 	private File currentPagePath;
@@ -110,15 +109,28 @@ public class LSPCompilerHelper
 	
 	
 	/**
-	 * Compiles an LSP file.
+	 * Compiles an LSP file. Performs dependency checking and compiles
+	 * only if nessecary.
+	 *
+	 * @param mainPage  the main LSP file to compile
+	 * @param force     force compilation, override dependency checking.
+	 *
+	 * @return <code>true</code> if page was compiled, <code>false</code>otherwise
 	 *
 	 * @throws LSPException with an error message if unsuccessful
 	 */
-	public void doCompile(String mainPage)
+	public boolean doCompile(String mainPage, boolean force)
 		throws LSPException
 	{
 		currentMainPage = mainPage;
-		currentPagePath = new File(startDir, currentMainPage).getParentFile();
+		File inputFile = new File(startDir, currentMainPage);
+		currentPagePath = inputFile.getParentFile();
+		File outputFile = new File(targetDir, targetFilename(inputFile.getName()));
+		
+		if (!(force 
+				|| !outputFile.isFile()
+				|| outputFile.lastModified() < inputFile.lastModified()))
+			return false; // *** check imported files + compileDynamic
 		
 		try {
 			ContentHandler sax = compiler.startCompile(
@@ -130,16 +142,15 @@ public class LSPCompilerHelper
 					}
 				});
 			
-			getFileAsSAX(new File(startDir, currentMainPage).toURL().toString(), sax);
+			getFileAsSAX(inputFile.toURL().toString(), sax);
 		
 			LSPPage page = compiler.finishCompile();
 			
-			String mainFile = new File(mainPage).getName();
-			File outputFile = new File(targetDir, targetFilename(mainFile));
 			FileOutputStream fos = new FileOutputStream(outputFile);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(page);
 			oos.close();
+			return true;
 		}
 		catch (SAXParseException spe)
 		{

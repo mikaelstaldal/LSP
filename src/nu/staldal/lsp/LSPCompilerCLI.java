@@ -57,6 +57,7 @@ public class LSPCompilerCLI
 		ArrayList mainPages = new ArrayList();
 		
 		boolean verbose = false;
+		boolean force = false;
 
 		for (int i = 0; i<args.length; i++)
 		{
@@ -65,6 +66,10 @@ public class LSPCompilerCLI
 				if (args[i].equals("-verbose"))
 				{
 					verbose = true;
+				}
+				else if (args[i].equals("-force"))
+				{
+					force = true;
 				}
 				else if (args[i].equals("-sourcepath"))
 				{
@@ -97,9 +102,9 @@ public class LSPCompilerCLI
 		for (Iterator it = mainPages.iterator(); it.hasNext(); )
 		{
 			String name = (String)it.next();
-			if (verbose) System.out.println("Compiling " + name);
 			try {
-				compiler.doCompile(name);
+				if (compiler.doCompile(name, force))
+					if (verbose) System.out.println("Compiling " + name);
 			}
 			catch (LSPException e)
 			{
@@ -111,7 +116,7 @@ public class LSPCompilerCLI
 		
 	private static void syntaxError()
 	{
-		System.err.println("Syntax: lspc [-verbose] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
+		System.err.println("Syntax: lspc [-verbose] [-force] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
 	}
 
 }

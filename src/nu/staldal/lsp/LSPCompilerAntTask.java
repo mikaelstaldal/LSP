@@ -128,21 +128,15 @@ public class LSPCompilerAntTask extends Task
 		for (int i = 0; i<srcFiles.length; i++)
 		{
 			File srcFile = new File(fromDir, srcFiles[i]);
-			File destFile = 
-				new File(destdir, LSPCompilerHelper.targetFilename(srcFiles[i]));
-			if (force || !destFile.isFile() 
-					|| destFile.lastModified() < srcFile.lastModified())
-			{
-				log("Compiling " + srcFiles[i]);
-				try {
-					compiler.doCompile(srcFiles[i]);
-				}
-				catch (LSPException e)
-				{
-					log(e.getMessage(), Project.MSG_ERR);
-					throw new BuildException("LSP compilation failed");
-				}
+			try {
+				if (compiler.doCompile(srcFiles[i], force))
+					log("Compiling " + srcFiles[i]);
 			}
+			catch (LSPException e)
+			{
+				log(e.getMessage(), Project.MSG_ERR);
+				throw new BuildException("LSP compilation failed");
+			}			
 		}
 	}
 
