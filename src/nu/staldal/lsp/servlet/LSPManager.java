@@ -183,6 +183,9 @@ public class LSPManager
 	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
 	 * @param doctypePublic the XML DOCTYPE PUBLIC (<code>null</code> for default)
 	 * @param doctypeSystem the XML DOCTYPE SYSTEM (<code>null</code> for default)
+     *
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
 	 */	
 	public void executePage(LSPPage thePage, Map lspParams, 
 							ServletResponse response, String outputType,
