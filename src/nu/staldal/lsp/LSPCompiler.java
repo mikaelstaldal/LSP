@@ -137,6 +137,13 @@ public class LSPCompiler
 	}
 
 
+	private String getAttrWithEmpty(String name, Element el)
+		throws SAXException
+	{
+		return el.getAttributeValue(el.lookupAttribute("", name));
+	}
+
+
 	private static Vector processTemplate(Node n,
         char left, char right, char quot1, char quot2,
         String template)
@@ -645,10 +652,10 @@ public class LSPCompiler
 			"<lsp:element> may not be nested in <lsp:processing-instruction>");
 
 		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
-		String nsAttr = getAttr("namespace", el, false);
+		String nsAttr = getAttrWithEmpty("namespace", el);
 		LSPExpr ns = (nsAttr != null) 
 			? processTemplateExpr(el, nsAttr)
-			: null;
+			: new StringLiteral(el.lookupNamespaceURI(""));
 
 		LSPElement newEl = new LSPElement(ns, name, -1, el.numberOfChildren());
 

@@ -40,12 +40,13 @@
 
 package nu.staldal.lsp;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import org.xml.sax.*;
 
 import nu.staldal.xtree.*;
+import nu.staldal.xmlutil.ContentHandlerSnooper;
 import nu.staldal.util.*;
 
 import nu.staldal.lsp.expr.*;
@@ -153,7 +154,22 @@ public class LSPInterpreter implements LSPPage
 			extLib.startPage(target, sourceMan);
 		}
 		
-        processNode(theTree, ch);
+		
+		PrintWriter debug = null;
+		if (DEBUG)
+		try { 
+			debug = new PrintWriter(new FileWriter("LSP.debug"));
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e.toString());	
+		}
+		
+        processNode(theTree, DEBUG
+			? new ContentHandlerSnooper(ch, debug) 
+			: ch);
+			
+		if (DEBUG) debug.close();
 
 		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
 		{
