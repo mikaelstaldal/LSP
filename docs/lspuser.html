@@ -433,6 +433,42 @@ strings in the outermost scope.</p>
 (which may be implicitly converted to the boolean value <code>false</code>
 or to the number <code>NaN</code>).</p>
 
+<h2>The stand-alone LSP compiler</h2>
+
+
+<h3>Command line</h3>
+
+
+<h3>Using LSP compiler from within Apache Ant</h3>
+
+<p>LSP comes with an Ant task. Define the LSP compiler Ant task in the Ant
+build file like this:</p>
+<pre>
+&lt;taskdef name="lspc" classname="nu.staldal.lsp.LSPCompilerAntTask"&gt;
+  &lt;classpath&gt;
+    &lt;pathelement location="<em>locationOfLSPJars</em>/lsp.jar" /&gt;
+    &lt;pathelement location="<em>locationOfLSPJars</em>/xmlutil.jar" /&gt;
+  &lt;/classpath&gt;
+&lt;/taskdef&gt;  
+</pre>
+
+<p>and use the following syntax:</p>
+<pre>
+&lt;lspc sourcepath="<em>source path</em>"
+         <b>destdir</b>="<em>where to place compiled code</em>"
+         verbose="<em>verbose output</em>"
+         force="<em>force recompiling of all files</em>"&gt;
+      &lt;fileset dir="lsp"&gt;
+        &lt;include name="**/*.lsp" /&lt;
+      &lt;/fileset&lt;
+&lt;/lspc&lt;
+</pre>
+
+<p>If the <code>sourcepath</code> attriute is omitted, the project base 
+path is used. If <code>force</code> is not set, files are only compiled if 
+the source file is newer than the target file (<em>note</em>: that imported files are 
+not checked, changing an imported file will not trigger recompile).</p>
+
 </body>
 </html>
 
