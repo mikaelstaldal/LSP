@@ -50,20 +50,13 @@ public class LSPRequestProcessor extends RequestProcessor
             // Remove ".lsp"
             String pageName = forwardPath.substring(0, forwardPath.length()-4);
 
-            String type = LSPManager.HTML; // ***
-            String doctypePublic = null; // ***
-            String doctypeSystem = null; // ***
-            String contentType = moduleConfig.getControllerConfig().getContentType();
-            System.out.println("Content-Type: " + contentType);
-            // lspManager.defaultContentType(type);
-            
             LSPPage thePage = lspManager.getPage(pageName);                
             if (thePage == null)
             {
                 throw new ServletException("Unable to find LSP page: " + pageName);
             }
             
-            response.setContentType(contentType);		
+            response.setContentType(lspManager.getContentType(thePage));		
             response.resetBuffer();		
             
             Map lspParams = new HashMap();
@@ -79,10 +72,7 @@ public class LSPRequestProcessor extends RequestProcessor
             try {		
                 lspManager.executePage(thePage, 
                                        lspParams, 
-                                       response,
-                                       type,
-                                       doctypePublic,
-                                       doctypeSystem);
+                                       response);
             }
             catch (SAXException e)
             {
