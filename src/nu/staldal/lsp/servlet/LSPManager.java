@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,34 +64,8 @@ import nu.staldal.lsp.*;
 public class LSPManager
 {
 	private final ServletContext context;
-	private final ClassLoader servletClassLoader;
+	private final LSPHelper helper;
 	
-	private final Map lspPages;
-	
-	private final SAXParserFactory spf;
-	private final SAXTransformerFactory tfactory;
-	
-
-	/**
-	 * Output type XML.
-	 */
-	public static final String XML = "xml";
-		
-	/**
-	 * Output type HTML.
-	 */
-	public static final String HTML = "html";
-		
-	/**
-	 * Output type XHTML.
-	 */
-	public static final String XHTML = "xhtml";
-		
-	/**
-	 * Output type TEXT.
-	 */
-	public static final String TEXT = "text";		
-
 	
 	/**
 	 * Obtain the the LSPManager instance for the given 
@@ -125,121 +99,10 @@ public class LSPManager
 	private LSPManager(ServletContext context, ClassLoader servletClassLoader)
 	{
 		this.context = context;
-		this.servletClassLoader = servletClassLoader;
-		
-		lspPages = Collections.synchronizedMap(new HashMap());
-		
-		spf = SAXParserFactory.newInstance();
-		spf.setNamespaceAware(true);
-		spf.setValidating(false);
-
-		TransformerFactory tf = TransformerFactory.newInstance();
-        if (!(tf.getFeature(SAXTransformerFactory.FEATURE)
-              	&& tf.getFeature(StreamResult.FEATURE)))
-        {
-            throw new Error("The transformer factory "
-                + tf.getClass().getName() + " doesn't support SAX");
-        }            
-		tfactory = (SAXTransformerFactory)tf;
+		this.helper = new LSPHelper(servletClassLoader);
 	}
 
-
-	/**
-	 * Get the default Content-Type for a givent output type.
-	 *
-	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
-	 */	
-	public String defaultContentType(String outputType)
-	{
-		String contentType;
-		
-		if (outputType.equals(HTML))
-			contentType = "text/html; charset=ISO-8859-1";
-		else if (outputType.equals(XML))
-			contentType = "text/xml; charset=UTF-8";
-		else if (outputType.equals(XHTML))
-			contentType = "application/xhtml+xml; charset=ISO-8859-1";
-		else if (outputType.equals(TEXT))
-			contentType = "text/plain; charset=ISO-8859-1";
-		else
-			contentType = null;
-		
-		return contentType;
-	}
 	
-	
-	/**
-	 * The method executes an LSP page and write the result to a 
-	 * {@link javax.servlet.ServletResponse}. 
-	 * You should set Content-Type on the response before using this method.
-	 *
-	 * @see #defaultContentType
-	 *
- 	 * @param thePage     the LSP page
-	 * @param lspParams   parameters to the LSP page
-	 * @param response    the {@link javax.servlet.ServletResponse}
-	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
-	 * @param doctypePublic the XML DOCTYPE PUBLIC (<code>null</code> for default)
-	 * @param doctypeSystem the XML DOCTYPE SYSTEM (<code>null</code> for default)
-     *
-     * @throws SAXException  if any error occurs while executing the page
-     * @throws IOException   if any I/O error occurs while executing the page
-	 */	
-	public void executePage(LSPPage thePage, Map lspParams, 
-							ServletResponse response, String outputType,
-							String doctypePublic, String doctypeSystem)
-		throws SAXException, IOException
-	{
-		OutputStream out = response.getOutputStream();
-		
-		ContentHandler sax;						
-		try {
-			TransformerHandler th = tfactory.newTransformerHandler();
-			th.setResult(new StreamResult(out));
-		
-			Transformer trans = th.getTransformer();
-			
-			Properties outputProperties = new Properties();
-			outputProperties.setProperty(OutputKeys.METHOD, outputType);				
-			outputProperties.setProperty(OutputKeys.ENCODING, 
-				response.getCharacterEncoding());
-			if (outputType.equals(HTML))
-			{
-				outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
-					"-//W3C//DTD HTML 4.01 Transitional//EN");
-				outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
-						"http://www.w3.org/TR/html4/loose.dtd");				
-			}
-			else if (outputType.equals(XHTML))
-			{
-				outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
-					"-//W3C//DTD XHTML 1.0 Transitional//EN");
-				outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
-					"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
-			}
-			if (doctypePublic != null)
-				outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
-					doctypePublic);
-			if (doctypeSystem != null)
-				outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
-					doctypeSystem);
-			trans.setOutputProperties(outputProperties);
-			
-			boolean isHtml = outputType.equals(HTML);
-				
-			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
-		}
-		catch (TransformerConfigurationException e)
-		{
-			throw new SAXException(e.getMessage());
-		}
-					
-		sax.startDocument();
-		thePage.execute(sax, lspParams, context);
-		sax.endDocument();
-    }
-	
-
 	/**
 	 * Get the {@link nu.staldal.lsp.LSPPage} instance for a given page name.
 	 *
@@ -249,88 +112,9 @@ public class LSPManager
 	 */
 	public LSPPage getPage(String pageName)
 	{
-		LSPPage page = (LSPPage)lspPages.get(pageName);
-		
-		if (page == null)
-		{
-			page = loadPage(pageName);
-		}
-		
-		return page;
-	}
-	
-	
-	/**
-	 * Get a {@link javax.servlet.RequestDispatcher} for a given page name.
-	 * Using the default Content-Type and DOCTYPE for the given output type.
-     *
-	 * The attributes in the {@link javax.servlet.ServletRequest} object
-	 * will be used as parameters to the LSP page.
-	 *
- 	 * @param pageName    the name of the LSP page
-	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
-	 *
-	 * @return <code>null</code> if the LSP page cannot be found
-	 */
-	public RequestDispatcher getRequestDispatcher(String pageName, 
-												  String outputType)
-	{
-		return getRequestDispatcher(pageName, outputType, null, null, null);
-	}
-
-	
-	/**
-	 * Get a {@link javax.servlet.RequestDispatcher} for a given page name.
-	 *
-	 * The attributes in the {@link javax.servlet.ServletRequest} object
-	 * will be used as parameters to the LSP page.
-     *
- 	 * @param pageName  the name of the LSP page
-	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
-	 * @param contentType the MIME Content-Type (<code>null</code> for default)
-	 * @param doctypePublic the XML DOCTYPE PUBLIC (<code>null</code> for default)
-	 * @param doctypeSystem the XML DOCTYPE SYSTEM (<code>null</code> for default)
-	 *
-	 * @return <code>null</code> if the LSP page cannot be found
-	 */
-	public RequestDispatcher getRequestDispatcher(String pageName, 
-												  String outputType,
-												  String contentType,
-												  String doctypePublic,
-												  String doctypeSystem)
-	{
-		LSPPage page = getPage(pageName);
-			
-		if (page == null)
-		{
-			context.log("Unable to find LSP page: " + pageName);
-			return null;
-		}
-		
-		return new LSPRequestDispatcher(this, page, outputType, contentType,
-			doctypePublic, doctypeSystem);
-	}
-
-
-	/**
-	 * @return <code>null</code> if not found.
-	 */
-	private LSPPage loadPage(String pageName)
-	{
-		try {
-			Class pageClass = Class.forName("_LSP_"+pageName, true, 
-				servletClassLoader);
-
-			LSPPage page = (LSPPage)pageClass.newInstance();
-			
-			lspPages.put(pageName, page);			
-			
-		  	return page;
-		}
-		catch (ClassNotFoundException e)
-		{
-			return null;
-		}				
+        try {
+            return helper.getPage(pageName);
+        }				
 		catch (InstantiationException e)
 		{
 			context.log("Invalid LSP page: " + pageName, e);
@@ -345,7 +129,52 @@ public class LSPManager
 		{
 			context.log("Invalid LSP page: " + pageName, e);
 			return null;
-		}				
+	 	}				
+	}
+
+
+	/**
+	 * The method executes an LSP page and write the result to a 
+	 * {@link javax.servlet.ServletResponse}. 
+	 *
+ 	 * @param thePage     the LSP page
+	 * @param lspParams   parameters to the LSP page
+	 * @param response    the {@link javax.servlet.ServletResponse}
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, 
+							ServletResponse response)
+		throws SAXException, IOException
+	{		
+        response.setContentType(helper.getContentType(thePage));
+            
+        OutputStream out = response.getOutputStream();        
+        helper.executePage(thePage, lspParams, context, out);
+    }
+		
+	
+	/**
+	 * Get a {@link javax.servlet.RequestDispatcher} for a given page name.
+	 *
+	 * The attributes in the {@link javax.servlet.ServletRequest} object
+	 * will be used as parameters to the LSP page.
+     *
+ 	 * @param pageName  the name of the LSP page
+	 *
+	 * @return <code>null</code> if the LSP page cannot be found
+	 */
+	public RequestDispatcher getRequestDispatcher(String pageName) 
+	{
+		LSPPage page = getPage(pageName);
+			
+		if (page == null)
+		{
+			context.log("Unable to find LSP page: " + pageName);
+			return null;
+		}
+		
+		return new LSPRequestDispatcher(this, page);
 	}
 
 }

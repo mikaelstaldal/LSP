@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,31 +57,18 @@ final class LSPRequestDispatcher implements RequestDispatcher
 {
 	private final LSPManager manager;
 	private final LSPPage thePage;
-	private final String type;
-	private final String contentType;
-	private final String doctypePublic;
-	private final String doctypeSystem;
 	
     
-	LSPRequestDispatcher(LSPManager manager, LSPPage thePage, 
-						 String type, String contentType,
-						 String doctypePublic, String doctypeSystem)
+	LSPRequestDispatcher(LSPManager manager, LSPPage thePage) 
     {
 		this.manager = manager;
 		this.thePage = thePage;
-		this.type = type;
-		this.contentType = (contentType == null) 
-			? manager.defaultContentType(type)
-			: contentType;
-		this.doctypePublic = doctypePublic;
-		this.doctypeSystem = doctypeSystem;
     }
     
     
     public void forward(ServletRequest request, ServletResponse response)
         throws ServletException, java.io.IOException
     {
-		response.setContentType(contentType);		
         response.resetBuffer();		
 		doLSP(request, response);		
 		response.flushBuffer();
@@ -108,10 +95,7 @@ final class LSPRequestDispatcher implements RequestDispatcher
 		try {		
 			manager.executePage(thePage, 
 								lspParams, 
-								response,
-								type,
-								doctypePublic,
-								doctypeSystem);
+								response);
 		}
 		catch (SAXException e)
 		{

@@ -56,179 +56,9 @@ import javax.xml.transform.stream.StreamResult;
  */
 public class LSPRunner
 {
-	private final SAXParserFactory spf;
-	private final SAXTransformerFactory tfactory;
-	
-    private Map lspPages;
-    
-    
-	/**
-	 * Output type XML.
-	 */
-	public static final String XML = "xml";
-		
-	/**
-	 * Output type HTML.
-	 */
-	public static final String HTML = "html";
-		
-	/**
-	 * Output type XHTML.
-	 */
-	public static final String XHTML = "xhtml";
-		
-	/**
-	 * Output type TEXT.
-	 */
-	public static final String TEXT = "text";		
-
-	
-	public LSPRunner()
-	{
-		lspPages = Collections.synchronizedMap(new HashMap());
-		
-		spf = SAXParserFactory.newInstance();
-		spf.setNamespaceAware(true);
-		spf.setValidating(false);
-
-		TransformerFactory tf = TransformerFactory.newInstance();
-        if (!(tf.getFeature(SAXTransformerFactory.FEATURE)
-              	&& tf.getFeature(StreamResult.FEATURE)))
-        {
-            throw new Error("The transformer factory "
-                + tf.getClass().getName() + " doesn't support SAX");
-        }            
-		tfactory = (SAXTransformerFactory)tf;
-	}
-
-
-	/**
-	 * The method executes an LSP page and write the result to an 
-	 * {@link java.io.OutputStream}. 
-	 *
- 	 * @param thePage     the LSP page
-	 * @param lspParams   parameters to the LSP page
-	 * @param out         the {@link java.io.OutputStream}
-	 * @param outputType  how to serialize the page; XML, HTML, XHTML or TEXT
-	 * @param doctypePublic the XML DOCTYPE PUBLIC (<code>null</code> for default)
-	 * @param doctypeSystem the XML DOCTYPE SYSTEM (<code>null</code> for default)
-	 * @param encoding    character encoding to use (<code>null</code> for default)
-     *
-     * @throws SAXException  if any error occurs while executing the page
-     * @throws IOException   if any I/O error occurs while executing the page
-	 */	
-	public void executePage(LSPPage thePage, Map lspParams, 
-							OutputStream out, String outputType,
-							String doctypePublic, String doctypeSystem,
-                            String encoding)
-		throws SAXException, IOException
-	{
-		ContentHandler sax;						
-		try {
-			TransformerHandler th = tfactory.newTransformerHandler();
-			th.setResult(new StreamResult(out));
-		
-			Transformer trans = th.getTransformer();
-			
-			Properties outputProperties = new Properties();
-			outputProperties.setProperty(OutputKeys.METHOD, outputType);				
-			if (outputType.equals(HTML))
-			{
-                outputProperties.setProperty(OutputKeys.ENCODING, "iso-8859-1"); 
-				outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
-					"-//W3C//DTD HTML 4.01 Transitional//EN");
-				outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
-						"http://www.w3.org/TR/html4/loose.dtd");				
-			}
-			else if (outputType.equals(XHTML))
-			{
-                outputProperties.setProperty(OutputKeys.ENCODING, "iso-8859-1"); 
-				outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
-					"-//W3C//DTD XHTML 1.0 Transitional//EN");
-				outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
-					"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
-			}
-			else if (outputType.equals(XML))
-			{
-                outputProperties.setProperty(OutputKeys.ENCODING, "UTF-8"); 
-			}
-			else if (outputType.equals(TEXT))
-			{
-                outputProperties.setProperty(OutputKeys.ENCODING, "iso-8859-1"); 
-			}
-            
-			if (doctypePublic != null)
-				outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
-					doctypePublic);
-			if (doctypeSystem != null)
-				outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
-					doctypeSystem);
-			if (encoding != null)
-				outputProperties.setProperty(OutputKeys.ENCODING,
-					encoding);
-                    
-			trans.setOutputProperties(outputProperties);
-			
-			boolean isHtml = outputType.equals(HTML);
-				
-			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
-		}
-		catch (TransformerConfigurationException e)
-		{
-			throw new SAXException(e.getMessage());
-		}
-					
-		sax.startDocument();
-		thePage.execute(sax, lspParams, null);
-		sax.endDocument();
-    }
-	
-
-	/**
-	 * Get the {@link nu.staldal.lsp.LSPPage} instance for a given page name.
-	 *
-	 * @param pageName  the name of the LSP page
-	 *
-	 * @return <code>null</code> if the given page name is not found
-	 */
-	public LSPPage getPage(String pageName)
-        throws InstantiationException, IllegalAccessException 
-	{
-		LSPPage page = (LSPPage)lspPages.get(pageName);
-		
-		if (page == null)
-		{
-			page = loadPage(pageName);
-		}
-		
-		return page;
-	}
-	
-	
-	/**
-	 * @return <code>null</code> if not found.
-	 */
-	private LSPPage loadPage(String pageName)
-        throws InstantiationException, IllegalAccessException 
-	{
-		try {
-			Class pageClass = Class.forName("_LSP_"+pageName);
-
-			LSPPage page = (LSPPage)pageClass.newInstance();
-			
-			lspPages.put(pageName, page);			
-			
-		  	return page;
-		}
-		catch (ClassNotFoundException e)
-		{
-			return null;
-		}				
-	}
-
     
     public static void main(String[] args)
-        throws InstantiationException, IllegalAccessException, 
+        throws InstantiationException, IllegalAccessException, VerifyError, 
             SAXException, IOException 
     {
         if (args.length < 2)
@@ -239,23 +69,25 @@ public class LSPRunner
             return;
         }
         
-        LSPRunner runner = new LSPRunner();
+        LSPHelper helper = new LSPHelper(ClassLoader.getSystemClassLoader());
         
-        LSPPage page = runner.getPage(args[0]);
+        LSPPage page = helper.getPage(args[0]);
         if (page == null)
         {
             System.err.println("LSP page " + args[0] + " not found");
             return;
         }
         
+        System.err.println("Content-Type: " + helper.getContentType(page));
+        
         OutputStream out = args[1].equals("-") 
             ? (OutputStream)System.out 
             : (OutputStream)(new FileOutputStream(args[1]));
         
-        runner.executePage(page, new HashMap(0), 
-						   out, XML, null, null, null);
+        helper.executePage(page, Collections.EMPTY_MAP, null, out);
                            
         out.close();
     }
 
 }
+

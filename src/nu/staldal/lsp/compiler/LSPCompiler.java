@@ -707,8 +707,9 @@ public class LSPCompiler
                     && (i+1 < el.numberOfChildren())
                     && el.getChild(i+1) instanceof Element
                     && ((Element)el.getChild(i+1)).getNamespaceURI().equals(LSP_CORE_NS)
-                    && ((Element)el.getChild(i+1)).getLocalName().equals("attribute"))
-                ; // strip whitespace before <lsp:attribute>
+                    && (((Element)el.getChild(i+1)).getLocalName().equals("attribute")
+                        || ((Element)el.getChild(i+1)).getLocalName().equals("output")))
+                ; // strip whitespace before <lsp:attribute> and <lsp:output>
             else
             {                                
                 LSPNode compiledNode = compileNode(child);
