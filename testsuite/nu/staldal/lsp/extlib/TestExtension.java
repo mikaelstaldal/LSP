@@ -142,5 +142,11 @@ public class TestExtension implements LSPExtLib, ContentHandler
         sax.skippedEntity(name);
     }
 
+
+	public Object function(String name, Object[] args)
+	{
+		return "[Function " + name + " invoked with " + args.length + " parameters]";
+	}
+
 }
 
