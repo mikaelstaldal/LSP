@@ -2132,28 +2132,23 @@ class LSPJVMCompiler implements Constants
 			new Type[] { Type.OBJECT },
 			INVOKEINTERFACE));
 			
-		// String funcName = expr.getName();
-		instrList.append(new PUSH(constGen, expr.getName()));		
-		
-		// Object[] args = new Object[expr.numberOfArgs()];
-		instrList.append(new PUSH(constGen, expr.numberOfArgs()));
-		instrList.append(instrFactory.createNewArray(Type.OBJECT, (short)1));
-		
+		instrList.append(instrFactory.createCast(
+			Type.OBJECT, Type.getType("L"+expr.getClassName().replace('.','/')+";")));
+					
+		Type[] argTypes = new Type[expr.numberOfArgs()];
 		for (int i = 0; i<expr.numberOfArgs(); i++)
 		{
-			instrList.append(InstructionConstants.DUP);
-			instrList.append(new PUSH(constGen, i));
+			argTypes[i] = Type.OBJECT;
 			compileSubExpr(expr.getArg(i), methodGen, instrList);
-			instrList.append(InstructionConstants.AASTORE);
 		}		
 
-		// Object res = extLib.function(funcName, args);		
+		// Object res = extLib._funcName(args);		
 		instrList.append(instrFactory.createInvoke(
-			LSPExtLib.class.getName(),
-			"function",
+			expr.getClassName(),
+			"_"+expr.getName(),
 			Type.OBJECT,
-			new Type[] { Type.STRING, new ArrayType(Type.OBJECT, 1) },
-			INVOKEINTERFACE));
+			argTypes,
+			INVOKEVIRTUAL));
 
 		// return convertObjectToLSP(res, expr.getName() + "()");
 		instrList.append(new PUSH(constGen, expr.getName()+"()"));		

@@ -73,6 +73,11 @@ import nu.staldal.syntax.ParseException;
  * ContentHandler "out" (it must not invoke startDocument() or endDocument()), 
  * or return a string from the afterElement() method. It may not do both.
  * <p>
+ * For each call to an extension function, a method with the function name
+ * prefixed with '_' is invoked. All arguments to this method must be of type
+ * Object, and the return type must be Object, it may throw SAXException.
+ * Functions may be overloaded based on number of arguments. 
+ * <p>
  * After the LSP page is finished, the endPage method is invoked.
  */
 public interface LSPExtLib
@@ -84,7 +89,7 @@ public interface LSPExtLib
 	 * @param namespaceURI  the namespace URI to serve
 	 */
 	public void init(String namespaceURI)
-		throws LSPException;
+		throws SAXException;
 
 
 	/**
@@ -96,7 +101,7 @@ public interface LSPExtLib
 	 */
 	public void startPage(URLResolver resolver, 
 						  Object extContext, String targetURL)
-		throws LSPException;
+		throws SAXException;
 	
 
 	/**
@@ -121,20 +126,10 @@ public interface LSPExtLib
 		
 
 	/**
-	 * Invoked when an extension function is called.
-	 *
-	 * @param name  the name of the function
-	 * @param args  arguments to the function
-	 */		
-	public Object function(String name, Object[] args)
-		throws SAXException;
-	
-
-	/**
 	 * Indicate the end of an LSP page.
 	 */
 	public void endPage()
-		throws LSPException;
+		throws SAXException;
 
 }
 

@@ -180,7 +180,7 @@ public class LSPCompiler
     }
 	
 	
-	private static SAXException fixSourceException(Node node, String msg)
+	static SAXException fixSourceException(Node node, String msg)
 	{
 		return new SAXParseException(msg, null,
 			node.getSystemId(), node.getLineNumber(), node.getColumnNumber());
@@ -957,14 +957,44 @@ public class LSPCompiler
 						"no mapping for namespace prefix " + fc.getPrefix()); 
 				}
 					
-				String extClass = lookupExtensionHandler(el, ns); 
-				if (extClass == null)
+				String extLibClassName = lookupExtensionHandler(el, ns); 
+				if (extLibClassName == null)
 					throw fixSourceException(el, 
 						"no handler found for extension namespace " + ns);			
-				
+
+				Class extLibClass;
+				String methodName = "_"+fc.getName();
+		
+				try {
+					extLibClass = Class.forName(extLibClassName);
+		
+					Class[] argTypes = new Class[fc.numberOfArgs()];
+					for (int i = 0; i<fc.numberOfArgs(); i++)
+					{
+						argTypes[i] = Object.class;
+					}
+					
+					java.lang.reflect.Method m = extLibClass.getMethod(methodName, argTypes);
+					if (!Object.class.equals(m.getReturnType()))
+					{
+						throw fixSourceException(el, "Extension function not found: "
+							+ fc.getName() + "/" + fc.numberOfArgs());
+					}			
+				}
+				catch (ClassNotFoundException e)
+				{
+					throw fixSourceException(el, "Extension library class not found: "
+						+ extLibClassName);
+				}
+				catch (NoSuchMethodException e)
+				{
+					throw fixSourceException(el, "Extension function not found: "
+						+ fc.getName() + "/" + fc.numberOfArgs());
+				}				
+												
 				ExtensionFunctionCall call = 
 					new ExtensionFunctionCall(
-						extClass, fc.getName(), fc.numberOfArgs());
+						extLibClassName, fc.getName(), fc.numberOfArgs());
 					
 				for (int i = 0; i<fc.numberOfArgs(); i++)
 				{
