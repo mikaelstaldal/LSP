@@ -444,6 +444,7 @@ also useful to check LSP pages for errors.</p>
 <p>For a programmatic interface to the LSP compiler, look at the class
 <code>nu.staldal.lsp.LSPCompilerHelper</code>.</p>
 
+
 <h3>Running LSP compiler from command line</h3>
 
 <p>The LSP compiler is invoked by the application class
@@ -458,6 +459,9 @@ specifies where place generated files, default is current directory.
 Multiple input files can be specified. All specified files are compiled 
 unconditionally.</p>
 
+<p>If you use any extension libraries, you have to include them in the 
+CLASSPATH.</p>
+
 
 <h3>Using LSP compiler from within Apache Ant</h3>
 
@@ -471,6 +475,9 @@ build file like this:</p>
   &lt;/classpath&gt;
 &lt;/taskdef&gt;  
 </pre>
+
+<p>If you use any extension libraries, you have to include them in the 
+classpath as well.</p>
 
 <p>and use the following syntax:</p>
 <pre>
