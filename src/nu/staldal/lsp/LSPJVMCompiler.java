@@ -131,9 +131,10 @@ class LSPJVMCompiler implements Constants
 		instrList.append(new PUSH(constGen, compileDynamic ? 1 : 0));
 		instrList.append(new PUSH(constGen, executeDynamic ? 1 : 0));
 		instrList.append(new PUSH(constGen, System.currentTimeMillis()));
+		instrList.append(new PUSH(constGen, pageName));
 		instrList.append(instrFactory.createInvoke(LSPPageBase.class.getName(), 
 			"<init>", Type.VOID, 
-			new Type[] { new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), Type.BOOLEAN, Type.BOOLEAN, Type.LONG }, 
+			new Type[] { new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), new ArrayType(Type.STRING, 1), Type.BOOLEAN, Type.BOOLEAN, Type.LONG, Type.STRING }, 
 			INVOKESPECIAL));
 		instrList.append(instrFactory.createReturn(Type.VOID));
 		constr.setMaxStack();

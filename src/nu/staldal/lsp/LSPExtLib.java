@@ -97,8 +97,10 @@ public interface LSPExtLib
 	 *
 	 * @param resolver    the current URLResolver
 	 * @param extContext  external context passed to LSP execution engine
+	 * @param pageName    name of the LSP page
 	 */
-	public void startPage(URLResolver resolver, Object extContext)
+	public void startPage(URLResolver resolver, Object extContext, 
+						  String pageName)
 		throws SAXException;
 	
 

@@ -67,11 +67,13 @@ public abstract class LSPPageBase implements LSPPage
 	protected final boolean compileDynamic;
 	protected final boolean executeDynamic;
 	protected final long timeCompiled;
+	protected final String pageName;
 
 	
 	protected LSPPageBase(String[] extLibsURLs, String[] extLibsClassNames,
 		String[] compileDependentFiles, String[] executeDependentFiles,
-		boolean compileDynamic, boolean executeDynamic, long timeCompiled)
+		boolean compileDynamic, boolean executeDynamic, long timeCompiled,
+		String pageName)
 	{
 		this.extLibsURLs = extLibsURLs;
 		this.extLibsClassNames = extLibsClassNames;
@@ -80,6 +82,7 @@ public abstract class LSPPageBase implements LSPPage
 		this.compileDynamic = compileDynamic;
 		this.executeDynamic = executeDynamic;
 		this.timeCompiled = timeCompiled;
+		this.pageName = pageName;
 	}
 
     public final String[] getCompileDependentFiles()
@@ -129,7 +132,7 @@ public abstract class LSPPageBase implements LSPPage
 			
 			LSPExtLib extLib = lookupExtensionHandler(extLibs, nsURI, className);			
 			
-			extLib.startPage(resolver, extContext);
+			extLib.startPage(resolver, extContext, pageName);
 		}
 
 		try {
