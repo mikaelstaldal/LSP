@@ -67,8 +67,6 @@ public class LSPCompilerAntTask extends Task
 	public LSPCompilerAntTask()
 	{
 		compiler = new LSPCompilerHelper();
-		compiler.err = new PrintWriter(System.out, true);
-		compiler.verbose = true;
 	}
 
 
@@ -135,8 +133,15 @@ public class LSPCompilerAntTask extends Task
 			if (force || !destFile.isFile() 
 					|| destFile.lastModified() < srcFile.lastModified())
 			{
-				if (!compiler.doCompile(srcFiles[i]))
+				log("Compiling " + srcFiles[i]);
+				try {
+					compiler.doCompile(srcFiles[i]);
+				}
+				catch (LSPException e)
+				{
+					log(e.getMessage(), Project.MSG_ERR);
 					throw new BuildException("LSP compilation failed");
+				}
 			}
 		}
 	}

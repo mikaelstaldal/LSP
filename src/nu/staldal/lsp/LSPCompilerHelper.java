@@ -81,21 +81,6 @@ public class LSPCompilerHelper
 	 */
 	public File targetDir;
 
-	/**
-	 * Verbose output.
-	 */
-	public boolean verbose;
-	
-    /**
-	 * Where to write the verbose output, default is <code>System.out</code>
-	 */
-	public PrintWriter out;
-	
-    /**
-	 * Where to write error messages, default is <code>System.err</code>
-	 */
-	public PrintWriter err;
-
 
 	public LSPCompilerHelper()
 	{
@@ -121,24 +106,17 @@ public class LSPCompilerHelper
 		startDir = new File(System.getProperty("user.dir", "."));
 		sourceDir = new File(System.getProperty("user.dir", "."));
 		targetDir = new File(System.getProperty("user.dir", "."));
-
-        verbose = false;
-
-        err = new PrintWriter(System.err, true);
-        out = new PrintWriter(System.out, true);
 	}
 	
 	
 	/**
 	 * Compiles an LSP file.
 	 *
-	 * @return <code>true</code> if successful, <code>false</code> otherwise.
+	 * @throws LSPException with an error message if unsuccessful
 	 */
-	public boolean doCompile(String mainPage)
+	public void doCompile(String mainPage)
+		throws LSPException
 	{
-		if (verbose) 
-			out.println("Compiling: " + mainPage);
-		
 		currentMainPage = mainPage;
 		currentPagePath = new File(startDir, currentMainPage).getParentFile();
 		
@@ -162,13 +140,48 @@ public class LSPCompilerHelper
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(page);
 			oos.close();
-			return true;
 		}
-		catch (Exception e)
+		catch (SAXParseException spe)
 		{
-			reportException(e);
-			return false;
-		}		
+			Exception ee = spe.getException();
+			if (ee instanceof RuntimeException)
+			{
+				throw (RuntimeException)ee;
+			}
+			try {
+				String sysId = (spe.getSystemId() == null)
+					? currentMainPage 
+					: ((spe.getSystemId().startsWith("file:")) 
+						? new File(new URI(spe.getSystemId())).toString()
+						: spe.getSystemId());
+
+				throw new LSPException(sysId + ":" + spe.getLineNumber()
+					+ ":" + spe.getColumnNumber() + ": " + spe.getMessage());
+			}
+			catch (URISyntaxException ex)
+			{
+				throw new LSPException("Error building " + currentMainPage + ":" 
+					+ ex.toString());				
+			}
+		}
+		catch (SAXException se)
+		{
+			Exception ee = se.getException();
+			if (ee instanceof RuntimeException)
+			{
+				throw (RuntimeException)ee;
+			}
+			else
+			{
+				throw new LSPException("Error building " + currentMainPage
+					+ ": " + se.getMessage());    			
+			}
+		}
+		catch (IOException e)
+		{
+			throw new LSPException("Error building " + currentMainPage
+					+ ": " + e.toString());
+		}
 	}
 
 
@@ -215,65 +228,6 @@ public class LSPCompilerHelper
 		}		
 	}
 
-
-	private void reportException(Exception e)
-	{
-		if (e instanceof RuntimeException)
-		{
-			err.println("Error building " + currentMainPage + ":");
-			e.printStackTrace(err);
-		}
-		else if (e instanceof SAXParseException)
-		{
-			SAXParseException spe = (SAXParseException)e;
-			Exception ee = spe.getException();
-			if (ee instanceof RuntimeException)
-			{
-				err.println("Error building " + currentMainPage + ":");
-				ee.printStackTrace(err);
-			}
-			try {
-				String sysId = (spe.getSystemId() == null)
-					? currentMainPage 
-					: ((spe.getSystemId().startsWith("file:")) 
-						? new File(new URI(spe.getSystemId())).toString()
-						: spe.getSystemId());
-
-				err.println(sysId + ":" + spe.getLineNumber()
-					+ ":" + spe.getColumnNumber() + ": " + spe.getMessage());
-			}
-			catch (URISyntaxException ex)
-			{
-				ex.printStackTrace(err);	
-			}
-		}
-		else if (e instanceof SAXException)
-		{
-			SAXException se = (SAXException)e;
-			Exception ee = se.getException();
-			if (ee instanceof RuntimeException)
-			{
-				err.println("Error building " + currentMainPage + ":");
-				ee.printStackTrace(err);
-			}
-			else
-			{
-				err.println("Error building " + currentMainPage
-					+ ": " + se.getMessage());    			
-			}
-		}
-		else if (e instanceof IOException)
-		{
-			err.println("Error building " + currentMainPage
-					+ ": " + e.toString());
-		}
-		else
-		{
-			err.println("Error building " + currentMainPage + ":");
-			e.printStackTrace(err);
-		}
-	}
-	
 
 	/**
 	 * Generates a target filename with <code>.lspc</code> extension.

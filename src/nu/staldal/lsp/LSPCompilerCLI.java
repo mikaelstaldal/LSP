@@ -54,7 +54,9 @@ public class LSPCompilerCLI
 	{
 		LSPCompilerHelper compiler = new LSPCompilerHelper();
 		
-		ArrayList mainPages = new ArrayList(); 
+		ArrayList mainPages = new ArrayList();
+		
+		boolean verbose = false;
 
 		for (int i = 0; i<args.length; i++)
 		{
@@ -62,7 +64,7 @@ public class LSPCompilerCLI
 			{
 				if (args[i].equals("-verbose"))
 				{
-					compiler.verbose = true;
+					verbose = true;
 				}
 				else if (args[i].equals("-sourcepath"))
 				{
@@ -93,7 +95,17 @@ public class LSPCompilerCLI
 		}			
 		
 		for (Iterator it = mainPages.iterator(); it.hasNext(); )
-			compiler.doCompile((String)it.next());		
+		{
+			String name = (String)it.next();
+			if (verbose) System.out.println("Compiling " + name);
+			try {
+				compiler.doCompile(name);
+			}
+			catch (LSPException e)
+			{
+				System.err.println(e.getMessage());	
+			}
+		}
 	}
 	
 		
