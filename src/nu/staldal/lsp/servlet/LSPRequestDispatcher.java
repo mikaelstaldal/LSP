@@ -93,9 +93,7 @@ final class LSPRequestDispatcher implements RequestDispatcher
 		}
 
 		try {		
-			manager.executePage(thePage, 
-								lspParams, 
-								response);
+			manager.executePage(thePage, lspParams, response);
 		}
 		catch (SAXException e)
 		{

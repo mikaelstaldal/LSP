@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import nu.staldal.lsp.LSPPage;
 import nu.staldal.lsp.servlet.*;
   
 
@@ -49,6 +50,24 @@ public class LSPTestServlet extends HttpServlet
             String flag = req.getParameter("flag");
             req.setAttribute("flag", (flag == null) ? "" : flag);
             lspManager.getRequestDispatcher("Func3").forward(req, resp);
+        }
+        else if (function.equals("/DIRLIST"))
+        {
+            try {
+                Map lspParams = new HashMap();
+                lspParams.put("dirlist", 
+                    new String[] { "first file", "second file", "third file" });
+                LSPPage thePage = lspManager.getPage("dirlist");
+                lspManager.executePage(thePage, lspParams, "dir.xsl", resp);
+            }
+            catch (org.xml.sax.SAXException e)
+            {
+                throw new ServletException(e);    
+            }
+            catch (javax.xml.transform.TransformerConfigurationException e)
+            {
+                throw new ServletException(e);    
+            }
         }
         else
         {

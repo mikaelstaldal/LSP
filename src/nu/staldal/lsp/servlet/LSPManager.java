@@ -46,6 +46,8 @@ import java.util.*;
 import javax.servlet.*;
 
 import org.xml.sax.*;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
 
 import nu.staldal.lsp.*;
 
@@ -130,12 +132,18 @@ public class LSPManager
 
 
 	/**
-	 * The method executes an LSP page and write the result to a 
-	 * {@link javax.servlet.ServletResponse}. 
+	 * The method executes an LSP page and transform the the result with an
+     * XSLT stylesheet.
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Also, the default
+     * output properties specified in this class will be ignored. Make sure
+     * to specify the output method in the stylesheet using <xsl:output>.
 	 *
  	 * @param thePage     the LSP page
 	 * @param lspParams   parameters to the LSP page
 	 * @param response    the {@link javax.servlet.ServletResponse}
+     *
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
@@ -150,6 +158,37 @@ public class LSPManager
     }
 		
 	
+	/**
+	 * The method executes an LSP page and write the result to a 
+	 * {@link javax.servlet.ServletResponse}. 
+	 *
+ 	 * @param thePage         the LSP page
+	 * @param lspParams       parameters to the LSP page
+     * @param stylesheetName  the XSLT stylesheet
+	 * @param response        the {@link javax.servlet.ServletResponse}
+     *
+     * @throws SAXException     if any error occurs while executing the page
+     * @throws FileNotFoundException  if the stylesheet cannot be found
+     * @throws IOException      if any I/O error occurs while executing the page
+     * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, 
+							String stylesheetName, 
+                            ServletResponse response)
+		throws SAXException, FileNotFoundException, IOException, 
+            TransformerConfigurationException
+	{
+        Templates compiledStylesheet = helper.getStylesheet(stylesheetName);
+        if (compiledStylesheet == null)
+            throw new FileNotFoundException(stylesheetName);
+		
+        response.setContentType(helper.getContentType(compiledStylesheet));
+            
+        OutputStream out = response.getOutputStream();        
+        helper.executePage(thePage, lspParams, context, compiledStylesheet, out);
+    }
+
+
 	/**
 	 * Get a {@link javax.servlet.RequestDispatcher} for a given page name.
 	 *

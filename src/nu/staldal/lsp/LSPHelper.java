@@ -46,6 +46,7 @@ import java.util.*;
 import org.xml.sax.*;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.*;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
 
@@ -62,6 +63,7 @@ public class LSPHelper
 {
     private final ClassLoader classLoader;
     private final Map lspPages;
+    private final Map stylesheets;
 	private final SAXTransformerFactory tfactory;
 
     private String htmlType = "text/html";
@@ -78,13 +80,15 @@ public class LSPHelper
 	/**
      * Create an LSPHelper.
      *     
-     * @param classLoader   {@link java.lang.ClassLoader} to load LSP pages with
+     * @param classLoader   {@link java.lang.ClassLoader} 
+     *          to load LSP pages and stylesheet source with
      */
     public LSPHelper(ClassLoader classLoader) 
 	{
         this.classLoader = classLoader;
 
 		this.lspPages = new HashMap();
+		this.stylesheets = new HashMap();
 
 		TransformerFactory tf = TransformerFactory.newInstance();
         if (!(tf.getFeature(SAXTransformerFactory.FEATURE)
@@ -188,6 +192,53 @@ public class LSPHelper
 
 
 	/**
+	 * Get an compiled XSLT stylesheet.
+     *<p>
+     * The compiled stylesheets are cached and reused. Stylesheet source
+     * is loaded from the supplied {@link java.lang.ClassLoader}.      
+	 *
+	 * @param stylesheetName  the name of the XSLT stylesheet
+	 *
+	 * @return <code>null</code> if the given stylesheet is not found
+     *
+     * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
+	 */
+	public synchronized Templates getStylesheet(String stylesheetName)
+        throws TransformerConfigurationException
+	{
+		Templates compiledStylesheet = (Templates)stylesheets.get(stylesheetName);
+		
+		if (compiledStylesheet == null)
+		{
+			compiledStylesheet = loadStylesheet(stylesheetName);
+		}
+		
+		return compiledStylesheet;
+	}
+	
+	
+	/**
+	 * @return <code>null</code> if not found.
+	 */
+	private Templates loadStylesheet(String stylesheetName)
+        throws TransformerConfigurationException
+	{
+        java.net.URL stylesheetURL = classLoader.getResource(stylesheetName);
+        if (stylesheetURL == null) return null;
+        String stylesheetData = stylesheetURL.toExternalForm();
+        
+        StreamSource stylesheetSource = new StreamSource(stylesheetData);
+        
+        Templates compiledStylesheet = 
+            tfactory.newTemplates(stylesheetSource);
+        
+        stylesheets.put(stylesheetName, compiledStylesheet);			
+        
+        return compiledStylesheet;            
+	}
+
+
+	/**
 	 * Get the {@link nu.staldal.lsp.LSPPage} instance for a given page name.
      *<p>
      * {@link nu.staldal.lsp.LSPPage} instances are cached and reused.      
@@ -240,15 +291,32 @@ public class LSPHelper
 
 
     /**
-     * Get Content-Type for the LSP page. Includes encoding with the 
-     * "charset" parameter.
+     * Get Content-Type for the LSP page. 
+     * Includes encoding with the "charset" parameter.
      */
     public String getContentType(LSPPage thePage)
     {
         Properties outputProperties = thePage.getOutputProperties();
         
+        return getContentType(outputProperties);
+    }
+
+    
+    /**
+     * Get Content-Type for the compiled stylesheet. 
+     * Includes encoding with the "charset" parameter.
+     */
+    public String getContentType(Templates compiledStylesheet)
+    {
+        Properties outputProperties = compiledStylesheet.getOutputProperties();
+        
+        return getContentType(outputProperties);
+    }
+    
+    private String getContentType(Properties outputProperties)
+    {
         return outputProperties.getProperty(OutputKeys.MEDIA_TYPE)+
-            "; charset="+outputProperties.getProperty(OutputKeys.ENCODING);    
+            "; charset="+outputProperties.getProperty(OutputKeys.ENCODING);
     }
     
 
@@ -276,6 +344,57 @@ public class LSPHelper
 			Transformer trans = th.getTransformer();
 			
 			Properties outputProperties = thePage.getOutputProperties();
+
+            boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
+                .equals("html");
+
+			trans.setOutputProperties(outputProperties);			
+            
+			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
+		}
+		catch (TransformerConfigurationException e)
+		{
+			throw new SAXException(e.getMessage());
+		}
+					
+		sax.startDocument();
+		thePage.execute(sax, lspParams, extContext);
+		sax.endDocument();
+    }
+
+
+	/**
+	 * Executes an LSP page and transform the the result with an
+     * XSLT stylesheet.
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Also, the default
+     * output properties specified in this class will be ignored. Make sure
+     * to specify the output method in the stylesheet using <xsl:output>.
+	 *
+ 	 * @param thePage             the LSP page
+	 * @param lspParams           parameters to the LSP page
+	 * @param extContext          external context which will be passed to ExtLibs
+     * @param compiledStylesheet  the compiled XSLT stylesheet
+	 * @param out                 the {@link java.io.OutputStream}
+     *
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+							Templates compiledStylesheet, OutputStream out)
+		throws SAXException, IOException
+	{
+		ContentHandler sax;						
+		try {
+			TransformerHandler th = tfactory.newTransformerHandler(
+                compiledStylesheet);
+			th.setResult(new StreamResult(out));
+		
+			Transformer trans = th.getTransformer();
+			
+			Properties outputProperties = 
+                compiledStylesheet.getOutputProperties();
 
             boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
                 .equals("html");
