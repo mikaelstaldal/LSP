@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2003, Mikael Ståldal
+ * Copyright (c) 2001-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,8 @@
 package nu.staldal.lsp;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -55,8 +55,8 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage
 {
-    public static final String LSP_VERSION_NAME = "1.0";
-    public static final int LSP_VERSION_NUM = 110;
+    public static final String LSP_VERSION_NAME = "1.1";
+    public static final int LSP_VERSION_NUM = 111;
     
 
     /**
@@ -82,6 +82,14 @@ public interface LSPPage
 	 */
 	public String getPageName();
 	
+
+    /**
+	 * Output properties to use then this page is serialized.
+     *
+     * From &lt;lsp:output&gt;.
+	 */
+	public Properties getOutputProperties();
+    
 
     /**
      * Execute this LSP page and sends the output as SAX2 events to the

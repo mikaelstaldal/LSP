@@ -108,7 +108,8 @@ class LSPJVMCompiler implements Constants
 	 */
     void compileToByteCode(String pageName, LSPNode theTree, 
 		    HashMap importedFiles, boolean compileDynamic,
-            HashMap extLibsInPage, OutputStream out)
+            HashMap extLibsInPage, Properties outputProperties, 
+            OutputStream out)
         throws IOException, SAXException
 	{
 		splitNumber = 0;
@@ -154,6 +155,7 @@ class LSPJVMCompiler implements Constants
 		MethodGen constr = new MethodGen(ACC_PUBLIC, Type.VOID, Type.NO_ARGS, 
 			new String[] {}, "<init>", className, instrList, constGen);
 		instrList.append(instrFactory.createLoad(Type.OBJECT, 0));
+        instrList.append(InstructionConstants.DUP);
 		instrList.append(instrFactory.createFieldAccess(className, EXT_LIBS_URLS, new ArrayType(Type.STRING, 1), GETSTATIC));
 		instrList.append(instrFactory.createFieldAccess(className, EXT_LIBS_CLASS_NAMES, new ArrayType(Type.STRING, 1), GETSTATIC));
 		instrList.append(instrFactory.createFieldAccess(className, COMPILE_DEPENDENT_FILES, new ArrayType(Type.STRING, 1), GETSTATIC));
@@ -168,6 +170,20 @@ class LSPJVMCompiler implements Constants
                 new ArrayType(Type.STRING, 1), Type.BOOLEAN, Type.LONG, Type.STRING, 
                 Type.STRING, Type.INT }, 
 			INVOKESPECIAL));
+        for (Enumeration e = outputProperties.propertyNames(); e.hasMoreElements(); )
+        {
+            String key = (String)e.nextElement();
+            String value = outputProperties.getProperty(key);
+            
+            instrList.append(InstructionConstants.DUP);
+            instrList.append(new PUSH(constGen, key));
+            instrList.append(new PUSH(constGen, value));
+            instrList.append(instrFactory.createInvoke(LSPPageBase.class.getName(), 
+                "setOutputProperty", Type.VOID, 
+                new Type[] { Type.STRING, Type.STRING }, 
+                INVOKEVIRTUAL));
+        }
+        instrList.append(InstructionConstants.POP);
 		instrList.append(instrFactory.createReturn(Type.VOID));
 		constr.setMaxStack();
 		constr.setMaxLocals();

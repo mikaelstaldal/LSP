@@ -64,6 +64,7 @@ public abstract class LSPPageBase implements LSPPage
 	protected final String pageName;
 	protected final String compiledVersionName;
 	protected final int compiledVersionNum;
+    protected final Properties outputProperties;
 
 	
 	protected LSPPageBase(String[] extLibsURLs, String[] extLibsClassNames,
@@ -78,7 +79,13 @@ public abstract class LSPPageBase implements LSPPage
 		this.pageName = pageName;
 		this.compiledVersionName = versionName;
 		this.compiledVersionNum = versionNum;
+        this.outputProperties = new Properties();
 	}
+    
+    protected final void setOutputProperty(String key, String value)
+    {
+        outputProperties.setProperty(key, value);    
+    }
 
     public final String[] getCompileDependentFiles()
 	{
@@ -99,6 +106,11 @@ public abstract class LSPPageBase implements LSPPage
 	{	
 		return pageName;
 	}
+    
+	public final Properties getOutputProperties()
+    {
+        return outputProperties;
+    }        
 	
     public final void execute(ContentHandler sax, Map params, Object extContext)
         throws SAXException

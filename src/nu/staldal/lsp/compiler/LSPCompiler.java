@@ -67,7 +67,8 @@ public class LSPCompiler
 
     private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
-
+    private static final String XHTML_NS = "http://www.w3.org/1999/xhtml";
+    
     private TreeBuilder tb;
 	private String pageName;
     private URLResolver resolver;
@@ -86,7 +87,9 @@ public class LSPCompiler
 	private LSPElement currentElement;
 	
 	// (String)namespaceURI -> (String)className
-	private HashMap extDict = new HashMap(); 
+	private HashMap extDict = new HashMap();
+    
+    private Properties outputProperties;
 
 
     /**
@@ -161,16 +164,43 @@ public class LSPCompiler
         inPi = false;
 		currentElement = null;
 		currentSourceElement = null;
+        outputProperties = null;
 
         LSPNode compiledTree = compileNode(tree);
-
+        
+        if (outputProperties == null)
+            outputProperties = new Properties();
+        
+        if (!outputProperties.containsKey("method"))
+        {
+            String method;
+            
+            if (tree.getLocalName().equals("html")
+                    && tree.getNamespaceURI().equals(XHTML_NS))
+            {
+                method = "xhtml";
+            }
+            else if (tree.getLocalName().equalsIgnoreCase("html")
+                    && tree.getNamespaceURI().length() == 0)
+            {
+                method = "html";
+            }
+            else
+            {
+                method = "xml";
+            }            
+            
+            outputProperties.setProperty("method", method);
+        }
+        
 		jvmCompiler.compileToByteCode(pageName, compiledTree, 
 			importedFiles, compileDynamic,
-			extLibsInPage, out);
+			extLibsInPage, outputProperties, out);
 
-		tb = null;
+		outputProperties = null;
+        tb = null;
 		pageName = null;
-        resolver = null;
+        resolver = null;        
 
 		long timeElapsed = System.currentTimeMillis()-startTime;
 		if (DEBUG) System.out.println("in " + timeElapsed + " ms");
@@ -451,7 +481,11 @@ public class LSPCompiler
 				&& el.getNamespaceURI().equals(LSP_CORE_NS))
 		{
 			// Dispatch LSP command
-			if (el.getLocalName().equals("root"))
+			if (el.getLocalName().equals("output"))
+			{
+				return process_output(el);
+			}
+			else if (el.getLocalName().equals("root"))
 			{
 				return process_root(el);
 			}
@@ -718,6 +752,25 @@ public class LSPCompiler
     }    
     
 
+	private LSPNode process_output(Element el)
+		throws SAXException
+	{
+		if (outputProperties != null)
+        throw fixSourceException(el,
+			"only one <lsp:output> element allowed");
+            
+        outputProperties = new Properties();
+        for (int i = 0; i <el.numberOfAttributes(); i++)
+        {
+            outputProperties.setProperty(
+                el.getAttributeLocalName(i),
+                el.getAttributeValue(i));
+        }        
+        
+        return new LSPSimpleContainer(0, null); // return empty container        
+	}
+
+    
 	private LSPNode process_root(Element el)
 		throws SAXException
 	{

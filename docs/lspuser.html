@@ -66,6 +66,49 @@ contain the whitespace in an <code>lsp:root</code> element. The prupose of this 
 format the LSP source in a readable way without getting a lot of unnessecary 
 whitespace in the output.</p>
 
+<h4>lsp:output</h4>
+
+<p class="element-syntax">
+<a name="element-output"></a>&lt;lsp:output<br />
+&#160;&#160;method = "xml" | "html" | "xhtml" | "text"<br />
+&#160;&#160;version = <var>nmtoken</var><br />
+&#160;&#160;encoding = <var>string</var><br />
+&#160;&#160;omit-xml-declaration = "yes" | "no"<br />
+&#160;&#160;standalone = "yes" | "no"<br />
+&#160;&#160;doctype-public = <var>string</var><br />
+&#160;&#160;doctype-system = <var>string</var><br />
+&#160;&#160;cdata-section-elements = <var>qnames</var><br />
+&#160;&#160;indent = "yes" | "no"<br />
+&#160;&#160;media-type = <var>string</var>&#160;/&gt;
+</p>
+
+<p>The <code>lsp:output</code> specifies how the LSP page should be 
+serialized to a byte stream. The parameters has the same meaning as in 
+<a href="http://www.w3.org/TR/xslt#output">XSLT 1.0</a>, with the addition of the 
+<code>xhtml</code> output method. The <code>xhtml</code> 
+output method works as the <code>xml</code> output method, but uses the applicable
+HTML compatibility guidelines published in 
+<a href="http://www.w3.org/TR/xhtml1/#guidelines">Appendix C of the XHTML 1.0 
+specification</a>.</p>
+
+<p>An LSP page may contain at most one <code>lsp:output</code> element.</p>
+
+<p>If an LSP page contains no <code>lsp:output</code> element with a 
+<code>method</code> parameter, the output method is choosen as follows at
+compile time:</p>
+<ul>
+<li>If the root element is <code>html</code> (in lower case) with 
+namespace URI <code>http://www.w3.org/1999/xhtml</code>, the output method 
+is <code>xhtml</code>.</li>
+
+<li>If the root element is <code>html</code> (in any case) with null 
+namespace, the output method is <code>html</code>.</li>
+
+<li>In all other cases, the output method is <code>xml</code>.</li>
+
+</ul>
+
+
 <h4>lsp:import</h4>
 
 <p class="element-syntax">
