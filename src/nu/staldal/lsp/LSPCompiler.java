@@ -678,6 +678,26 @@ public class LSPCompiler
 		}
 	}
 
+    
+    private void removeWhitespace(Element el)
+		throws SAXException
+    {
+        if (el.getPreserveSpace())
+            return; // do not remove whitespace if xml:space is in effect
+        
+        if (el.numberOfChildren() == 0)
+            return;        
+        Node firstNode = el.getChild(0);
+        if (firstNode.isWhitespaceNode())
+            el.removeChild(0);
+        
+        if (el.numberOfChildren() == 0)
+            return;        
+        Node lastNode = el.getChild(el.numberOfChildren()-1);
+        if (lastNode.isWhitespaceNode())
+            el.removeChild(el.numberOfChildren()-1);                
+    }    
+    
 
 	private LSPNode process_root(Element el)
 		throws SAXException
@@ -789,8 +809,10 @@ public class LSPCompiler
 	private LSPNode process_if(Element el)
 		throws SAXException
 	{
-		String exp = getAttr("test", el, true);
-		try {
+        removeWhitespace(el);
+		
+        String exp = getAttr("test", el, true);
+		try {                        
 			LSPExpr test = LSPExpr.parseFromString(exp);
 
 			return new LSPIf(compileExpr(el, test), compileChildren(el));
@@ -818,6 +840,7 @@ public class LSPCompiler
 						&& child.getLocalName().equals("when")
 						&& (choose.getOtherwise() == null))
 				{
+                    removeWhitespace(child);
 					String exp = getAttr("test", child, true);
 					try {
 						LSPExpr test = LSPExpr.parseFromString(exp);
@@ -834,6 +857,7 @@ public class LSPCompiler
 						&& child.getLocalName().equals("otherwise")
 						&& (choose.getOtherwise() == null))
 				{
+                    removeWhitespace(child);
 					choose.setOtherwise(compileChildren(child));
 				}
 				else
@@ -847,7 +871,7 @@ public class LSPCompiler
 			else if (_child instanceof Text)
 			{
 				Text child = (Text)_child;
-				if (child.getValue().trim().length() > 0)
+				if (!child.isWhitespaceNode())
 					throw fixSourceException(child,
 						"content of <lsp:choose> must match "
 						+ "(lsp:when+, lsp:otherwise?): CharacterData");
@@ -871,6 +895,8 @@ public class LSPCompiler
 	private LSPNode process_for_each(Element el)
 		throws SAXException
 	{
+        removeWhitespace(el);
+        
 		String exp = getAttr("select", el, true);
 		String var = getAttr("var", el, true); 
 		String status = getAttr("status", el, false); 
@@ -894,7 +920,9 @@ public class LSPCompiler
 			throw fixSourceException(el, 
 				"<lsp:let> must have at least one attribute");
 		
-		String[] vars = new String[el.numberOfAttributes()];
+        removeWhitespace(el);
+
+        String[] vars = new String[el.numberOfAttributes()];
 		LSPExpr[] values = new LSPExpr[el.numberOfAttributes()];
 
 		for (int i = 0; i < el.numberOfAttributes(); i++)

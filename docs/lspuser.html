@@ -58,6 +58,14 @@ attribute value specification surrounded by curly braces
 (<code>{}</code>) means that the attribute value is processed as a <a
 href="#template">template</a>.</p>
 
+<p>In elements marked with <code>(whitespace stripping)</code>,
+any whitespace node immediatly after the start-tag and before 
+the end-tag is stripped. This stripping can be inhibited by setting
+the <code>xml:space</code> attribute to <code>preserve</code>, or by 
+contain the whitespace in an <code>lsp:root</code> element. The prupose of this whitespace stripping is to make it possible to
+format the LSP source in a readable way without getting a lot of unnessecary 
+whitespace in the output.</p>
+
 <h4>lsp:import</h4>
 
 <p class="element-syntax">
@@ -192,13 +200,13 @@ That string is outputted. Any content of the <code>lsp:value-of</code>
 element is ignored (may be used as sample data during development).</p>
 
 
-<h4>lsp:if</h4>
+<h4>lsp:if></h4>
 
 <p class="element-syntax">
 <a name="element-if"></a>
 &lt;lsp:if<br />
 &#160;&#160;<b>test</b> = <var>boolean-expression</var>&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any (whitespace stripping)</var> --&gt;<br />
 &lt;/lsp:if&gt;
 </p>
 
@@ -224,7 +232,7 @@ is outputted, otherwise nothing outputted.</p>
 <a name="element-when"></a>
 &lt;lsp:when<br />
 &#160;&#160;<b>test</b> = <var>boolean-expression</var>&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any (whitespace stripping)</var> --&gt;<br />
 &lt;/lsp:when&gt;
 </p>
 
@@ -234,7 +242,7 @@ is outputted, otherwise nothing outputted.</p>
 <p class="element-syntax">
 <a name="element-otherwise"></a>
 &lt;lsp:otherwise&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any (whitespace stripping)</var> --&gt;<br />
 &lt;/lsp:otherwise&gt;
 </p>
 
@@ -250,7 +258,7 @@ evaluated in turn, and converted to boolean (as if by a call to the <code>boolea
 &#160;&#160;<b>select</b> = <var>list-expression</var><br />
 &#160;&#160;<b>var</b> = <var>variable name</var>&gt;<br />
 &#160;&#160;status = <var>variable name</var>&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any (whitespace stripping)</var> --&gt;<br />
 &lt;/lsp:for-each&gt;
 </p>
 
@@ -281,7 +289,7 @@ same name in the enclosing scope is shadowed.</p>
 &#160;&#160;<i>var2</i> = <var>expression</var><br />
 &#160;&#160;<i>...</i><br />
 &#160;&#160;<i>varn</i> = <var>expression</var>&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any (whitespace stripping)</var> --&gt;<br />
 &lt;/lsp:let&gt;
 </p>
 
