@@ -744,6 +744,50 @@ public class LSPCompiler
                 }
             }
 
+            if (child.isWhitespaceNode()
+                    && (!child.getPreserveSpace())
+                    && (i > 0)
+                    && (i == el.numberOfChildren()-1) // last child
+                    && el.getChild(i-1) instanceof Element)
+            {
+                Element child2 = (Element)el.getChild(i-1);
+
+                if (child2.getNamespaceURI().equals(LSP_CORE_NS))
+                {
+                    if (child2.getLocalName().equals("attribute")
+                            || child2.getLocalName().equals("output"))
+                    {               
+                        continue; // strip whitespace                        
+                    }
+                    
+                    if (child2.getLocalName().equals("if")
+                            && (child2.numberOfChildren() >= 1) 
+                            && (child2.getChild(0) instanceof Element))
+                    {
+                        Element child3 = (Element)child2.getChild(0);
+
+                        if (child3.getNamespaceURI().equals(LSP_CORE_NS)
+                                && child3.getLocalName().equals("attribute"))
+                        {
+                            continue; // strip whitespace                        
+                        }                                                
+                    }
+                    else if (child2.getLocalName().equals("if")
+                            && (child2.numberOfChildren() >= 2) 
+                            && (child2.getChild(0).isWhitespaceNode())
+                            && (child2.getChild(1) instanceof Element))
+                    {
+                        Element child3 = (Element)child2.getChild(1);
+
+                        if (child3.getNamespaceURI().equals(LSP_CORE_NS)
+                                && child3.getLocalName().equals("attribute"))
+                        {
+                            continue; // strip whitespace                        
+                        }                                                
+                    }
+                }
+            }            
+            
             LSPNode compiledNode = compileNode(child);
             container.addChild(compiledNode);
 		}
@@ -767,19 +811,16 @@ public class LSPCompiler
     private void removeWhitespace(Element el)
 		throws SAXException
     {
-        if (el.getPreserveSpace())
-            return; // do not remove whitespace if xml:space is in effect
-        
         if (el.numberOfChildren() == 0)
             return;        
         Node firstNode = el.getChild(0);
-        if (firstNode.isWhitespaceNode())
+        if (firstNode.isWhitespaceNode() && !firstNode.getPreserveSpace())
             el.removeChild(0);
         
         if (el.numberOfChildren() == 0)
             return;        
         Node lastNode = el.getChild(el.numberOfChildren()-1);
-        if (lastNode.isWhitespaceNode())
+        if (lastNode.isWhitespaceNode() && !lastNode.getPreserveSpace())
             el.removeChild(el.numberOfChildren()-1);                
     }    
     

@@ -199,8 +199,10 @@ existing attribute, this error cannot be detected at compile time, and will
 result in undefined behaviour at runtime. If the <code>name</code> 
 expression evaluates to the empty string, no attribute will be created.</p>
 
-<p>Any whitespace immediately before an <code>lsp:attribute</code> element 
-will be stripped, unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
+<p>Any whitespace immediately before an <code>lsp:attribute</code> element,
+and any whitespace immediately after an <code>lsp:attribute</code> element 
+if there are no more children of the parent element, will be stripped. 
+Unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
 
 <p><em>Note:</em> unlike the similar element in XSLT, the value of the 
 <code>name</code> attribute may not be a QName.</p>

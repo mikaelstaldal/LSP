@@ -10,13 +10,15 @@
     <form>
     Box 1: 
     <input type="checkbox" name="box1">
-      <lsp:attribute name="{if ($flag='foobar') then 'checked' else ''}" value="checked"/></input><br/>
+      <lsp:attribute name="{if ($flag='foobar') then 'checked' else ''}" value="checked"/>
+    </input><br/>
 
     Box 2: 
     <input type="checkbox" name="box2">
       <lsp:if test="$flag='foobar'">
         <lsp:attribute name="checked" value="checked"/>
-      </lsp:if></input><br/>
+      </lsp:if>
+    </input><br/>
 
     </form>    
   </body>
