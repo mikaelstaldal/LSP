@@ -101,8 +101,12 @@ will be stripped, unless the <code>xml:space</code> attribute is set to <code>pr
 compile time:</p>
 <ul>
 <li>If the root element is <code>html</code> (in any case) with 
-namespace URI <code>http://www.w3.org/1999/xhtml</code> or null namespace URI,
-the output method is <code>html</code>.</li>
+null namespace URI, the output method is <code>html</code>.</li>
+
+<li>If the root element is <code>html</code> (in lower case) with 
+namespace URI <code>http://www.w3.org/1999/xhtml</code>,
+the output method is <code>html</code> or <code>xhtml</code> depending
+on the "xhtml" parameter to the LSP compiler.</li>
 
 <li>In all other cases, the output method is <code>xml</code>.</li>
 
@@ -223,9 +227,9 @@ element is ignored (may be used as sample data during development).</p>
 
 <p>If the <code>disable-output-escaping</code> attribute is specified and 
 set to "yes" or "disable-output-escaping", the noraml escaping of 
-characters &amp; and &lt; is disabled. This allows you to e.g. include 
-a XML or HTML fragment as a string. <em>Note:</em> This can cause the 
-output to be ill-formed.</p>
+characters &amp;, &lt; and characters not possible in the current character 
+encoding is disabled. This allows you to e.g. include a XML or HTML fragment 
+as a string. <em>Note:</em> This may cause the output to be ill-formed.</p>
 
 
 <h4>lsp:if</h4>
@@ -539,7 +543,7 @@ executing the compiled code.</p>
 <p>The LSP compiler is invoked by the application class
 <code>nu.staldal.lsp.compiler.LSPCompilerCLI</code>. The syntax is:</p>
 <pre>
-lspc [-verbose] [-force] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] <em>inputFile</em> ...
+lspc [-verbose] [-force] [-xhtml] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] <em>inputFile</em> ...
 </pre>
 
 <p><em>sourcepath</em> specifies where to look for imported files with 
@@ -549,7 +553,9 @@ search the directory where the source file is as well).
 Multiple input files can be specified. If <code>-force</code> is not specified, 
 files are only compiled if the source file is newer than the target file 
 (imported files are also checked, changing an imported file will trigger 
-recompile).</p> 
+recompile). If <code>-xhtml</code> is specified, 
+the default output method for XHTML pages will be <code>xhtml</code>, 
+otherwise it will be <code>html</code>.</p> 
 
 <p>You have to put bcel.jar in CLASSPATH. If you use any extension libraries, 
 you have to include them in the CLASSPATH as well.</p>
@@ -577,6 +583,7 @@ classpath as well.</p>
 &lt;lspc sourcepath="<em>sourcepath</em>"
          <b>destdir</b>="<em>where to place compiled code</em>"
          force="<em>force recompiling of all files</em>"&gt;
+         xhtml="<em>use xhtml as default output method</em>"&gt;
       &lt;fileset dir="lsp"&gt;
         &lt;include name="*.lsp" /&gt;
       &lt;/fileset&gt;
@@ -588,7 +595,9 @@ relative URL:s, may contain multiple directories separated by ';' or ':'
 (will search the directory where the source file is as well).
 If <code>force</code> is not set, files are only compiled if 
 the source file is newer than the target file (imported files are also checked, 
-changing an imported file will trigger recompile).</p>
+changing an imported file will trigger recompile). If <code>xhtml</code> is set, 
+the default output method for XHTML pages will be <code>xhtml</code>, 
+otherwise it will be <code>html</code>.</p>
 
 </body>
 </html>

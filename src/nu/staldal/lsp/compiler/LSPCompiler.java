@@ -91,6 +91,7 @@ public class LSPCompiler
     
     private Properties outputProperties;
 
+    private boolean xhtml;
 
     /**
 	 * Create a new LSP compiler. The instance may be reused, 
@@ -104,6 +105,17 @@ public class LSPCompiler
 		pageName = null;
         resolver = null;
 		jvmCompiler = new LSPJVMCompiler();
+        xhtml = false;
+    }
+    
+    
+    /**
+     * Set to <code>true</code> to use <code>xhtml</code> as default output 
+     * type.
+     */
+    public void setXhtml(boolean xhtml)
+    {
+        this.xhtml = xhtml;    
     }
 
 
@@ -176,10 +188,14 @@ public class LSPCompiler
             String method;
             
             if (tree.getLocalName().equalsIgnoreCase("html")
-                        && (tree.getNamespaceURI().length() == 0
-                            || tree.getNamespaceURI().equals(XHTML_NS)))
+                        && tree.getNamespaceURI().length() == 0)
             {
                 method = "html";
+            }
+            else if (tree.getLocalName().equals("html")
+                        && tree.getNamespaceURI().equals(XHTML_NS))
+            {
+                method = xhtml ? "xhtml" : "html";
             }
             else
             {

@@ -43,13 +43,9 @@ package nu.staldal.lsp.servlet;
 import java.io.*;
 import java.util.*;
 
-import org.xml.sax.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.*;
-import javax.xml.transform.stream.StreamResult;
-
 import javax.servlet.*;
+
+import org.xml.sax.*;
 
 import nu.staldal.lsp.*;
 

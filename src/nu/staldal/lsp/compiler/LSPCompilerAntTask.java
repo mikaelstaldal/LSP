@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,7 @@ public class LSPCompilerAntTask extends Task
 	private File destdir;	
 	private FileSet fileset;
 	private boolean force;
+	private boolean xhtml;
 
 	
 	public LSPCompilerAntTask()
@@ -80,6 +81,7 @@ public class LSPCompilerAntTask extends Task
 		sourcepath = null;		
 		destdir = null;
 		force = false;
+        xhtml = false;
 	}
 
 	
@@ -90,6 +92,11 @@ public class LSPCompilerAntTask extends Task
 		this.force = force;
 	}
 	
+	public void setXhtml(boolean xhtml)
+	{
+		this.xhtml = xhtml;
+	}
+
 	public void setSourcepath(Path sourcepath)
 	{
 		this.sourcepath = sourcepath;
@@ -118,6 +125,8 @@ public class LSPCompilerAntTask extends Task
 			throw new BuildException("Must have a destdir attribute");
 
 		compiler.targetDir = destdir;
+        
+        compiler.setXhtml(xhtml);
 		
 		if (sourcepath != null)
         {

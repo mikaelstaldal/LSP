@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -116,6 +116,15 @@ public class LSPCompilerHelper
 		targetDir = new File(System.getProperty("user.dir", "."));
 	}
 
+    /**
+     * Set to <code>true</code> to use <code>xhtml</code> as default output 
+     * type.
+     */
+    public void setXhtml(boolean xhtml)
+    {
+        compiler.setXhtml(xhtml);    
+    }
+        
 
 	private boolean checkDepend(boolean force, File outputFile, File inputFile)
 	{

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,6 +60,7 @@ public class LSPCompilerCLI
 		
 		boolean verbose = false;
 		boolean force = false;
+		boolean xhtml = false;
         
 		String sourcePathSpec = null;
 		File targetDir = null;
@@ -75,6 +76,10 @@ public class LSPCompilerCLI
 				else if (args[i].equals("-force"))
 				{
 					force = true;
+				}
+				else if (args[i].equals("-xhtml"))
+				{
+					xhtml = true;
 				}
 				else if (args[i].equals("-sourcepath"))
 				{
@@ -104,7 +109,8 @@ public class LSPCompilerCLI
 			return;
 		}			
 
-                LSPCompilerHelper compiler = new LSPCompilerHelper();
+        LSPCompilerHelper compiler = new LSPCompilerHelper();
+        compiler.setXhtml(xhtml);
 		if (targetDir != null) compiler.targetDir = targetDir;
 
         if (sourcePathSpec != null)
@@ -138,7 +144,7 @@ public class LSPCompilerCLI
 	private static void syntaxError()
 	{
 	    System.err.println("LSP compiler version " + LSPPage.LSP_VERSION_NAME);
-	    System.err.println("Syntax: lspc [-verbose] [-force] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
+	    System.err.println("Syntax: lspc [-verbose] [-force] [-xhtml] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
 	}
 
 }

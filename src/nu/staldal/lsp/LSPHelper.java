@@ -44,7 +44,6 @@ import java.io.*;
 import java.util.*;
 
 import org.xml.sax.*;
-import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.*;
 import javax.xml.transform.stream.StreamResult;
