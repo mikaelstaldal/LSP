@@ -507,12 +507,12 @@ public class LSPCompiler
 				inExtElementNow = true;
 				newEl = new LSPExtElement(extClass, 
 					el.getNamespaceURI(), el.getLocalName(),
-					el.numberOfAttributes(), el.numberOfChildren()); 
+					el.numberOfAttributes(), el.numberOfChildren(), el); 
 			}
 			else
 			{
 				newEl = new LSPElement(el.getNamespaceURI(), el.getLocalName(),
-					el.numberOfAttributes(), el.numberOfChildren());
+					el.numberOfAttributes(), el.numberOfChildren(), el);
 			}
 
 			for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
@@ -612,7 +612,7 @@ public class LSPCompiler
     private LSPNode compileNode(Text text)
         throws SAXException
     {
-        return new LSPText(text.getValue());
+        return new LSPText(text.getValue(), text);
     }
 
 
@@ -621,7 +621,7 @@ public class LSPCompiler
     {
         return new LSPProcessingInstruction(
 			new StringLiteral(pi.getTarget()), 
-			new LSPText(pi.getValue()));
+			new LSPText(pi.getValue(), pi), pi);
     }
 
 
@@ -683,7 +683,7 @@ public class LSPCompiler
 			return compileNode(el.getChild(0)); // optimization
 		else
 		{
-			LSPContainer container = new LSPContainer(el.numberOfChildren());
+			LSPContainer container = new LSPContainer(el.numberOfChildren(), el);
 			compileChildren(el, container);
 			return container;
 		}
@@ -724,7 +724,7 @@ public class LSPCompiler
 		try {
 			LSPExpr select = LSPExpr.parseFromString(exp);
 
-			return new LSPTemplate(compileExpr(el, select));
+			return new LSPTemplate(compileExpr(el, select), el);
 		}
 		catch (ParseException e)
 		{
@@ -745,7 +745,7 @@ public class LSPCompiler
 		LSPNode data = compileChildren(el);
 		inPi = false;
 
-		return new LSPProcessingInstruction(name, data);
+		return new LSPProcessingInstruction(name, data, el);
 	}
 
 
@@ -761,7 +761,7 @@ public class LSPCompiler
 			? processTemplateExpr(el, nsAttr)
 			: new StringLiteral(el.lookupNamespaceURI(""));
 
-		LSPElement newEl = new LSPElement(ns, name, -1, el.numberOfChildren());
+		LSPElement newEl = new LSPElement(ns, name, -1, el.numberOfChildren(), el);
 
 		currentElement = newEl;
 		currentSourceElement = el;
@@ -795,7 +795,7 @@ public class LSPCompiler
 
 		currentElement.addAttribute(ns, name, "CDATA", value);		
 		
-		return new LSPContainer(0); // return empty container
+		return new LSPContainer(0, null); // return empty container
 	}
 
 	
@@ -813,7 +813,7 @@ public class LSPCompiler
 			executeDynamic = true;
 		}
 
-		return new LSPInclude(file);
+		return new LSPInclude(file, el);
 	}
 
 
@@ -826,7 +826,7 @@ public class LSPCompiler
 		try {                        
 			LSPExpr test = LSPExpr.parseFromString(exp);
 
-			return new LSPIf(compileExpr(el, test), compileChildren(el));
+			return new LSPIf(compileExpr(el, test), compileChildren(el), el);
 		}
 		catch (ParseException e)
 		{
@@ -838,7 +838,7 @@ public class LSPCompiler
 	private LSPNode process_choose(Element el)
 		throws SAXException
 	{
-		LSPChoose choose = new LSPChoose(el.numberOfChildren());
+		LSPChoose choose = new LSPChoose(el.numberOfChildren(), el);
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
 			Node _child = el.getChild(i);
@@ -920,7 +920,7 @@ public class LSPCompiler
 			LSPExpr theList = LSPExpr.parseFromString(exp);
 
 			return new LSPForEach(compileExpr(el, theList), var, 
-				status, compileChildren(el));
+				status, compileChildren(el), el);
 		}
 		catch (ParseException e)
 		{
@@ -954,7 +954,7 @@ public class LSPCompiler
 			}
 		}
 
-		return new LSPLet(vars, values, compileChildren(el));
+		return new LSPLet(vars, values, compileChildren(el), el);
 	}
 	
 	

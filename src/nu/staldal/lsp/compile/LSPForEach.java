@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,9 +40,11 @@
 
 package nu.staldal.lsp.compile;
 
+import org.xml.sax.Locator;
+
 import nu.staldal.lsp.LSPExpr;
 
-public class LSPForEach implements LSPNode
+public class LSPForEach extends LSPNode
 {
 	private LSPExpr theList;
     private String variable;
@@ -50,8 +52,10 @@ public class LSPForEach implements LSPNode
 	private LSPNode body;
 
 	public LSPForEach(LSPExpr theList, String variable, String statusObject, 
-		LSPNode body)
+		LSPNode body, Locator locator)
 	{
+        super(locator);
+        
 		this.theList = theList;
         this.variable = variable;
 		this.statusObject = statusObject; // may be null 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,8 @@ package nu.staldal.lsp.compile;
 
 import java.util.Vector;
 
+import org.xml.sax.Locator;
+
 import nu.staldal.lsp.LSPExpr;
 
 public class LSPExtElement extends LSPElement
@@ -49,9 +51,9 @@ public class LSPExtElement extends LSPElement
 	protected String className;
 
     public LSPExtElement(String className, String namespaceURI, String localName,
-           		      	 int numberOfAttributes, int numberOfChildren)
+           		      	 int numberOfAttributes, int numberOfChildren, Locator locator)
     {
-        super(namespaceURI, localName, numberOfAttributes, numberOfChildren);
+        super(namespaceURI, localName, numberOfAttributes, numberOfChildren, locator);
 		this.className = className;
     }
 

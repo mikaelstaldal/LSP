@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,16 +42,19 @@ package nu.staldal.lsp.compile;
 
 import java.util.Vector;
 
+import org.xml.sax.Locator;
+
 import nu.staldal.lsp.LSPExpr;
 
-public class LSPChoose implements LSPNode
+public class LSPChoose extends LSPNode
 {
 	private Vector whenTests;
 	private Vector whenBodies;
 	private LSPNode otherwise;
 
-	public LSPChoose(int nWhens)
+	public LSPChoose(int nWhens, Locator locator)
 	{
+        super(locator);
 		whenTests = new Vector(nWhens);
 		whenBodies = new Vector(nWhens);
 		otherwise = null;

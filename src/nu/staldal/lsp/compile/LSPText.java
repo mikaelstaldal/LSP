@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,15 +40,19 @@
 
 package nu.staldal.lsp.compile;
 
+import org.xml.sax.Locator;
 
-public class LSPText implements LSPNode
+
+public class LSPText extends LSPNode
 {
 	private String value;
     transient char[] charArrayCache;
 
 
-	public LSPText(String value)
+	public LSPText(String value, Locator locator)
 	{
+        super(locator);
+                        
 		this.value = value;
 	}
 

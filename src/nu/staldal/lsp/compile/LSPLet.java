@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, Mikael Ståldal
+ * Copyright (c) 2002-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,16 +40,20 @@
 
 package nu.staldal.lsp.compile;
 
+import org.xml.sax.Locator;
+
 import nu.staldal.lsp.LSPExpr;
 
-public class LSPLet implements LSPNode
+public class LSPLet extends LSPNode
 {
 	private String[] vars;
 	private LSPExpr[] values;
 	private LSPNode body;
 
-	public LSPLet(String[] vars, LSPExpr[] values, LSPNode body)
+	public LSPLet(String[] vars, LSPExpr[] values, LSPNode body, Locator locator)
 	{
+        super(locator);  
+                      
 		this.vars = vars;
         this.values = values;
 		this.body = body;

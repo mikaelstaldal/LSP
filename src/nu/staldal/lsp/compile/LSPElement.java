@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,8 @@ package nu.staldal.lsp.compile;
 
 import java.util.Vector;
 
+import org.xml.sax.Locator;
+
 import nu.staldal.lsp.LSPExpr;
 
 public class LSPElement extends LSPContainer
@@ -62,9 +64,10 @@ public class LSPElement extends LSPContainer
 
 
     public LSPElement(String namespaceURI, String localName,
-           		      int numberOfAttributes, int numberOfChildren)
+           		      int numberOfAttributes, int numberOfChildren,
+                      Locator locator)
     {
-        super(numberOfChildren);
+        super(numberOfChildren, locator);
         if (numberOfAttributes >= 0)
         {
 			attrNamespace = new Vector(numberOfAttributes);
@@ -87,9 +90,10 @@ public class LSPElement extends LSPContainer
 
 
     public LSPElement(LSPExpr namespaceURI, LSPExpr localName,
-           		      int numberOfAttributes, int numberOfChildren)
+           		      int numberOfAttributes, int numberOfChildren,
+                      Locator locator)
     {
-        super(numberOfChildren);
+        super(numberOfChildren, locator);
         if (numberOfAttributes >= 0)
         {
             attrNamespace = new Vector(numberOfAttributes);

@@ -101,7 +101,7 @@ class LSPJVMCompiler implements Constants
 		    HashMap importedFiles, ArrayList includedFiles, 
             boolean compileDynamic,	boolean executeDynamic,
             HashMap extLibsInPage, OutputStream out)
-        throws IOException, LSPException
+        throws IOException, SAXException
 	{
 		splitNumber = 0;
 		
@@ -258,7 +258,7 @@ class LSPJVMCompiler implements Constants
 	
 		
 	private Method createExecuteMethod(String methodName, LSPNode theTree, int split)
-        throws LSPException, ClassGenException
+        throws SAXException, ClassGenException
 	{
 		InstructionList instrList = new InstructionList();
 		
@@ -298,7 +298,7 @@ class LSPJVMCompiler implements Constants
 
 
 	private Method createSplitMethod(LSPNode theNode)
-		throws LSPException	
+		throws SAXException	
 	{
 		String methodName = "_executeSplit" + (splitNumber++);
 		
@@ -336,7 +336,7 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPNode node, 
 			MethodGen methodGen, InstructionList instrList, 
 			int split)
-        throws LSPException
+        throws SAXException
     {
         if (node instanceof LSPExtElement)
             compileNode((LSPExtElement)node, methodGen, instrList, split);
@@ -361,15 +361,15 @@ class LSPJVMCompiler implements Constants
         else if (node instanceof LSPContainer)
             compileChildren((LSPContainer)node, methodGen, instrList, split);
         else
-			throw new LSPException("Unrecognized LSPNode: "
-				+ node.getClass().getName());
+			throw new SAXParseException("Unrecognized LSPNode: "
+				+ node.getClass().getName(), node);
     }
 
 	
 	private void compileChildren(LSPContainer el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)
-		throws LSPException
+		throws SAXException
 	{
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
@@ -429,8 +429,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPElement el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)
-        throws LSPException
+        throws SAXException
     {
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+            
 		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 		{
 			instrList.append(instrFactory.createLoad(
@@ -478,11 +481,11 @@ class LSPJVMCompiler implements Constants
 						
 			if ((localExpr instanceof StringLiteral)
 					&& 	((StringLiteral)localExpr).getValue().indexOf(':') > -1)
-				throw new LSPException("<lsp:attribute> may not use QName");
+				throw new SAXParseException("<lsp:attribute> may not use QName", el);
 
 			if ((localExpr instanceof StringLiteral)
 					&& 	((StringLiteral)localExpr).getValue().equals("xmlns"))
-				throw new LSPException("<lsp:attribute> may not add xmlns");
+				throw new SAXParseException("<lsp:attribute> may not add xmlns", el);
 				
 			// String local = evalExprAsString(el.getAttributeLocalName(i));
 			compileExprAsString(localExpr, methodGen, instrList);
@@ -555,7 +558,7 @@ class LSPJVMCompiler implements Constants
 			
 			if ((localNameExpr instanceof StringLiteral)
 					&& 	((StringLiteral)localNameExpr).getValue().indexOf(':') > -1)
-				throw new LSPException("<lsp:element> may not use QName");
+				throw new SAXParseException("<lsp:element> may not use QName", el);
 
 			// String localName = evalExprAsString(el.getLocalNameExpr());
 			compileExprAsString(localNameExpr, methodGen, instrList);
@@ -640,8 +643,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPExtElement el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-        throws LSPException
+        throws SAXException
     {		
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+            
 		// LSPExtLib extLib = (LSPExtLib)extLibs.get(el.getClassName());
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Map.class), PARAM_extLibs));
@@ -716,9 +722,12 @@ class LSPJVMCompiler implements Constants
     private void compileNode(LSPText text,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-        throws LSPException
+        throws SAXException
     {
-		String chars = text.getValue();
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            text.getLineNumber());
+
+        String chars = text.getValue();
         
 		instrList.append(instrFactory.createLoad(
 			Type.getType(org.xml.sax.ContentHandler.class),
@@ -743,9 +752,12 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPProcessingInstruction el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
-		// StringHandler sh = new StringHandler();
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+
+        // StringHandler sh = new StringHandler();
 		instrList.append(instrFactory.createNew(
 			(ObjectType)Type.getType(StringHandler.class)));
 		instrList.append(InstructionConstants.DUP);			
@@ -797,8 +809,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPInclude el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+
         // String url = evalExprAsString(el.getFile());		
 		compileExprAsString(el.getFile(), methodGen, instrList);
 		
@@ -821,8 +836,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPIf el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+            
 		LSPExpr expr = el.getTest();
 		compileExprAsBooleanValue(expr, methodGen, instrList);
 
@@ -840,8 +858,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPChoose el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+            
 		InstructionHandle[] testCase = new InstructionHandle[el.getNWhens()];
 		BranchInstruction[] branch1 = new BranchInstruction[el.getNWhens()];
 		BranchInstruction[] branch2 = new BranchInstruction[el.getNWhens()];
@@ -893,8 +914,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPForEach el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+        
 		// final LSPList theList = evalExprAsList(el.getList());
 		compileExprAsList(el.getList(), methodGen, instrList);
 
@@ -1011,9 +1035,12 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPLet el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
-		// env.pushFrame();
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+
+        // env.pushFrame();
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Environment.class), PARAM_env));
 		instrList.append(instrFactory.createInvoke(
@@ -1056,8 +1083,11 @@ class LSPJVMCompiler implements Constants
 	private void compileNode(LSPTemplate el,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-		throws LSPException
+		throws SAXException
 	{
+        methodGen.addLineNumber(instrList.append(InstructionConstants.NOP),
+            el.getLineNumber());
+            
 		LSPExpr expr = el.getExpr();
 
 		// Object o = evalExpr(expr);
@@ -1130,7 +1160,7 @@ class LSPJVMCompiler implements Constants
 	
 	private Class compileExpr(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		if (expr instanceof StringLiteral)
 		{
@@ -1153,7 +1183,7 @@ class LSPJVMCompiler implements Constants
 
 	private void compileExprAsString(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
 		if (type != String.class)
@@ -1171,7 +1201,7 @@ class LSPJVMCompiler implements Constants
 	// returns double value
 	private void compileExprAsNumberValue(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
 		if (type != Double.class)
@@ -1199,7 +1229,7 @@ class LSPJVMCompiler implements Constants
 	// returns boolean value
 	private void compileExprAsBooleanValue(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
 		if (type != Boolean.class)
@@ -1226,7 +1256,7 @@ class LSPJVMCompiler implements Constants
 
 	private void compileExprAsList(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
 		if (type != LSPList.class)
@@ -1243,7 +1273,7 @@ class LSPJVMCompiler implements Constants
 	
 	private void compileExprAsTuple(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
 		if (type != LSPTuple.class)
@@ -1260,7 +1290,7 @@ class LSPJVMCompiler implements Constants
 	
 	private Class compileSubExpr(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		if (expr instanceof StringLiteral)
 		{
@@ -1308,7 +1338,7 @@ class LSPJVMCompiler implements Constants
 	
 	private Class compileSubExpr(StringLiteral expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		instrList.append(new PUSH(constGen, ((StringLiteral)expr).getValue()));
 
@@ -1318,7 +1348,7 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(NumberLiteral expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		instrList.append(new PUSH(constGen, expr.getValue()));
 		
@@ -1333,7 +1363,7 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(VariableReference expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Environment.class), PARAM_env));
@@ -1353,7 +1383,7 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(BinaryExpr expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws LSPException
+		throws SAXException
 	{
 		switch (expr.getOp())
 		{
@@ -1638,7 +1668,7 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(UnaryExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		LSPExpr left = expr.getLeft();
 		
@@ -1664,7 +1694,7 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(BuiltInFunctionCall expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		if (expr.getName().equals("string"))
 		{
@@ -2128,7 +2158,7 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(ExtensionFunctionCall expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		// LSPExtLib extLib = (LSPExtLib)extLibs.get();
 		instrList.append(instrFactory.createLoad(
@@ -2174,7 +2204,7 @@ class LSPJVMCompiler implements Constants
 	
 	private Class compileSubExpr(TupleExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		// LSPTuple tuple = evalExprAsTuple(expr.getBase());
 		compileSubExprAsTuple(expr.getBase(), methodGen, instrList);
@@ -2194,7 +2224,7 @@ class LSPJVMCompiler implements Constants
 	
 	private Class compileSubExpr(ConditionalExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		// if (evalExprAsBoolean(expr.getTest()))
 		// 	return evalSubExpr(expr.getThen());	
@@ -2222,7 +2252,7 @@ class LSPJVMCompiler implements Constants
 	
 	private void compileSubExprAsString(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
 		if (type != String.class)
@@ -2240,7 +2270,7 @@ class LSPJVMCompiler implements Constants
 	// returns double value
 	private void compileSubExprAsNumberValue(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
 		if (type != Double.class)
@@ -2268,7 +2298,7 @@ class LSPJVMCompiler implements Constants
 	// returns boolean value
 	private void compileSubExprAsBooleanValue(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
 		if (type != Boolean.class)
@@ -2295,7 +2325,7 @@ class LSPJVMCompiler implements Constants
 
 	private void compileSubExprAsList(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
 		if (type != LSPList.class)
@@ -2312,7 +2342,7 @@ class LSPJVMCompiler implements Constants
 	
 	private void compileSubExprAsTuple(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws LSPException
+		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
 		if (type != LSPTuple.class)
