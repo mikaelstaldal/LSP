@@ -61,9 +61,6 @@ public class LSPInterpreter implements LSPPage
 	
     static final long serialVersionUID = -1168364109491726218L;
 
-    private static final String LSP_CORE_NS = "http://staldal.nu/LSP/core";
-    private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
-
 	// (String)className -> (LSPExtLib)extLib
 	private static Hashtable extLibs = new Hashtable();	
 	
@@ -251,8 +248,7 @@ public class LSPInterpreter implements LSPPage
 		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 		{
 			String[] m = el.getNamespaceMapping(i);
-			if (!m[1].equals(LSP_CORE_NS))
-				sax.startPrefixMapping(m[0], m[1]);
+			sax.startPrefixMapping(m[0], m[1]);
 		}
 
 		org.xml.sax.helpers.AttributesImpl saxAtts =
@@ -300,8 +296,7 @@ public class LSPInterpreter implements LSPPage
 		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 		{
 			String[] m = el.getNamespaceMapping(i);
-			if (!m[1].equals(LSP_CORE_NS))
-				sax.endPrefixMapping(m[0]);
+			sax.endPrefixMapping(m[0]);
 		}
     }
 

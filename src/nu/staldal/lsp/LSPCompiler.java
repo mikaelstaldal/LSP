@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -485,8 +485,12 @@ public class LSPCompiler
 			for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 			{
 				String[] m = el.getNamespaceMapping(i);
-				if (!m[1].equals(LSP_CORE_NS))
-					newEl.addNamespaceMapping(m[0], m[1]);
+				if (m[1].equals(LSP_CORE_NS)) continue;
+				
+				if (lookupExtensionHandlerClass(el, m[1]) != null)
+					continue;
+												
+				newEl.addNamespaceMapping(m[0], m[1]);				
 			}
 
 			for (int i = 0; i < el.numberOfAttributes(); i++)
@@ -519,8 +523,20 @@ public class LSPCompiler
 	{
 		if (ns == null || ns.length() == 0) 
 			return null;
+
+		String className = lookupExtensionHandlerClass(el, ns);
 		
-        String className = (String)extDict.get(ns);
+		if (className == null) return null;
+			
+		extLibsInPage.put(ns, className);
+		return className;
+	}
+	
+    
+	private String lookupExtensionHandlerClass(Node el, String ns)
+		throws SAXException
+	{	
+	    String className = (String)extDict.get(ns);
 		
 		if (className == null)
         try
@@ -540,7 +556,7 @@ public class LSPCompiler
 			Class cls = Class.forName(className);
 			if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(cls))
 			throw fixSourceException(el, 
-				"LSP extension class " + className 
+				"LSP Extension class " + className 
 				+ " must implement nu.staldal.lsp.LSPExtLib");
 				
 			extDict.put(ns, className);
@@ -553,12 +569,11 @@ public class LSPCompiler
         catch (IOException e)
         {
             throw fixSourceException(el,
-                "Unable to read producer config file: " + e.toString());
+                "Unable to read LSP Extension config file: " + e.toString());
         }
-
-		extLibsInPage.put(ns, className);
+		
 		return className;
-	}
+	}	
 	
 
     private LSPNode compileNode(Text text)
