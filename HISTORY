@@ -51,4 +51,5 @@
 * <lsp:output>.
 * Allow <lsp:attribute> inside <lsp:if>
 * Whitespace stripping after <lsp:attribute>.
+* Smart handling of boolean attributes.
 
