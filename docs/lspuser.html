@@ -106,7 +106,7 @@ nested.</p>
 <a name="element-processing-instruction"></a>
 &lt;lsp:processing-instruction<br />
 &#160;&#160;<b>name</b> = { <var>ncname</var> }&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction) --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction, lsp:element) --&gt;<br />
 &lt;/lsp:processing-instruction&gt;
 </p>
 
@@ -115,6 +115,25 @@ processing instruction in the output. The <code>name</code> attribute
 is used as the processing instruction target, and the character data of
 the content is used as the processing instruction data.
 <code>lsp:processing-instruction</code> may <em>not</em> be nested.</p>
+
+
+<h4>lsp:element</h4>
+
+<p class="element-syntax">
+<a name="element-element"></a>
+&lt;lsp:element<br />
+&#160;&#160;<b>name</b> = { <var>ncname</var> }<br />
+&#160;&#160;namespace = { <var>URI</var> }&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:element&gt;
+</p>
+
+<p>The <code>lsp:element</code> element creates an
+element with a computed name in the output. The <code>name</code> attribute
+is used as the local name of the element. The <code>namespace</code> attribute
+is used as the namespace URI of the element (if omitted, the generated element
+will be in the null namespace). <em>Note:</em> unlike the similar element in 
+XSLT, the value of the <code>name</code> attribute may not be a QName.</p>
 
 
 <h4>lsp:value-of</h4>

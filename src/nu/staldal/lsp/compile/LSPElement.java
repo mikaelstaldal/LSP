@@ -48,8 +48,11 @@ public class LSPElement extends LSPContainer
 {
 	static final long serialVersionUID = -18043557462593495L;
 
-    String namespaceURI;
-    String localName;
+    String namespaceURI = null;
+    String localName = null;
+	
+	LSPExpr namespaceURIExpr;
+	LSPExpr localNameExpr;
 
     Vector attrName;
     Vector attrValue;
@@ -81,6 +84,30 @@ public class LSPElement extends LSPContainer
         this.localName = localName;
     }
 
+
+    public LSPElement(LSPExpr namespaceURI, LSPExpr localName,
+           		      int numberOfAttributes, int numberOfChildren)
+    {
+        super(numberOfChildren);
+        if (numberOfAttributes >= 0)
+        {
+            attrName = new Vector(numberOfAttributes);
+            attrValue = new Vector(numberOfAttributes);
+            attrType = new Vector(numberOfAttributes);
+        }
+        else
+        {
+            attrName = new Vector();
+            attrValue = new Vector();
+            attrType = new Vector();
+        }
+        namespaceURIs = new Vector();
+        namespacePrefixes = new Vector();
+        this.namespaceURIExpr = namespaceURI;
+        this.localNameExpr = localName;
+    }
+
+
     public String getNamespaceURI()
     {
         return namespaceURI;
@@ -91,6 +118,17 @@ public class LSPElement extends LSPContainer
         return localName;
     }
 
+    public LSPExpr getNamespaceURIExpr()
+    {
+        return namespaceURIExpr;
+    }
+
+    public LSPExpr getLocalNameExpr()
+    {
+        return localNameExpr;
+    }
+	
+	
     /**
      * @return -1 if not found
      */
@@ -166,59 +204,4 @@ public class LSPElement extends LSPContainer
 			(String)namespaceURIs.elementAt(index) };
 	}
 
-/*
-	public String lookupNamespaceURI(String prefix)
-	{
-		int index = namespacePrefixes.indexOf(prefix);
-		if (index == -1)
-		{
-			if ((parent != null) && (parent instanceof Element))
-			{
-				return ((Element)parent).lookupNamespaceURI(prefix);
-			}
-			else
-			{
-				if (prefix.length() == 0)
-				{
-					return "";
-				}
-				else
-				{
-					return null;
-				}
-			}
-		}
-		else
-		{
-			return (String)namespaceURIs.elementAt(index);
-		}
-	}
-
-	public String lookupNamespacePrefix(String URI)
-	{
-		int index = namespaceURI.indexOf(URI);
-		if (index == -1)
-		{
-			if ((parent != null) && (parent instanceof Element))
-			{
-				return ((Element)parent).lookupNamespacePrefix(URI);
-			}
-			else
-			{
-				if (URI.length() == 0)
-				{
-					return "";
-				}
-				else
-				{
-					return null;
-				}
-			}
-		}
-		else
-		{
-			return (String)namespacePrefixes.elementAt(index);
-		}
-	}
-*/
 }

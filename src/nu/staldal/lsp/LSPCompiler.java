@@ -420,6 +420,14 @@ public class LSPCompiler
 			{
 				return process_let(el);
 			}
+			else if (el.getLocalName().equals("element"))
+			{
+				return process_element(el);
+			}
+			else if (el.getLocalName().equals("attribute"))
+			{
+				return process_attribute(el);
+			}
 			else
 			{
 				throw fixSourceException(el,
@@ -630,6 +638,46 @@ public class LSPCompiler
 	}
 
 
+	private LSPNode process_element(Element el)
+		throws SAXException
+	{
+		if (inPi) throw fixSourceException(el,
+			"<lsp:element> may not be nested in <lsp:processing-instruction>");
+
+		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
+		String nsAttr = getAttr("namespace", el, false);
+		LSPExpr ns = (nsAttr != null) 
+			? processTemplateExpr(el, nsAttr)
+			: null;
+
+		LSPElement newEl = new LSPElement(ns, name, -1, el.numberOfChildren());
+
+		compileChildren(el, newEl);
+
+		return newEl;
+	}
+
+	
+	private LSPNode process_attribute(Element el)
+		throws SAXException
+	{
+		// ***
+		throw new LSPException("<lsp:attribute> is not implemented");
+		/*
+		if (inPi) throw fixSourceException(el,
+			"<lsp:attribute> may not be nested in <lsp:processing-instruction>");
+
+		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
+
+		inPi = true;
+		LSPNode data = compileChildren(el);
+		inPi = false;
+
+		return new LSPProcessingInstruction(name, data);
+		*/
+	}
+
+	
 	private LSPNode process_include(Element el)
 		throws SAXException
 	{

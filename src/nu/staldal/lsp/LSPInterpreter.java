@@ -257,12 +257,25 @@ public class LSPInterpreter implements LSPPage
 			saxAtts.addAttribute(URI, local, "", type,
 				evalExprAsString(value));
 		}
-		sax.startElement(el.getNamespaceURI(), el.getLocalName(), "",
-			saxAtts);
+		
+		String nsURI = el.getNamespaceURI();
+		String localName = el.getLocalName();
+		if (localName == null)
+		{
+			localName = evalExprAsString(el.getLocalNameExpr());
+			if (localName.indexOf(':') > -1)
+				throw new LSPException("<lsp:element> may not use QName");
+				
+			nsURI = (el.getNamespaceURIExpr() != null) 
+				? evalExprAsString(el.getNamespaceURIExpr())
+				: "";
+		}
+		
+		sax.startElement(nsURI, localName, "", saxAtts);
 
 		processChildren(el, sax);
 
-		sax.endElement(el.getNamespaceURI(), el.getLocalName(), "");
+		sax.endElement(nsURI, localName, "");
 
 		for (int i = 0; i < el.numberOfNamespaceMappings(); i++)
 		{
