@@ -398,6 +398,10 @@ public class LSPCompiler
 			{
 				return process_for_each(el);
 			}
+			else if (el.getLocalName().equals("let"))
+			{
+				return process_let(el);
+			}
 			// *** more to implement
 			else
 			{
@@ -705,7 +709,7 @@ public class LSPCompiler
 		return choose;
 	}
 
-
+	
 	private LSPNode process_for_each(Element el)
 		throws SAXException
 	{
@@ -724,7 +728,34 @@ public class LSPCompiler
 		}
 	}
 
+	
+	private LSPNode process_let(Element el)
+		throws SAXException
+	{
+		if (el.numberOfAttributes() == 0)
+			throw fixSourceException(el, 
+				"<lsp:let> must have at least one attribute");
+		
+		String[] vars = new String[el.numberOfAttributes()];
+		LSPExpr[] values = new LSPExpr[el.numberOfAttributes()];
 
+		for (int i = 0; i < el.numberOfAttributes(); i++)
+		{
+			vars[i] = el.getAttributeLocalName(i);
+			String exp = el.getAttributeValue(i);
+			try {		
+				values[i] = compileExpr(el, LSPExpr.parseFromString(exp));				
+			}
+			catch (ParseException e)
+			{
+				throw fixParseException(el, exp, e);
+			}
+		}
+
+		return new LSPLet(vars, values, compileChildren(el));
+	}
+	
+	
 	private LSPExpr compileExpr(Node el, LSPExpr expr)
 		throws SAXException
 	{

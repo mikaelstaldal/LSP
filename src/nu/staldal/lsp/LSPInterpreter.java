@@ -150,6 +150,8 @@ public class LSPInterpreter implements LSPPage
             processNode((LSPChoose)node, sax);
         else if (node instanceof LSPForEach)
             processNode((LSPForEach)node, sax);
+        else if (node instanceof LSPLet)
+            processNode((LSPLet)node, sax);
         else if (node instanceof LSPInclude)
             processNode((LSPInclude)node, sax);
         else if (node instanceof LSPProcessingInstruction)
@@ -360,6 +362,14 @@ public class LSPInterpreter implements LSPPage
 		}
 	}
 		
+
+	private void processNode(LSPLet el, ContentHandler sax)
+		throws SAXException
+	{
+		// ***
+		processNode(el.getBody(), sax);
+	}
+
 
 	private void processNode(LSPTemplate el, ContentHandler sax)
 		throws SAXException
