@@ -150,6 +150,8 @@ public class LSPInterpreter implements LSPPage
             processNode((LSPIf)node, sax);
         else if (node instanceof LSPChoose)
             processNode((LSPChoose)node, sax);
+        else if (node instanceof LSPForEach)
+            processNode((LSPForEach)node, sax);
         else if (node instanceof LSPInclude)
             processNode((LSPInclude)node, sax);
         else if (node instanceof LSPProcessingInstruction)
@@ -291,6 +293,25 @@ public class LSPInterpreter implements LSPPage
 		}
 	}
 
+
+	private void processNode(LSPForEach el, ContentHandler sax)
+		throws SAXException
+	{
+		LSPList theList = evalExprAsList(el.getList());
+		
+		while (theList.hasNext())
+		{
+			Object o = theList.next();
+			Object old = params.get(el.getVariable());
+			params.put(el.getVariable(), o);
+			processNode(el.getBody(), sax);
+			if (old == null)
+				params.remove(el.getVariable());
+			else
+				params.put(el.getVariable(), old);
+		}
+	}
+		
 
 	private void processNode(LSPTemplate el, ContentHandler sax)
 		throws SAXException
@@ -657,6 +678,16 @@ public class LSPInterpreter implements LSPPage
 
 				return new Double(Math.floor(a + 0.5d));
 			}
+			else if (expr.getName().equals("count"))
+			{
+				if (expr.numberOfArgs() != 1)
+					throw new LSPException(
+						"count() function must have 1 argument");
+
+				LSPList list = evalExprAsList(expr.getArg(0));
+
+				return new Double(list.length());
+			}
 			else
 			{
 				throw new LSPException("Unrecognized built-in function: "
@@ -684,8 +715,13 @@ public class LSPInterpreter implements LSPPage
 	
 	private Object evalExpr(TupleExpr expr) throws LSPException
 	{
-		throw new LSPException("Tuple not implemented");
-		// ***
+		Hashtable tuple = evalExprAsTuple(expr.getBase());
+		Object o = tuple.get(expr.getName());
+		if (o == null)
+			throw new LSPException("Element \'" + expr.getName() 
+				+ "\' not found in tuple");
+		else
+			return o;
 	}
 
 	private String convertToString(Object value) throws LSPException
@@ -784,4 +820,27 @@ public class LSPInterpreter implements LSPPage
 		return convertToNumber(evalExpr(expr));
 	}
 
+	private LSPList evalExprAsList(LSPExpr expr) throws LSPException
+	{
+		Object value = evalExpr(expr);
+		if (value instanceof LSPList) 
+			return (LSPList)value;
+		else
+			throw new LSPException(
+				"Convert to List not implemented for type "
+				+ value.getClass().getName());
+	}
+
+	private Hashtable evalExprAsTuple(LSPExpr expr) throws LSPException
+	{
+		Object value = evalExpr(expr);
+		if (value instanceof Hashtable) 
+			return (Hashtable)value;
+		else
+			throw new LSPException(
+				"Convert to Tuple not implemented for type "
+				+ value.getClass().getName());
+	}
+
 }
+

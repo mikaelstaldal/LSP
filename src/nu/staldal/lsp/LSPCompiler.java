@@ -402,6 +402,10 @@ public class LSPCompiler
 				throw fixSourceException(el,
 					"<lsp:otherwise> must occur inside <lsp:choose>");
 			}
+			else if (el.getLocalName().equals("for-each"))
+			{
+				return process_for_each(el);
+			}
 			// *** more to implement
 			else
 			{
@@ -671,4 +675,21 @@ public class LSPCompiler
 		return choose;
 	}
 
+
+	private LSPNode process_for_each(Element el)
+		throws SAXException
+	{
+		String exp = getAttr("select", el, true);
+		String var = getAttr("var", el, true); 
+		try {
+			LSPExpr theList = LSPExpr.parseFromString(exp);
+
+			return new LSPForEach(theList, var, compileChildren(el));
+		}
+		catch (ParseException e)
+		{
+			throw fixParseException(el, exp, e);
+		}
+	}	
+	
 }
