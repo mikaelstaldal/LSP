@@ -108,7 +108,7 @@ public class LSPCompiler
 	 * Start compilation of an LSP page.
 	 *
 	 * @param page    page name
-	 * @param r       {@link URLResolver} to use for resolving <code>&lg;lsp:import&gt;</code>
+	 * @param r       {@link URLResolver} to use for resolving <code>&lt;lsp:import&gt;</code>
 	 *
 	 * @return SAX2 ContentHandler to feed the LSP source into
 	 */
