@@ -153,7 +153,7 @@ public abstract class LSPPageBase implements LSPPage
 
 
 	protected static final LSPExtLib lookupExtensionHandler(Map extLibs, String nsURI, String className)
-		throws LSPException
+		throws SAXException
 	{
 		try {
 			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);

@@ -42,7 +42,7 @@ package nu.staldal.lsp;
 
 import org.xml.sax.*;
 
-class StringHandler implements ContentHandler
+public class StringHandler implements ContentHandler
 {
     private StringBuffer sb;
 

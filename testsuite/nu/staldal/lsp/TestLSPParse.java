@@ -11,7 +11,7 @@ public class TestLSPParse extends TestCase
     public static final String correctExpr =
 		"1+2-3.2*4 div f($a.b,$c)-\'4ad\'";
     public static final String correctTest = 
-		"BinaryExpr(BinaryExpr(BinaryExpr(NumberLiteral(1.0),12,NumberLiteral(2.0)),13,BinaryExpr(BinaryExpr(NumberLiteral(3.2),14,NumberLiteral(4.0)),15,FunctionCall(null,f,[TupleExpr(VariableReference(a).b),VariableReference(c)]))),13,StringLiteral(4ad))";
+		"BinaryExpr(BinaryExpr(BinaryExpr(NumberLiteral(1.0),12,NumberLiteral(2.0)),13,BinaryExpr(BinaryExpr(NumberLiteral(3.2),14,NumberLiteral(4.0)),15,FunctionCall(null,f,[TupleExpr(VariableReference(a)[StringLiteral(b)]),VariableReference(c)]))),13,StringLiteral(4ad))";
 
     public static final String correctExpr2 = 
 		"if (2 = 3) then 5+8 else \'foo\'";
