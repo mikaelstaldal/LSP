@@ -70,12 +70,6 @@ public class LSPCompiler
 	private boolean inPi;
 
 
-	private static LSPException fixSAXException(SAXException e)
-	{
-		// *** better error message
-		return new LSPException(e.toString());
-	}
-
 	private static LSPException fixSourceException(Node node, String msg)
 	{
 		return new LSPException(
@@ -271,7 +265,7 @@ public class LSPCompiler
 
 
     public LSPPage finishCompile()
-    	throws LSPException, IOException
+    	throws SAXException, IOException
     {
         if (tb == null) throw new IllegalStateException(
             "startCompile() must be invoked before finishCompile()");
@@ -299,7 +293,7 @@ public class LSPCompiler
 
 
     private void processImports(Element el)
-    	throws LSPException, IOException
+    	throws SAXException, IOException
     {
 		for (int i = 0; i < el.numberOfChildren(); i++)
 		{
@@ -329,10 +323,6 @@ public class LSPCompiler
 				Element importedDoc;
 				try {
 					importedDoc = TreeBuilder.parseXML(inputSource, false);
-				}
-				catch (SAXException e)
-				{
-					throw fixSAXException(e);
 				}
 				catch (javax.xml.parsers.ParserConfigurationException e)
 				{
