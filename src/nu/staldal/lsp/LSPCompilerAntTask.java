@@ -47,6 +47,7 @@ import org.xml.sax.SAXException;
 import org.apache.tools.ant.*;
 import org.apache.tools.ant.util.*;
 import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Path;
  
 
 /**
@@ -58,7 +59,7 @@ public class LSPCompilerAntTask extends Task
 {
 	private LSPCompilerHelper compiler;
 	
-	private File sourcepath;
+	private Path sourcepath;
 	private File destdir;	
 	private FileSet fileset;
 	private boolean force;
@@ -87,7 +88,7 @@ public class LSPCompilerAntTask extends Task
 		this.force = force;
 	}
 	
-	public void setSourcepath(File sourcepath)
+	public void setSourcepath(Path sourcepath)
 	{
 		this.sourcepath = sourcepath;
 	}
@@ -116,8 +117,18 @@ public class LSPCompilerAntTask extends Task
 
 		compiler.targetDir = destdir;
 		
-		if (sourcepath == null) sourcepath = project.getBaseDir();
-		compiler.sourceDir = sourcepath;
+		if (sourcepath != null)
+        {
+            String[] _sp = sourcepath.list();
+            File[] sp = new File[_sp.length];
+            
+            for (int i = 0; i<_sp.length; i++)
+            {
+                sp[i] = new File(_sp[i]);   
+            }
+            
+            compiler.sourcePath = sp;            
+        }
 
 		DirectoryScanner ds = fileset.getDirectoryScanner(project);
 		File fromDir = fileset.getDir(project);

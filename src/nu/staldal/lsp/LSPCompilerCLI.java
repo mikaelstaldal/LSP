@@ -60,6 +60,8 @@ public class LSPCompilerCLI
 		
 		boolean verbose = false;
 		boolean force = false;
+        
+        String sourcePathSpec = null;
 
 		for (int i = 0; i<args.length; i++)
 		{
@@ -76,7 +78,7 @@ public class LSPCompilerCLI
 				else if (args[i].equals("-sourcepath"))
 				{
 					i++;
-					compiler.sourceDir = new File(args[i]);
+                    sourcePathSpec = args[i];
 				}
 				else if (args[i].equals("-d"))
 				{
@@ -100,6 +102,19 @@ public class LSPCompilerCLI
 			syntaxError();
 			return;
 		}			
+
+        if (sourcePathSpec != null)
+        {
+            StringTokenizer st = new StringTokenizer(sourcePathSpec, ";");
+            File[] sp = new File[st.countTokens()];
+            int i = 0;
+            while (st.hasMoreTokens())
+            {
+                sp[i] = new File(st.nextToken());
+                i++;
+            }
+            compiler.sourcePath = sp;
+        }
 		
 		for (Iterator it = mainPages.iterator(); it.hasNext(); )
 		{

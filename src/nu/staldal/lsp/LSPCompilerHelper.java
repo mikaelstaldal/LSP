@@ -73,10 +73,10 @@ public class LSPCompilerHelper
 	public File startDir;
 	
 	/**
-	 * Where to look for imported files with pseudo-absolute URL:s,
-	 * default is current directory.
+	 * Where to look for imported files with relative URL:s
+     * (will search the directory where the source file is as well).
 	 */
-	public File sourceDir;
+	public File[] sourcePath;
 
 	/**
 	 * Where to place generated files, default is current directory.
@@ -112,7 +112,7 @@ public class LSPCompilerHelper
 		compiler = new LSPCompiler();
 				
 		startDir = new File(System.getProperty("user.dir", "."));
-		sourceDir = new File(System.getProperty("user.dir", "."));
+		sourcePath = new File[0];
 		targetDir = new File(System.getProperty("user.dir", "."));
 	}
 
@@ -150,7 +150,15 @@ public class LSPCompilerHelper
 			String[] compDepFiles = thePage.getCompileDependentFiles();
 			for (int i = 0; i<compDepFiles.length; i++)
 			{
-				File f = new File(sourceDir, compDepFiles[i]);
+                File f = new File(currentPagePath, compDepFiles[i]);
+                if (!f.isFile())
+                {
+                    for (int j = 0; j<sourcePath.length; j++)
+                    {
+                        f = new File(sourcePath[j], compDepFiles[i]);
+                        if (f.isFile()) break;
+                    }
+                }                
 				
 				if (!f.isFile()) return false;
 				
@@ -291,7 +299,7 @@ public class LSPCompilerHelper
 	{
 		InputSource is;
 		
-		if (Utils.absoluteURL(url) && url.startsWith("res:"))
+		if (url.startsWith("res:"))
 		{
 			InputStream in = getClass().getResourceAsStream(
 				url.substring(4));
@@ -301,19 +309,42 @@ public class LSPCompilerHelper
 			
 			is = new InputSource(in);
 		}
-		else if (Utils.absoluteURL(url))
+		else if (url.length() > 3 
+                    && Character.isLetter(url.charAt(0))
+                    && url.charAt(1) == ':'
+                    && (url.charAt(2) == '/' || url.charAt(2) == '\\'))
+        {   // Windows pathname
+			is = new InputSource(new File(url).toURL().toString());
+        }
+		else if (url.length() > 2 
+                    && url.charAt(0) == '\\' && url.charAt(1) == '\\')
+        {   // Windows UNC pathname
+			is = new InputSource(new File(url).toURL().toString());
+        }
+        else if (Utils.absoluteURL(url))
 		{
 			is = new InputSource(url);
 		}
-		else if (Utils.pseudoAbsoluteURL(url))
-		{
-			is = new InputSource(
-				new File(sourceDir, url.substring(1)).toURL().toString());
+		else if (url.charAt(0) == '/')            
+		{   // UNIX pathname
+			is = new InputSource(new File(url).toURL().toString());
 		}
 		else // relative URL 	
-		{			
-			is = new InputSource(
-				new File(currentPagePath, url).toURL().toString());
+		{
+            File file = new File(currentPagePath, url);
+            if (!file.isFile())
+            {
+                for (int i = 0; i<sourcePath.length; i++)
+                {
+                    file = new File(sourcePath[i], url);
+                    if (file.isFile()) break;
+                }
+            }                
+            
+            if (!file.isFile())
+                throw new FileNotFoundException(url + " (File not found)");
+            
+            is = new InputSource(file.toURL().toString());
 		}
 
 		try {
