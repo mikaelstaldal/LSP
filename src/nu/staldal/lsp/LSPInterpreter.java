@@ -132,7 +132,8 @@ public class LSPInterpreter implements LSPPage
 		{
 			Map.Entry ent = (Map.Entry)it.next();
 			String key = (String)ent.getKey();
-			env.bind(key, ent.getValue());
+			Object value = ent.getValue();						
+			env.bind(key, convertObjectToLSP(value));
 		}
 
         this.resolver = resolver;
@@ -390,7 +391,7 @@ public class LSPInterpreter implements LSPPage
 		{
 			Object o = theList.next();
 			env.pushFrame();
-			env.bind(el.getVariable(), o);
+			env.bind(el.getVariable(), convertObjectToLSP(o));
 			if (el.getStatusObject() != null)
 			{
 				env.bind(el.getStatusObject(), new LSPTuple()
@@ -854,7 +855,7 @@ public class LSPInterpreter implements LSPPage
 			args[i] = evalExpr(expr.getArg(i));
 		}
 		try {
-			return extLib.function(expr.getName(), args);
+			return convertObjectToLSP(extLib.function(expr.getName(), args));
 		}
 		catch (IOException e)
 		{
@@ -881,7 +882,7 @@ public class LSPInterpreter implements LSPPage
 			throw new LSPException("Element \'" + expr.getName() 
 				+ "\' not found in tuple");
 		else
-			return o;
+			return convertObjectToLSP(o);
 	}
 
 	private String convertToString(Object value) throws LSPException
@@ -890,9 +891,9 @@ public class LSPInterpreter implements LSPPage
 		{
 			return (String)value;
 		}
-		else if (value instanceof Double)
+		else if (value instanceof Number)
 		{
-			double d = ((Double)value).doubleValue();
+			double d = ((Number)value).doubleValue();
 			if (d == 0)
 				return "0";
 			else if (d == Math.rint(d))
@@ -924,9 +925,9 @@ public class LSPInterpreter implements LSPPage
 		{
 			return ((Boolean)value).booleanValue();
 		}
-		if (value instanceof Double)
+		if (value instanceof Number)
 		{
-			double d = ((Double)value).doubleValue();
+			double d = ((Number)value).doubleValue();
 			return !((d == 0) || Double.isNaN(d));
 		}
 		if (value instanceof String)
@@ -949,9 +950,9 @@ public class LSPInterpreter implements LSPPage
 
 	private double convertToNumber(Object value) throws LSPException
 	{
-		if (value instanceof Double)
+		if (value instanceof Number)
 		{
-			return ((Double)value).doubleValue();
+			return ((Number)value).doubleValue();
 		}
 		else if (value instanceof Boolean)
 		{
@@ -983,18 +984,9 @@ public class LSPInterpreter implements LSPPage
 	private LSPList evalExprAsList(LSPExpr expr) throws SAXException
 	{
 		Object value = evalExpr(expr);
+		
 		if (value instanceof LSPList) 
 			return (LSPList)value;
-		else if (value instanceof Object[]) 
-			return new LSPArrayList((Object[])value);
-		else if (value instanceof Vector) 
-			return new LSPVectorList((Vector)value);
-		else if (value instanceof List) 
-			return new LSPCollectionList((Collection)value);
-		else if (value instanceof Enumeration) 
-			return new LSPEnumerationList((Enumeration)value);
-		else if (value instanceof Iterator) 
-			return new LSPIteratorList((Iterator)value);
 		else
 			throw new LSPException(
 				"Convert to list not implemented for type "
@@ -1006,15 +998,48 @@ public class LSPInterpreter implements LSPPage
 		Object value = evalExpr(expr);
 		if (value instanceof LSPTuple) 
 			return (LSPTuple)value;
+		else
+			throw new LSPException(
+				"Convert to tuple not implemented for type "
+				+ value.getClass().getName());
+	}
+
+
+	private Object convertObjectToLSP(Object value)
+		throws LSPException
+	{
+		if (value instanceof String)
+			return value;
+		else if (value instanceof Boolean)
+			return value;
+		else if (value instanceof Number)
+			return value;
+		else if (value instanceof LSPList) 
+			return value;
+		else if (value instanceof LSPTuple) 
+			return value;
+		else if (value instanceof Object[]) 
+			return new LSPArrayList((Object[])value);
+		else if (value instanceof Vector) 
+			return new LSPVectorList((Vector)value);
+		else if (value instanceof Collection) 
+			return new LSPCollectionList((Collection)value);
+		else if (value instanceof Enumeration) 
+			return new LSPEnumerationList((Enumeration)value);
+		else if (value instanceof Iterator) 
+			return new LSPIteratorList((Iterator)value);
+		else if (value instanceof java.sql.ResultSet) 
+			return new LSPResultSetTupleList((java.sql.ResultSet)value);
 		else if (value instanceof Dictionary) 
 			return new LSPDictionaryTuple((Dictionary)value);
 		else if (value instanceof Map) 
 			return new LSPMapTuple((Map)value);
 		else
 			throw new LSPException(
-				"Convert to tuple not implemented for type "
+				"LSP cannot handle objects of type "
 				+ value.getClass().getName());
 	}
+
 
 	private LSPExtLib lookupExtensionHandler(String nsURI, String className)
 		throws LSPException
