@@ -950,6 +950,10 @@ public class LSPInterpreter implements LSPPage
 		{
 			return ((String)value).length() > 0;
 		}
+		if (value instanceof LSPList)
+		{
+			return ((LSPList)value).length() > 0;
+		}
 		else
 		{
 			throw new LSPException(
