@@ -433,15 +433,35 @@ strings in the outermost scope.</p>
 (which may be implicitly converted to the boolean value <code>false</code>
 or to the number <code>NaN</code>).</p>
 
+
 <h2>The stand-alone LSP compiler</h2>
 
+<p>LSP comes with a stand-alone compiler, which compiles LSP pages into files
+with <code>.lspc</code> extension. This is currently not useful together with 
+Lagoon, but might be useful if LSP is integrated into another system. It is
+also useful to check LSP pages for errors.</p>
 
-<h3>Command line</h3>
+<p>For a programmatic interface to the LSP compiler, look at the class
+<code>nu.staldal.lsp.LSPCompilerHelper</code>.</p>
+
+<h3>Running LSP compiler from command line</h3>
+
+<p>The LSP compiler is invoked by the application class
+<code>nu.staldal.lsp.LSPCompilerCLI</code>. The syntax is:</p>
+<pre>
+lspc [-verbose] [-sourcepath <em>sourcepath</em>] [-d <em>destpath</em>] <em>inputFile</em> ...
+</pre>
+
+<p><em>sourcepath</em> specifies where to look for imported files with 
+pseudo-absolute URL:s, default is current directory. <em>destpath</em> 
+specifies where place generated files, default is current directory.
+Multiple input files can be specified. All specified files are compiled 
+unconditionally.</p>
 
 
 <h3>Using LSP compiler from within Apache Ant</h3>
 
-<p>LSP comes with an Ant task. Define the LSP compiler Ant task in the Ant
+<p>Define the LSP compiler Ant task in the Ant
 build file like this:</p>
 <pre>
 &lt;taskdef name="lspc" classname="nu.staldal.lsp.LSPCompilerAntTask"&gt;
@@ -459,15 +479,16 @@ build file like this:</p>
          verbose="<em>verbose output</em>"
          force="<em>force recompiling of all files</em>"&gt;
       &lt;fileset dir="lsp"&gt;
-        &lt;include name="**/*.lsp" /&lt;
-      &lt;/fileset&lt;
-&lt;/lspc&lt;
+        &lt;include name="*.lsp" /&gt;
+      &lt;/fileset&gt;
+&lt;/lspc&gt;
 </pre>
 
 <p>If the <code>sourcepath</code> attriute is omitted, the project base 
 path is used. If <code>force</code> is not set, files are only compiled if 
-the source file is newer than the target file (<em>note</em>: that imported files are 
-not checked, changing an imported file will not trigger recompile).</p>
+the source file is newer than the target file (<strong>Note:</strong> 
+imported files are not checked, changing an imported file will not trigger 
+recompile).</p>
 
 </body>
 </html>

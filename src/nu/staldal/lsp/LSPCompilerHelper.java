@@ -64,13 +64,37 @@ public class LSPCompilerHelper
 	
 	private String currentMainPage;
 	private File currentPagePath;
-	
-	public File sourceDir;
-	public File targetDir;
+
+	/**
+	 * Where to look for files to compile, default is current directory.
+	 */
 	public File startDir;
+	
+	/**
+	 * Where to look for imported files with pseudo-absolute URL:s,
+	 * default is current directory.
+	 */
+	public File sourceDir;
+
+	/**
+	 * Where to place generated files, default is current directory.
+	 */
+	public File targetDir;
+
+	/**
+	 * Verbose output.
+	 */
 	public boolean verbose;
-    public PrintWriter out;
-    public PrintWriter err;
+	
+    /**
+	 * Where to write the verbose output, default is <code>System.out</code>
+	 */
+	public PrintWriter out;
+	
+    /**
+	 * Where to write error messages, default is <code>System.err</code>
+	 */
+	public PrintWriter err;
 
 
 	public LSPCompilerHelper()
