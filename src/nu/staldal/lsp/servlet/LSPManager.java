@@ -138,22 +138,84 @@ public class LSPManager
 	 *
  	 * @param thePage     the LSP page
 	 * @param lspParams   parameters to the LSP page
+	 * @param request     the {@link javax.servlet.ServletRequest}
 	 * @param response    the {@link javax.servlet.ServletResponse}
      *
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
 	public void executePage(LSPPage thePage, Map lspParams, 
-							ServletResponse response)
+							ServletRequest request, ServletResponse response)
 		throws SAXException, IOException
 	{		
         response.setContentType(helper.getContentType(thePage));
             
         OutputStream out = response.getOutputStream();        
-        helper.executePage(thePage, lspParams, context, out);
+        helper.executePage(thePage, lspParams, 
+            new LSPServletContext(context, request), out);
+    }
+
+
+	/**
+	 * Executes an LSP page and write the result to a 
+	 * {@link javax.servlet.ServletResponse}. Uses any stylesheet 
+     * specified in the LSP page. 
+	 *
+ 	 * @param thePage     the LSP page
+	 * @param lspParams   parameters to the LSP page
+	 * @param response    the {@link javax.servlet.ServletResponse}
+     *
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+     *
+     * @deprecated use {@link #executePage(nu.staldal.lsp.LSPPage, java.util.Map, javax.servlet.ServletRequest, javax.servlet.ServletResponse)} instead   
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, 
+							ServletResponse response)
+		throws SAXException, IOException
+	{		
+        executePage(thePage, lspParams, (ServletRequest)null, response);
     }
 		
 	
+	/**
+	 * Executes an LSP page and transform the the result with an
+     * XSLT stylesheet.
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Make sure
+     * to specify the output method in the stylesheet using &lt;xsl:output&gt;.
+	 *
+ 	 * @param thePage         the LSP page
+	 * @param lspParams       parameters to the LSP page
+     * @param stylesheetName  the XSLT stylesheet
+	 * @param request         the {@link javax.servlet.ServletRequest}
+	 * @param response        the {@link javax.servlet.ServletResponse}
+     *
+     * @throws SAXException     if any error occurs while executing the page
+     * @throws FileNotFoundException  if the stylesheet cannot be found
+     * @throws IOException      if any I/O error occurs while executing the page
+     * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, 
+							String stylesheetName, 
+                            ServletRequest request, ServletResponse response)
+		throws SAXException, FileNotFoundException, IOException, 
+            TransformerConfigurationException
+	{
+        Templates compiledStylesheet = helper.getStylesheet(stylesheetName);
+        if (compiledStylesheet == null)
+            throw new FileNotFoundException(stylesheetName);
+		
+        response.setContentType(helper.getContentType(compiledStylesheet));
+            
+        OutputStream out = response.getOutputStream();        
+        helper.executePage(thePage, lspParams, 
+            new LSPServletContext(context, request), 
+            compiledStylesheet, out);
+    }
+
+
 	/**
 	 * Executes an LSP page and transform the the result with an
      * XSLT stylesheet.
@@ -171,6 +233,8 @@ public class LSPManager
      * @throws FileNotFoundException  if the stylesheet cannot be found
      * @throws IOException      if any I/O error occurs while executing the page
      * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
+     *
+     * @deprecated use {@link #executePage(nu.staldal.lsp.LSPPage, java.util.Map, java.lang.String, javax.servlet.ServletRequest, javax.servlet.ServletResponse)} instead   
 	 */	
 	public void executePage(LSPPage thePage, Map lspParams, 
 							String stylesheetName, 
@@ -178,14 +242,8 @@ public class LSPManager
 		throws SAXException, FileNotFoundException, IOException, 
             TransformerConfigurationException
 	{
-        Templates compiledStylesheet = helper.getStylesheet(stylesheetName);
-        if (compiledStylesheet == null)
-            throw new FileNotFoundException(stylesheetName);
-		
-        response.setContentType(helper.getContentType(compiledStylesheet));
-            
-        OutputStream out = response.getOutputStream();        
-        helper.executePage(thePage, lspParams, context, compiledStylesheet, out);
+        executePage(thePage, lspParams, stylesheetName, 
+            (ServletRequest)null, response);
     }
 
 

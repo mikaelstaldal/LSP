@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2004, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,66 +40,47 @@
 
 package nu.staldal.lsp.servlet;
 
-import java.util.*;
-
-import org.xml.sax.SAXException;
-
 import javax.servlet.*;
 
 import nu.staldal.lsp.*;
 
 
 /**
- * A Servlet {@link javax.servlet.RequestDispatcher} 
- * which executes an LSP page.
+ * Context for LSP extension libraries.
  */
-final class LSPRequestDispatcher implements RequestDispatcher
+public class LSPServletContext
 {
-	private final LSPManager manager;
-	private final LSPPage thePage;
+	private final ServletContext servletContext;
+	private final ServletRequest servletRequest;
 	
-    
-	LSPRequestDispatcher(LSPManager manager, LSPPage thePage) 
-    {
-		this.manager = manager;
-		this.thePage = thePage;
-    }
-    
-    
-    public void forward(ServletRequest request, ServletResponse response)
-        throws ServletException, java.io.IOException
-    {
-        response.resetBuffer();		
-		doLSP(request, response);		
-		response.flushBuffer();
-    }
-                    
-    
-    public void include(ServletRequest request, ServletResponse response)
-        throws ServletException, java.io.IOException
-    {
-		doLSP(request, response);
-    }
 
-	
-	private void doLSP(ServletRequest request, ServletResponse response)
-        throws ServletException, java.io.IOException
-	{
-		Map lspParams = new HashMap();
-		for (Enumeration e = request.getAttributeNames(); e.hasMoreElements(); )
-		{
-			String name = (String)e.nextElement();
-			lspParams.put(name, request.getAttribute(name));
-		}
+    protected LSPServletContext(ServletContext servletContext,
+        ServletRequest servletRequest)
+    {
+        this.servletContext = servletContext;
+        this.servletRequest = servletRequest;
+    }
+    
 
-		try {		
-			manager.executePage(thePage, lspParams, request, response);
-		}
-		catch (SAXException e)
-		{
-			throw new ServletException(e);	
-		}
-	}
-	
+    /**
+     * Get the {@link javax.servlet.ServletContext}.
+     *
+     * @return the {@link javax.servlet.ServletContext}
+     */
+    public ServletContext getServletContext()
+    {
+        return servletContext;
+    }
+    
+
+    /**
+     * Get the {@link javax.servlet.ServletRequest}.
+     *
+     * @return the {@link javax.servlet.ServletRequest}
+     */
+    public ServletRequest getServletRequest()
+    {
+        return servletRequest;
+    }
 }
 

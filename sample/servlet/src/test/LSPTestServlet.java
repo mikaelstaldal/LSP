@@ -64,7 +64,7 @@ public class LSPTestServlet extends HttpServlet
                 lspParams.put("dirlist", 
                     new String[] { "first file", "second file", "third file" });
                 LSPPage thePage = lspManager.getPage("dirlist");
-                lspManager.executePage(thePage, lspParams, "dir.xsl", resp);
+                lspManager.executePage(thePage, lspParams, "dir.xsl", req, resp);
             }
             catch (org.xml.sax.SAXException e)
             {
