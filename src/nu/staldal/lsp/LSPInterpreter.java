@@ -77,6 +77,8 @@ public class LSPInterpreter implements LSPPage
 
     private transient URLResolver resolver = null;
     private transient Environment env = null;
+	private transient Object extContext = null;
+	private transient String targetURL = null;
 
 	
     public LSPInterpreter(LSPNode theTree, 
@@ -122,7 +124,7 @@ public class LSPInterpreter implements LSPPage
 
 
     public void execute(ContentHandler ch, URLResolver resolver,
-        Hashtable params)
+        Hashtable params, Object extContext, String targetURL)
         throws SAXException
     {
         this.env = new Environment();
@@ -133,7 +135,9 @@ public class LSPInterpreter implements LSPPage
 		}
 
         this.resolver = resolver;
-		
+		this.extContext = extContext;
+		this.targetURL = targetURL;
+				
 		for (Enumeration e = extLibsInPage.keys(); e.hasMoreElements(); )
 		{
 			String nsURI = (String)e.nextElement();
@@ -141,7 +145,7 @@ public class LSPInterpreter implements LSPPage
 			
 			LSPExtLib extLib = lookupExtensionHandler(nsURI, className);			
 			
-			extLib.startPage(resolver);
+			extLib.startPage(resolver, extContext, targetURL);
 		}
 		
 		
@@ -171,7 +175,9 @@ public class LSPInterpreter implements LSPPage
 			extLib.endPage();
 		}
 		
-        this.resolver = null;
+        this.targetURL = null;
+		this.extContext = null;
+		this.resolver = null;
         this.env = null;
     }
 

@@ -65,9 +65,13 @@ public interface LSPPage extends Serializable
      * Execute this LSP page and sends the output as SAX events to the
      * supplied ContentHandler. Does <em>not</em> output startDocument()
      * or endDocument() events.
+	 *
+	 * @param extContext  external context which will be passed to ExtLibs
+	 * @param targetURL   the current target URL, pseudo-absolute URL string,
+	 *					  passed to ExtLibs
      */
     public void execute(ContentHandler ch, URLResolver resolver,
-        	Hashtable params)
+        	Hashtable params, Object extContext, String targetURL)
         throws SAXException;
 }
 

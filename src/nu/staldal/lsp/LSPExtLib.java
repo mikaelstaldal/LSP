@@ -90,9 +90,12 @@ public interface LSPExtLib
 	/**
 	 * Indicate the start of an LSP page.
 	 *
-	 * @param resolver  the current URLResolver
+	 * @param resolver    the current URLResolver
+	 * @param extContext  external context passed to LSP execution engine
+	 * @param targetURL   the current target URL, pseudo-absolute URL string
 	 */
-	public void startPage(URLResolver resolver)
+	public void startPage(URLResolver resolver, 
+						  Object extContext, String targetURL)
 		throws LSPException;
 	
 
