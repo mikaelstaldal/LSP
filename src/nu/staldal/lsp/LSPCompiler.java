@@ -52,7 +52,7 @@ import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compiledexpr.*;
 
-import nu.staldal.lagoon.util.LagoonUtil;
+import nu.staldal.util.Utils;
 
 /**
  * Compiles an LSP page into a tree representaton which can be Serialized and
@@ -523,7 +523,7 @@ public class LSPCompiler
         try
         {
 			String fileName = "/nu/staldal/lsp/extlib/" 
-				+ LagoonUtil.encodePath(ns);
+				+ Utils.encodePath(ns);
 			InputStream is = getClass().getResourceAsStream(fileName);
 			if (is == null) return null;
 
