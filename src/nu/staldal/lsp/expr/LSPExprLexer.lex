@@ -92,6 +92,8 @@ mod  { return new DelimiterToken(yychar+1, DelimiterToken.MOD); }
 if   { return new DelimiterToken(yychar+1, DelimiterToken.IF); }
 then { return new DelimiterToken(yychar+1, DelimiterToken.THEN); }
 else { return new DelimiterToken(yychar+1, DelimiterToken.ELSE); }
+"["  { return new DelimiterToken(yychar+1, DelimiterToken.LBRACK); }
+"]"  { return new DelimiterToken(yychar+1, DelimiterToken.RBRACK); }
 
 
 \"[^\"]*\"|'[^']*' { 

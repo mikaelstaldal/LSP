@@ -48,18 +48,12 @@ import nu.staldal.lsp.LSPExpr;
 public class TupleExpr extends LSPExpr
 {
 	protected LSPExpr base;
-	protected String name;
+	protected LSPExpr key;
 
-	public TupleExpr(LSPExpr base, String name)
+	public TupleExpr(LSPExpr base, LSPExpr key)
 	{
 		this.base = base;
-		this.name = name;
-	}
-
-	public TupleExpr(LSPExpr base, NameToken name)
-	{
-		this.base = base;
-		this.name = name.getName();
+		this.key = key;
 	}
 	
 	public LSPExpr getBase()
@@ -67,14 +61,14 @@ public class TupleExpr extends LSPExpr
 		return base;
 	}
 
-	public String getName()
+	public LSPExpr getKey()
 	{
-		return name;
+		return key;
 	}
 
 	public String toString()
 	{
-		return "TupleExpr(" + base + "." + name + ")";
+		return "TupleExpr(" + base + "[" + key + "])";
 	}
 
 }

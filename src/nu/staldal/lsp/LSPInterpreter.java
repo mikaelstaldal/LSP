@@ -911,10 +911,10 @@ public class LSPInterpreter implements LSPPage
 	private Object evalExpr(TupleExpr expr) throws SAXException
 	{
 		LSPTuple tuple = evalExprAsTuple(expr.getBase());
-		Object o = tuple.get(expr.getName());
+		String key = evalExprAsString(expr.getKey()); 		
+		Object o = tuple.get(key);	
 		if (o == null)
-			throw new LSPException("Element \'" + expr.getName() 
-				+ "\' not found in tuple");
+			throw new LSPException("Element \'" + key + "\' not found in tuple");
 		else
 			return convertObjectToLSP(o);
 	}

@@ -324,12 +324,18 @@ each other, as if using the <code>boolean()</code>, <code>number()</code>
 and <code>string()</code> functions. A list can be implicitly converted into 
 boolean, the result will be <code>true</code> if the list has at least one element.</p>
 
-<p>An object can be extracted from a tuple using the '.' notation,
-e.g.<br />
+<p>An object can be extracted from a tuple either by appending an '.' and a 
+symbol, e.g.<br />
 <code>$tupleVar.foo</code><br />
 or<br />
 <code>functionReturningTuple().bar</code><br />
+. Or by appending '[]' with an expression, e.g.<br /> 
+<code>$tupleVar[$myKey]</code><br />
+or<br />
+<code>functionReturningTuple()[getKey()]</code><br />
 .</p>
+<p>With the '[]' notation, a tuple can be used like an hashtable, and is 
+most likley implemented with an hashtable.</p>
 
 
 <h3>Grammar</h3>
@@ -383,6 +389,7 @@ UnaryExpr ::= TupleExpr
 
 TupleExpr ::= PrimaryExpr
             | TupleExpr '.' LSPName
+            | TupleExpr '[' Expr ']'
 </pre>
 
 <h3>Lexical</h3>

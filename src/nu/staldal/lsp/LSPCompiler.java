@@ -950,7 +950,7 @@ public class LSPCompiler
 		else if (expr instanceof TupleExpr)
 		{
 			return new TupleExpr(compileExpr(el, ((TupleExpr)expr).getBase()), 
-								 ((TupleExpr)expr).getName());
+								 compileExpr(el, ((TupleExpr)expr).getKey()));
 		}
 		else if (expr instanceof ConditionalExpr)
 		{

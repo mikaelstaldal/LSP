@@ -386,14 +386,27 @@ public class LSPExprParser extends Parser
 	/**
 	 * TupleExpr ::= PrimaryExpr
 	 *			   | TupleExpr '.' LSPName
+	 *			   | TupleExpr '[' Expr ']'
 	 */
 	LSPExpr tupleExpr() throws ParseException, java.io.IOException
 	{
 		LSPExpr ret = primaryExpr();
-		while (consumeDelimiter(DelimiterToken.DOT))
+		while (true)
 		{
-			ret = new TupleExpr(
-				ret, (NameToken)consumeToken(NameToken.class));
+			if (consumeDelimiter(DelimiterToken.LBRACK))
+			{
+				ret = new TupleExpr(ret, expr());
+				consumeDelimiter(DelimiterToken.RBRACK, "] expected");				
+			}		
+			else if (consumeDelimiter(DelimiterToken.DOT))
+			{
+				ret = new TupleExpr(
+					ret, new StringLiteral(((NameToken)consumeToken(NameToken.class)).getName()));
+			}
+			else
+			{
+				break;
+			}
 		}
 		return ret;
 	}

@@ -69,6 +69,8 @@ class DelimiterToken extends Token
 	public static final int IF = 20;
 	public static final int THEN = 21;
 	public static final int ELSE = 22;
+	public static final int LBRACK = 23;
+	public static final int RBRACK = 24;
 
 
 	protected int type;
