@@ -155,7 +155,7 @@ public class LSPInterpreter implements LSPPage
         else if (node instanceof LSPTemplate)
             processNode((LSPTemplate)node, sax);
         else if (node instanceof LSPContainer)
-            processNode((LSPContainer)node, sax); // ***
+            processChildren((LSPContainer)node, sax);
         else
 			throw new LSPException("Unrecognized LSPNode: "
 				+ node.getClass().getName());
