@@ -38,7 +38,7 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.ext;
+package nu.staldal.lsp.extlib;
 
 import org.xml.sax.*;
 
