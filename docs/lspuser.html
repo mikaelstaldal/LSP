@@ -134,7 +134,9 @@ is used as the local name of the element. The <code>namespace</code> attribute
 is used as the namespace URI of the element (if omitted, the generated element
 will be in the default namespace in effect, set <code>namespace</code> 
 attribute to the empty string to explicitly place the element in the null 
-namespace). <em>Note:</em> unlike the similar element in 
+namespace).</p>
+
+<p><em>Note:</em> unlike the similar element in 
 XSLT, the value of the <code>name</code> attribute may not be a QName.</p>
 
 
@@ -158,8 +160,21 @@ declarations, the value of the <code>name</code> attribute may not be "<code>xml
 It's an error to add an attribute with the same name as an already 
 existing attribute, this error cannot be detected at compile time, and will 
 result in undefined behaviour at runtime. If the <code>name</code> 
-expression evaluates to the empty string, no attribute will be created.
-<em>Note:</em> unlike the similar element in XSLT, the value of the 
+expression evaluates to the empty string, no attribute will be created.</p>
+
+<p>Note that it's not possible to nest an <code>lsp:attribute</code> element
+inside <code>lsp:if</code> or <code>lsp:choose</code>. To conditionally add 
+an attribute, use the <code>if ... then ... else ...</code> expression and
+the fact that <code>lsp:attribute</code> will not add any attribute if 
+<code>name</code> is the empty string. E.g.</p>
+
+<pre>
+&lt;option value="4711"&gt;
+&lt;lsp:attribute name="{if (cond) then 'selected' else ''}" value="selected"/&gt;
+foo&lt;/option&gt;
+</pre>
+
+<p><em>Note:</em> unlike the similar element in XSLT, the value of the 
 <code>name</code> attribute may not be a QName.</p>
 
 
