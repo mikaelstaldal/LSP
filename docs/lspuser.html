@@ -32,11 +32,12 @@ any prefix may be used.</p>
 
 <p>An LSP page is processed by interpreting all LSP elements, and
 sending all non-LSP elements (unless they are extension elements, see
-the <a href="advuserguide.html">Advanced User Guide</a>) and all character 
-data to the output (subject to <a href="#template">template processing</a>). 
+the <a href="advuserguide.html">Advanced User Guide</a>), all character 
+data and all processing instructions to the output 
+(subject to <a href="#template">template processing</a>). 
 However, some LSP element can alter the output of parts of the LSP page. 
-Comments and processing instructions in the LSP page are ignored. 
-Any DTD in the LSP page is not sent to the output.</p>
+Comments in the LSP page are ignored. Any DTD in the LSP page is not sent 
+to the output.</p>
 
 <p>To allow high-performance implementation of LSP, an LSP page may be
 compiled into some code (for example Java byte code), which can then be
@@ -210,6 +211,7 @@ same name in the enclosing scope is shadowed.</p>
 <li><code>even</code> - a boolean indicating if this is an even element</li>
 <li><code>odd</code> - a boolean indicating if this is an odd element</li>
 </ul>
+</p>
 
 <a name="template"><h2>Templates</h2></a>
 

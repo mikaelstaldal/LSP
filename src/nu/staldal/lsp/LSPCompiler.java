@@ -531,7 +531,9 @@ public class LSPCompiler
     private LSPNode compileNode(ProcessingInstruction pi)
         throws SAXException
     {
-        return new LSPContainer(0);
+        return new LSPProcessingInstruction(
+			new StringLiteral(pi.getTarget()), 
+			new LSPText(pi.getValue()));
     }
 
 
