@@ -105,8 +105,7 @@ public interface LSPExtLib
 	 * Invoked before the element is sent.
 	 *
 	 * @param out     where to write XML output.
-	 * @param target  the current target
-	 *
+     *
 	 * @return  a ContentHandler to send input to.
 	 */
 	public ContentHandler beforeElement(ContentHandler out)			
