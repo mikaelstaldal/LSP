@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2002, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,6 +54,7 @@ public class LSPElement extends LSPContainer
 	LSPExpr namespaceURIExpr;
 	LSPExpr localNameExpr;
 
+	Vector attrNamespace;
     Vector attrName;
     Vector attrValue;
     Vector attrType;
@@ -68,12 +69,14 @@ public class LSPElement extends LSPContainer
         super(numberOfChildren);
         if (numberOfAttributes >= 0)
         {
+			attrNamespace = new Vector(numberOfAttributes);
             attrName = new Vector(numberOfAttributes);
             attrValue = new Vector(numberOfAttributes);
             attrType = new Vector(numberOfAttributes);
         }
         else
         {
+            attrNamespace = new Vector();
             attrName = new Vector();
             attrValue = new Vector();
             attrType = new Vector();
@@ -91,12 +94,14 @@ public class LSPElement extends LSPContainer
         super(numberOfChildren);
         if (numberOfAttributes >= 0)
         {
+            attrNamespace = new Vector(numberOfAttributes);
             attrName = new Vector(numberOfAttributes);
             attrValue = new Vector(numberOfAttributes);
             attrType = new Vector(numberOfAttributes);
         }
         else
         {
+            attrNamespace = new Vector();
             attrName = new Vector();
             attrValue = new Vector();
             attrType = new Vector();
@@ -129,18 +134,12 @@ public class LSPElement extends LSPContainer
     }
 	
 	
-    /**
-     * @return -1 if not found
-     */
-    public int lookupAttribute(String namespaceURI, String localName)
-    {
-		return attrName.indexOf(localName + '^' + namespaceURI);
-	}
 
-    public void addAttribute(String namespaceURI, String localName,
+    public void addAttribute(LSPExpr namespaceURI, LSPExpr localName,
     						 String type, LSPExpr value)
     {
-		attrName.addElement(localName + '^' + namespaceURI);
+		attrNamespace.addElement(namespaceURI);
+		attrName.addElement(localName);
 		attrType.addElement(type);
 		attrValue.addElement(value);
 	}
@@ -148,6 +147,7 @@ public class LSPElement extends LSPContainer
     public void removeAttribute(int index)
         throws ArrayIndexOutOfBoundsException
     {
+        attrNamespace.removeElementAt(index);
         attrName.removeElementAt(index);
         attrType.removeElementAt(index);
         attrValue.removeElementAt(index);
@@ -158,18 +158,16 @@ public class LSPElement extends LSPContainer
 		return attrName.size();
 	}
 
-	public String getAttributeNamespaceURI(int index)
+	public LSPExpr getAttributeNamespaceURI(int index)
 	{
         if (index == -1) return null;
-		String s = (String)attrName.elementAt(index);
-		return s.substring(s.indexOf('^')+1);
+		return (LSPExpr)attrNamespace.elementAt(index);
 	}
 
-	public String getAttributeLocalName(int index)
+	public LSPExpr getAttributeLocalName(int index)
 	{
         if (index == -1) return null;
-		String s = (String)attrName.elementAt(index);
-		return s.substring(0, s.indexOf('^'));
+		return (LSPExpr)attrName.elementAt(index);
 	}
 
 	public String getAttributeType(int index)

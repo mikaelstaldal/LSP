@@ -265,13 +265,20 @@ public class LSPInterpreter implements LSPPage
 
 		for (int i = 0; i < el.numberOfAttributes(); i++)
 		{
-			String URI = el.getAttributeNamespaceURI(i);
-			String local = el.getAttributeLocalName(i);
-			String type = el.getAttributeType(i);
-			LSPExpr value = el.getAttributeValue(i);
+			String URI = evalExprAsString(el.getAttributeNamespaceURI(i));
 
-			saxAtts.addAttribute(URI, local, "", type,
-				evalExprAsString(value));
+			String local = evalExprAsString(el.getAttributeLocalName(i));
+
+			if (local.indexOf(':') > -1)
+				throw new LSPException("<lsp:attribute> may not use QName");
+			if (local.equals("xmlns"))
+				throw new LSPException("<lsp:attribute> may not add xmlns");
+
+			String type = el.getAttributeType(i);
+
+			String value = evalExprAsString(el.getAttributeValue(i));
+
+			saxAtts.addAttribute(URI, local, "", type, value);
 		}
 		
 		String nsURI = el.getNamespaceURI();

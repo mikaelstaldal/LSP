@@ -106,7 +106,7 @@ nested.</p>
 <a name="element-processing-instruction"></a>
 &lt;lsp:processing-instruction<br />
 &#160;&#160;<b>name</b> = { <var>ncname</var> }&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction, lsp:element) --&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction, lsp:element, lsp:attribute) --&gt;<br />
 &lt;/lsp:processing-instruction&gt;
 </p>
 
@@ -136,6 +136,30 @@ will be in the default namespace in effect, set <code>namespace</code>
 attribute to the empty string to explicitly place the element in the null 
 namespace). <em>Note:</em> unlike the similar element in 
 XSLT, the value of the <code>name</code> attribute may not be a QName.</p>
+
+
+<h4>lsp:attribute</h4>
+
+<p class="element-syntax">
+<a name="element-attribute"></a>
+&lt;lsp:attribute<br />
+&#160;&#160;<b>name</b> = { <var>ncname</var> }<br />
+&#160;&#160;namespace = { <var>URI</var> }<br />
+&#160;&#160;<b>value</b> = { <var>any</var> }/&gt;
+</p>
+
+<p>The <code>lsp:attribute</code> element creates an attribute with a 
+computed name in the output. The attribute is attached to the enclosing 
+element (which may be either an <code>lsp:element</code> or a normal literal element).
+The <code>name</code> attribute is used as the local name of the attribute. The <code>namespace</code> attribute
+is used as the namespace URI of the atribute (if omitted, the generated attribute
+will be in the null namespace). May not be used to create namespace 
+declarations, the value of the <code>name</code> attribute may not be "<code>xmlns</code>".
+It's an error to add an attribute with the same name as an already 
+existing attribute, this error cannot be detected at compile time, and will 
+result in undefined behaviour at runtime.
+<em>Note:</em> unlike the similar element in XSLT, the value of the 
+<code>name</code> attribute may not be a QName.</p>
 
 
 <h4>lsp:value-of</h4>

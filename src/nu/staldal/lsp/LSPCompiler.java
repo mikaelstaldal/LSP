@@ -79,6 +79,8 @@ public class LSPCompiler
 	private boolean inPi;
 	private boolean inExtElement;
 	
+	private LSPElement currentElement;
+	
 	// (String)namespaceURI -> (String)className
 	private Hashtable extDict = new Hashtable(); 
 
@@ -137,10 +139,25 @@ public class LSPCompiler
 	}
 
 
-	private String getAttrWithEmpty(String name, Element el)
+	private String getAttrWithEmpty(String name, Element el, boolean throwOnError)
 		throws SAXException
 	{
-		return el.getAttributeValue(el.lookupAttribute("", name));
+		String value = el.getAttributeValue(el.lookupAttribute("", name));
+
+		if (value == null)
+		{
+			if (throwOnError)
+			{
+				throw fixSourceException(el,
+					"lsp:" + el.getLocalName() + " element must have a "
+					+ name + " attribute");
+			}
+			else
+			{
+				return null;
+			}
+		}
+		return value;
 	}
 
 
@@ -285,8 +302,6 @@ public class LSPCompiler
         compileDynamic = false;
         executeDynamic = false;
 		extLibsInPage = new Hashtable();
-		
-		inExtElement = false;
 
         resolver = r;
         tb = new TreeBuilder();
@@ -317,7 +332,11 @@ public class LSPCompiler
 			lookupExtensionHandler(tree, namespace);
 		}
 
+		
+		inExtElement = false;
         inPi = false;
+		currentElement = null;
+
         LSPNode compiledTree = compileNode(tree);
 
         tb = null;
@@ -477,9 +496,12 @@ public class LSPCompiler
 
 				LSPExpr newValue = processTemplateExpr(el, value);
 
-				newEl.addAttribute(URI, local, type, newValue);
+				newEl.addAttribute(new StringLiteral(URI), 
+								   new StringLiteral(local),
+								   type, newValue);
 			}
 
+			currentElement = newEl;
 			compileChildren(el, newEl);
 			
 			if (inExtElementNow) inExtElement = false;
@@ -652,13 +674,14 @@ public class LSPCompiler
 			"<lsp:element> may not be nested in <lsp:processing-instruction>");
 
 		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
-		String nsAttr = getAttrWithEmpty("namespace", el);
+		String nsAttr = getAttrWithEmpty("namespace", el, false);
 		LSPExpr ns = (nsAttr != null) 
 			? processTemplateExpr(el, nsAttr)
 			: new StringLiteral(el.lookupNamespaceURI(""));
 
 		LSPElement newEl = new LSPElement(ns, name, -1, el.numberOfChildren());
 
+		currentElement = newEl;
 		compileChildren(el, newEl);
 
 		return newEl;
@@ -668,20 +691,26 @@ public class LSPCompiler
 	private LSPNode process_attribute(Element el)
 		throws SAXException
 	{
-		// ***
-		throw new LSPException("<lsp:attribute> is not implemented");
-		/*
 		if (inPi) throw fixSourceException(el,
 			"<lsp:attribute> may not be nested in <lsp:processing-instruction>");
-
+		if (currentElement == null) throw fixSourceException(el,
+			"<lsp:attribute> must be inside element");
+		
+		if (el.numberOfChildren() > 0) throw fixSourceException(el,
+			"<lsp:attribute> must be empty");
+		
 		LSPExpr name = processTemplateExpr(el, getAttr("name", el, true));
+		String nsAttr = getAttrWithEmpty("namespace", el, false);
+		LSPExpr ns = (nsAttr != null) 
+			? processTemplateExpr(el, nsAttr)
+			: new StringLiteral("");
+		
+		String valueAttr = getAttrWithEmpty("value", el, true);
+		LSPExpr value = processTemplateExpr(el, valueAttr);
 
-		inPi = true;
-		LSPNode data = compileChildren(el);
-		inPi = false;
-
-		return new LSPProcessingInstruction(name, data);
-		*/
+		currentElement.addAttribute(ns, name, "CDATA", value);		
+		
+		return new LSPContainer(0); // return empty container
 	}
 
 	
