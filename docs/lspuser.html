@@ -31,8 +31,10 @@ that this namespace is mapped to the prefix <code>lsp</code>, however
 any prefix may be used.</p>
 
 <p>An LSP page is processed by interpreting all LSP elements, and
-sending all non-LSP elements and all character data to the output
-(subject to <a href="#template">template processing</a>). However, some
+sending all non-LSP elements (unless they are extension elements, see
+the <a href="advuserguide.html">Advanced User Guide</a>) and all character 
+data to the output (subject to <a href="#template">template processing</a>). 
+However, some
 LSP element (such as <code>lsp:if</code>) can inhibit the output of
 parts of the LSP page. Comments and processing instructions in the
 LSP page are ignored. Any DTD in the LSP page is not sent to the
@@ -342,8 +344,8 @@ Digits ::= [0-9]+
 <li>number count(list) - the number of objects in the list</li>
 </ul>
 
-<p>Namespaced functions are extension functions,
-not currently supported.</p>
+<p>Namespaced functions are extension functions, see the <a
+href="advuserguide.html">Advanced User Guide</a></p>
 
 <h3>Variables</h3>
 
