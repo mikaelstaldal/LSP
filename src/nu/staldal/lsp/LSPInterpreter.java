@@ -360,8 +360,14 @@ public class LSPInterpreter implements LSPPage
 	private void processNode(LSPLet el, ContentHandler sax)
 		throws SAXException
 	{
-		// ***
+		env.pushFrame();
+		for (int i = 0; i<el.getVars().length; i++)
+		{
+			env.bind(el.getVars()[i], evalExpr(el.getValues()[i])); 
+		}
+		
 		processNode(el.getBody(), sax);
+		env.popFrame();
 	}
 
 
