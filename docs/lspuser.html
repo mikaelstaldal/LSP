@@ -192,7 +192,8 @@ will be stripped, unless the <code>xml:space</code> attribute is set to <code>pr
 <p class="element-syntax">
 <a name="element-value-of"></a>
 &lt;lsp:value-of<br />
-&#160;&#160;<b>select</b> = <var>string-expression</var>&gt;<br />
+&#160;&#160;<b>select</b> = <var>string-expression</var><br />
+&#160;&#160;disable-output-escaping = <var>boolean</var>&gt;<br />
 &#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
 &lt;/lsp:value-of&gt;
 </p>
@@ -201,6 +202,12 @@ will be stripped, unless the <code>xml:space</code> attribute is set to <code>pr
 string (as if by a call to the <code>string()</code> function).
 That string is outputted. Any content of the <code>lsp:value-of</code> 
 element is ignored (may be used as sample data during development).</p>
+
+<p>If the <code>disable-output-escaping</code> attribute is specified and 
+set to "yes" or "disable-output-escaping", the noraml escaping of 
+characters &amp; and &lt; is disabled. This allows you to e.g. include 
+a XML or HTML fragment as a string. <em>Note:</em> This can cause the 
+output to be ill-formed.</p>
 
 
 <h4>lsp:if</h4>

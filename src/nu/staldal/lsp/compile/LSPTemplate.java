@@ -47,16 +47,25 @@ import nu.staldal.lsp.compiler.LSPExpr;
 public class LSPTemplate extends LSPNode
 {
 	private LSPExpr expr;
+    private boolean disableOutputEscaping;
 
-	public LSPTemplate(LSPExpr expr, Locator locator)
+	public LSPTemplate(LSPExpr expr, Locator locator, 
+        boolean disableOutputEscaping)
 	{
         super(locator);
                         
 		this.expr = expr;
+        this.disableOutputEscaping = disableOutputEscaping;
 	}
 
 	public LSPExpr getExpr()
 	{
 		return expr;
 	}
+    
+    public boolean isDisableOutputEscaping()
+    {
+        return disableOutputEscaping;    
+    }
+    
 }

@@ -739,10 +739,21 @@ public class LSPCompiler
 		throws SAXException
 	{
 		String exp = getAttr("select", el, true);
+        
+        String _disableOutputEscaping = 
+            getAttr("disable-output-escaping", el, false);
+        boolean disableOutputEscaping =
+            "yes".equals(_disableOutputEscaping)
+                || "disable-output-escaping".equals(_disableOutputEscaping);
+                
+        if (inPi && disableOutputEscaping) throw fixSourceException(el,
+			"disable-output-escaping may not be used in processing instruction");
+                
 		try {
 			LSPExpr select = LSPExpr.parseFromString(exp);
 
-			return new LSPTemplate(compileExpr(el, select), el);
+			return new LSPTemplate(compileExpr(el, select), el,
+                disableOutputEscaping);
 		}
 		catch (ParseException e)
 		{

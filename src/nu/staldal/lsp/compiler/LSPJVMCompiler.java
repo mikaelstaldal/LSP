@@ -764,7 +764,7 @@ class LSPJVMCompiler implements Constants
 			Type.NO_ARGS,
 			INVOKEINTERFACE));
 				
-		// if (res != null) outputStringWithoutCR(sax, res);
+		// if (res != null) outputStringWithoutCR(sax, res, false);
 		instrList.append(InstructionConstants.DUP);		  		
 		BranchInstruction branch1 = instrFactory.createBranchInstruction(
 			IFNULL, null);
@@ -774,12 +774,13 @@ class LSPJVMCompiler implements Constants
 			Type.getType(org.xml.sax.ContentHandler.class),
 			PARAM_sax));
 		
-		instrList.append(InstructionConstants.SWAP);		  		
+		instrList.append(InstructionConstants.SWAP);
+        instrList.append(new PUSH(constGen, 0));
 		instrList.append(instrFactory.createInvoke(
 			LSPPageBase.class.getName(),
 			"outputStringWithoutCR",
 			Type.VOID,
-			new Type[] { Type.getType(ContentHandler.class), Type.STRING },
+			new Type[] { Type.getType(ContentHandler.class), Type.STRING, Type.BOOLEAN },
 			INVOKESTATIC));
 		BranchInstruction branch2 = instrFactory.createBranchInstruction(
 			GOTO, null);
@@ -1139,16 +1140,18 @@ class LSPJVMCompiler implements Constants
 		
 		if (type == String.class)
 		{
-			// outputStringWithoutCR(sax, text);
+			// outputStringWithoutCR(sax, text, disableOutputEscaping);
 			instrList.append(instrFactory.createLoad(
 				Type.getType(org.xml.sax.ContentHandler.class),
 				PARAM_sax));
-			instrList.append(InstructionConstants.SWAP);		  		
+			instrList.append(InstructionConstants.SWAP);
+			instrList.append(new PUSH(constGen,
+                el.isDisableOutputEscaping() ? 1 : 0));
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"outputStringWithoutCR",
 				Type.VOID,
-				new Type[] { Type.getType(ContentHandler.class), Type.STRING },
+				new Type[] { Type.getType(ContentHandler.class), Type.STRING, Type.BOOLEAN },
 				INVOKESTATIC));		
 		}
 		else
@@ -1161,16 +1164,18 @@ class LSPJVMCompiler implements Constants
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));		
 	
-			// outputStringWithoutCR(sax, text);
+			// outputStringWithoutCR(sax, text, disableOutputEscaping);
 			instrList.append(instrFactory.createLoad(
 				Type.getType(org.xml.sax.ContentHandler.class),
 				PARAM_sax));
 			instrList.append(InstructionConstants.SWAP);		  		
+			instrList.append(new PUSH(constGen, 
+                el.isDisableOutputEscaping() ? 1 : 0));
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"outputStringWithoutCR",
 				Type.VOID,
-				new Type[] { Type.getType(ContentHandler.class), Type.STRING },
+				new Type[] { Type.getType(ContentHandler.class), Type.STRING, Type.BOOLEAN },
 				INVOKESTATIC));		
 		}
 	}

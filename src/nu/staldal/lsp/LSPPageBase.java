@@ -43,6 +43,7 @@ package nu.staldal.lsp;
 import java.io.*;
 import java.util.*;
 
+import javax.xml.transform.Result;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -355,7 +356,8 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
-	protected static void outputStringWithoutCR(ContentHandler sax, String s)
+	protected static void outputStringWithoutCR(ContentHandler sax, String s,
+            boolean disableOutputEscaping)
 		throws SAXException
 	{
 		char[] cb = new char[s.length()];
@@ -376,8 +378,11 @@ public abstract class LSPPageBase implements LSPPage
 				cb[ci++] = sc;
 			}
 		}
-		
+        if (disableOutputEscaping)
+            sax.processingInstruction(Result.PI_DISABLE_OUTPUT_ESCAPING, "");    		
 		sax.characters(cb, 0, ci);
+        if (disableOutputEscaping)
+            sax.processingInstruction(Result.PI_ENABLE_OUTPUT_ESCAPING, "");    		
 	}
 	
 	

@@ -29,3 +29,10 @@
 * Add JSR-45 (Debugging Support for Other Languages) information 
   to generated class files.
 * Split lsp.jar into lsprt.jar and lspc.jar.
+
+
+1.0 beta 6
+----------
+* disable-output-escaping in <lsp:value-of>
+
+
