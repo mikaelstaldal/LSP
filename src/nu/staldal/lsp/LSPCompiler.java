@@ -70,7 +70,6 @@ public class LSPCompiler
     private boolean compileDynamic;
     private boolean executeDynamic;
 
-	private int raw;
 	private boolean inPi;
 	private boolean inExtElement;
 	private Hashtable extDict = new Hashtable();
@@ -293,7 +292,6 @@ public class LSPCompiler
 
         processImports(tree);
 
-        raw = 0;
         inPi = false;
         LSPNode compiledTree = compileNode(tree);
 
@@ -378,9 +376,9 @@ public class LSPCompiler
 			{
 				return process_if(el);
 			}
-			else if (el.getLocalName().equals("raw"))
+			else if (el.getLocalName().equals("value-of"))
 			{
-				return process_raw(el);
+				return process_value_of(el);
 			}
 			else if (el.getLocalName().equals("choose"))
 			{
@@ -441,9 +439,7 @@ public class LSPCompiler
 				String type = el.getAttributeType(i);
 				String value = el.getAttributeValue(i);
 
-				LSPExpr newValue = (raw > 0)
-                    ? new StringLiteral(value)
-                    : processTemplateExpr(el, value);
+				LSPExpr newValue = processTemplateExpr(el, value);
 
 				newEl.addAttribute(URI, local, type, newValue);
 			}
@@ -506,36 +502,7 @@ public class LSPCompiler
     private LSPNode compileNode(Text text)
         throws SAXException
     {
-		if (raw > 0)
-		{
-			return new LSPText(text.getValue());
-		}
-		else
-		{
-			Vector vec = processTemplate(text, '{', '}', '\'', '\"',
-				text.getValue());
-
-			LSPContainer container = new LSPContainer(vec.size());
-
-			for (Enumeration e = vec.elements(); e.hasMoreElements(); )
-			{
-				Object o = e.nextElement();
-				if (o instanceof String)
-				{
-					container.addChild(new LSPText((String)o));
-				}
-				else if (o instanceof LSPExpr)
-				{
-					container.addChild(
-						new LSPTemplate(compileExpr(text, (LSPExpr)o)));
-				}
-			}
-
-			if (container.numberOfChildren() == 1)
-				return container.getChild(0);
-			else
-				return container;
-		}
+		return new LSPText(text.getValue());
     }
 
 
@@ -607,13 +574,19 @@ public class LSPCompiler
 	}
 
 
-	private LSPNode process_raw(Element el)
+	private LSPNode process_value_of(Element el)
 		throws SAXException
 	{
-        raw++;
-        LSPNode ret = compileChildren(el);
-        raw--;
-        return ret;
+		String exp = getAttr("select", el, true);
+		try {
+			LSPExpr select = LSPExpr.parseFromString(exp);
+
+			return new LSPTemplate(compileExpr(el, select));
+		}
+		catch (ParseException e)
+		{
+			throw fixParseException(el, exp, e);
+		}
 	}
 
 

@@ -34,11 +34,9 @@ any prefix may be used.</p>
 sending all non-LSP elements (unless they are extension elements, see
 the <a href="advuserguide.html">Advanced User Guide</a>) and all character 
 data to the output (subject to <a href="#template">template processing</a>). 
-However, some
-LSP element (such as <code>lsp:if</code>) can inhibit the output of
-parts of the LSP page. Comments and processing instructions in the
-LSP page are ignored. Any DTD in the LSP page is not sent to the
-output.</p>
+However, some LSP element can alter the output of parts of the LSP page. 
+Comments and processing instructions in the LSP page are ignored. 
+Any DTD in the LSP page is not sent to the output.</p>
 
 <p>To allow high-performance implementation of LSP, an LSP page may be
 compiled into some code (for example Java byte code), which can then be
@@ -49,7 +47,7 @@ executed.</p>
 <p>It's simple to start using LSP in a static HTML (or some XML
 based markup language) page. Just add a declaration for the LSP
 namespace (<code>xmlns:lsp="http://staldal.nu/LSP/core"</code>) in the
-root element and add LSP elements and templates. However, you must
+root element and add LSP elements. However, you must
 ensure that the HTML page is in well-formed XML format.</p>
 
 
@@ -101,21 +99,6 @@ Useful as document root element in files to be <code>import</code>ed or
 nested.</p>
 
 
-<h4>lsp:raw</h4>
-
-<p class="element-syntax">
-<a name="element-raw"></a>&lt;lsp:raw&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
-&lt;/lsp:raw&gt;
-</p>
-
-<p>The <code>lsp:raw</code> element outputs all of its content, without
-processing templates in character data or in attribute values on
-non-LSP elements. However, templates are still processed in attribute
-values on LSP elements. The <code>lsp:raw</code> element can be
-nested, nesting has no additional meaning.</p>
-
-
 <h4>lsp:processing-instruction</h4>
 
 <p class="element-syntax">
@@ -131,6 +114,22 @@ processing instruction in the output. The <code>name</code> attribute
 is used as the processing instruction target, and the character data of
 the content is used as the processing instruction data.
 <code>lsp:processing-instruction</code> may <em>not</em> be nested.</p>
+
+
+<h4>lsp:value-of</h4>
+
+<p class="element-syntax">
+<a name="element-value-of"></a>
+&lt;lsp:value-of<br />
+&#160;&#160;<b>select</b> = <var>string-expression</var>&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:value-of&gt;
+</p>
+
+<p>The <code>select</code> expression is evaluated, and converted to
+string (as if by a call to the <code>string()</code> function).
+That string is outputted. Any content of the <code>lsp:value-of</code> 
+element is ignored (may be used as sample data during development).</p>
 
 
 <h4>lsp:if</h4>
@@ -204,8 +203,7 @@ shadowed.</p>
 
 <a name="template"><h2>Templates</h2></a>
 
-<p>All attribute values to non-LSP elements, all character content
-(unless contained in an <code>lsp:raw</code> element) and the values of
+<p>All attribute values to non-LSP elements and the values of
 some attributes to LSP elements are processed as templates. This means
 that it may contain LSP expressions surrounded by curly braces
 (<code>{}</code>). A such expression is evaluated and the expression
