@@ -43,8 +43,6 @@ package nu.staldal.lsp.extlib;
 import java.io.*;
 import java.net.URL;
 
-import javax.xml.parsers.*;
-
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import org.apache.batik.transcoder.*;
@@ -69,11 +67,10 @@ public class BatikSVGExtension implements LSPExtLib
 	private Target target;
 	private SourceManager sourceMan;
 	private int imageNumber;
-	private String xmlReaderClassName;
 	private URL sourceURL;
 	private String _sourceURL;
 	
-	public BatikSVGExtension() throws ParserConfigurationException, SAXException
+	public BatikSVGExtension() throws SAXException
 	{
 		if (DEBUG) System.out.println("new BatikSVGExtension");
 		transcoder = new PNGTranscoder();
@@ -81,14 +78,7 @@ public class BatikSVGExtension implements LSPExtLib
 		docFactory = null;
 		out = null;
 		target = null;
-		sourceMan = null;		
-
-		SAXParserFactory spf = SAXParserFactory.newInstance();
-		XMLReader parser = spf.newSAXParser().getXMLReader();
-		xmlReaderClassName = parser.getClass().getName();
-		
-		org.apache.batik.util.XMLResourceDescriptor.setXMLParserClassName(
-			 xmlReaderClassName);
+		sourceMan = null;
 	}
 	
 	
@@ -119,8 +109,7 @@ public class BatikSVGExtension implements LSPExtLib
 		this.out = out;
 		this.target = target;
 		this.sourceMan = sourceMan;
-		docFactory = new MySVGDocumentFactory(
-			xmlReaderClassName, sourceURL);
+		docFactory = new MySVGDocumentFactory(sourceURL);
 		docFactory.startDocument();
 		return new ContentHandlerFixer(docFactory);
 	}
