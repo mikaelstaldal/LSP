@@ -291,19 +291,33 @@ public class LSPHelper
 
 
     /**
-     * Get Content-Type for the LSP page. 
+     * Get Content-Type for the LSP page. If the LSP page specifies a 
+     * stylesheet, the Content-Type for the stylesheet will be returned.
+     *<p>
      * Includes encoding with the "charset" parameter.
      */
     public String getContentType(LSPPage thePage)
     {
         Properties outputProperties = thePage.getOutputProperties();
-        
+        String stylesheet = outputProperties.getProperty("stylesheet");
+        if (stylesheet != null)
+        {
+            try {
+                Templates compiledStylesheet = getStylesheet(stylesheet);
+                if (compiledStylesheet != null)
+                {
+                    return getContentType(compiledStylesheet);    
+                }
+            }
+            catch (TransformerConfigurationException ignore) {}
+        }
         return getContentType(outputProperties);
     }
 
     
     /**
-     * Get Content-Type for the compiled stylesheet. 
+     * Get Content-Type for the compiled stylesheet.
+     *<p>
      * Includes encoding with the "charset" parameter.
      */
     public String getContentType(Templates compiledStylesheet)
@@ -312,6 +326,7 @@ public class LSPHelper
         
         return getContentType(outputProperties);
     }
+
     
     private String getContentType(Properties outputProperties)
     {
@@ -322,29 +337,48 @@ public class LSPHelper
 
 	/**
 	 * Executes an LSP page and serialize the result to an 
-	 * {@link java.io.OutputStream}. 
+	 * {@link java.io.OutputStream}. Uses any stylesheet specified in the 
+     * LSP page. 
 	 *
  	 * @param thePage     the LSP page
 	 * @param lspParams   parameters to the LSP page
 	 * @param extContext  external context which will be passed to ExtLibs
 	 * @param out         the {@link java.io.OutputStream}
      *
+     * @throws FileNotFoundException  if the stylesheet cannot be found
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
 	public void executePage(LSPPage thePage, Map lspParams, Object extContext,
 							OutputStream out)
-		throws SAXException, IOException
+		throws FileNotFoundException, SAXException, IOException
 	{
 		ContentHandler sax;						
 		try {
-			TransformerHandler th = tfactory.newTransformerHandler();
+            TransformerHandler th;
+
+			Properties outputProperties = thePage.getOutputProperties();
+            String stylesheetName = outputProperties.getProperty("stylesheet");
+            if (stylesheetName != null)
+            {
+                Templates compiledStylesheet = getStylesheet(stylesheetName);
+                if (compiledStylesheet == null)                    
+                    throw new FileNotFoundException(stylesheetName);
+                
+                outputProperties = compiledStylesheet.getOutputProperties();
+
+                th = tfactory.newTransformerHandler(
+                    compiledStylesheet);
+            }
+            else
+            {
+                th = tfactory.newTransformerHandler();
+            }
+
 			th.setResult(new StreamResult(out));
 		
 			Transformer trans = th.getTransformer();
 			
-			Properties outputProperties = thePage.getOutputProperties();
-
             boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
                 .equals("html");
 
@@ -387,15 +421,15 @@ public class LSPHelper
 	{
 		ContentHandler sax;						
 		try {
+			Properties outputProperties = 
+                compiledStylesheet.getOutputProperties();
+
 			TransformerHandler th = tfactory.newTransformerHandler(
                 compiledStylesheet);
 			th.setResult(new StreamResult(out));
 		
 			Transformer trans = th.getTransformer();
 			
-			Properties outputProperties = 
-                compiledStylesheet.getOutputProperties();
-
             boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
                 .equals("html");
 

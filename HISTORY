@@ -52,3 +52,8 @@
 * Allow <lsp:attribute> inside <lsp:if>
 * Whitespace stripping after <lsp:attribute>.
 * Smart handling of boolean attributes.
+
+
+1.2
+---
+* Transform LSP output with XSLT stylesheet.

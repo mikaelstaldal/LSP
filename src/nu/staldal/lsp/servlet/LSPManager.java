@@ -132,13 +132,9 @@ public class LSPManager
 
 
 	/**
-	 * The method executes an LSP page and transform the the result with an
-     * XSLT stylesheet.
-     *<p>
-     * The output properties specified in the stylesheet will be used, 
-     * and those specified in the LSP page will be ignored. Also, the default
-     * output properties specified in this class will be ignored. Make sure
-     * to specify the output method in the stylesheet using <xsl:output>.
+	 * Executes an LSP page and write the result to a 
+	 * {@link javax.servlet.ServletResponse}. Uses any stylesheet 
+     * specified in the LSP page. 
 	 *
  	 * @param thePage     the LSP page
 	 * @param lspParams   parameters to the LSP page
@@ -159,8 +155,12 @@ public class LSPManager
 		
 	
 	/**
-	 * The method executes an LSP page and write the result to a 
-	 * {@link javax.servlet.ServletResponse}. 
+	 * Executes an LSP page and transform the the result with an
+     * XSLT stylesheet.
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Make sure
+     * to specify the output method in the stylesheet using <xsl:output>.
 	 *
  	 * @param thePage         the LSP page
 	 * @param lspParams       parameters to the LSP page

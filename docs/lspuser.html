@@ -79,7 +79,8 @@ whitespace in the output.</p>
 &#160;&#160;doctype-system = <var>string</var><br />
 &#160;&#160;cdata-section-elements = <var>qnames</var><br />
 &#160;&#160;indent = "yes" | "no"<br />
-&#160;&#160;media-type = <var>string</var>&#160;/&gt;
+&#160;&#160;media-type = <var>string</var>&#160;<br />
+&#160;&#160;stylesheet = <var>string</var>&#160;/&gt;
 </p>
 
 <p>The <code>lsp:output</code> specifies how the LSP page should be 
@@ -111,6 +112,13 @@ on the "xhtml" parameter to the LSP compiler.</li>
 <li>In all other cases, the output method is <code>xml</code>.</li>
 
 </ul>
+
+<p>If the <code>stylesheet</code> parameter is specified, an XSLT stylesheet is used 
+to transform the output of the LSP page. All other output parameters are
+ignored and the output parameters in the XSLT stylesheet are used instead.
+Note that XSLT might use an other algorithm to determine default output 
+method, so be sure to always specify output method in the XSLT stylesheet 
+explicitly.</p> 
 
 
 <h4>lsp:import</h4>
