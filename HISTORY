@@ -45,3 +45,7 @@
 * Move to separate project and change packaging a bit.
 * xmlutil.jar is no longer needed.
 
+
+1.1
+---
+* <lsp:output>.
