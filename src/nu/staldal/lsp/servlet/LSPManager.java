@@ -177,15 +177,5 @@ public class LSPManager
 		return new LSPRequestDispatcher(this, page);
 	}
 
-    
-    /**
-     * Get Content-Type for the LSP page. Includes encoding with the 
-     * "charset" parameter.
-     */
-    public String getContentType(LSPPage thePage)
-    {
-        return helper.getContentType(thePage);    
-    }
-    
 }
 

@@ -175,13 +175,9 @@ public class LSPCompiler
         {
             String method;
             
-            if (tree.getLocalName().equals("html")
-                    && tree.getNamespaceURI().equals(XHTML_NS))
-            {
-                method = "xhtml";
-            }
-            else if (tree.getLocalName().equalsIgnoreCase("html")
-                    && tree.getNamespaceURI().length() == 0)
+            if (tree.getLocalName().equalsIgnoreCase("html")
+                        && (tree.getNamespaceURI().length() == 0
+                            || tree.getNamespaceURI().equals(XHTML_NS)))
             {
                 method = "html";
             }

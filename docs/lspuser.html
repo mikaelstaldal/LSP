@@ -100,12 +100,9 @@ will be stripped, unless the <code>xml:space</code> attribute is set to <code>pr
 <code>method</code> parameter, the output method is choosen as follows at
 compile time:</p>
 <ul>
-<li>If the root element is <code>html</code> (in lower case) with 
-namespace URI <code>http://www.w3.org/1999/xhtml</code>, the output method 
-is <code>xhtml</code>.</li>
-
-<li>If the root element is <code>html</code> (in any case) with null 
-namespace, the output method is <code>html</code>.</li>
+<li>If the root element is <code>html</code> (in any case) with 
+namespace URI <code>http://www.w3.org/1999/xhtml</code> or null namespace URI,
+the output method is <code>html</code>.</li>
 
 <li>In all other cases, the output method is <code>xml</code>.</li>
 
