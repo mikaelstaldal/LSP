@@ -39,10 +39,10 @@ However, some LSP element can alter the output of parts of the LSP page.
 Comments in the LSP page are ignored. Any DTD in the LSP page is not sent 
 to the output.</p>
 
-<p>To allow high-performance implementation of LSP, an LSP page may be
-compiled into some code (for example Java byte code), which can then be
-executed several times, possibly with a different set of parameters.
-Unless otherwise stated, all processing occurs when the page is
+<p>To ensure high performance, LSP pages are compiled into some code which 
+is more efficient to interpret than the XML source format, 
+which can then be executed several times, possibly with a different set 
+of parameters. Unless otherwise stated, all processing occurs when the page is
 executed.</p>
 
 <p>It's simple to start using LSP in a static HTML (or some XML
@@ -483,7 +483,6 @@ classpath as well.</p>
 <pre>
 &lt;lspc sourcepath="<em>source path</em>"
          <b>destdir</b>="<em>where to place compiled code</em>"
-         verbose="<em>verbose output</em>"
          force="<em>force recompiling of all files</em>"&gt;
       &lt;fileset dir="lsp"&gt;
         &lt;include name="*.lsp" /&gt;

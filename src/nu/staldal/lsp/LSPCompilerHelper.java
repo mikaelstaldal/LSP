@@ -145,12 +145,10 @@ public class LSPCompilerHelper
 			
 			String mainFile = new File(mainPage).getName();
 			File outputFile = new File(targetDir, targetFilename(mainFile));
-			if (verbose) out.println("Writing: " + outputFile);
 			FileOutputStream fos = new FileOutputStream(outputFile);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(page);
 			oos.close();
-			if (verbose) out.println("Finished");
 			return true;
 		}
 		catch (Exception e)
@@ -164,8 +162,6 @@ public class LSPCompilerHelper
 	private void getFileAsSAX(String url, ContentHandler ch)
 		throws SAXException, IOException
 	{
-		if (verbose) out.println("Reading: " + url);
-
 		InputSource is;
 		
 		if (Utils.absoluteURL(url) && url.startsWith("res:"))

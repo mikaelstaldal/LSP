@@ -68,6 +68,7 @@ public class LSPCompilerAntTask extends Task
 	{
 		compiler = new LSPCompilerHelper();
 		compiler.err = new PrintWriter(System.out, true);
+		compiler.verbose = true;
 	}
 
 
@@ -83,12 +84,7 @@ public class LSPCompilerAntTask extends Task
 	
 	// Attribute setter methods
 	
-	public void setVerbose(boolean verbose)
-	{
-		compiler.verbose = verbose;
-	}
-
-	public void setFirce(boolean force)
+	public void setForce(boolean force)
 	{
 		this.force = force;
 	}
