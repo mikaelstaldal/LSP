@@ -227,8 +227,6 @@ public abstract class LSPPageBase implements LSPPage
             else
                 return Arrays.asList(arr);
         }
-		else if (value instanceof java.sql.ResultSet) 
-			return new nu.staldal.lsp.wrapper.LSPResultSetTupleList((java.sql.ResultSet)value);
 		else if (value instanceof char[])
 			return new String((char[])value);
 		else if (value instanceof byte[])
