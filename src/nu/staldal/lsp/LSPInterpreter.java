@@ -258,7 +258,7 @@ public class LSPInterpreter implements LSPPage
 			processNode((LSPElement)el, in);
 		
 			String res = extLib.afterElement();
-			if (res != null) sax.characters(res.toCharArray(), 0, res.length());
+			if (res != null) outputStringWithoutCR(sax, res);
 		}
 		catch (IOException e)
 		{
@@ -471,8 +471,7 @@ public class LSPInterpreter implements LSPPage
 		{		
 			String text = convertToString(o);
 
-			char[] chars = text.toCharArray();
-			sax.characters(chars, 0, chars.length);
+			outputStringWithoutCR(sax, text);
 		}
 	}
 
@@ -1139,6 +1138,30 @@ public class LSPInterpreter implements LSPPage
 				+ " does not implement the required interface");
 		}
 	}
-	
+
+	private void outputStringWithoutCR(ContentHandler sax, String s)
+		throws SAXException
+	{
+		char[] cb = new char[s.length()];
+		
+		int ci = 0;
+		for (int si = 0; si<s.length(); si++)
+		{
+			char sc = s.charAt(si);
+			if (sc == '\r')
+			{
+				if (si<s.length() && (s.charAt(si+1) == '\n'))
+					; // convert CR+LF to LF
+				else
+					cb[ci++] = '\n'; // convert alone CR to LF
+			}
+			else
+			{
+				cb[ci++] = sc;
+			}
+		}
+		
+		sax.characters(cb, 0, ci);
+	}
 }
 
