@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Mikael Ståldal
+ * Copyright (c) 2001-2003, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,14 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 
-public interface LSPPage extends Serializable
+/**
+ * An LSP Page.
+ *
+ * <p>An LSP page may be reused, but is not thread-safe. 
+ * If it needs to be executed concurrently by several threads, 
+ * create one clone for each thread.
+ */
+public interface LSPPage extends Serializable, Cloneable
 {
     public Enumeration getCompileDependentFiles();
 
@@ -61,6 +68,14 @@ public interface LSPPage extends Serializable
 
     public long getTimeCompiled();
 
+
+	/**
+	 * Create an independent clone of this LSP Page.
+	 * Useful for executing by several threads.
+	 */
+	public Object clone();
+
+	
     /**
      * Execute this LSP page and sends the output as SAX events to the
      * supplied ContentHandler. Does <em>not</em> output startDocument()

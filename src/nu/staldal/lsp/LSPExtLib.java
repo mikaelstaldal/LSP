@@ -52,12 +52,12 @@ import nu.staldal.syntax.ParseException;
 /**
  * LSP Extension Library.
  * <p>
- * A single instance of this class will be created per namespace URI.
  * After instance creation, the init method will be invoked with the 
  * namespace URI. This allows the same class to be used for several
  * namespaces.
- * <p>
- * For each LSP page to process, the startPage method will be invoked 
+ * <p>An LSPExtLib may be reused, but will not be executed concurrently 
+ * by several threads. 
+ * <p>For each LSP page to process, the startPage method will be invoked 
  * first. Then for each extension element on the LSP page:
  * <ol>
  * <li>beforeElement() is invoked, which returns a ContentHandler "in"

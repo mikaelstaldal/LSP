@@ -61,21 +61,21 @@ public class LSPInterpreter implements LSPPage
 	
     static final long serialVersionUID = -1168364109491726218L;
 
-	// (String)className -> (LSPExtLib)extLib
-	private static Hashtable extLibs = new Hashtable();	
-	
-    private long timeCompiled;
-    private LSPNode theTree;
-    private Hashtable importedFiles;
-    private Vector includedFiles;
-    private boolean compileDynamic;
-    private boolean executeDynamic;
-	private Hashtable extLibsInPage;
+    private final long timeCompiled;
+    private final LSPNode theTree;
+    private final Hashtable importedFiles;
+    private final Vector includedFiles;
+    private final boolean compileDynamic;
+    private final boolean executeDynamic;
+	private final Hashtable extLibsInPage;
 
-    private transient URLResolver resolver = null;
-    private transient Environment env = null;
-	private transient Object extContext = null;
-	private transient String targetURL = null;
+	// (String)className -> (LSPExtLib)extLib
+	private transient Hashtable extLibs;		
+
+    private transient URLResolver resolver;
+    private transient Environment env;
+	private transient Object extContext;
+	private transient String targetURL;
 
 	
     public LSPInterpreter(LSPNode theTree, 
@@ -91,9 +91,35 @@ public class LSPInterpreter implements LSPPage
         this.compileDynamic = compileDynamic;
         this.executeDynamic = executeDynamic;
 		this.extLibsInPage = extLibsInPage;
+		
+		init();
     }
 
 
+	public Object clone()
+	{
+		try {
+			LSPInterpreter x = (LSPInterpreter)super.clone();
+			x.init();
+			return x;
+		}
+		catch (CloneNotSupportedException e)
+		{
+			throw new Error("Unable to clone Cloneable object");	
+		}
+	}
+
+	
+	private void init()
+	{
+		extLibs = new Hashtable();
+		resolver = null;
+		env = null;
+		extContext = null;
+		targetURL = null;
+	}
+	
+	
     public Enumeration getCompileDependentFiles()
     {
         return importedFiles.keys();
