@@ -43,6 +43,30 @@ public class LSPTestServlet extends HttpServlet
         {
             req.setAttribute("hello", "Hi, there!");
             req.setAttribute("alist", new Object[] { "one", "two", "three" });
+
+			List food = new ArrayList();
+			Map m;
+			
+			m = new HashMap();
+			m.put("name", "orange");
+			m.put("type", "fruit");
+			m.put("colour", "orange");
+			food.add(m);
+
+			m = new HashMap();
+			m.put("name", "banana");
+			m.put("type", "fruit");
+			m.put("colour", "yellow");
+			food.add(m);
+
+			m = new HashMap();
+			m.put("name", "ice cream");
+			m.put("type", "desert");
+			m.put("colour", "white");
+			food.add(m);
+
+			req.setAttribute("food", food);
+
             lspManager.getRequestDispatcher("Func2").forward(req, resp);
         }
         else if (function.equals("/FUNC3"))

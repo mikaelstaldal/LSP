@@ -16,6 +16,18 @@
     </lsp:for-each>    
     </ol>
     
+    <h2>Food</h2>
+	<table border="1">
+	<tr><th>Name</th><th>Type</th><th>Colour</th></tr>
+	<lsp:for-each select="$food" var="ent">
+		<tr>
+			<td><lsp:value-of select="$ent.name"/></td>
+			<td><lsp:value-of select="$ent.type"/></td>
+			<td><lsp:value-of select="$ent.colour"/></td>
+		</tr>
+	</lsp:for-each>
+	</table>
+    
   </body>
 </html>
 
