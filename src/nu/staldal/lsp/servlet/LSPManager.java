@@ -102,8 +102,8 @@ public class LSPManager
 	private LSPManager(ServletContext context, ClassLoader servletClassLoader)
 	{
 		this.context = context;
-		this.helper = new LSPHelper(servletClassLoader);
         this.servletClassLoader = servletClassLoader;
+		this.helper = new LSPHelper(servletClassLoader);
         
         this.localeBundleCache = Collections.synchronizedMap(new HashMap());
         
@@ -116,20 +116,12 @@ public class LSPManager
         try {
             Class localeBundleFactoryClass = Class.forName(localeBundleFactortClassName);
             localeBundleFactory = (LocaleBundleFactory)localeBundleFactoryClass.newInstance();        
-            localeBundleFactory.init(servletClassLoader);
+            localeBundleFactory.init(servletClassLoader, context);
         }
-        catch (ClassNotFoundException e)
+        catch (Exception e)
         {
             throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
         }
-        catch (InstantiationException e)
-        {
-            throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
-        }        
 	}
 
 	

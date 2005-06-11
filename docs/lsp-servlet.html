@@ -90,11 +90,25 @@ public class LSPTestServlet extends HttpServlet
 
 <h2>Internationalization</h2>
 
+<p>The user's locale is determined from the <code>Accept-Language</code>
+header in the HTTP request. If the request gives more than one locale, they 
+are tried in order of preference.
+This can be overriden by setting a locale in the user session, using the key
+<a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#LOCALE_KEY"><code>LOCALE_KEY</code></a>.
+</p>
+
+<p>The localized strings can be accessed from LSP pages using the 
+<a href="lsp-servlet-extlib.html">extension library</a>, and from your code
+using the <a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#getLocalizedString(javax.servlet.ServletRequest, java.lang.String, java.lang.String)"><code>getLocalizedString(ServletRequest,String,String)</code> method
+in <code>nu.staldal.lsp.servlet.LSPManager</code></a>.</p>
+
 <p>Localized strings can be loaded from any source by  
 implementing the interface <a href="javadoc/nu/staldal/lsp/servlet/LocaleBundleFactory.html"><code>nu.staldal.lsp.servlet.LocaleBundleFactory</code></a>,
 and set the Servlet context init parameter
 "<code>nu.staldal.lsp.servlet.LocaleBundleFactory</code>" to your implementation
 of <code>nu.staldal.lsp.servlet.LocaleBundleFactory</code>.</p>
+
+<h3>Property files</h3>
 
 <p>The default implementation is <code>nu.staldal.lsp.servlet.PropertyLocaleBundleFactory</code>,
 which loads from property files (in standard 
@@ -106,6 +120,8 @@ file named <code>LSPLocale.properties</code> (for use when no locale match).
 <em>Note:</em> Java property files must be encoded with <code>iso-8859-1</code>, 
 and characters not present in this encoding must be escaped with Java Unicode escapes. 
 If you don't like this, use the XML format instead.</p>
+
+<h3>XML files</h3>
 
 <p>Use <code>nu.staldal.lsp.servlet.XMLLocaleBundleFactory</code> to load 
 localized strings from an XML file. The XML files use the same naming 
@@ -130,20 +146,21 @@ element specifies global strings.</p>
 &gt;
 </pre>
 
-<p>The user's locale is determined from the <code>Accept-Language</code>
-header in the HTTP request. If the request gives more than one locale, they 
-are tried in order of preference.
-This can be overriden by setting a locale in the user session, using the key
-<a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#LOCALE_KEY"><code>LOCALE_KEY</code></a>.
-</p>
+<h3>SQL Database</h3>
 
-<p>The localized strings can be accessed from LSP pages using the 
-<a href="lsp-servlet-extlib.html">extension library</a>, and from your code
-using the <a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#getLocalizedString(javax.servlet.ServletRequest, java.lang.String, java.lang.String)"><code>getLocalizedString(ServletRequest,String,String)</code> method
-in <code>nu.staldal.lsp.servlet.LSPManager</code></a>.</p>
+<p>Use <code>nu.staldal.lsp.servlet.SQLLocaleBundleFactory</code> to load 
+localized strings from an SQL database.</p>
 
+<pre>
+CREATE TABLE LOCALEBUNDLE (
+    LOCALE VARCHAR(8) NOT NULL, 
+    LSPPAGE VARCHAR(16) NOT NULL, 
+    LOCALEKEY VARCHAR(16) NOT NULL, 
+    VALUE VARCHAR(255), 
+    PRIMARY KEY (LOCALE,LSPPAGE,LOCALEKEY)
+);
+</pre>
 
 </body>
 </html>
-
 

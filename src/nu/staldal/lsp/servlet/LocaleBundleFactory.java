@@ -43,6 +43,8 @@ package nu.staldal.lsp.servlet;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
 
 /**
  * Interface for localization bundle factories.
@@ -58,9 +60,11 @@ public interface LocaleBundleFactory
     /**
      * Initialize this factory.
      *
-     * @param classLoader   the {@link java.lang.ClassLoader} to use
+     * @param classLoader    the {@link java.lang.ClassLoader} to use
+     * @param servletContext the {@link javax.servlet.ServletContext}
      */    
-    public void init(ClassLoader classLoader);
+    public void init(ClassLoader classLoader, ServletContext servletContext)
+        throws Exception;    
     
 
     /**

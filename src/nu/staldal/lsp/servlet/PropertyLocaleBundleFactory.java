@@ -43,6 +43,9 @@ package nu.staldal.lsp.servlet;
 import java.util.*;
 import java.io.*;
 
+import javax.servlet.ServletContext;
+
+
 /**
  * Factory for loading localization data from Property files.
  */
@@ -50,7 +53,7 @@ class PropertyLocaleBundleFactory implements LocaleBundleFactory
 {
     private ClassLoader classLoader;
         
-    public void init(ClassLoader classLoader)
+    public void init(ClassLoader classLoader, ServletContext servletContext)
     {
         this.classLoader = classLoader;    
     }

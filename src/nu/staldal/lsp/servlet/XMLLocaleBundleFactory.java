@@ -46,6 +46,8 @@ import java.io.*;
 import org.xml.sax.*;
 import javax.xml.parsers.*;
 
+import javax.servlet.ServletContext;
+
 
 /**
  * Factory for loading localization data from XML files.
@@ -55,7 +57,7 @@ class XMLLocaleBundleFactory implements LocaleBundleFactory
     private ClassLoader classLoader;
 	private SAXParserFactory spf;    
 
-    public void init(ClassLoader classLoader)
+    public void init(ClassLoader classLoader, ServletContext servletContext)
     {
         this.classLoader = classLoader;    
 

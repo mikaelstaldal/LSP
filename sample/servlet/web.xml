@@ -6,6 +6,21 @@
 
 <display-name>LSP Servlet test application</display-name>
 
+<context-param>
+  <param-name>nu.staldal.lsp.servlet.LocaleBundleFactory</param-name>
+  <param-value>nu.staldal.lsp.servlet.SQLLocaleBundleFactory</param-value>
+</context-param>
+
+<context-param>
+  <param-name>nu.staldal.lsp.servlet.LOCALE_DB</param-name>
+  <param-value>jdbc/TheDB</param-value>
+</context-param>
+
+<context-param>
+  <param-name>nu.staldal.lsp.servlet.LOCALE_TABLE</param-name>
+  <param-value>LOCALEBUNDLE</param-value>
+</context-param>
+
 <servlet>
   <servlet-name>LSPTestServlet</servlet-name>
   <servlet-class>test.LSPTestServlet</servlet-class>
@@ -15,5 +30,12 @@
   <servlet-name>LSPTestServlet</servlet-name>
   <url-pattern>/LSPTestServlet/*</url-pattern>
 </servlet-mapping>
+
+<resource-ref>
+  <description>JDBC database connection for localization</description>
+  <res-ref-name>jdbc/TheDB</res-ref-name>
+  <res-type>javax.sql.DataSource</res-type>
+  <res-auth>Container</res-auth>
+</resource-ref>
 
 </web-app>
