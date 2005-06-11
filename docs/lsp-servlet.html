@@ -132,7 +132,10 @@ element specifies global strings.</p>
 
 <p>The user's locale is determined from the <code>Accept-Language</code>
 header in the HTTP request. If the request gives more than one locale, they 
-are tried in order of preference. If none is found, the default is used.</p>
+are tried in order of preference.
+This can be overriden by setting a locale in the user session, using the key
+<a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#LOCALE_KEY"><code>LOCALE_KEY</code></a>.
+</p>
 
 <p>The localized strings can be accessed from LSP pages using the 
 <a href="lsp-servlet-extlib.html">extension library</a>, and from your code

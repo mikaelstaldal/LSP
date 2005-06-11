@@ -41,6 +41,7 @@
 package nu.staldal.lsp.servlet;
 
 import javax.servlet.*;
+import javax.servlet.http.*;
 
 import nu.staldal.lsp.*;
 
@@ -51,14 +52,14 @@ import nu.staldal.lsp.*;
 public class LSPServletContext
 {
 	private final ServletContext servletContext;
-	private final ServletRequest servletRequest;
-	private final ServletResponse servletResponse;
+	private final HttpServletRequest servletRequest;
+	private final HttpServletResponse servletResponse;
     private final LSPManager lspManager;
 	
 
     protected LSPServletContext(ServletContext servletContext,
-        ServletRequest servletRequest, 
-        ServletResponse servletResponse,
+        HttpServletRequest servletRequest, 
+        HttpServletResponse servletResponse,
         LSPManager lspManager)
     {
         this.servletContext = servletContext;
@@ -80,22 +81,22 @@ public class LSPServletContext
     
 
     /**
-     * Get the {@link javax.servlet.ServletRequest}.
+     * Get the {@link javax.servlet.http.HttpServletRequest}.
      *
-     * @return the {@link javax.servlet.ServletRequest}
+     * @return the {@link javax.servlet.http.HttpServletRequest}
      */
-    public ServletRequest getServletRequest()
+    public HttpServletRequest getServletRequest()
     {
         return servletRequest;
     }
     
 
     /**
-     * Get the {@link javax.servlet.ServletResponse}.
+     * Get the {@link javax.servlet.http.HttpServletResponse}.
      *
-     * @return the {@link javax.servlet.ServletResponse}
+     * @return the {@link javax.servlet.http.HttpServletResponse}
      */
-    public ServletResponse getServletResponse()
+    public HttpServletResponse getServletResponse()
     {
         return servletResponse;
     }

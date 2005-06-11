@@ -75,6 +75,11 @@ public class LSPTestServlet extends HttpServlet
             req.setAttribute("flag", (flag == null) ? "" : flag);
             lspManager.getRequestDispatcher("Func3").forward(req, resp);
         }
+        else if (function.equals("/SETLOCALE"))
+        {
+            HttpSession sess = req.getSession();
+            sess.setAttribute(LSPManager.LOCALE_KEY, Locale.ENGLISH);
+        }
         else if (function.equals("/FUNC4"))
         {
             lspManager.getRequestDispatcher("Func4").forward(req, resp);

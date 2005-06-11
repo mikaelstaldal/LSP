@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@ import java.util.*;
 import org.xml.sax.SAXException;
 
 import javax.servlet.*;
+import javax.servlet.http.*;
 
 import nu.staldal.lsp.*;
 
@@ -93,7 +94,8 @@ final class LSPRequestDispatcher implements RequestDispatcher
 		}
 
 		try {		
-			manager.executePage(thePage, lspParams, request, response);
+			manager.executePage(thePage, lspParams, 
+                (HttpServletRequest)request, (HttpServletResponse)response);
 		}
 		catch (SAXException e)
 		{

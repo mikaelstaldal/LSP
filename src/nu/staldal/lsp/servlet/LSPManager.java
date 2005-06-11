@@ -44,6 +44,7 @@ import java.io.*;
 import java.util.*;
 
 import javax.servlet.*;
+import javax.servlet.http.*;
 
 import org.xml.sax.*;
 import javax.xml.transform.Templates;
@@ -163,20 +164,32 @@ public class LSPManager
 
 
 	/**
+     * @deprecated use {@link #executePage(LSPPage,Map,HttpServletRequest,HttpServletResponse)} instead
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, 
+							ServletRequest request, ServletResponse response)
+		throws SAXException, IOException
+	{		
+        executePage(thePage, lspParams, (HttpServletRequest)request,
+            (HttpServletResponse)response);
+    }
+    
+
+	/**
 	 * Executes an LSP page and write the result to a 
-	 * {@link javax.servlet.ServletResponse}. Uses any stylesheet 
+	 * {@link javax.servlet.http.HttpServletResponse}. Uses any stylesheet 
      * specified in the LSP page. 
 	 *
  	 * @param thePage     the LSP page
 	 * @param lspParams   parameters to the LSP page
-	 * @param request     the {@link javax.servlet.ServletRequest}
-	 * @param response    the {@link javax.servlet.ServletResponse}
+	 * @param request     the {@link javax.servlet.http.HttpServletRequest}
+	 * @param response    the {@link javax.servlet.http.HttpServletResponse}
      *
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
 	public void executePage(LSPPage thePage, Map lspParams, 
-							ServletRequest request, ServletResponse response)
+							HttpServletRequest request, HttpServletResponse response)
 		throws SAXException, IOException
 	{		
         response.setContentType(helper.getContentType(thePage));
@@ -186,7 +199,21 @@ public class LSPManager
             new LSPServletContext(context, request, response, this), out);
     }
 
+    
+	/**
+     * @deprecated use {@link #executePage(LSPPage,Map,String,HttpServletRequest,HttpServletResponse)} instead
+	 */	
+	public void executePage(LSPPage thePage, Map lspParams, 
+							String stylesheetName, 
+                            ServletRequest request, ServletResponse response)
+		throws SAXException, FileNotFoundException, IOException, 
+            TransformerConfigurationException
+	{		
+        executePage(thePage, lspParams, stylesheetName, (HttpServletRequest)request,
+            (HttpServletResponse)response);
+    }    
 
+    
 	/**
 	 * Executes an LSP page and transform the the result with an
      * XSLT stylesheet.
@@ -198,8 +225,8 @@ public class LSPManager
  	 * @param thePage         the LSP page
 	 * @param lspParams       parameters to the LSP page
      * @param stylesheetName  the XSLT stylesheet
-	 * @param request         the {@link javax.servlet.ServletRequest}
-	 * @param response        the {@link javax.servlet.ServletResponse}
+	 * @param request         the {@link javax.servlet.http.HttpServletRequest}
+	 * @param response        the {@link javax.servlet.http.HttpServletResponse}
      *
      * @throws SAXException     if any error occurs while executing the page
      * @throws FileNotFoundException  if the stylesheet cannot be found
@@ -208,7 +235,7 @@ public class LSPManager
 	 */	
 	public void executePage(LSPPage thePage, Map lspParams, 
 							String stylesheetName, 
-                            ServletRequest request, ServletResponse response)
+                            HttpServletRequest request, HttpServletResponse response)
 		throws SAXException, FileNotFoundException, IOException, 
             TransformerConfigurationException
 	{
@@ -263,12 +290,20 @@ public class LSPManager
 
     
     /**
+     * Use this key to store a user's locale in {@link javax.servlet.http.HttpSession#setAttribute}
+     * to override the default use of {@link javax.servlet.ServletRequest#getLocales}.
+     * The value stored for this key must be of type {@link java.util.Locale}.
+     */
+    public static final String LOCALE_KEY = "nu.staldal.lsp.servlet.LOCALE";
+    
+    
+    /**
      * Get a localized resource for the user's locale.
      *<p>
      * This method is used by the LSP ExtLib <code>lang</code> 
      * element and function.
      *
-     * @param request  the {@link javax.servlet.ServletRequest} 
+     * @param request  the {@link javax.servlet.http.HttpServletRequest} 
      *                 to determine the user's locale
      * @param pageName LSP page name, 
      *                 or <code>null</code> for global resources only
@@ -276,20 +311,35 @@ public class LSPManager
      *
      * @return <code>null</code> if not found.
      */
-    public String getLocalizedString(ServletRequest request, 
+    public String getLocalizedString(HttpServletRequest request, 
                                      String pageName, String key)
         throws Exception
     {
         Map localeBundle = null;        
         
-        for (Enumeration userLocales = request.getLocales();
-             userLocales.hasMoreElements(); )
+        Locale userLocale = null;
+        
+        HttpSession theSession = request.getSession(false);
+        if (theSession != null)
         {
-            Locale userLocale = (Locale)userLocales.nextElement();
-
-            localeBundle = loadBundle(userLocale);            
-            
-            if (localeBundle != null) break;            
+            userLocale = (Locale)theSession.getAttribute(LOCALE_KEY);            
+        }
+        
+        if (userLocale != null)
+        {
+            localeBundle = loadBundle(userLocale);
+        }
+        else
+        {
+            for (Enumeration userLocales = request.getLocales();
+                 userLocales.hasMoreElements(); )
+            {
+                userLocale = (Locale)userLocales.nextElement();
+    
+                localeBundle = loadBundle(userLocale);            
+                
+                if (localeBundle != null) break;            
+            }
         }
 
         if (localeBundle == null)
