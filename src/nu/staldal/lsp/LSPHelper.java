@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, Mikael Ståldal
+ * Copyright (c) 2004-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,6 +49,8 @@ import javax.xml.transform.sax.*;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
+import nu.staldal.xodus.*;
+
 
 /**
  * Helper class for loading and executing an LSP pages and serialize 
@@ -92,7 +94,7 @@ public class LSPHelper
 
 		TransformerFactory tf = TransformerFactory.newInstance();
         if (!(tf.getFeature(SAXTransformerFactory.FEATURE)
-              	&& tf.getFeature(StreamResult.FEATURE)))
+              	&& tf.getFeature(SAXResult.FEATURE)))
         {
             throw new Error("The transformer factory "
                 + tf.getClass().getName() + " doesn't support SAX");
@@ -355,12 +357,12 @@ public class LSPHelper
 	{
 		ContentHandler sax;						
 		try {
-            TransformerHandler th;
-
 			Properties outputProperties = thePage.getOutputProperties();
             String stylesheetName = outputProperties.getProperty("stylesheet");
             if (stylesheetName != null)
             {
+                TransformerHandler th;
+
                 Templates compiledStylesheet = getStylesheet(stylesheetName);
                 if (compiledStylesheet == null)                    
                     throw new FileNotFoundException(stylesheetName);
@@ -369,22 +371,24 @@ public class LSPHelper
 
                 th = tfactory.newTransformerHandler(
                     compiledStylesheet);
-            }
+    
+                Serializer ser = Serializer.createSerializer(
+                    new StreamResult(out), outputProperties);
+                
+                SAXResult saxResult = new SAXResult(ser);
+                saxResult.setLexicalHandler(ser);
+                th.setResult(saxResult);
+                
+                boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
+                    .equals("html");
+    
+                sax = new ContentHandlerFixer(th, !isHtml, isHtml);            
+            }                
             else
             {
-                th = tfactory.newTransformerHandler();
+                sax = Serializer.createSerializer(
+                    new StreamResult(out), outputProperties);
             }
-
-			th.setResult(new StreamResult(out));
-		
-			Transformer trans = th.getTransformer();
-			
-            boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
-                .equals("html");
-
-			trans.setOutputProperties(outputProperties);			
-            
-			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
 		}
 		catch (TransformerConfigurationException e)
 		{
@@ -423,17 +427,18 @@ public class LSPHelper
 		try {
 			Properties outputProperties = 
                 compiledStylesheet.getOutputProperties();
+                
+            Serializer ser = Serializer.createSerializer(
+                new StreamResult(out), outputProperties);
 
 			TransformerHandler th = tfactory.newTransformerHandler(
                 compiledStylesheet);
-			th.setResult(new StreamResult(out));
-		
-			Transformer trans = th.getTransformer();
-			
+            SAXResult saxResult = new SAXResult(ser);
+            saxResult.setLexicalHandler(ser);
+			th.setResult(saxResult);
+		            
             boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
                 .equals("html");
-
-			trans.setOutputProperties(outputProperties);			
             
 			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
 		}
@@ -457,9 +462,6 @@ public class LSPHelper
     {
         String method = outputProperties.getProperty(OutputKeys.METHOD);
 
-        if (!outputProperties.containsKey(OutputKeys.INDENT)) 
-            outputProperties.setProperty(OutputKeys.INDENT, "no");
-        
         if (method.equals("html"))
         {
 			if (!outputProperties.containsKey(OutputKeys.MEDIA_TYPE)) 

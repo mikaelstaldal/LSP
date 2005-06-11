@@ -44,7 +44,7 @@
   <target name="lsprt" depends="init"
   	description="Compiles LSP runtime">
     <javac srcdir="${src.dir}"
-    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/util/*"
+    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/util/*,nu/staldal/xodus/*"
            destdir="${build.classes}"
            optimize="on" debug="on"
            source="1.4" target="1.4"
@@ -59,6 +59,7 @@
         <include name="nu/staldal/lsp/extlib/*" />
         <include name="nu/staldal/lsp/wrapper/*" />
         <include name="nu/staldal/lsp/servlet/**/*" />
+        <include name="nu/staldal/xodus/**/*" />
         <include name="nu/staldal/lsp/struts/**/*" />
         <include name="nu/staldal/util/*" />
         <exclude name="**/*.java" />
@@ -74,6 +75,7 @@
          <include name="nu/staldal/lsp/extlib/*" />
          <include name="nu/staldal/lsp/wrapper/*" />
          <include name="nu/staldal/lsp/servlet/**/*" />
+         <include name="nu/staldal/xodus/**/*" />
          <include name="nu/staldal/lsp/struts/**/*" />
          <include name="nu/staldal/util/*" />
       </fileset>	 
@@ -165,7 +167,7 @@
       <fileset dir="docs" includes="*.html,*.css,*.dtd"/>
     </copy>
     <mkdir dir="dist/docs/javadoc"/>
-    <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet"
+    <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet,nu.staldal.xodus"
     	     sourcepath="${src.dir}"
              classpath="${Ant};${BCEL};${Servlet}"
              destdir="dist/docs/javadoc"

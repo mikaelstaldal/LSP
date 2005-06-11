@@ -1,0 +1,28 @@
+<html><head><title>nu.staldal.xmlutil</title></head>
+<body>
+<p>Serialize SAX2 events to its textual XML representation.</p>
+
+<p>Can be used as a replacement for the serialization code in 
+<code>javax.xml.transform</code>.</p>
+<p>Support output to HTML, XML, XHTML and Text. Full support for XML namespaces.</p>
+
+<p>Sample usage:</p>
+<pre>
+    java.util.Properties p = new Properties();
+    p.setProperty(OutputKeys.METHOD, "xml");
+    OutputStream myOut = new java.io.FileOutputStream("my.xml");
+    
+    {@link nu.staldal.xodus.Serializer} ser = Serializer.createSerializer(
+        new javax.xml.transform.stream.StreamResult(myOut), p);
+        
+    ser.startDocument();
+            
+    ser.startElement("", "root", "", new org.xml.sax.helpers.AttributesImpl());
+    ser.endElement("", "root", "");
+    
+    ser.endDocument();                
+
+    myOut.close();
+</pre>
+</body>
+</html>

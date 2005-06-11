@@ -70,3 +70,5 @@
 1.3
 ---
 * Servlet extension library with internationalization support.
+* New serialization code.
+
