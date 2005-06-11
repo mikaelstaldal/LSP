@@ -98,7 +98,7 @@ This can be overriden by setting a locale in the user session, using the key
 </p>
 
 <p>The localized strings can be accessed from LSP pages using the 
-<a href="lsp-servlet-extlib.html">extension library</a>, and from your code
+<a href="lsp-servlet-extlib.html">extension library</a>, or from your code
 using the <a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#getLocalizedString(javax.servlet.ServletRequest, java.lang.String, java.lang.String)"><code>getLocalizedString(ServletRequest,String,String)</code> method
 in <code>nu.staldal.lsp.servlet.LSPManager</code></a>.</p>
 
@@ -124,14 +124,22 @@ If you don't like this, use the XML format instead.</p>
 <h3>XML files</h3>
 
 <p>Use <code>nu.staldal.lsp.servlet.XMLLocaleBundleFactory</code> to load 
-localized strings from an XML file. The XML files use the same naming 
+localized strings from an XML file. Add this to <code>WEB-INF/web.xml</code>:</p>
+<pre class="boxed">
+&lt;context-param&gt;
+  &lt;param-name&gt;nu.staldal.lsp.servlet.LocaleBundleFactory&lt;/param-name&gt;
+  &lt;param-value&gt;nu.staldal.lsp.servlet.XMLLocaleBundleFactory&lt;/param-value&gt;
+&lt;/context-param&gt;
+</pre>
+
+<p>The XML files use the same naming 
 convention as the property files, but with <code>.xml</code> extension.
 The XML files must adhere to <a href="LSPLocaleBundle.dtd">this DTD</a> (but does not need to have a 
 DOCTYPE declaration). Use the <code>page</code> element to specify that a 
 string only applies to a specific LSP page, strings outside any <code>page</code>
 element specifies global strings.</p>
 
-<pre>
+<pre class="boxed">
 &lt;!-- root element --&gt;
 &lt;!ELEMENT locale ((string|page)*)&gt;
 
@@ -149,17 +157,48 @@ element specifies global strings.</p>
 <h3>SQL Database</h3>
 
 <p>Use <code>nu.staldal.lsp.servlet.SQLLocaleBundleFactory</code> to load 
-localized strings from an SQL database.</p>
+localized strings from an SQL database. Add this to <code>WEB-INF/web.xml</code>:</p>
+<pre class="boxed">
+&lt;context-param&gt;
+  &lt;param-name&gt;nu.staldal.lsp.servlet.LocaleBundleFactory&lt;/param-name&gt;
+  &lt;param-value&gt;nu.staldal.lsp.servlet.SQLLocaleBundleFactory&lt;/param-value&gt;
+&lt;/context-param&gt;
 
-<pre>
-CREATE TABLE LOCALEBUNDLE (
+&lt;context-param&gt;
+  &lt;param-name&gt;nu.staldal.lsp.servlet.LOCALE_DB&lt;/param-name&gt;
+  &lt;param-value&gt;jdbc/<var>TheDB</var>&lt;/param-value&gt;
+&lt;/context-param&gt;
+
+&lt;context-param&gt;
+  &lt;param-name&gt;nu.staldal.lsp.servlet.LOCALETABLE&lt;/param-name&gt;
+  &lt;param-value&gt;<var>LOCALEBUNDLE</var>&lt;/param-value&gt;
+&lt;/context-param&gt;
+
+&lt;resource-ref&gt;
+  &lt;res-ref-name&gt;jdbc/<var>TheDB</var>&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+&lt;/resource-ref&gt;
+</pre>
+
+<p>Where <var>TheDB</var> can be any identifier for your database. 
+The database table should be setup like this:</p> 
+
+<pre class="boxed">
+CREATE TABLE <var>LOCALEBUNDLE</var> (
     LOCALE VARCHAR(8) NOT NULL, 
     LSPPAGE VARCHAR(16) NOT NULL, 
-    LOCALEKEY VARCHAR(16) NOT NULL, 
+    THEKEY VARCHAR(16) NOT NULL, 
     VALUE VARCHAR(255), 
-    PRIMARY KEY (LOCALE,LSPPAGE,LOCALEKEY)
+    PRIMARY KEY (LOCALE,LSPPAGE,THEKEY)
 );
 </pre>
+
+<p>The length of the fields may be different, and the <code>VALUE</code> 
+field may be of some "long text" type, as long as you can fetch it using 
+<code>ResultSet.getString()</code>. The default locale is specified with 
+<code>LOCALE="*"</code>, and global strings are specified with 
+<code>LSPPAGE="*"</code>.</p>  
 
 </body>
 </html>

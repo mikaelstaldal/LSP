@@ -1,8 +1,11 @@
 /* CSS Stylesheet for LSP documentation */
 
 body { color: black; margin-right: 10%; }
+
 p.element-syntax { 
 				   border: solid thin;
 				   font-family: monospace;
                  }
-b { font-weight: bold; }
+
+.boxed { border: solid thin; }
+

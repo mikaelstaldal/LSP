@@ -87,7 +87,7 @@ class SQLLocaleBundleFactory implements LocaleBundleFactory
         try {
             conn = dataSource.getConnection();
             pstmt = conn.prepareStatement(
-                "SELECT LSPPAGE,LOCALEKEY,VALUE FROM "+localeTable+" WHERE LOCALE=?");        
+                "SELECT LSPPAGE,THEKEY,VALUE FROM "+localeTable+" WHERE LOCALE=?");        
             if (locale == null)
             {            
                 pstmt.setString(1, "*");
@@ -102,11 +102,11 @@ class SQLLocaleBundleFactory implements LocaleBundleFactory
                 String page = rs.getString("LSPPAGE");
                 if (page.equals("*"))
                 {
-                    m.put(rs.getString("LOCALEKEY"), rs.getString("VALUE"));    
+                    m.put(rs.getString("THEKEY"), rs.getString("VALUE"));    
                 }
                 else
                 {
-                    m.put(page+'$'+rs.getString("LOCALEKEY"), rs.getString("VALUE"));    
+                    m.put(page+'$'+rs.getString("THEKEY"), rs.getString("VALUE"));    
                 }
             }            
         }
