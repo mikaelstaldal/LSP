@@ -52,14 +52,18 @@ public class LSPServletContext
 {
 	private final ServletContext servletContext;
 	private final ServletRequest servletRequest;
+	private final ServletResponse servletResponse;
     private final LSPManager lspManager;
 	
 
     protected LSPServletContext(ServletContext servletContext,
-        ServletRequest servletRequest, LSPManager lspManager)
+        ServletRequest servletRequest, 
+        ServletResponse servletResponse,
+        LSPManager lspManager)
     {
         this.servletContext = servletContext;
         this.servletRequest = servletRequest;
+        this.servletResponse = servletResponse;
         this.lspManager = lspManager;
     }
     
@@ -85,6 +89,17 @@ public class LSPServletContext
         return servletRequest;
     }
     
+
+    /**
+     * Get the {@link javax.servlet.ServletResponse}.
+     *
+     * @return the {@link javax.servlet.ServletResponse}
+     */
+    public ServletResponse getServletResponse()
+    {
+        return servletResponse;
+    }
+
 
     /**
      * Get the {@link nu.staldal.lsp.servlet.LSPManager}.

@@ -162,7 +162,7 @@
   <target name="docs" depends="init" 
   	description="Creates the LSP documentation">
   	<copy todir="dist/docs">
-      <fileset dir="docs" includes="lspuser.html,lsp-servlet.html,manual.css"/>
+      <fileset dir="docs" includes="*.html,*.css,*.dtd"/>
     </copy>
     <mkdir dir="dist/docs/javadoc"/>
     <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet"

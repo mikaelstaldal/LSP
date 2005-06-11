@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="us-ascii"?>
+
+<!-- DTD for LSP locale bundles -->
+
+<!-- root element -->
+<!ELEMENT locale ((string|page)*)>
+
+<!ELEMENT page (string*)>
+<!ATTLIST page
+	name NMTOKEN #REQUIRED
+>
+
+<!ELEMENT string (#PCDATA)>
+<!ATTLIST string
+	key NMTOKEN #REQUIRED
+>

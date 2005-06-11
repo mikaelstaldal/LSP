@@ -25,24 +25,6 @@ pages. The element is replaced with a localized string for the given key in
 the user's locale. If no suitable localized string is found, the element is 
 replaced with <code>[<var>key</var>]</code>.</p>
 
-<p>The user's locale is determined from the Accept-Language header in 
-the request. If the request gives more than one locale, they are tried in 
-order of preference.</p>
-
-<p>The localized strings are by default loaded from property files (in standard 
-Java property format, see <code>java.util.Properties</code>) in
-the <code>WEB-INF/classes</code> directory of your web application.
-The property files are named <code>LSPLocale_<var>locale</var>.properties</code>
-(e.g. <code>LSPLocale_en.properties</code>). You may place default strings in a file named
-<code>LSPLocale.properties</code> (for use when no locale match).</p>
-
-<p>To load localized string from another source (e.g. a database), 
-implement the interfaces <a href="javadoc/nu/staldal/lsp/servlet/LocaleBundleFactory.html"><code>nu.staldal.lsp.servlet.LocaleBundleFactory</code></a> and
-<a href="javadoc/nu/staldal/lsp/servlet/LocaleBundle.html"><code>nu.staldal.lsp.servlet.LocaleBundle</code></a>,
-and set the Servlet context init parameter
-"<code>nu.staldal.lsp.servlet.LocaleBundleFactory</code>" to your implementation
-of <code>nu.staldal.lsp.servlet.LocaleBundleFactory</code>.</p>
-
 <h2>Functions</h2>
 
 <h4>string s:lang(string)</h4>

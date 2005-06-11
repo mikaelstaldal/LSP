@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -183,32 +183,10 @@ public class LSPManager
             
         OutputStream out = response.getOutputStream();        
         helper.executePage(thePage, lspParams, 
-            new LSPServletContext(context, request, this), out);
+            new LSPServletContext(context, request, response, this), out);
     }
 
 
-	/**
-	 * Executes an LSP page and write the result to a 
-	 * {@link javax.servlet.ServletResponse}. Uses any stylesheet 
-     * specified in the LSP page. 
-	 *
- 	 * @param thePage     the LSP page
-	 * @param lspParams   parameters to the LSP page
-	 * @param response    the {@link javax.servlet.ServletResponse}
-     *
-     * @throws SAXException  if any error occurs while executing the page
-     * @throws IOException   if any I/O error occurs while executing the page
-     *
-     * @deprecated use {@link #executePage(nu.staldal.lsp.LSPPage, java.util.Map, javax.servlet.ServletRequest, javax.servlet.ServletResponse)} instead   
-	 */	
-	public void executePage(LSPPage thePage, Map lspParams, 
-							ServletResponse response)
-		throws SAXException, IOException
-	{		
-        executePage(thePage, lspParams, (ServletRequest)null, response);
-    }
-		
-	
 	/**
 	 * Executes an LSP page and transform the the result with an
      * XSLT stylesheet.
@@ -242,39 +220,8 @@ public class LSPManager
             
         OutputStream out = response.getOutputStream();        
         helper.executePage(thePage, lspParams, 
-            new LSPServletContext(context, request, this), 
+            new LSPServletContext(context, request, response, this), 
             compiledStylesheet, out);
-    }
-
-
-	/**
-	 * Executes an LSP page and transform the the result with an
-     * XSLT stylesheet.
-     *<p>
-     * The output properties specified in the stylesheet will be used, 
-     * and those specified in the LSP page will be ignored. Make sure
-     * to specify the output method in the stylesheet using &lt;xsl:output&gt;.
-	 *
- 	 * @param thePage         the LSP page
-	 * @param lspParams       parameters to the LSP page
-     * @param stylesheetName  the XSLT stylesheet
-	 * @param response        the {@link javax.servlet.ServletResponse}
-     *
-     * @throws SAXException     if any error occurs while executing the page
-     * @throws FileNotFoundException  if the stylesheet cannot be found
-     * @throws IOException      if any I/O error occurs while executing the page
-     * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
-     *
-     * @deprecated use {@link #executePage(nu.staldal.lsp.LSPPage, java.util.Map, java.lang.String, javax.servlet.ServletRequest, javax.servlet.ServletResponse)} instead   
-	 */	
-	public void executePage(LSPPage thePage, Map lspParams, 
-							String stylesheetName, 
-                            ServletResponse response)
-		throws SAXException, FileNotFoundException, IOException, 
-            TransformerConfigurationException
-	{
-        executePage(thePage, lspParams, stylesheetName, 
-            (ServletRequest)null, response);
     }
 
 
@@ -316,24 +263,70 @@ public class LSPManager
 
     
     /**
-     * Load a {@link nu.staldal.lsp.servlet.LocaleBundle}
-     * for the given {@link java.util.Locale}.
+     * Get a localized resource for the user's locale.
+     *<p>
+     * This method is used by the LSP ExtLib <code>lang</code> 
+     * element and function.
      *
-     * @param locale  the {@link java.util.Locale}
+     * @param request  the {@link javax.servlet.ServletRequest} 
+     *                 to determine the user's locale
+     * @param pageName LSP page name, 
+     *                 or <code>null</code> for global resources only
+     * @param key      the key
      *
-     * @return {@link nu.staldal.lsp.servlet.LocaleBundle}, 
-     * or <code>null</code> if none found for the given locale
+     * @return <code>null</code> if not found.
      */
-    LocaleBundle loadLocaleBundle(Locale locale)
+    public String getLocalizedString(ServletRequest request, 
+                                     String pageName, String key)
         throws Exception
     {
-        LocaleBundle localeBundle = (LocaleBundle)localeBundleCache.get(locale);
+        Map localeBundle = null;        
         
+        for (Enumeration userLocales = request.getLocales();
+             userLocales.hasMoreElements(); )
+        {
+            Locale userLocale = (Locale)userLocales.nextElement();
+
+            localeBundle = loadBundle(userLocale);            
+            
+            if (localeBundle != null) break;            
+        }
+
+        if (localeBundle == null)
+        {
+            localeBundle = loadBundle(null);            
+        }
+
+        if (localeBundle == null)
+        {
+            return null;
+        }
+        
+        String ret = null;        
+        if (pageName != null)
+        {
+            ret = (String)localeBundle.get(pageName+'$'+key);
+        }
+        if (ret == null)
+        {
+            ret = (String)localeBundle.get(key);
+        }
+        return ret;            
+    }
+
+
+    private Map loadBundle(Locale locale)
+        throws Exception
+    {
+        Map localeBundle = (Map)localeBundleCache.get(locale);
         if (localeBundle == null)
         {
             localeBundle = localeBundleFactory.loadBundle(locale);
+            if (localeBundle != null)
+            {
+                localeBundleCache.put(locale, localeBundle);    
+            }
         }
-        
         return localeBundle;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, Mikael Ståldal
+ * Copyright (c) 2004-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,6 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 
 	private LSPServletContext context;
     private String pageName;
-    private LocaleBundle localeBundle;
 
 	private String currentLocalizeKey;
 	private ContentHandler sax;
@@ -74,7 +73,6 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 			
 		context = null;
         pageName = null;
-        localeBundle = null;
 	}
 
 
@@ -83,7 +81,6 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 	{
 		context = (LSPServletContext)extContext;
         this.pageName = pageName;
-        localeBundle = null;
 		
 		currentLocalizeKey = null;
 		sax = null;
@@ -107,7 +104,7 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 			if (currentLocalizeKey != null)
 			{
 				if (currentLocalizeKey.length() == 0) return "";
-				String x = getLocalizedString(currentLocalizeKey);
+				String x = getLocalizedString(pageName, currentLocalizeKey);
 				if (x == null)
 					return '[' + currentLocalizeKey + ']';
 				else
@@ -135,7 +132,7 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 		String key = (String)_key;
 
 		if (key == null || key.length() == 0) return "";
-		String x = getLocalizedString(key);
+		String x = getLocalizedString(pageName, key);
 		if (x == null)
 			return '[' + key + ']';
 		else
@@ -147,7 +144,6 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 	{
 		context = null;
         pageName = null;
-        localeBundle = null;
 	}
 	
 	
@@ -252,14 +248,12 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
     /**
      * Return <code>null</code> if not found.
      */
-    private String getLocalizedString(String key)
+    private String getLocalizedString(String pageName, String key)
         throws SAXException
     {
         try {
-            if (localeBundle == null)
-                localeBundle = loadLocaleBundle();
-            
-            return localeBundle.getString(pageName, key);
+            return context.getLSPManager().getLocalizedString(
+                context.getServletRequest(), pageName, key);
         }
         catch (RuntimeException e)
         {
@@ -275,31 +269,5 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
         }
     }
         
-    
-    /**
-     * Return a LocaleBundle, never <code>null</code>.
-     */
-    private LocaleBundle loadLocaleBundle()
-        throws Exception
-    {
-        for (Enumeration userLocales = context.getServletRequest().getLocales();
-             userLocales.hasMoreElements(); )
-        {
-            Locale userLocale = (Locale)userLocales.nextElement();
-            
-            LocaleBundle localeBundle = 
-                context.getLSPManager().loadLocaleBundle(userLocale);
-                
-            if (localeBundle != null) return localeBundle;            
-        }
-
-        LocaleBundle localeBundle = 
-            context.getLSPManager().loadLocaleBundle(null);
-
-        if (localeBundle != null) return localeBundle;            
-        
-        return EmptyLocaleBundle.getInstance();
-    }
-    
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, Mikael Ståldal
+ * Copyright (c) 2004-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,7 +44,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Factory for {@link nu.staldal.lsp.servlet.PropertyLocaleBundle}.
+ * Factory for loading localization data from Property files.
  */
 class PropertyLocaleBundleFactory implements LocaleBundleFactory
 {
@@ -55,22 +55,21 @@ class PropertyLocaleBundleFactory implements LocaleBundleFactory
         this.classLoader = classLoader;    
     }
     
-    public LocaleBundle loadBundle(Locale locale)
+    public Map loadBundle(Locale locale)
         throws IOException
     {        
         String name = (locale != null)
             ? "LSPLocale_"+locale.toString()+".properties"
             : "LSPLocale.properties";
         
-        InputStream is = classLoader.getResourceAsStream(name);
-            
+        InputStream is = classLoader.getResourceAsStream(name);            
         if (is == null) return null;
             
         Properties props = new Properties();
         props.load(is);
         is.close();
         
-        return new PropertyLocaleBundle(props);
+        return props;
     }
 }
 

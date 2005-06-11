@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, Mikael Ståldal
+ * Copyright (c) 2004-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,10 +41,16 @@
 package nu.staldal.lsp.servlet;
 
 import java.util.Locale;
+import java.util.Map;
 
 
 /**
- * Interface for localization bundle factories. 
+ * Interface for localization bundle factories.
+ *<p>
+ * The resureces for a locale is stored in an {@link java.util.Map}.
+ * The key in this map is either <code>[pageName]$[key]</code> for page specific 
+ * resources, or just <code>[key]</code> for global resources. If a page specific 
+ * resource is not found, a global resource with the same key will be used.
  */
 public interface LocaleBundleFactory
 {
@@ -56,16 +62,24 @@ public interface LocaleBundleFactory
      */    
     public void init(ClassLoader classLoader);
     
+
     /**
-     * Load this LocaleBundle.
+     * Load a localization bundle for a given locale.
+     *<p>
+     * The localization bundles are cached, this method is only
+     * invoked once for each locale.
+     *<p>
+     * This method should <em>not</em> attempt to load a default locale if 
+     * the specified locale is not found. The framework will invoke this
+     * method again with <code>null</code> as argument when nessecary.
      * 
      * @param locale        the {@link java.util.Locale},
      *                      or <code>null</code> for default
      *
-     * @return the {@link nu.staldal.lsp.servlet.LocaleBundle}, 
+     * @return the {@link java.util.Map} with localization data, 
      * or <code>null</code> if none found for the given locale
      */    
-    public LocaleBundle loadBundle(Locale locale)
+    public Map loadBundle(Locale locale)
         throws Exception;    
 }
 

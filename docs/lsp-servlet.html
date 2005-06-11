@@ -16,9 +16,9 @@ environment</a>, the namespace URI for this extension library is <code>http://st
 <ol>
 
 <li>Put <code>lsprt.jar</code> in some 
-shared CLASSPATH of your application server. 
-(Or put <code>lsprt.jar</code> in the <code>WEB-INF/lib</code> directory
-of each web application using LSP.)</li>
+shared CLASSPATH of your application server, 
+or put <code>lsprt.jar</code> in the <code>WEB-INF/lib</code> directory
+of each web application using LSP.</li>
 
 <li>Compile your LSP pages into the <code>WEB-INF/classes</code> directory
 of your web application.</li>
@@ -88,6 +88,59 @@ public class LSPTestServlet extends HttpServlet
 
 <p>See the <code>sample/servlet</code> directory for a complete example.</p>
 
+<h2>Internationalization</h2>
+
+<p>Localized strings can be loaded from any source by  
+implementing the interface <a href="javadoc/nu/staldal/lsp/servlet/LocaleBundleFactory.html"><code>nu.staldal.lsp.servlet.LocaleBundleFactory</code></a>,
+and set the Servlet context init parameter
+"<code>nu.staldal.lsp.servlet.LocaleBundleFactory</code>" to your implementation
+of <code>nu.staldal.lsp.servlet.LocaleBundleFactory</code>.</p>
+
+<p>The default implementation is <code>nu.staldal.lsp.servlet.PropertyLocaleBundleFactory</code>,
+which loads from property files (in standard 
+Java property format, see <code>java.util.Properties</code>) in
+the <code>WEB-INF/classes</code> directory of your web application.
+The property files are named <code>LSPLocale_<var>locale</var>.properties</code>
+(e.g. <code>LSPLocale_en.properties</code>). You may place default strings in a
+file named <code>LSPLocale.properties</code> (for use when no locale match).
+<em>Note:</em> Java property files must be encoded with <code>iso-8859-1</code>, 
+and characters not present in this encoding must be escaped with Java Unicode escapes. 
+If you don't like this, use the XML format instead.</p>
+
+<p>Use <code>nu.staldal.lsp.servlet.XMLLocaleBundleFactory</code> to load 
+localized strings from an XML file. The XML files use the same naming 
+convention as the property files, but with <code>.xml</code> extension.
+The XML files must adhere to <a href="LSPLocaleBundle.dtd">this DTD</a> (but does not need to have a 
+DOCTYPE declaration). Use the <code>page</code> element to specify that a 
+string only applies to a specific LSP page, strings outside any <code>page</code>
+element specifies global strings.</p>
+
+<pre>
+&lt;!-- root element --&gt;
+&lt;!ELEMENT locale ((string|page)*)&gt;
+
+&lt;!ELEMENT page (string*)&gt;
+&lt;!ATTLIST page
+	name NMTOKEN #REQUIRED
+&gt;
+
+&lt;!ELEMENT string (#PCDATA)&gt;
+&lt;!ATTLIST string
+	key NMTOKEN #REQUIRED
+&gt;
+</pre>
+
+<p>The user's locale is determined from the <code>Accept-Language</code>
+header in the HTTP request. If the request gives more than one locale, they 
+are tried in order of preference. If none is found, the default is used.</p>
+
+<p>The localized strings can be accessed from LSP pages using the 
+<a href="lsp-servlet-extlib.html">extension library</a>, and from your code
+using the <a href="javadoc/nu/staldal/lsp/servlet/LSPManager.html#getLocalizedString(javax.servlet.ServletRequest, java.lang.String, java.lang.String)"><code>getLocalizedString(ServletRequest,String,String)</code> method
+in <code>nu.staldal.lsp.servlet.LSPManager</code></a>.</p>
+
+
 </body>
 </html>
+
 
