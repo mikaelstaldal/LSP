@@ -548,9 +548,9 @@ public class XMLSerializer extends Serializer
 
     /**
      * Will honor 
-     * {@link javax.xml.transform.Result.PI_DISABLE_OUTPUT_ESCAPING} 
+     * {@link javax.xml.transform.Result#PI_DISABLE_OUTPUT_ESCAPING} 
      * and 
-     * {@link javax.xml.transform.Result.PI_ENABLE_OUTPUT_ESCAPING}. 
+     * {@link javax.xml.transform.Result#PI_ENABLE_OUTPUT_ESCAPING}. 
      */
     public void processingInstruction(String target, String data)
 	    throws SAXException
