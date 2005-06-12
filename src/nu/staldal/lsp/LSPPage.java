@@ -55,7 +55,7 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage
 {
-    public static final String LSP_VERSION_NAME = "1.2.1";
+    public static final String LSP_VERSION_NAME = "1.3";
     public static final int LSP_VERSION_NUM = 111;
     
 
