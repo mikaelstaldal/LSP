@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html>
+<head><title>LSP and Struts</title></head>
+<link rel="stylesheet" type="text/css" href="manual.css" />
+<body>
+<h1>LSP and Struts</h1>
+
+<p>LSP pages can be used as a View technology in the  
+<a href="http://struts.apache.org/">Struts</a> MVC framework.</p>
+
+<p>Add the following element to your <code>struts-config.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;controller processorClass="nu.staldal.lsp.struts.LSPRequestProcessor"/&gt;
+</pre>
+
+<p>This will recognize LSP pages using an <code>.lsp</code> extension.</p>
+
+<p><em>Note:</em> The Struts integration is rudimentary and not well tested. 
+It should be considered beta. Feedback is welcome.</p>
+
+</body>
+</html>
+
