@@ -2,6 +2,6 @@
 <dirlist xmlns:lsp="http://staldal.nu/LSP/core">
 <lsp:output stylesheet="dir.xsl"/>
   <lsp:for-each select="$dirlist" var="file">
-    <file filename="{$file}"/>
+    <file xmlns="http://foo.bar" filename="{$file}"/>
   </lsp:for-each>
 </dirlist>

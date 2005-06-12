@@ -18,7 +18,7 @@
 </html>
 </xsl:template>
 
-<xsl:template match="file">
+<xsl:template xmlns:foo="http://foo.bar" match="foo:file">
 	<li><xsl:value-of select="@filename"/></li>
 </xsl:template>
 

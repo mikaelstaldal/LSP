@@ -74,7 +74,7 @@ public class LSPHelper
     private String textType = "text/plain";	
 
     private String htmlEncoding = "iso-8859-1";
-    private String xhtmlEncoding = "iso-8859-1";
+    private String xhtmlEncoding = "UTF-8";
     private String xmlEncoding = "UTF-8";
     private String textEncoding = "iso-8859-1";	
 	
@@ -163,7 +163,7 @@ public class LSPHelper
     /**
      * Set the default character encoding for XHTML.
      *<p>
-     * Default is "iso-8859-1". 
+     * Default is "UTF-8". 
      */
     public void setXhtmlEncoding(String xhtmlEncoding)
     {
@@ -379,10 +379,7 @@ public class LSPHelper
                 saxResult.setLexicalHandler(ser);
                 th.setResult(saxResult);
                 
-                boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
-                    .equals("html");
-    
-                sax = new ContentHandlerFixer(th, !isHtml, isHtml);            
+                sax = th;                            
             }                
             else
             {
@@ -437,10 +434,7 @@ public class LSPHelper
             saxResult.setLexicalHandler(ser);
 			th.setResult(saxResult);
 		            
-            boolean isHtml = outputProperties.getProperty(OutputKeys.METHOD)
-                .equals("html");
-            
-			sax = new ContentHandlerFixer(th, !isHtml, isHtml);
+            sax = th;            
 		}
 		catch (TransformerConfigurationException e)
 		{

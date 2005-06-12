@@ -70,5 +70,5 @@
 1.3
 ---
 * Servlet extension library with internationalization support.
-* New serialization code.
-
+* New formatting code for XML, HTML, XHTML and Text. 
+  UTF-8 encoding is now default for XHTML.
