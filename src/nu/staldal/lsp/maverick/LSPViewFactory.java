@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, Mikael Ståldal
+ * Copyright (c) 2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,79 +38,49 @@
  * http://www.gnu.org/philosophy/license-list.html
  */
 
-package nu.staldal.lsp.servlet;
+package nu.staldal.lsp.maverick;
+
+import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import nu.staldal.lsp.*;
+import org.xml.sax.*;
+
+import org.infohazard.maverick.flow.*; 
+import org.infohazard.maverick.util.*; 
+
+import nu.staldal.lsp.LSPPage;
+import nu.staldal.lsp.servlet.LSPManager;
 
 
 /**
- * Context for LSP extension libraries.
+ * Maverick ViewFactory to use LSP pages in a Maverick application.
  */
-public class LSPServletContext
+public class LSPViewFactory implements ViewFactory
 {
-	private final ServletContext servletContext;
-	private final HttpServletRequest servletRequest;
-	private final HttpServletResponse servletResponse;
-    private final LSPManager lspManager;
-	
+    private LSPManager lspManager;    
 
-    public LSPServletContext(ServletContext servletContext,
-        HttpServletRequest servletRequest, 
-        HttpServletResponse servletResponse,
-        LSPManager lspManager)
+
+    public void init(org.jdom.Element factoryNode, ServletConfig servletCfg)
+        throws ConfigException    
     {
-        this.servletContext = servletContext;
-        this.servletRequest = servletRequest;
-        this.servletResponse = servletResponse;
-        this.lspManager = lspManager;
+        lspManager = LSPManager.getInstance(
+            servletCfg.getServletContext(),
+            Thread.currentThread().getContextClassLoader());            
     }
     
-
-    /**
-     * Get the {@link javax.servlet.ServletContext}.
-     *
-     * @return the {@link javax.servlet.ServletContext}
-     */
-    public ServletContext getServletContext()
+    
+    public View createView(org.jdom.Element viewNode)
+        throws ConfigException
     {
-        return servletContext;
+		String path = XML.getValue(viewNode, "path");
+
+		if (path == null || path.length()==0)
+			throw new ConfigException("View node must have a path:  " + XML.toString(viewNode));
+			
+		return new LSPView(path, lspManager);                
     }
     
-
-    /**
-     * Get the {@link javax.servlet.http.HttpServletRequest}.
-     *
-     * @return the {@link javax.servlet.http.HttpServletRequest}
-     */
-    public HttpServletRequest getServletRequest()
-    {
-        return servletRequest;
-    }
-    
-
-    /**
-     * Get the {@link javax.servlet.http.HttpServletResponse}.
-     *
-     * @return the {@link javax.servlet.http.HttpServletResponse}
-     */
-    public HttpServletResponse getServletResponse()
-    {
-        return servletResponse;
-    }
-
-
-    /**
-     * Get the {@link nu.staldal.lsp.servlet.LSPManager}.
-     *
-     * @return the {@link nu.staldal.lsp.servlet.LSPManager}
-     */
-    public LSPManager getLSPManager()
-    {
-        return lspManager;
-    }
-
 }
 
