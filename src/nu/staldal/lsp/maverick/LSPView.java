@@ -61,12 +61,14 @@ class LSPView implements View
 {
     private final LSPManager lspManager;    
     private final LSPPage thePage;
+    private final String beanName;
 
     
-    public LSPView(String path, LSPManager lspManager)
+    public LSPView(String path, String beanName, LSPManager lspManager)
         throws ConfigException
     {
         this.lspManager = lspManager;
+        this.beanName = beanName;
         
         if (path.charAt(0) == '/')
         {
@@ -113,18 +115,17 @@ class LSPView implements View
         Object model = vctx.getModel();        
         if (model == null)
         {
-            lspParams.put("model", FullMap.getInstance());
+            lspParams.put(beanName, FullMap.getInstance());
         }
         else
         {
-            lspParams.put("model", new BeanMap(model));
+            lspParams.put(beanName, new BeanMap(model));
         }            
 
         TransformStep next = vctx.getNextStep();
         
         if (next == null || next.isLast())
         {
-            System.out.println("Executing LSP page with no transform");
             // no transforms
 
             try {		
@@ -152,7 +153,6 @@ class LSPView implements View
         }
         else
         {
-            System.out.println("Executing LSP page with transform");
             // we have transform(s)
                         
             try {

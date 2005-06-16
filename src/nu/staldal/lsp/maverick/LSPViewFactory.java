@@ -49,6 +49,7 @@ import org.xml.sax.*;
 
 import org.infohazard.maverick.flow.*; 
 import org.infohazard.maverick.util.*; 
+import org.infohazard.maverick.view.DocumentViewFactory; 
 
 import nu.staldal.lsp.LSPPage;
 import nu.staldal.lsp.servlet.LSPManager;
@@ -57,7 +58,7 @@ import nu.staldal.lsp.servlet.LSPManager;
 /**
  * Maverick ViewFactory to use LSP pages in a Maverick application.
  */
-public class LSPViewFactory implements ViewFactory
+public class LSPViewFactory extends DocumentViewFactory
 {
     private LSPManager lspManager;    
 
@@ -65,6 +66,8 @@ public class LSPViewFactory implements ViewFactory
     public void init(org.jdom.Element factoryNode, ServletConfig servletCfg)
         throws ConfigException    
     {
+        super.init(factoryNode, servletCfg);
+        
         lspManager = LSPManager.getInstance(
             servletCfg.getServletContext(),
             Thread.currentThread().getContextClassLoader());            
@@ -78,8 +81,12 @@ public class LSPViewFactory implements ViewFactory
 
 		if (path == null || path.length()==0)
 			throw new ConfigException("View node must have a path:  " + XML.toString(viewNode));
-			
-		return new LSPView(path, lspManager);                
+
+        String beanName = XML.getValue(viewNode, ATTR_BEAN_NAME);
+        if (beanName == null || beanName.length()==0)
+            beanName = this.defaultBeanName;
+        
+		return new LSPView(path, beanName, lspManager);                
     }
     
 }

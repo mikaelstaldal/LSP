@@ -79,4 +79,6 @@ next
 ----
 * Any java.util.Collection can be used as the list type, 
   not only java.util.List.
+* acceptNull parameter.
+* Maverick integration.
 
