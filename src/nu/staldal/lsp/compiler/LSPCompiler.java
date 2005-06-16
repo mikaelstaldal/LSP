@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2004, Mikael Ståldal
+ * Copyright (c) 2001-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,8 @@ public class LSPCompiler
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
     private static final String XHTML_NS = "http://www.w3.org/1999/xhtml";
     
+    private boolean acceptNull;
+    
     private TreeBuilder tb;
 	private String pageName;
     private URLResolver resolver;
@@ -118,12 +120,22 @@ public class LSPCompiler
         this.xhtml = xhtml;    
     }
 
+    
+    /**
+	 * Set to <code>true</code> to make the compiled page accept 
+     * <code>null</code> values without runtime error.
+     */    
+    public void setAcceptNull(boolean acceptNull)
+    {
+        this.acceptNull = acceptNull;    
+    }
+    
 
     /**
 	 * Start compilation of an LSP page.
 	 *
-	 * @param page    page name
-	 * @param r       {@link URLResolver} to use for resolving <code>&lt;lsp:import&gt;</code>
+	 * @param page       page name
+	 * @param r          {@link URLResolver} to use for resolving <code>&lt;lsp:import&gt;</code>
 	 *
 	 * @return SAX2 ContentHandler to feed the LSP source into
 	 */
@@ -207,7 +219,7 @@ public class LSPCompiler
         
 		jvmCompiler.compileToByteCode(pageName, compiledTree, 
 			importedFiles, compileDynamic,
-			extLibsInPage, outputProperties, out);
+			extLibsInPage, outputProperties, out, acceptNull);
 
 		outputProperties = null;
         tb = null;

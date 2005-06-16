@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,6 +66,7 @@ public class LSPCompilerAntTask extends Task
 	private FileSet fileset;
 	private boolean force;
 	private boolean xhtml;
+    private boolean acceptNull;
 
 	
 	public LSPCompilerAntTask()
@@ -82,7 +83,8 @@ public class LSPCompilerAntTask extends Task
 		destdir = null;
 		force = false;
         xhtml = false;
-	}
+        acceptNull= false;
+    }
 
 	
 	// Attribute setter methods
@@ -95,6 +97,11 @@ public class LSPCompilerAntTask extends Task
 	public void setXhtml(boolean xhtml)
 	{
 		this.xhtml = xhtml;
+	}
+
+	public void setAcceptNull(boolean acceptNull)
+	{
+		this.acceptNull = acceptNull;
 	}
 
 	public void setSourcepath(Path sourcepath)
@@ -127,6 +134,7 @@ public class LSPCompilerAntTask extends Task
 		compiler.targetDir = destdir;
         
         compiler.setXhtml(xhtml);
+        compiler.setAcceptNull(acceptNull);
 		
 		if (sourcepath != null)
         {

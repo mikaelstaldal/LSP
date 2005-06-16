@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,7 @@ public abstract class LSPPageBase implements LSPPage
 	protected final String compiledVersionName;
 	protected final int compiledVersionNum;
     protected final Properties outputProperties;
-
+    
 	
 	protected LSPPageBase(String[] extLibsURLs, String[] extLibsClassNames,
 		String[] compileDependentFiles, boolean compileDynamic, 
@@ -112,6 +112,7 @@ public abstract class LSPPageBase implements LSPPage
         return outputProperties;
     }        
 	
+
     public final void execute(ContentHandler sax, Map params, Object extContext)
         throws SAXException
 	{
@@ -206,13 +207,15 @@ public abstract class LSPPageBase implements LSPPage
 	{
 		if (value == null)
 			throw new LSPException(name + ": LSP cannot handle null objects");
+		else if (value == Void.TYPE)
+			return value;
 		else if (value instanceof String)
 			return value;
 		else if (value instanceof Boolean)
 			return value;
 		else if (value instanceof Number)
 			return value;
-		else if (value instanceof List) 
+		else if (value instanceof Collection) 
 			return value;
 		else if (value instanceof Map) 
 			return value;
@@ -249,6 +252,10 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return (String)value;
 		}
+        else if (value == Void.TYPE)
+        {
+            return "";
+        }
 		else if (value instanceof Number)
 		{
 			double d = ((Number)value).doubleValue();
@@ -278,6 +285,10 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return ((Number)value).doubleValue();
 		}
+        else if (value == Void.TYPE)
+        {
+            return 0.0d;
+        }
 		else if (value instanceof Boolean)
 		{
 			return ((Boolean)value).booleanValue() ? 1.0d : 0.0d;
@@ -307,6 +318,10 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return ((Boolean)value).booleanValue();
 		}
+        else if (value == Void.TYPE)
+        {
+            return false;
+        }
 		if (value instanceof Number)
 		{
 			double d = ((Number)value).doubleValue();
@@ -316,9 +331,9 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return ((String)value).length() > 0;
 		}
-		if (value instanceof List)
+		if (value instanceof Collection)
 		{
-			return !(((List)value).isEmpty());
+			return !(((Collection)value).isEmpty());
 		}
 		else
 		{
@@ -329,22 +344,25 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
-
-	protected static List convertToList(Object value) throws LSPException
+	protected static Collection convertToList(Object value) throws LSPException
 	{
-		if (value instanceof List) 
-			return (List)value;
-		else
+		if (value instanceof Collection) 
+			return (Collection)value;
+        else if (value == Void.TYPE)
+            return Collections.EMPTY_LIST;
+		else           
 			throw new LSPException(
 				"Convert to list not implemented for type "
 				+ value.getClass().getName());
 	}
-	
+
 
 	protected static Map convertToTuple(Object value) throws LSPException
 	{
 		if (value instanceof Map) 
 			return (Map)value;
+        else if (value == Void.TYPE)
+            return FullMap.getInstance();
 		else
 			throw new LSPException(
 				"Convert to tuple not implemented for type "
@@ -392,24 +410,67 @@ public abstract class LSPPageBase implements LSPPage
 		throws LSPException
 	{
 		Object o = tuple.get(key);
-		if (o == null)
-			throw new LSPException("Element \'" + key + "\' not found in tuple");
-		return convertObjectToLSP(o, "."+key);
+		
+        if (o == null)
+        {
+            throw new LSPException(
+                "Element \'" + key + "\' not found in tuple");
+        }
+        else
+        {
+            return convertObjectToLSP(o, "."+key);
+        }
 	}
 
 	
+	protected static Object getElementFromTupleAcceptNull(Map tuple, String key)
+		throws LSPException
+	{
+		Object o = tuple.get(key);
+		
+        if (o == null)
+        {
+            return Void.TYPE;
+        }
+        else
+        {
+            return convertObjectToLSP(o, "."+key);
+        }
+	}
+
+
 	protected static Object getVariableValue(Environment env, String varName)
 		throws LSPException
 	{
 		Object o = env.lookup(varName);
 		
 		if (o == null)
-			throw new LSPException(
-				"Attempt to reference unbound variable: " + varName);
+        {
+            throw new LSPException(
+                "Attempt to reference unbound variable: " + varName);
+        }
 		else
+        {
 			return convertObjectToLSP(o, varName);
+        }
 	}
+    
+    
+	protected static Object getVariableValueAcceptNull(Environment env, String varName)
+		throws LSPException
+	{
+		Object o = env.lookup(varName);
 		
+		if (o == null)
+        {
+            return Void.TYPE;
+        }
+		else
+        {
+			return convertObjectToLSP(o, varName);
+        }
+	}
+				
 
 	protected static boolean compareEqual(Object left, Object right)
 		throws LSPException
@@ -538,7 +599,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 	
 
-	protected static List fnSeq(double start, double end, double step)
+	protected static Collection fnSeq(double start, double end, double step)
 	{
 		ArrayList vec = new ArrayList((int)((end-start)/step));
 		for (; start <= end; start+=step)

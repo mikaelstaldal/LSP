@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -125,6 +125,16 @@ public class LSPCompilerHelper
         compiler.setXhtml(xhtml);    
     }
         
+
+    /**
+	 * Set to <code>true</code> to make the compiled page accept 
+     * <code>null</code> values without runtime error.
+     */
+    public void setAcceptNull(boolean acceptNull)
+    {
+        compiler.setAcceptNull(acceptNull);    
+    }
+
 
 	private boolean checkDepend(boolean force, File outputFile, File inputFile)
 	{

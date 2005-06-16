@@ -104,7 +104,7 @@ public class LSPResultSetTupleList implements List
 
     public Iterator iterator()
     {
-        throw new UnsupportedOperationException();    
+        return new ResultSetListIterator(this);
     }
 
     public Object[] toArray()

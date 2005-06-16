@@ -15,6 +15,19 @@
       <li><lsp:value-of select="$ent"/></li>
     </lsp:for-each>    
     </ol>
+
+    <ol>
+    <lsp:for-each select="$alist" var="ent" status="s">
+      <li><lsp:value-of select="$s.index"/>: 
+			(first: <lsp:value-of select="$s.first"/>)
+			(last: <lsp:value-of select="$s.last"/>)
+			(odd: <lsp:value-of select="$s.odd"/>)
+			(even: <lsp:value-of select="$s.even"/>)
+		  <lsp:value-of select="$ent"/></li>
+    </lsp:for-each>    
+    </ol>
+
+	<p>Length of list: <lsp:value-of select="count($alist)"/></p>
     
     <h2>Food</h2>
 	<table border="1">

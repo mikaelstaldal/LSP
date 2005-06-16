@@ -44,13 +44,16 @@
   <target name="lsprt" depends="init"
   	description="Compiles LSP runtime">
     <javac srcdir="${src.dir}"
-    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/util/*,nu/staldal/xodus/*"
+    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/util/*,nu/staldal/xodus/*"
            destdir="${build.classes}"
            optimize="on" debug="on"
            source="1.4" target="1.4"
            deprecation="on">
        <classpath location="${Servlet}" />
        <classpath location="${Struts}" />
+       <classpath location="${Maverick}" />
+       <classpath location="${JDOM}" />
+       <classpath location="${CommonsCollections}" />
 	</javac>
 
     <copy todir="${build.classes}" includeEmptyDirs="no">
@@ -61,6 +64,7 @@
         <include name="nu/staldal/lsp/servlet/**/*" />
         <include name="nu/staldal/xodus/**/*" />
         <include name="nu/staldal/lsp/struts/**/*" />
+        <include name="nu/staldal/lsp/maverick/**/*" />
         <include name="nu/staldal/util/*" />
         <exclude name="**/*.java" />
         <exclude name="**/*.lex" />
@@ -77,6 +81,7 @@
          <include name="nu/staldal/lsp/servlet/**/*" />
          <include name="nu/staldal/xodus/**/*" />
          <include name="nu/staldal/lsp/struts/**/*" />
+         <include name="nu/staldal/lsp/maverick/**/*" />
          <include name="nu/staldal/util/*" />
       </fileset>	 
     </jar>

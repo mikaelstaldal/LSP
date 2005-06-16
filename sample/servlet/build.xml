@@ -24,6 +24,7 @@
     <mkdir dir="${build.dir}"/>
     <mkdir dir="${build.dir}/WEB-INF"/>
     <mkdir dir="${build.dir}/WEB-INF/classes"/>
+    <mkdir dir="${build.dir}/WEB-INF/lib"/>
   </target>
   
   <target name="compile" depends="init"
@@ -62,6 +63,8 @@
         <exclude name="build.xml" />
       </fileset>
     </copy>
+
+	<copy file="${LSP}" todir="${build.dir}/WEB-INF/lib" />
   </target>
   
 </project>

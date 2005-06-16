@@ -42,7 +42,7 @@ public class LSPTestServlet extends HttpServlet
         else if (function.equals("/FUNC2"))
         {
             req.setAttribute("hello", "Hi, there!");
-            req.setAttribute("alist", new Object[] { "one", "two", "three" });
+            req.setAttribute("alist", new Object[] { "one", "two", "three", "four", "five" });
 
 			List food = new ArrayList();
 			Map m;

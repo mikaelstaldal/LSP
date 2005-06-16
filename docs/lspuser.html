@@ -416,6 +416,12 @@ converted to a string before used as key for lookup, this means that a
 mapping with another type of key will not be found by LSP (e.g. you cannot 
 use a Java Number).</p>
 
+<p>It's a runtime error to attempt to reference a non-existing tuple entry. 
+Unless the <code>acceptNull</code> parameter is passed to the compiler,
+then an non-existing tuple entry  will result in a special value convertible to 
+the empty string, the number 0.0, the boolean value false, the empty list
+or the empty tuple.</p>
+
 
 <h3>Grammar</h3>
 <pre>
@@ -535,7 +541,11 @@ specified sequence</li>
 <p>The parameters passed to the LSP page are bound to variables 
 in the outermost scope.</p>
 
-<p>It's an error to attempt to reference an unbound variable.</p>
+<p>It's a runtime error to attempt to reference an unbound variable. 
+Unless the <code>acceptNull</code> parameter is passed to the compiler,
+then an unbound variable will result in a special value convertible to 
+the empty string, the number 0.0, the boolean value false, the empty list
+or the empty tuple.</p>
 
 
 <h2>The LSP compiler</h2>
@@ -556,7 +566,7 @@ executing the compiled code. <code>lsprt.jar</code> is also needed by the compil
 <p>The LSP compiler is invoked by the application class
 <code>nu.staldal.lsp.compiler.LSPCompilerCLI</code>. The syntax is:</p>
 <pre>
-lspc [-verbose] [-force] [-xhtml] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] <em>inputFile</em> ...
+lspc [-verbose] [-force] [-xhtml] [-acceptNull] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] <em>inputFile</em> ...
 </pre>
 
 <p><em>sourcepath</em> specifies where to look for imported files with 
@@ -568,7 +578,12 @@ files are only compiled if the source file is newer than the target file
 (imported files are also checked, changing an imported file will trigger 
 recompile). If <code>-xhtml</code> is specified, 
 the default output method for XHTML pages will be <code>xhtml</code>, 
-otherwise it will be <code>html</code>.</p> 
+otherwise it will be <code>html</code>.</p>
+
+<p>If <code>-acceptNull</code> is specified, the LSP page will accept 
+non-existing variables and tuple entries without runtime error. This
+may make it easier to develop the application, but may make it harder
+to debug.</p> 
 
 <p>You have to put <code>bcel.jar</code> and <code>lsprt.jar</code> in CLASSPATH. 
 If you use any <a href="extlib">extension libraries</a>, you have to include them in the CLASSPATH as well.</p>
@@ -595,8 +610,9 @@ classpath as well.</p>
 <pre>
 &lt;lspc sourcepath="<em>sourcepath</em>"
          <b>destdir</b>="<em>where to place compiled code</em>"
-         force="<em>force recompiling of all files</em>"&gt;
-         xhtml="<em>use xhtml as default output method</em>"&gt;
+         force="<em>force recompiling of all files</em>"
+         xhtml="<em>use xhtml as default output method</em>"
+         acceptNull="<em>allow non-existing variables and tuple entries</em>"&gt;
       &lt;fileset dir="lsp"&gt;
         &lt;include name="*.lsp" /&gt;
       &lt;/fileset&gt;
@@ -611,6 +627,11 @@ the source file is newer than the target file (imported files are also checked,
 changing an imported file will trigger recompile). If <code>xhtml</code> is set, 
 the default output method for XHTML pages will be <code>xhtml</code>, 
 otherwise it will be <code>html</code>.</p>
+
+<p>If <code>acceptNull</code> is specified, the LSP page will accept 
+non-existing variables and tuple entries without runtime error. This
+may make it easier to develop the application, but may make it harder
+to debug.</p> 
 
 
 <h2>The LSP runtime</h2>

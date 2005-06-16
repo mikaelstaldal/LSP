@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,59 +40,49 @@
 
 package nu.staldal.lsp;
 
-import java.util.*;
+import java.util.Map;
 
-public class LSPForEachStatus implements Map
+
+/**
+ * A special implementation of {@link java.util.Map} which pretends to have
+ * all possible keys. The {@link #get} method return <code>Void.TYPE</code> for
+ * all keys. All other methors throws 
+ * {@link java.lang.UnsupportedOperationException}.
+ *<p>
+ * Implements the Singleton pattern.
+ */
+public class FullMap implements Map
 {
-    private Iterator theIterator;
-    private int index;
-
-    public LSPForEachStatus(Iterator theIterator)
-    {
-        this.theIterator = theIterator;
-        this.index = 0;
+    private static FullMap theInstance = null;
+   
+    /**
+     * Singleton.
+     */
+    public static FullMap getInstance()
+    {        
+        if (theInstance == null) theInstance = new FullMap(); 
+        
+        return theInstance;
     }
     
-    public void next()
-    {
-        index++;    
-    }
-        
+    private FullMap() {}
+    
+    /**
+     * @return <code>Void.TYPE</code> for all keys
+     */
     public Object get(Object key)
     {
-        if (key.equals("index"))
-            return new Double(index);
-        else if (key.equals("first"))
-            return Boolean.valueOf(index == 1);
-        else if (key.equals("last"))
-            return Boolean.valueOf(!theIterator.hasNext());
-        else if (key.equals("even"))
-            return Boolean.valueOf(index % 2 == 0);
-        else if (key.equals("odd"))
-            return Boolean.valueOf(index % 2 != 0);
-        else
-            return null;
+        return Void.TYPE; 
     }
     
     public boolean containsKey(Object key)
     {
-        if (key.equals("index"))
-            return true;
-        else if (key.equals("first"))
-            return true;
-        else if (key.equals("last"))
-            return true;
-        else if (key.equals("even"))
-            return true;
-        else if (key.equals("odd"))
-            return true;
-        else
-            return false;
+        throw new UnsupportedOperationException();    
     }
 
     public int size()
     {   
-        return 5;
+        throw new UnsupportedOperationException();    
     }
 
     public boolean isEmpty()
@@ -109,7 +99,7 @@ public class LSPForEachStatus implements Map
     {
         throw new UnsupportedOperationException();    
     }
-    
+        
     public Object remove(Object key)
     {
         throw new UnsupportedOperationException();    
@@ -138,7 +128,5 @@ public class LSPForEachStatus implements Map
     public java.util.Set entrySet()
     {
         throw new UnsupportedOperationException();    
-    }
-
+    }    
 }
-

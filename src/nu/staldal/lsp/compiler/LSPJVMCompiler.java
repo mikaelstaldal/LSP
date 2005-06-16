@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,7 +77,9 @@ class LSPJVMCompiler implements Constants
 	private static final int PARAM_extLibs = 3;
 	private static final int PARAM_sax = 4;
 	private static final int PARAM_attrs = 5;
-
+    
+    private boolean acceptNull;
+    
 	private String className = null;
 	private ClassGen classGen = null;
 	private ConstantPoolGen constGen = null;
@@ -86,7 +88,7 @@ class LSPJVMCompiler implements Constants
     private int[] maxLineNumber = null;
 	
 	private int splitNumber;
-
+    
 
     LSPJVMCompiler()
     {
@@ -109,9 +111,11 @@ class LSPJVMCompiler implements Constants
     void compileToByteCode(String pageName, LSPNode theTree, 
 		    HashMap importedFiles, boolean compileDynamic,
             HashMap extLibsInPage, Properties outputProperties, 
-            OutputStream out)
+            OutputStream out, boolean acceptNull)
         throws IOException, SAXException
 	{
+        this.acceptNull = acceptNull;
+        
 		splitNumber = 0;
 		
 		className = "_LSP_"+pageName;		
@@ -975,16 +979,34 @@ class LSPJVMCompiler implements Constants
 			int split)	
 		throws SAXException
 	{
-		// final List theList = evalExprAsList(el.getList());
+		// final Collection theList = evalExprAsList(el.getList());
 		compileExprAsList(el.getList(), methodGen, instrList);
 
-		// ListIterator theIter = theList.listIterator();
+		// Iterator theIter = theList.listIterator();
 		instrList.append(instrFactory.createInvoke(
-			List.class.getName(),
-			"listIterator",
-			Type.getType(ListIterator.class),
+			Collection.class.getName(),
+			"iterator",
+			Type.getType(Iterator.class),
 			Type.NO_ARGS,
 			INVOKEINTERFACE));
+            
+		if (el.getStatusObject() != null)
+		{
+			instrList.append(InstructionConstants.DUP); // DUP theIter	
+
+			// new LSPForEachStatus(theIter);
+			instrList.append(instrFactory.createNew(
+				(ObjectType)Type.getType(LSPForEachStatus.class)));
+			instrList.append(InstructionConstants.DUP_X1);			
+			instrList.append(InstructionConstants.SWAP);
+			instrList.append(instrFactory.createInvoke(
+				LSPForEachStatus.class.getName(),
+				"<init>", Type.VOID, 
+				new Type[] { Type.getType(Iterator.class) }, 
+				INVOKESPECIAL));			
+
+            instrList.append(InstructionConstants.SWAP);	
+		}            
 		
 		// while (theIter.hasNext())
 		BranchInstruction loopStart = 
@@ -992,11 +1014,27 @@ class LSPJVMCompiler implements Constants
 		instrList.append(loopStart);		
 		InstructionHandle atStartOfLoop = 
 			instrList.append(InstructionConstants.NOP);
-				
+
+		if (el.getStatusObject() != null)
+		{
+            instrList.append(InstructionConstants.SWAP);
+            
+            // status.next();
+            instrList.append(InstructionConstants.DUP); // DUP status
+            instrList.append(instrFactory.createInvoke(
+                LSPForEachStatus.class.getName(),
+                "next",
+                Type.VOID,
+                Type.NO_ARGS,
+                INVOKEVIRTUAL));            
+
+			instrList.append(InstructionConstants.SWAP);
+        }            
+            
 		// Object o = theIter.next();
 		instrList.append(InstructionConstants.DUP); // DUP theIter
 		instrList.append(instrFactory.createInvoke(
-			ListIterator.class.getName(),
+			Iterator.class.getName(),
 			"next",
 			Type.OBJECT,
 			Type.NO_ARGS,
@@ -1031,31 +1069,24 @@ class LSPJVMCompiler implements Constants
 			
 		if (el.getStatusObject() != null)
 		{
-			instrList.append(InstructionConstants.DUP); // DUP theIter	
+            instrList.append(InstructionConstants.SWAP);
+            instrList.append(InstructionConstants.DUP);
 
-			// env.bind(el.getStatusObject(), new LSPForEachStatus(theIter));
-			instrList.append(instrFactory.createLoad(
-				Type.getType(Environment.class), PARAM_env));
-			instrList.append(InstructionConstants.SWAP);
-			instrList.append(new PUSH(constGen, el.getStatusObject()));
-			instrList.append(InstructionConstants.SWAP);
-			instrList.append(instrFactory.createNew(
-				(ObjectType)Type.getType(LSPForEachStatus.class)));
-			instrList.append(InstructionConstants.DUP_X1);			
-			instrList.append(InstructionConstants.SWAP);
-			instrList.append(instrFactory.createInvoke(
-				LSPForEachStatus.class.getName(),
-				"<init>", Type.VOID, 
-				new Type[] { Type.getType(ListIterator.class) }, 
-				INVOKESPECIAL));			
+            instrList.append(instrFactory.createLoad(
+                Type.getType(Environment.class), PARAM_env));
 
-			instrList.append(instrFactory.createInvoke(
+            instrList.append(InstructionConstants.SWAP);
+            instrList.append(new PUSH(constGen, el.getStatusObject()));		
+            instrList.append(InstructionConstants.SWAP);		
+                
+            instrList.append(instrFactory.createInvoke(
 				Environment.class.getName(),
 				"bind",
 				Type.OBJECT,
 				new Type[] { Type.OBJECT, Type.OBJECT },
 				INVOKEVIRTUAL));
 			instrList.append(InstructionConstants.POP); // discard return value
+            instrList.append(InstructionConstants.SWAP);
 		}
 		
 		compileNode(el.getBody(), methodGen, instrList, split);
@@ -1074,7 +1105,7 @@ class LSPJVMCompiler implements Constants
 		loopStart.setTarget(
 			instrList.append(InstructionConstants.DUP)); // DUP theIter
 		instrList.append(instrFactory.createInvoke(
-			ListIterator.class.getName(),
+			Iterator.class.getName(),
 			"hasNext",
 			Type.BOOLEAN,
 			Type.NO_ARGS,
@@ -1083,6 +1114,10 @@ class LSPJVMCompiler implements Constants
 				IFNE, atStartOfLoop));
 		
 		instrList.append(InstructionConstants.POP); // POP theIter
+		if (el.getStatusObject() != null)
+		{
+            instrList.append(InstructionConstants.POP); // POP status
+        }
 	}
 		
 
@@ -1285,12 +1320,12 @@ class LSPJVMCompiler implements Constants
 		throws SAXException
 	{
 		Class type = compileExpr(expr, methodGen, instrList);
-		if (type != List.class)
+		if (type != Collection.class)
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToList",
-				Type.getType(List.class),
+				Type.getType(Collection.class),
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
 		}
@@ -1398,7 +1433,7 @@ class LSPJVMCompiler implements Constants
 		// Object o = env.lookup(varName);
 		instrList.append(instrFactory.createInvoke(
 			LSPPageBase.class.getName(),
-			"getVariableValue",
+			acceptNull ? "getVariableValueAcceptNull" : "getVariableValue",
 			Type.OBJECT,
 			new Type[] { Type.getType(Environment.class), Type.STRING },
 			INVOKESTATIC));				
@@ -2127,12 +2162,12 @@ class LSPJVMCompiler implements Constants
 				throw new LSPException(
 					"count() function must have 1 argument");
 
-			// List list = evalExprAsList(expr.getArg(0));
+			// Collection list = evalExprAsList(expr.getArg(0));
 			compileSubExprAsList(expr.getArg(0), methodGen, instrList);
 
 			// return new Double(list.length());
 			instrList.append(instrFactory.createInvoke(
-				List.class.getName(),
+				Collection.class.getName(),
 				"size",
 				Type.INT,
 				Type.NO_ARGS,
@@ -2168,11 +2203,11 @@ class LSPJVMCompiler implements Constants
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"fnSeq",
-				Type.getType(List.class),
+				Type.getType(Collection.class),
 				new Type[] { Type.DOUBLE, Type.DOUBLE, Type.DOUBLE },
 				INVOKESTATIC));											
 
-			return List.class;
+			return Collection.class;
 		}
 		else
 		{
@@ -2239,7 +2274,7 @@ class LSPJVMCompiler implements Constants
 
 		instrList.append(instrFactory.createInvoke(
 			LSPPageBase.class.getName(),
-			"getElementFromTuple",
+			acceptNull ? "getElementFromTupleAcceptNull" : "getElementFromTuple",
 			Type.OBJECT,
 			new Type[] { Type.getType(Map.class), Type.STRING },
 			INVOKESTATIC));		
@@ -2354,12 +2389,12 @@ class LSPJVMCompiler implements Constants
 		throws SAXException
 	{
 		Class type = compileSubExpr(expr, methodGen, instrList);
-		if (type != List.class)
+		if (type != Collection.class)
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
 				"convertToList",
-				Type.getType(List.class),
+				Type.getType(Collection.class),
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
 		}
