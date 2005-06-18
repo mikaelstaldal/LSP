@@ -55,8 +55,8 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage
 {
-    public static final String LSP_VERSION_NAME = "1.3.1";
-    public static final int LSP_VERSION_NUM = 131;
+    public static final String LSP_VERSION_NAME = "1.4";
+    public static final int LSP_VERSION_NUM = 140;
     
 
     /**
@@ -89,20 +89,6 @@ public interface LSPPage
      * From &lt;lsp:output&gt;.
 	 */
 	public Properties getOutputProperties();
-    
-
-    /**
-     * Set to <code>true</code> to accept reference to unbound variables
-     * and consider them to be the empty string. Default is <code>false</code>.
-     */
-    public void setAcceptNullVariables(boolean b);
-    
-    
-    /**
-     * Set to <code>true</code> to accept reference to non-existing tuple entries
-     * and consider them to be the empty string. Default is <code>false</code>. 
-     */
-    public void setAcceptNullTupleEntries(boolean b);
     
 
     /**
