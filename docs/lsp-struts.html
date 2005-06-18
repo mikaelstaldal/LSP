@@ -6,7 +6,7 @@
 <h1>LSP and Struts</h1>
 
 <p>LSP pages can be used as a View technology in the  
-<a href="http://struts.apache.org/">Struts</a> MVC framework.</p>
+<a target="_new" href="http://struts.apache.org/">Struts</a> MVC framework.</p>
 
 <p>Add the following element to your <code>struts-config.xml</code> file:</p>
 
@@ -15,6 +15,10 @@
 </pre>
 
 <p>This will recognize LSP pages using an <code>.lsp</code> extension.</p>
+
+<p>The compiled LSP pages should be placed in <code>WEB-INF/classes</code>.</p>
+
+<p>Place <code>lsprt.jar</code> in the same place as <code>struts.jar</code>.</p>
 
 <p><em>Note:</em> The Struts integration is rudimentary and not well tested. 
 It should be considered beta. Feedback is welcome.</p>

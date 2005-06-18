@@ -6,7 +6,7 @@
 <h1>LSP and Maverick</h1>
 
 <p>LSP pages can be used as a View technology in the  
-<a href="http://mav.sourceforge.net/">Maverick</a> MVC framework.</p>
+<a target="_new" href="http://mav.sourceforge.net/">Maverick</a> MVC framework.</p>
 
 <p>Add the following to your <code>maverick.xml</code> file:</p>
 
@@ -14,6 +14,41 @@
 &lt;modules&gt;
     &lt;view-factory type="lsp" provider="nu.staldal.lsp.maverick.LSPViewFactory"/&gt;
 &lt;/modules&gt;
+</pre>
+
+<p>LSP view factory supports the <code>default-bean-name</code>, 
+and LSP views the <code>bean</code> attribute to specify the name of the
+model. Default is "model". The model is passed as a top level variable to
+the LSP page, and can be accessed as a tuple in the LSP page.</p>
+
+<p>Use XSLT to transform the output of an LSP page. The LSP page will send 
+its output directly to the XSLT processor using SAX events, with no need for
+XML parsing. Please note that Maverick expects to find the XSLT stylesheets 
+along with the static content of your web application (and not in 
+<code>WEB-INF/classes</code>). The compiled LSP pages should be 
+placed in <code>WEB-INF/classes</code>.</p>
+
+<p>Place <code>lsprt.jar</code> in the same place as <code>maverick.jar</code> 
+(either both in in some shared CLASSPATH of your application server, 
+or both in the <code>WEB-INF/lib</code> directory of each web application 
+using LSP).</p>
+
+<p>Sample part of <code>maverick.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;maverick version="2.0" default-view-type="lsp" default-transform-type="xslt"&gt;
+
+  &lt;modules&gt;
+    &lt;view-factory type="lsp" provider="nu.staldal.lsp.maverick.LSPViewFactory"/&gt;
+  &lt;/modules&gt;
+
+  &lt;views&gt;
+    &lt;view id="loginRequired" path="loginRequired.lsp"&gt;
+      &lt;transform path="trimOutside.xsl"/&gt;
+    &lt;/view&gt;
+  &lt;/views&gt;
+
+&lt;/maverick&gt;
 </pre>
 
 </body>
