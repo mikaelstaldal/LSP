@@ -75,11 +75,12 @@
 * Rudimentary Struts integration.
 
 
-next
-----
+1.4
+---
 * Any java.util.Collection can be used as the list type, 
   not only java.util.List.
 * int[], long[], short[], double[], float[] and boolean[] 
   can be used as the list type.
 * acceptNull parameter.
 * Maverick integration.
+
