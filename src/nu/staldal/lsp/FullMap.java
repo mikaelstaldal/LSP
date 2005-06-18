@@ -46,7 +46,7 @@ import java.util.Map;
 /**
  * A special implementation of {@link java.util.Map} which pretends to have
  * all possible keys. The {@link #get} method return <code>Void.TYPE</code> for
- * all keys. All other methors throws 
+ * all keys. All other methods throws 
  * {@link java.lang.UnsupportedOperationException}.
  *<p>
  * Implements the Singleton pattern.
