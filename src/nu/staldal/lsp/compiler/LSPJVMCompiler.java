@@ -1297,7 +1297,7 @@ class LSPJVMCompiler implements Constants
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
-				"convertToBoolean",
+				acceptNull ? "convertToBooleanAcceptNull" : "convertToBoolean",
 				Type.BOOLEAN,
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
@@ -1994,7 +1994,7 @@ class LSPJVMCompiler implements Constants
 			{
 				instrList.append(instrFactory.createInvoke(
 					LSPPageBase.class.getName(),
-					"convertToBoolean",
+					acceptNull ? "convertToBooleanAcceptNull" : "convertToBoolean",
 					Type.BOOLEAN,
 					new Type[] { Type.OBJECT },
 					INVOKESTATIC));
@@ -2366,7 +2366,7 @@ class LSPJVMCompiler implements Constants
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
-				"convertToBoolean",
+				acceptNull ? "convertToBooleanAcceptNull" : "convertToBoolean",
 				Type.BOOLEAN,
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));

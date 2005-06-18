@@ -383,6 +383,46 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
+	protected static boolean convertToBooleanAcceptNull(Object value) throws LSPException
+	{
+		if (value instanceof Boolean)
+		{
+			return ((Boolean)value).booleanValue();
+		}
+        else if (value == Void.TYPE)
+        {
+            return false;
+        }
+		else if (value instanceof Number)
+		{
+			double d = ((Number)value).doubleValue();
+			return !((d == 0) || Double.isNaN(d));
+		}
+		else if (value instanceof String)
+		{
+			return ((String)value).length() > 0;
+		}
+		else if (value instanceof Collection)
+		{
+			return !(((Collection)value).isEmpty());
+		}
+		else if (value instanceof FullMap)
+		{
+			return false;
+		}
+		else if (value instanceof Map)
+		{
+			return true;
+		}
+		else
+		{
+			throw new LSPException(
+				"Convert to Boolean not implemented for type "
+				+ value.getClass().getName());
+		}
+	}
+
+
 	protected static Collection convertToList(Object value) throws LSPException
 	{
 		if (value instanceof Collection) 
