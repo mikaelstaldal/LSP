@@ -1,0 +1,14 @@
+# sample, adapt for your system
+
+LSP=lsprt.jar
+LSPC=lspc.jar
+BCEL=bcel.jar
+Servlet=servlet.jar
+
+maverick.lib.dir=
+maverick.jar.dir=
+maverick.fb.dir=
+
+lsp.dist.dir=
+
+output.dir=

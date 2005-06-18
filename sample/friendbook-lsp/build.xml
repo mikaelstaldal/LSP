@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+
+<project name="friendbook-lsp" default="package" basedir=".">
+
+	<property file="build.properties"/>
+		
+    <taskdef name="lspc" classname="nu.staldal.lsp.compiler.LSPCompilerAntTask">
+      <classpath>
+        <pathelement location="${LSPC}" />
+        <pathelement location="${LSP}" />
+        <pathelement location="${BCEL}" />
+      </classpath>
+    </taskdef>  
+	
+	<path id="master-classpath">
+		<pathelement location="${maverick.jar.dir}/maverick.jar"/>
+		<fileset dir="${maverick.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<property name="debug" value="on" />
+
+	<target name="clean">
+		<delete dir="${output.dir}" />
+	</target>
+
+ 	<target name="classes">
+	  <mkdir dir="${output.dir}"/>
+	  <mkdir dir="${output.dir}/WEB-INF"/>
+	  <mkdir dir="${output.dir}/WEB-INF/classes"/>
+
+		<javac srcdir="${maverick.fb.dir}/javasrc"
+				destdir="${output.dir}/WEB-INF/classes"
+				debug="${debug}">
+			<classpath refid="master-classpath" />
+		</javac>
+
+      <copy todir="${output.dir}/WEB-INF/classes">
+        <fileset dir="${maverick.fb.dir}/javasrc">
+          <include name="**/*" />
+          <exclude name="**/*.java" />
+        </fileset>
+      </copy>
+	</target>
+
+    <target name="lsp">
+	   <lspc sourcepath="templates"
+             destdir="${output.dir}/WEB-INF/classes"
+             acceptNull="true">
+         <fileset dir="templates">
+           <include name="*.lsp" />
+         </fileset>
+       </lspc>    
+    </target>
+
+	<target name="package" depends="classes,lsp">
+
+      <copy todir="${output.dir}">
+		<fileset dir="content">
+          <include name="**/*" />
+        </fileset>
+		<fileset dir="${maverick.fb.dir}/content">
+          <include name="stylesheet.css" />
+        </fileset>
+      </copy>
+
+      <copy todir="${output.dir}/WEB-INF">
+        <fileset dir="WEB-INF">
+          <include name="**/*" />
+        </fileset>
+      </copy>
+
+	  <mkdir dir="${output.dir}/WEB-INF/lib"/>
+
+	  <copy todir="${output.dir}/WEB-INF/lib">
+			<fileset dir="${maverick.jar.dir}">
+				<include name="maverick.jar" />
+			</fileset>
+			<fileset dir="${maverick.lib.dir}">
+				<include name="commons-beanutils.jar" />
+				<include name="commons-collections.jar" />
+				<include name="jdom.jar" />
+				<include name="commons-logging-1.0.3.jar" />
+			</fileset>
+			<fileset dir="${lsp.dist.dir}">
+				<include name="lsprt.jar" />
+			</fileset>
+	  </copy>
+	</target>
+
+</project>

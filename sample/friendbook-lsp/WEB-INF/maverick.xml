@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+
+<maverick version="2.0" default-view-type="lsp" default-transform-type="xslt">
+
+    <modules>
+        <view-factory type="lsp" provider="nu.staldal.lsp.maverick.LSPViewFactory"/>
+    </modules>
+
+	<views>
+		<view id="loginRequired" path="loginRequired.lsp">
+			<transform path="trimOutside.xsl"/>
+		</view>
+	</views>
+
+	<commands>
+		<command name="welcome">
+			<view path="welcome.lsp" />
+		</command>
+
+		<command name="loginSubmit">
+			<controller class="org.infohazard.friendbook.ctl.LoginSubmit" />
+
+			<view name="success" type="redirect"/>
+			
+			<view name="error" path="loginFailed.lsp">
+				<transform path="trimOutside.xsl"/>
+			</view>
+		</command>
+
+		<command name="signup">
+			<view path="signup.lsp" bean="mymodel">
+				<transform path="trimOutside.xsl"/>
+			</view>
+		</command>
+
+		<command name="signupSubmit">
+			<controller class="org.infohazard.friendbook.ctl.SignupSubmit"/>
+			
+			<view name="success" type="redirect" path="edit.m"/>
+
+			<view name="error" path="signup.lsp" bean="mymodel">
+				<transform path="trimOutside.xsl"/>
+			</view>
+		</command>
+
+		<command name="edit">
+			<controller class="org.infohazard.friendbook.ctl.Edit"/>
+
+			<view ref="loginRequired"/>
+
+			<view name="success" path="edit.lsp">
+				<transform path="trimInside.xsl"/>
+			</view>
+		</command>
+
+		<command name="editSubmit">
+			<controller class="org.infohazard.friendbook.ctl.EditSubmit"/>
+			
+			<view ref="loginRequired"/>
+
+			<view name="success" type="redirect" path="friends.m"/>
+		</command>
+
+		<command name="changePassword">
+			<controller class="org.infohazard.friendbook.ctl.ChangePassword"/>
+			
+			<view ref="loginRequired"/>
+
+			<view name="success" path="changePassword.lsp">
+				<transform path="trimInside.xsl"/>
+			</view>
+		</command>
+
+		<command name="changePasswordSubmit">
+			<controller class="org.infohazard.friendbook.ctl.ChangePasswordSubmit"/>
+			
+			<view ref="loginRequired"/>
+
+			<view name="success" type="redirect" path="friends.m"/>
+
+			<view name="error" path="changePassword.lsp">
+				<transform path="trimInside.xsl"/>
+			</view>
+		</command>
+
+		<command name="logout">
+			<controller class="org.infohazard.friendbook.ctl.Logout"/>
+			
+			<view ref="loginRequired"/>
+
+			<view name="success" type="redirect" path="welcome.m"/>
+		</command>
+
+		<command name="friends">
+			<controller class="org.infohazard.friendbook.ctl.Friends"/>
+			
+			<view ref="loginRequired"/>
+
+			<view name="success" path="friends.lsp">
+				<transform path="trimInside.xsl"/>
+			</view>
+		</command>
+	</commands>
+
+</maverick>
