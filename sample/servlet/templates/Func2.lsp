@@ -16,6 +16,12 @@
     </lsp:for-each>    
     </ol>
 
+    <ul>
+    <lsp:for-each select="$intlist" var="ent">
+      <li><lsp:value-of select="$ent"/></li>
+    </lsp:for-each>    
+    </ul>
+
     <ol>
     <lsp:for-each select="$alist" var="ent" status="s">
       <li><lsp:value-of select="$s.index"/>: 

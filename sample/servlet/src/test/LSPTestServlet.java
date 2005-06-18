@@ -43,6 +43,7 @@ public class LSPTestServlet extends HttpServlet
         {
             req.setAttribute("hello", "Hi, there!");
             req.setAttribute("alist", new Object[] { "one", "two", "three", "four", "five" });
+            req.setAttribute("intlist", new int[] { 0, 11, 22, 33, 44 });
 
 			List food = new ArrayList();
 			Map m;

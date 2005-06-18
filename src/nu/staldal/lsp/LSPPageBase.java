@@ -52,6 +52,7 @@ import nu.staldal.util.*;
 import nu.staldal.lsp.expr.*;
 import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
+import nu.staldal.lsp.wrapper.*;
 
 
 public abstract class LSPPageBase implements LSPPage
@@ -219,16 +220,34 @@ public abstract class LSPPageBase implements LSPPage
 			return value;
 		else if (value instanceof Map) 
 			return value;
-		else if (value instanceof Object[])
+		else if (value instanceof int[])
         {
-            Object[] arr = (Object[])value;
-            if (arr.length == 0)
-                return Collections.EMPTY_LIST;
-            else
-                return Arrays.asList(arr);
+			return new IntArrayCollection((int[])value);
+        }
+		else if (value instanceof short[])
+        {
+			return new ShortArrayCollection((short[])value);
+        }
+		else if (value instanceof long[])
+        {
+			return new LongArrayCollection((long[])value);
+        }
+		else if (value instanceof float[])
+        {
+			return new FloatArrayCollection((float[])value);
+        }
+		else if (value instanceof double[])
+        {
+			return new DoubleArrayCollection((double[])value);
+        }
+		else if (value instanceof boolean[])
+        {
+			return new BooleanArrayCollection((boolean[])value);
         }
 		else if (value instanceof char[])
+        {
 			return new String((char[])value);
+        }
 		else if (value instanceof byte[])
 		{
 			try {
@@ -239,10 +258,26 @@ public abstract class LSPPageBase implements LSPPage
 				throw new Error("JVM doesn't support ISO-8859-1 encoding");	
 			}
 		}
-		else
-			throw new LSPException(
-				name + ": LSP cannot handle objects of type "
-				+ value.getClass().getName());
+		else if (value instanceof Object[])
+        {
+            Object[] arr = (Object[])value;
+            if (arr.length == 0)
+                return Collections.EMPTY_LIST;
+            else
+                return Arrays.asList(arr);
+        }
+        else
+        {
+            try {
+                return new org.apache.commons.collections.BeanMap(value);
+            }
+            catch (NoClassDefFoundError e)
+            {
+                throw new LSPException(
+				    name + ": LSP cannot handle objects of type "
+                    + value.getClass().getName());
+            }
+        }
 	}
 
 	
@@ -322,16 +357,16 @@ public abstract class LSPPageBase implements LSPPage
         {
             return false;
         }
-		if (value instanceof Number)
+		else if (value instanceof Number)
 		{
 			double d = ((Number)value).doubleValue();
 			return !((d == 0) || Double.isNaN(d));
 		}
-		if (value instanceof String)
+		else if (value instanceof String)
 		{
 			return ((String)value).length() > 0;
 		}
-		if (value instanceof Collection)
+		else if (value instanceof Collection)
 		{
 			return !(((Collection)value).isEmpty());
 		}

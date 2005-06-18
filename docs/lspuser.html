@@ -650,6 +650,39 @@ Extension libraries will get an <a href="javadoc/nu/staldal/lsp/servlet/LSPServl
 and the <code>javax.servlet.http.HttpServletResponse</code>) 
 as external context.</p>
 
+<h2>Passing parameters from Java to LSP</h2>
+
+<table border="1">
+<tr align="left"><th>LSP type</th><th>Java type</th></tr>
+
+<tr><td>boolean</td><td><code>java.lang.Boolean</code></td></tr>
+
+<tr><td>number</td><td><code>java.lang.Number</code><br/>(e.g. 
+<code>java.lang.Integer</code> or <code>java.lang.Dobule</code>)</td></tr>
+
+<tr><td>string</td><td><code>java.lang.String</code><br/><code>char[]</code><br/>
+<code>byte[]</code> (which is assumed to be encoded using ISO-8859-1)</td></tr>
+
+<tr><td>list</td><td><code>java.util.Collection</code> (only the <code>iterator()</code>, <code>size()</code> and <code>isEmpty()</code> methods are used)<br/>
+<code>Object[]</code><br/>
+<code>int[]</code><br/>
+<code>short[]</code><br/>
+<code>long[]</code><br/>
+<code>double[]</code><br/>
+<code>float[]</code><br/>
+<code>boolean[]</code><br/>
+</td></tr>
+
+<tr><td>tuple</td><td><code>java.util.Map</code> (only the <code>get(Object)</code> method with <code>java.lang.String</code> keys is used)</td></tr>
+
+</table>
+
+<p>A Java object of another type is considered to be a JavaBean, and an attempt
+is made to use its properties as a tuple. This uses the <code>BeanMap</code>
+class from <a href="http://jakarta.apache.org/commons/collections">Apache Commons Collections</a>,
+<code>commons-collections.jar</code> must be available in order for this to work.</p>
+
+
 <h2><a name="extlib">Extension libraries</a></h2>
 
 <p>Extension function and extension elements are implemented in Java with 
