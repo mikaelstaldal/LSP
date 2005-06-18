@@ -266,6 +266,10 @@ public abstract class LSPPageBase implements LSPPage
             else
                 return Arrays.asList(arr);
         }
+        else if (value instanceof java.sql.ResultSet)
+        {
+            return new LSPResultSetTupleList((java.sql.ResultSet)value);    
+        }
         else
         {
             try {

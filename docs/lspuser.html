@@ -677,6 +677,10 @@ as external context.</p>
 
 </table>
 
+<p>A <code>java.sql.ResultSet</code> will be used as a list of tuples. 
+However, it can only be traversed once, and the count function can only be 
+used after traversion.</p>
+
 <p>A Java object of another type is considered to be a JavaBean, and an attempt
 is made to use its properties as a tuple. This uses the <code>BeanMap</code>
 class from <a href="http://jakarta.apache.org/commons/collections">Apache Commons Collections</a>,
