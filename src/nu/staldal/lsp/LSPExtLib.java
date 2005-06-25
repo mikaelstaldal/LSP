@@ -77,7 +77,7 @@ import org.xml.sax.*;
  * <p>
  * After the LSP page is finished, the endPage method is invoked.
  * <p>
- * An easier way to implement an extension library is to extend the 
+ * An easier, but not as flexible, way to implement an extension library is to extend the 
  * {@link nu.staldal.lsp.SimpleExtLib} class.
  */
 public interface LSPExtLib
