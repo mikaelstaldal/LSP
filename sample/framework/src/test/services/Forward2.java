@@ -9,7 +9,7 @@ import javax.servlet.http.*;
 import nu.staldal.lsp.framework.*;
 
 
-public class Func1 implements Service
+public class Forward2 implements Service
 {
     
     public void init()
@@ -24,13 +24,7 @@ public class Func1 implements Service
                 Map pageParams, boolean isPost)
         throws ServletException, IOException
     {
-        if (request.getAttribute("forward") != null)
-            pageParams.put("str", "FOO forwarded");
-        else
-            pageParams.put("str", "FOO");
-        
-        pageParams.put("num", new Integer(4711));
-        return "Func1";
+        return "*Func1";
     }
     
     

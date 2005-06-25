@@ -112,57 +112,69 @@ public class DispatcherServlet extends HttpServlet
     {
         String serviceName = fixServiceName(request.getServletPath());
 
-        Service service;
-        try {
-            service = lookupService(serviceName);
-        }
-        catch (InstantiationException e)
-        {
-            throw new ServletException("Unable to create service", e);    
-        }
-        catch (IllegalAccessException e)
-        {
-            throw new ServletException("Unable to create service", e);    
-        }
-        
-        if (service == null)
-        {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                "Service \'"+serviceName+"\' not found");    
-            return;
-        }
-
         Map lspParams = new HashMap();
-        String templateName = 
-            service.execute(getServletContext(), request, response, lspParams, isPost);
-        if (templateName == null)
-        {
-            return;        
-        }
-
-        LSPPage lspPage = lspManager.getPage(templateName);
-        if (lspPage == null)
-        {
-            throw new ServletException("Template \'"+templateName+"\' not found");
-        }           
+        while (true)
+        {        
+            Service service;
+            try {
+                service = lookupService(serviceName);
+            }
+            catch (InstantiationException e)
+            {
+                throw new ServletException("Unable to create service", e);    
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new ServletException("Unable to create service", e);    
+            }
             
-		try {		
-			lspManager.executePage(lspPage, lspParams, request, response);
-		}
-		catch (SAXException e)
-		{
-            Exception ee = e.getException();
-            if (ee == null)
-                throw new ServletException(e);
-            if (ee instanceof IOException)
-                throw (IOException)ee;
-            else if (ee instanceof ServletException)
-                throw (ServletException)ee;
-            else if (ee instanceof RuntimeException)
-                throw (RuntimeException)ee;
-            else
-                throw new ServletException(ee);
-		}
+            if (service == null)
+            {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+                    "Service \'"+serviceName+"\' not found");    
+                return;
+            }
+    
+            String templateName = 
+                service.execute(getServletContext(), request, response, lspParams, isPost);
+            if (templateName == null || templateName.length() == 0)
+            {
+                break;        
+            }
+            else if (templateName.charAt(0) == '*')
+            { 
+                // Forward
+                serviceName = templateName.substring(1);
+                continue;
+            }
+            else 
+            {   // LSP page        
+                LSPPage lspPage = lspManager.getPage(templateName);
+                if (lspPage == null)
+                {
+                    throw new ServletException("Template \'"+templateName+"\' not found");
+                }           
+                    
+                try {		
+                    lspManager.executePage(lspPage, lspParams, request, response);
+                }
+                catch (SAXException e)
+                {
+                    Exception ee = e.getException();
+                    if (ee == null)
+                        throw new ServletException(e);
+                    if (ee instanceof IOException)
+                        throw (IOException)ee;
+                    else if (ee instanceof ServletException)
+                        throw (ServletException)ee;
+                    else if (ee instanceof RuntimeException)
+                        throw (RuntimeException)ee;
+                    else
+                        throw new ServletException(ee);
+                }
+                break;
+            }
+        }
     }
     
     

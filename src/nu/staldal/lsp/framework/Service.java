@@ -92,18 +92,22 @@ public interface Service
      * See the HTTP specification for differences between GET and POST 
      * requests.
      *<p>
-     * There are two choices to create the response:
+     * There are three choices to create the response:
      *<ol>
-     *<li>Return the name of a page to display, and fill the 
-     * <code>pageParams</code> object with parameters to this page.
-     * In that case, the <code>response</code> object should only be used
+     *<li>Return the name of a page to display, and fill 
+     * <code>pageParams</code> with parameters to this page.
+     * In this case, <code>response</code> should only be used
      * to set headers.</li>
-     *<li>Send the whole response by using the <code>response</code> object 
-     * and return <code>null</code>. In that case the framework will not 
-     * touch the <code>response</code> object after this method returns, and will not
-     * use the <code>pageParams</code> object. This can be used if you want
+     *<li>Send the whole response by using <code>response</code>  
+     * and return <code>null</code>. In this case the framework will not 
+     * touch <code>response</code> after this method returns, and will not
+     * use <code>pageParams</code>. This can be used if you want
      * to use {@link javax.servlet.http.HttpServletResponse#sendError sendError}
      * or {@link javax.servlet.http.HttpServletResponse#sendRedirect sendRedirect}</li>
+     *<li>Return name name of an other service to forward the request to,
+     * prefixed by "*". Any parameters added to <code>pageParams</code> are 
+     * retained. You may add attributes to <code>request</code> in order to
+     * comunicate with the other service.</li>
      *</ol>
      *
      * @param context     the {@link javax.servlet.ServletContext}
@@ -114,7 +118,8 @@ public interface Service
      *                    <code>false</code> if it's a GET or HEAD request 
      *
      * @return name of the page to view, or <code>null</code> to not 
-     *         use any page.
+     *         use any page, or the name of an other service to forward to
+     *         prefixed by "*"
      *
      * @throws ServletException  may throw ServletException
      * @throws IOException  may throw IOException
