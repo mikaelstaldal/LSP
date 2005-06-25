@@ -72,6 +72,28 @@ public interface Service
 {
     
     /**
+     * Request type GET.
+     */
+    public static final int REQUEST_GET = 1;
+
+    /**
+     * Request type POST.
+     */
+    public static final int REQUEST_POST = 2;
+    
+    /**
+     * Request type include.
+     */
+    public static final int REQUEST_INCLUDE = 3;
+    
+    
+    /**
+     * Prefix for request attributes for include attributes.
+     */
+    public static final String INCLUDE_ATTR_PREFIX = "nu.staldal.lsp.framework.INCLUDE.";
+    
+    
+    /**
      * Invoked once directly after instantiation, before first use.
      *
      * @throws ServletException  may throw ServletException
@@ -88,7 +110,7 @@ public interface Service
      * Is invoked for GET, POST and HEAD requests. You should not treat
      * HEAD requests differently than GET requests, the framework will
      * automatically discard the body and only send the headers. The
-     * <code>isPost</code> parameter will be set for POST requests.
+     * <code>requestType</code> parameter indicate the type of request.
      * See the HTTP specification for differences between GET and POST 
      * requests.
      *<p>
@@ -107,15 +129,19 @@ public interface Service
      *<li>Return name name of an other service to forward the request to,
      * prefixed by "*". Any parameters added to <code>pageParams</code> are 
      * retained. You may add attributes to <code>request</code> in order to
-     * comunicate with the other service.</li>
+     * comnunicate with the other service.</li>
      *</ol>
+     *
+     * If <code>requestType</code> is {@link #REQUEST_INCLUDE},
+     * only alt 1 may be used, and <code>response</code> may not be
+     * modified in any way.
      *
      * @param context     the {@link javax.servlet.ServletContext}
      * @param request     the {@link javax.servlet.http.HttpServletRequest}
      * @param response    the {@link javax.servlet.http.HttpServletResponse}
      * @param pageParams  map for page parameters
-     * @param isPost      <code>true</code> if this request is a POST request,
-     *                    <code>false</code> if it's a GET or HEAD request 
+     * @param requestType the type of request:
+     *        {@link #REQUEST_GET}, {@link #REQUEST_POST} or {@link #REQUEST_INCLUDE}  
      *
      * @return name of the page to view, or <code>null</code> to not 
      *         use any page, or the name of an other service to forward to
@@ -126,7 +152,7 @@ public interface Service
      */
     public String execute(ServletContext context, 
                 HttpServletRequest request, HttpServletResponse response,
-                Map pageParams, boolean isPost)
+                Map pageParams, int requestType)
         throws ServletException, IOException;
 
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <html xmlns:lsp="http://staldal.nu/LSP/core"
+      xmlns:s="http://staldal.nu/LSP/ExtLib/Servlet"
       xmlns="http://www.w3.org/1999/xhtml">
   <lsp:output method="html"/>
   <head>
@@ -10,6 +11,11 @@
     
     <p>string: <lsp:value-of select="$str"/></p>
     <p>number: <lsp:value-of select="$num"/></p>
+    
+    <h2>Include</h2>
+    <hr/>
+    <s:include name="Include" myattr="Include attribute value"/>
+    <hr/>    
   </body>
 </html>
 

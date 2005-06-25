@@ -13,11 +13,28 @@ any prefix may be used.</p>
 
 <h2>Elements</h2>
 
+<h4>s:include</h4>
+
+<p class="element-syntax">
+<a name="element-include"></a>&lt;s:include<br />
+&#160;&#160;<b>name</b> = <var>serviceName</var><br />
+&#160;&#160;<var>optionally more attributes</var>&#160;/&gt;
+</p>
+
+<p>The <code>s:include</code> element is used to include the output of 
+another service in the current page. Can only be used with the 
+<a href="lsp-framework.html">LSP framework</a>.</p>
+
+<p>Any attributes other than <code>name</code> will be make available to
+the included service as a request attribute with the prefix
+<a href="javadoc/nu/staldal/lsp/framework/Service.html#INCLUDE_ATTR_PREFIX">INCLUDE_ATTR_PREFIX</a>.</p>
+
+
 <h4>s:lang</h4>
 
 <p class="element-syntax">
 <a name="element-lang"></a>&lt;s:lang<br />
-&#160;&#160;key = <var>key</var>&#160;/&gt;
+&#160;&#160;<b>key</b> = <var>key</var>&#160;/&gt;
 </p>
 
 <p>The <code>s:lang</code> element is used for internationalization of LSP 

@@ -54,6 +54,9 @@ import nu.staldal.lsp.servlet.*;
 
 /**
  * Dispatcher Servlet for LSP framework.
+ *
+ * Will be available in {@link javax.servlet.ServletContext} under the key
+ * <code>nu.staldal.lsp.framework.DispatcherServlet</code>.
  */
 public class DispatcherServlet extends HttpServlet
 {
@@ -88,26 +91,28 @@ public class DispatcherServlet extends HttpServlet
         lspManager = LSPManager.getInstance(getServletContext(),
             Thread.currentThread().getContextClassLoader());
         
-        serviceCache = new HashMap();                
+        serviceCache = new HashMap();
+        
+        getServletContext().setAttribute(getClass().getName(), this);
     }
          
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        doService(request, response, false);
+        doService(request, response, Service.REQUEST_GET);
     }
     
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        doService(request, response, true);
+        doService(request, response, Service.REQUEST_POST);
     }
 
     
     private void doService(HttpServletRequest request, HttpServletResponse response,
-            boolean isPost)
+            int requestType)
         throws ServletException, IOException
     {
         String serviceName = fixServiceName(request.getServletPath());
@@ -136,7 +141,7 @@ public class DispatcherServlet extends HttpServlet
             }
     
             String templateName = 
-                service.execute(getServletContext(), request, response, lspParams, isPost);
+                service.execute(getServletContext(), request, response, lspParams, requestType);
             if (templateName == null || templateName.length() == 0)
             {
                 break;        
@@ -188,6 +193,8 @@ public class DispatcherServlet extends HttpServlet
         }
         
         serviceCache.clear();
+
+        getServletContext().removeAttribute(getClass().getName());        
     }
 
     
@@ -209,9 +216,17 @@ public class DispatcherServlet extends HttpServlet
     
     
     /**
+     * Lookup a service.
+     *
+     * @param serviceName  service name
+     *
      * @return <code>null</code> if not found
+     *
+     * @throws InstantiationException  if the service cannot be instantiated
+     * @throws IllegalAccessException  if the service cannot be instantiated
+     * @throws ServletException  if the service fails to initialize
      */
-    private synchronized Service lookupService(String serviceName)
+    public synchronized Service lookupService(String serviceName)
         throws InstantiationException, IllegalAccessException, ServletException
     {
         Service s = (Service)serviceCache.get(serviceName);

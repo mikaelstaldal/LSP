@@ -16,6 +16,7 @@
       <pathelement location="${LSPC}" />
       <pathelement location="${LSP}" />
       <pathelement location="${BCEL}" />
+      <pathelement location="${Servlet}" />
     </classpath>
   </taskdef>  
 

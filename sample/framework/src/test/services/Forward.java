@@ -21,7 +21,7 @@ public class Forward implements Service
     
     public String execute(ServletContext context, 
                 HttpServletRequest request, HttpServletResponse response,
-                Map pageParams, boolean isPost)
+                Map pageParams, int requestType)
         throws ServletException, IOException
     {
         request.setAttribute("forward", Boolean.TRUE);

@@ -22,7 +22,7 @@ public class Setlocale implements Service
     
     public String execute(ServletContext context, 
                 HttpServletRequest request, HttpServletResponse response,
-                Map pageParams, boolean isPost)
+                Map pageParams, int requestType)
         throws ServletException, IOException
     {
         HttpSession sess = request.getSession();
