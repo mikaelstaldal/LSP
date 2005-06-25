@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html>
+<head><title>LSP framework</title></head>
+<link rel="stylesheet" type="text/css" href="manual.css" />
+<body>
+<h1>LSP framework</h1>
+
+<p>This framework consists of a Servlet which dispatches requests to 
+services. Each service is a Java class implementing the 
+<a href="javadoc/nu/staldal/lsp/framework/Service.html">nu.staldal.lsp.framework.Service</a> 
+interface. The mapping is done based in the class name, so no explicit 
+mapping file is needed.</p>
+
+<p>If your web application is mounted on the URL 
+<var>http://www.example.com/myapp</var> and ServicePackages is set to 
+<var>com.example.services</var>, the following mapping is performed:</p>
+
+<table border="1">
+<tr align="left"><th>Request URL</th><th>Java class</th></tr>
+<tr><td>http://www.example.com/myapp/Foo.s</td><td>com.example.services.Foo</td></tr>
+<tr><td>http://www.example.com/myapp/Bar.s</td><td>com.example.services.Bar</td></tr>
+</table>
+
+<p>Add the following to your <code>WEB-INF/web.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;servlet&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;nu.staldal.lsp.framework.DispatcherServlet&lt;/servlet-class&gt;
+
+  &lt;init-param&gt;
+      &lt;param-name&gt;ServicePackages&lt;/param-name&gt;
+      &lt;param-value&gt;<var>list of Java packages, separated by comma</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;*.s&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</pre>
+
+<p>See the <code>sample/framework</code> directory for a complete example.</p>
+
+</body>
+</html>
+
