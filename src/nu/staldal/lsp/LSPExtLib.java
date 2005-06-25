@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2002, Mikael Ståldal
+ * Copyright (c) 2001-2005, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,9 @@ import org.xml.sax.*;
  * Functions may be overloaded based on number of arguments. 
  * <p>
  * After the LSP page is finished, the endPage method is invoked.
+ * <p>
+ * An easier way to implement an extension library is to extend the 
+ * {@link nu.staldal.lsp.SimpleExtLib} class.
  */
 public interface LSPExtLib
 {

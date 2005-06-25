@@ -84,3 +84,9 @@
 * acceptNull parameter.
 * Maverick integration.
 
+
+1.5
+---
+* SimpleExtLib for easier extension library implementation.
+* LSP framework.
+

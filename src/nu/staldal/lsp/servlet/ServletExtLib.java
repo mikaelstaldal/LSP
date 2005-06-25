@@ -52,71 +52,35 @@ import nu.staldal.lsp.*;
 /**
  * LSP extension library for Servlet environment.
  */
-public class ServletExtLib implements LSPExtLib, ContentHandler
+public class ServletExtLib extends SimpleExtLib
 {
-	private static final String myNamespaceURI = 
-		"http://staldal.nu/LSP/ExtLib/Servlet";
 		
-
-	private LSPServletContext context;
-    private String pageName;
-
-	private String currentLocalizeKey;
-	private ContentHandler sax;
-
-		
-	public void init(String namespaceURI)
-		throws LSPException
-	{
-		if (!myNamespaceURI.equals(namespaceURI))
-			throw new LSPException("Cannot handle " + namespaceURI);
-			
-		context = null;
-        pageName = null;
-	}
-
-
-	public void startPage(Object extContext, String pageName)
-		throws LSPException
-	{
-		context = (LSPServletContext)extContext;
-        this.pageName = pageName;
-		
-		currentLocalizeKey = null;
-		sax = null;
-	}
-	
-
-	public ContentHandler beforeElement(ContentHandler out)			
+    public String handleElement(String localName, Attributes atts)
 		throws SAXException
-	{
-		currentLocalizeKey = null;
-		sax = out;
-		
-		return this;
-	}
-	
-	
-	public String afterElement()
-		throws SAXException
-	{
-		try {
-			if (currentLocalizeKey != null)
-			{
-				if (currentLocalizeKey.length() == 0) return "";
-				String x = getLocalizedString(pageName, currentLocalizeKey);
-				if (x == null)
-					return '[' + currentLocalizeKey + ']';
-				else
-					return x;
-			}
-			else
-				return null;
-		}
-		finally {
-			currentLocalizeKey = null;
-			sax = null;
-		}
+    {
+        if (localName.equals("lang"))
+        {
+            String key = atts.getValue("", "key");
+            if (key == null || key.length() == 0)
+            {
+                throw new LSPException(
+                    "<s:lang> element missing \'key\' attribute");
+            }
+            
+            String x = getLocalizedString(pageName, key);
+            if (x == null)
+            {
+                return '[' + key + ']';
+            }
+            else
+            {
+                return x;
+            }
+        }
+        else
+        {
+            throw new LSPException("Unknown element: " + localName);	
+        }
 	}
 		
 
@@ -140,117 +104,14 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 	}
 	
 
-	public void endPage()
-	{
-		context = null;
-        pageName = null;
-	}
-	
-	
-    // ContentHandler implementation - START
-
-    public void setDocumentLocator(Locator locator)
-    {
-		// ignore
-    }
-
-    public void startDocument()
-        throws SAXException
-    {
-		throw new SAXException("Unexpected startDocument");
-    }
-
-    public void endDocument()
-        throws SAXException
-    {
-		throw new SAXException("Unexpected endDocument");
-    }
-
-    public void startElement(String namespaceURI, String localName,
-                             String qname, Attributes atts)
-        throws SAXException
-    {
-		if (myNamespaceURI.equals(namespaceURI))
-		{				
-			if (localName.equals("lang"))
-			{
-				String key = atts.getValue("", "key");
-				if (key == null || key.length() == 0)
-					throw new LSPException(
-						"<s:lang> element missing \'key\' attribute");
-				else
-					currentLocalizeKey = key;
-			}
-			else
-			{
-				throw new LSPException("Unknown element: " + localName);	
-			}
-		}
-		else
-		{
-			if (sax != null) sax.startElement(namespaceURI, localName, qname, atts);
-		}
-    }
-
-    public void endElement(String namespaceURI, String localName,
-                           String qname)
-        throws SAXException
-    {
-		if (myNamespaceURI.equals(namespaceURI))
-		{
-			// ignore
-		}
-		else
-		{
-			if (sax != null) sax.endElement(namespaceURI, localName, qname);
-		}
-    }
-
-    public void startPrefixMapping(String prefix, String uri)
-        throws SAXException
-    {
-		if (sax != null) sax.startPrefixMapping(prefix, uri);
-    }
-
-    public void endPrefixMapping(String prefix)
-        throws SAXException
-    {
-		if (sax != null) sax.endPrefixMapping(prefix);
-    }
-
-    public void characters(char[] chars, int start, int length)
-        throws SAXException
-    {
-		if (sax != null) sax.characters(chars, start, length);
-    }
-
-    public void ignorableWhitespace(char[] chars, int start, int length)
-        throws SAXException
-    {
-		if (sax != null) sax.ignorableWhitespace(chars, start, length);
-    }
-
-    public void processingInstruction(String target, String data)
-        throws SAXException
-    {
-		if (sax != null) sax.processingInstruction(target, data);
-    }
-
-    public void skippedEntity(String name)
-        throws SAXException
-    {
-		if (sax != null) sax.skippedEntity(name);
-    }
-
-    // ContentHandler implementation - END
-    
-
     /**
      * Return <code>null</code> if not found.
      */
     private String getLocalizedString(String pageName, String key)
         throws SAXException
     {
+        LSPServletContext context = (LSPServletContext)extContext; 
+        
         try {
             return context.getLSPManager().getLocalizedString(
                 context.getServletRequest(), pageName, key);
