@@ -77,7 +77,7 @@ public class LSPManager
 	 *
 	 * @param  context  the {@link javax.servlet.ServletContext}
 	 * @param  servletClassLoader  the {@link java.lang.ClassLoader} 
-	 *                             used to load LSPPages, use
+	 *                             used to load LSP pages, use
 	 *                             <code>getClass().getClassLoader()</code> 
 	 *                             on the Servlet
 	 *
@@ -289,6 +289,24 @@ public class LSPManager
     public static final String LOCALE_KEY = "nu.staldal.lsp.servlet.LOCALE";
     
     
+    /**
+     * Get a localized resource for the user's locale.
+     *
+     * Same as <code>getLocalizedString(request, null, key)</code>
+     *
+     * @param request  the {@link javax.servlet.http.HttpServletRequest} 
+     *                 to determine the user's locale
+     * @param key      the key
+     *
+     * @return <code>null</code> if not found.
+     */
+    public String getLocalizedString(HttpServletRequest request, String key)
+        throws Exception
+    {
+        return getLocalizedString(request, null, key); 
+    }
+    
+        
     /**
      * Get a localized resource for the user's locale.
      *<p>
