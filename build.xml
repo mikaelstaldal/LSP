@@ -208,6 +208,10 @@
   	<copy todir="dist/sample/servlet">
       <fileset dir="sample/servlet" excludes="build.properties"/>
     </copy>
+    <mkdir dir="dist/sample/framework"/>
+  	<copy todir="dist/sample/framework">
+      <fileset dir="sample/framework" excludes="build.properties"/>
+    </copy>
     <mkdir dir="dist/sample/friendbook-lsp"/>
   	<copy todir="dist/sample/friendbook-lsp">
       <fileset dir="sample/friendbook-lsp" excludes="build.properties"/>
