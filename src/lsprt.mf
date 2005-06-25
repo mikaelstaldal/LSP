@@ -1,1 +1,2 @@
 Main-Class: nu.staldal.lsp.LSPRunner
+Class-Path: commons-collections.jar
