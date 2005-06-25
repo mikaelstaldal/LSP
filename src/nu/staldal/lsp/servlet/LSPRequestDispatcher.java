@@ -99,7 +99,17 @@ final class LSPRequestDispatcher implements RequestDispatcher
 		}
 		catch (SAXException e)
 		{
-			throw new ServletException(e);	
+            Exception ee = e.getException();
+            if (ee == null)
+                throw new ServletException(e);
+            if (ee instanceof java.io.IOException)
+                throw (java.io.IOException)ee;
+            else if (ee instanceof ServletException)
+                throw (ServletException)ee;
+            else if (ee instanceof RuntimeException)
+                throw (RuntimeException)ee;
+            else
+                throw new ServletException(ee);
 		}
 	}
 	
