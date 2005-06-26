@@ -24,6 +24,8 @@ public class Func1 implements Service
                 Map pageParams, int requestType)
         throws ServletException, IOException
     {
+        request.getSession(true); // create a session
+        
         if (request.getAttribute("forward") != null)
             pageParams.put("str", "FOO forwarded");
         else

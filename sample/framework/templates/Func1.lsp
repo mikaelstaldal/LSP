@@ -11,6 +11,8 @@
     
     <p>string: <lsp:value-of select="$str"/></p>
     <p>number: <lsp:value-of select="$num"/></p>
+
+    <p><a href="{s:encodeURL('Func2.s')}">Shortcut to Func2</a></p>
     
     <h2>Include</h2>
     <hr/>

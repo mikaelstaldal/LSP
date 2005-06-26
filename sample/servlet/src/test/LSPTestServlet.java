@@ -35,6 +35,7 @@ public class LSPTestServlet extends HttpServlet
         
         if (function.equals("/FUNC1"))
         {
+            req.getSession(true); // create a session
             req.setAttribute("str", "FOO");
             req.setAttribute("num", new Integer(4711));
             lspManager.getRequestDispatcher("Func1").forward(req, resp);

@@ -248,6 +248,21 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 	}
 	
 
+	/**
+	 * Extension function <code>encodeURL(url)</code>.
+	 */
+	public Object _encodeURL(Object _url)
+		throws SAXException
+	{
+		if (!(_url instanceof String))
+			throw new LSPException(
+				"Argument to s:encodeURL(url) function must be a string"); 
+		String url = (String)_url;
+
+        return context.getServletResponse().encodeURL(url);			
+	}
+
+
 	public void endPage()
 	{
 		context = null;
