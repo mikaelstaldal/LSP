@@ -54,177 +54,137 @@ import nu.staldal.lsp.framework.*;
 /**
  * LSP extension library for Servlet environment.
  */
-public class ServletExtLib implements LSPExtLib, ContentHandler
+public class ServletExtLib extends SimpleExtLib
 {
 	private static final String myNamespaceURI = 
 		"http://staldal.nu/LSP/ExtLib/Servlet";
-		
-
-	private LSPServletContext context;
-    private String pageName;
-
-	private String currentLocalizeKey;
-	private String currentIncludeName;
-    private Attributes currentIncludeAtts;
-	private ContentHandler sax;
-
-		
-	public void init(String namespaceURI)
-		throws LSPException
-	{
-		if (!myNamespaceURI.equals(namespaceURI))
-			throw new LSPException("Cannot handle " + namespaceURI);
 			
-		context = null;
-        pageName = null;
-	}
-
-
-	public void startPage(Object extContext, String pageName)
-		throws LSPException
-	{
-		context = (LSPServletContext)extContext;
-        this.pageName = pageName;
-		
-		currentLocalizeKey = null;
-        currentIncludeName = null;
-        currentIncludeAtts = null;        
-		sax = null;
-	}
 	
-
-	public ContentHandler beforeElement(ContentHandler out)			
-		throws SAXException
-	{
-		currentLocalizeKey = null;
-        currentIncludeName = null;        
-        currentIncludeAtts = null;        
-		sax = out;
-		
-		return this;
-	}
-	
-	
-	public String afterElement()
-		throws SAXException
-	{
-		try {
-			if (currentLocalizeKey != null)
-			{
-				if (currentLocalizeKey.length() == 0) return "";
-				String x = getLocalizedString(pageName, currentLocalizeKey);
-				if (x == null)
-					return '[' + currentLocalizeKey + ']';
-				else
-					return x;
-			}
-			else if (currentIncludeName != null)
-            {
-                DispatcherServlet dispatcher = 
-                    (DispatcherServlet)context.getServletContext().getAttribute(DispatcherServlet.class.getName());
-                    
-                if (dispatcher == null)
-                {
-                    throw new LSPException(
-                        "<s:include> can only be used within the LSP framework");
-                }
-                
-                Service service;
-                try {
-                    service = dispatcher.lookupService(currentIncludeName);
-                }
-                catch (InstantiationException e)
-                {
-                    throw new SAXException("Unable to create service", e);    
-                }
-                catch (IllegalAccessException e)
-                {
-                    throw new SAXException("Unable to create service", e);    
-                }
-                catch (ServletException e)
-                {
-                    throw new SAXException("Unable to initialize service", e);    
-                }
-                
-                if (service == null)
-                {
-                    throw new LSPException( 
-                        "Included service \'"+currentIncludeName+"\' not found");    
-                }
+    public String handleElement(String localName, Attributes atts,
+                                ContentHandler out)
+        throws SAXException
+    {
+        LSPServletContext context = (LSPServletContext)extContext; 
         
-                Map lspParams = new HashMap();
-                String templateName;
-                for (int i = 0; i < currentIncludeAtts.getLength(); i++)
-                {
-                    String aName = currentIncludeAtts.getLocalName(i);
-                    String aValue = currentIncludeAtts.getValue(i);
-                    
-                    if (!aName.equals("name"))
-                    {
-                        context.getServletRequest().setAttribute(Service.INCLUDE_ATTR_PREFIX+aName, aValue);    
-                    }                    
-                }
-                try {
-                    templateName = 
-                        service.execute(context.getServletContext(), 
-                                        context.getServletRequest(), 
-                                        context.getServletResponse(),
-                                        lspParams, 
-                                        Service.REQUEST_INCLUDE);
-                }
-                catch (ServletException e)
-                {
-                    Throwable ee = e.getRootCause();
-                    if (ee == null)
-                        throw new SAXException(e);
-                    else if (ee instanceof SAXException)
-                        throw (SAXException)ee;
-                    else if (ee instanceof RuntimeException)
-                        throw (RuntimeException)ee;
-                    else if (ee instanceof Error)
-                        throw (Error)ee;
-                    else
-                        throw new SAXException((Exception)ee);
-                }
-                catch (java.io.IOException e)
-                {
-                    throw new SAXException(e);
-                }
+        if (localName.equals("lang"))
+        {
+            String key = atts.getValue("", "key");
+            if (key == null || key.length() == 0)
+                throw new LSPException(
+                    "<s:lang> element missing \'key\' attribute");
+
+            String x = getLocalizedString(pageName, key, context);
+            if (x == null)
+                return '[' + key + ']';
+            else
+                return x;
+        }
+        else if (localName.equals("include"))
+        {
+            String name = atts.getValue("", "name");
+            if (name == null || name.length() == 0)
+                throw new LSPException(
+                    "<s:include> element missing \'name\' attribute");
+
+            DispatcherServlet dispatcher = 
+                (DispatcherServlet)context.getServletContext().getAttribute(
+                    DispatcherServlet.class.getName());
                 
-                if (templateName == null || templateName.length() == 0)
+            if (dispatcher == null)
+            {
+                throw new LSPException(
+                    "<s:include> can only be used within the LSP framework");
+            }
+            
+            Service service;
+            try {
+                service = dispatcher.lookupService(name);
+            }
+            catch (InstantiationException e)
+            {
+                throw new SAXException("Unable to create service", e);    
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new SAXException("Unable to create service", e);    
+            }
+            catch (ServletException e)
+            {
+                throw new SAXException("Unable to initialize service", e);    
+            }
+            
+            if (service == null)
+            {
+                throw new LSPException( 
+                    "Included service \'"+name+"\' not found");    
+            }
+    
+            Map lspParams = new HashMap();
+            String templateName;
+            for (int i = 0; i < atts.getLength(); i++)
+            {
+                String aName = atts.getLocalName(i);
+                String aValue = atts.getValue(i);
+                
+                if (!aName.equals("name"))
                 {
-                    throw new LSPException( 
-                        "Included service \'"+currentIncludeName+"\' didn\'t return any page");                    
-                }
-                else if (templateName.charAt(0) == '*')
-                {
-                    throw new LSPException( 
-                        "Included service \'"+currentIncludeName+"\' attempt to forward");                    
-                }
+                    context.getServletRequest().setAttribute(Service.INCLUDE_ATTR_PREFIX+aName, aValue);    
+                }                    
+            }
+            try {
+                templateName = 
+                    service.execute(context.getServletContext(), 
+                                    context.getServletRequest(), 
+                                    context.getServletResponse(),
+                                    lspParams, 
+                                    Service.REQUEST_INCLUDE);
+            }
+            catch (ServletException e)
+            {
+                Throwable ee = e.getRootCause();
+                if (ee == null)
+                    throw new SAXException(e);
+                else if (ee instanceof SAXException)
+                    throw (SAXException)ee;
+                else if (ee instanceof RuntimeException)
+                    throw (RuntimeException)ee;
+                else if (ee instanceof Error)
+                    throw (Error)ee;
                 else
-                {
-                    LSPPage lspPage = context.getLSPManager().getPage(templateName);
-                    if (lspPage == null)
-                    {
-                        throw new LSPException("Included template \'"+templateName+"\' not found");
-                    }           
-                        
-                    lspPage.execute(sax, lspParams, context);
-                                        
-                    return null;
-                }
+                    throw new SAXException((Exception)ee);
+            }
+            catch (java.io.IOException e)
+            {
+                throw new SAXException(e);
+            }
+            
+            if (templateName == null || templateName.length() == 0)
+            {
+                throw new LSPException( 
+                    "Included service \'"+name+"\' didn\'t return any page");                    
+            }
+            else if (templateName.charAt(0) == '*')
+            {
+                throw new LSPException( 
+                    "Included service \'"+name+"\' attempt to forward");                    
             }
             else
             {
-				return null;
+                LSPPage lspPage = context.getLSPManager().getPage(templateName);
+                if (lspPage == null)
+                {
+                    throw new LSPException("Included template \'"+templateName+"\' not found");
+                }           
+                    
+                lspPage.execute(out, lspParams, context);
+                                    
+                return null;
             }
-		}
-		finally {
-			currentLocalizeKey = null;
-			currentIncludeName = null;
-            currentIncludeAtts = null;        
-			sax = null;
-		}
+        }
+        else
+        {
+            throw new LSPException("Unknown element: " + localName);	
+        }
 	}
 		
 
@@ -234,13 +194,15 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 	public Object _lang(Object _key)
 		throws SAXException
 	{
+        LSPServletContext context = (LSPServletContext)extContext;
+        
 		if (!(_key instanceof String))
 			throw new LSPException(
 				"Argument to s:lang(key) function must be a string"); 
 		String key = (String)_key;
 
 		if (key == null || key.length() == 0) return "";
-		String x = getLocalizedString(pageName, key);
+		String x = getLocalizedString(pageName, key, context);
 		if (x == null)
 			return '[' + key + ']';
 		else
@@ -254,6 +216,8 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 	public Object _encodeURL(Object _url)
 		throws SAXException
 	{
+        LSPServletContext context = (LSPServletContext)extContext; 
+        
 		if (!(_url instanceof String))
 			throw new LSPException(
 				"Argument to s:encodeURL(url) function must be a string"); 
@@ -261,128 +225,13 @@ public class ServletExtLib implements LSPExtLib, ContentHandler
 
         return context.getServletResponse().encodeURL(url);			
 	}
-
-
-	public void endPage()
-	{
-		context = null;
-        pageName = null;
-	}
-	
-	
-    // ContentHandler implementation - START
-
-    public void setDocumentLocator(Locator locator)
-    {
-		// ignore
-    }
-
-    public void startDocument()
-        throws SAXException
-    {
-		throw new SAXException("Unexpected startDocument");
-    }
-
-    public void endDocument()
-        throws SAXException
-    {
-		throw new SAXException("Unexpected endDocument");
-    }
-
-    public void startElement(String namespaceURI, String localName,
-                             String qname, Attributes atts)
-        throws SAXException
-    {
-		if (myNamespaceURI.equals(namespaceURI))
-		{				
-			if (localName.equals("lang"))
-			{
-				String key = atts.getValue("", "key");
-				if (key == null || key.length() == 0)
-					throw new LSPException(
-						"<s:lang> element missing \'key\' attribute");
-				else
-					currentLocalizeKey = key;
-			}
-			else if (localName.equals("include"))
-			{
-				String name = atts.getValue("", "name");
-				if (name == null || name.length() == 0)
-					throw new LSPException(
-						"<s:include> element missing \'name\' attribute");
-				else
-					currentIncludeName = name;
-                
-                currentIncludeAtts = new AttributesImpl(atts);
-			}
-			else
-			{
-				throw new LSPException("Unknown element: " + localName);	
-			}
-		}
-		else
-		{
-			if (sax != null) sax.startElement(namespaceURI, localName, qname, atts);
-		}
-    }
-
-    public void endElement(String namespaceURI, String localName,
-                           String qname)
-        throws SAXException
-    {
-		if (myNamespaceURI.equals(namespaceURI))
-		{
-			// ignore
-		}
-		else
-		{
-			if (sax != null) sax.endElement(namespaceURI, localName, qname);
-		}
-    }
-
-    public void startPrefixMapping(String prefix, String uri)
-        throws SAXException
-    {
-		if (sax != null) sax.startPrefixMapping(prefix, uri);
-    }
-
-    public void endPrefixMapping(String prefix)
-        throws SAXException
-    {
-		if (sax != null) sax.endPrefixMapping(prefix);
-    }
-
-    public void characters(char[] chars, int start, int length)
-        throws SAXException
-    {
-		if (sax != null) sax.characters(chars, start, length);
-    }
-
-    public void ignorableWhitespace(char[] chars, int start, int length)
-        throws SAXException
-    {
-		if (sax != null) sax.ignorableWhitespace(chars, start, length);
-    }
-
-    public void processingInstruction(String target, String data)
-        throws SAXException
-    {
-		if (sax != null) sax.processingInstruction(target, data);
-    }
-
-    public void skippedEntity(String name)
-        throws SAXException
-    {
-		if (sax != null) sax.skippedEntity(name);
-    }
-
-    // ContentHandler implementation - END
     
 
     /**
      * Return <code>null</code> if not found.
      */
-    private String getLocalizedString(String pageName, String key)
+    private String getLocalizedString(String pageName, String key,
+                LSPServletContext context)
         throws SAXException
     {
         try {

@@ -52,6 +52,11 @@ import org.xml.sax.helpers.AttributesImpl;
  *<p>
  * You only need to implement the {@link #handleElement handleElement} 
  * method and methods for any extension functions.
+ * <p>
+ * The extlib can return data in one of two ways, write to the supplied 
+ * ContentHandler "out" (it must not invoke startDocument() or endDocument()), 
+ * or return a string from the {@link #handleElement handleElement} method. 
+ * It may not do both. 
  */
 public abstract class SimpleExtLib implements LSPExtLib, ContentHandler
 {		
@@ -118,7 +123,7 @@ public abstract class SimpleExtLib implements LSPExtLib, ContentHandler
 		try {
 			if (currentElement != null)
 			{
-                return handleElement(currentElement, currentAttributes);
+                return handleElement(currentElement, currentAttributes, sax);
 			}
 			else
             {
@@ -145,12 +150,15 @@ public abstract class SimpleExtLib implements LSPExtLib, ContentHandler
      * 
      * @param localName  the local name of the element
      * @param atts       the attributes of the element
+	 * @param out        where to write XML output
      *
-     * @return  the String to replace the extension element with
+     * @return  the String to replace the extension element with,
+     *          or <code>null</code> if <var>out</var> was used
      *
      * @throws SAXException  may throw SAXException 
      */
-    public abstract String handleElement(String localName, Attributes atts)
+    public abstract String handleElement(String localName, Attributes atts,
+            ContentHandler out)
         throws SAXException;
     
 	
