@@ -21,6 +21,10 @@ mapping file is needed.</p>
 <tr><td>http://www.example.com/myapp/Bar.s</td><td>com.example.services.Bar</td></tr>
 </table>
 
+<p>If no service is found, an attempt is made to load an LSP page with the 
+same name and display it without any parameters. If neither any LSP page is
+found, a HTTP 404 Not Found response is generated.</p>
+
 <p>This framework supports including from an LSP page by using the <code>&lt;s:include&gt;</code>
 element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.</p>
 
@@ -59,8 +63,7 @@ application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
   &lt;init-param&gt;
       &lt;param-name&gt;DefaultService&lt;/param-name&gt;
       &lt;param-value&gt;<var>Menu</var>&lt;/param-value&gt;
-  &lt;/init-param&gt;
-  
+  &lt;/init-param&gt;  
 &lt;/servlet&gt;
 
 &lt;servlet-mapping&gt;

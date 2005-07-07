@@ -119,7 +119,9 @@ public class DispatcherServlet extends HttpServlet
 
         Map lspParams = new HashMap();
         while (true)
-        {        
+        {
+            boolean noService = false;
+            
             Service service;
             try {
                 service = lookupService(serviceName);
@@ -132,21 +134,24 @@ public class DispatcherServlet extends HttpServlet
             {
                 throw new ServletException("Unable to create service", e);    
             }
+
+            String templateName;
             
             if (service == null)
             {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, 
-                    "Service \'"+serviceName+"\' not found");    
-                return;
+                noService = true;
+                templateName = serviceName;
             }
-    
-            String templateName = 
-                service.execute(getServletContext(), request, response, lspParams, requestType);
-            if (templateName == null || templateName.length() == 0)
+            else
+            {
+                templateName = 
+                    service.execute(getServletContext(), request, response, lspParams, requestType);
+            }
+            if (!noService && templateName == null || templateName.length() == 0)
             {
                 break;        
             }
-            else if (templateName.charAt(0) == '*')
+            else if (!noService && templateName.charAt(0) == '*')
             { 
                 // Forward
                 serviceName = templateName.substring(1);
@@ -157,7 +162,16 @@ public class DispatcherServlet extends HttpServlet
                 LSPPage lspPage = lspManager.getPage(templateName);
                 if (lspPage == null)
                 {
-                    throw new ServletException("Template \'"+templateName+"\' not found");
+                    if (noService)
+                    {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+                            "Service \'"+serviceName+"\' not found");    
+                        return;
+                    }
+                    else
+                    {                        
+                        throw new ServletException("Template \'"+templateName+"\' not found");
+                    }
                 }           
                     
                 try {		
@@ -199,19 +213,37 @@ public class DispatcherServlet extends HttpServlet
 
     
     /**
-     * Strip leading '/' and extension. 
-     * Never return <code>null</code>
+     * Strip leading '/' and extension, apply defaultService.
+     *
+     * @return never return <code>null</code>
      */
-    static String fixServiceName(String serviceName)
+    public String fixServiceName(String serviceName)
     {
-        if (serviceName == null) return "";
+        if (serviceName == null || serviceName.length() == 0)
+        {
+            if (defaultService == null)
+                return "";
+            else                    
+                return defaultService;                    
+        }
 
         int startPos = serviceName.startsWith("/") ? 1 : 0;
 
         int dot = serviceName.lastIndexOf('.');
         if (dot < 0) dot = serviceName.length();
         
-        return serviceName.substring(startPos, dot);
+        String ret = serviceName.substring(startPos, dot);
+        if (ret.length() == 0)
+        {
+            if (defaultService == null)
+                return "";
+            else                    
+                return defaultService;                    
+        }
+        else
+        {
+            return ret;    
+        }
     }    
     
     
@@ -233,21 +265,12 @@ public class DispatcherServlet extends HttpServlet
         
         if (s == null)
         {
-            String name = serviceName;
-            if (serviceName.length() == 0) // default service
-            {
-                if (defaultService == null)
-                    return null;
-                else                    
-                    name = defaultService;    
-            }
-            
             Class serviceClass = null;
             
             for (Iterator it = servicePackages.iterator(); it.hasNext(); )
             {
                 String packageName = (String)it.next();
-                String className = packageName + '.' + name;
+                String className = packageName + '.' + serviceName;
                 
                 try {
                     serviceClass = Class.forName(className, true, 
