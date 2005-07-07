@@ -17,9 +17,9 @@
 
   <init-param>
       <param-name>DefaultService</param-name>
-      <param-value>Func1</param-value>
-  </init-param>  
-  
+      <param-value>Menu</param-value>
+  </init-param>
+	
 </servlet>
 
 <servlet-mapping>
@@ -27,5 +27,8 @@
   <url-pattern>*.s</url-pattern>
 </servlet-mapping>
 
-</web-app>
+<welcome-file-list>
+  <welcome-file>.s</welcome-file>
+</welcome-file-list>
 
+</web-app>

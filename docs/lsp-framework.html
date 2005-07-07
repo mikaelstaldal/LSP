@@ -43,6 +43,38 @@ element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.<
 &lt;/servlet-mapping&gt;
 </pre>
 
+<p>If you want to use a service (e.g. <var>Menu</var>) as welcome page to your web 
+application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;servlet&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;nu.staldal.lsp.framework.DispatcherServlet&lt;/servlet-class&gt;
+
+  &lt;init-param&gt;
+      &lt;param-name&gt;ServicePackages&lt;/param-name&gt;
+      &lt;param-value&gt;<var>list of Java packages, separated by comma</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+
+  &lt;init-param&gt;
+      &lt;param-name&gt;DefaultService&lt;/param-name&gt;
+      &lt;param-value&gt;<var>Menu</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+  
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;*.s&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+
+&lt;welcome-file-list&gt;
+  &lt;welcome-file&gt;.s&lt;/welcome-file&gt;
+&lt;/welcome-file-list&gt;
+</pre>
+
+<p>and create an empty file <code>.s</code> in your web application.</p>
+ 
 <p>See the <code>sample/framework</code> directory for a complete example.</p>
 
 </body>
