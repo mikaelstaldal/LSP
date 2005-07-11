@@ -19,7 +19,6 @@
       <param-name>DefaultService</param-name>
       <param-value>Menu</param-value>
   </init-param>
-	
 </servlet>
 
 <servlet-mapping>
