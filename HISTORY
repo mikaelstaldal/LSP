@@ -90,3 +90,5 @@
 * SimpleExtLib for easier extension library implementation.
 * LSP framework.
 * encodeURL in Servlet extension library.
+* Custom transform factory for Maverick.
+

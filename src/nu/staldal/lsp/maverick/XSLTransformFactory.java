@@ -40,33 +40,32 @@
 
 package nu.staldal.lsp.maverick;
 
-import java.util.*;
-
 import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.xml.transform.*;
 
-import org.xml.sax.*;
+import org.infohazard.maverick.flow.*;
+import org.infohazard.maverick.util.XML;
+import org.jdom.Element;
 
-import org.infohazard.maverick.flow.*; 
-import org.infohazard.maverick.util.*; 
-import org.infohazard.maverick.view.DocumentViewFactory; 
-
-import nu.staldal.lsp.LSPPage;
 import nu.staldal.lsp.servlet.LSPManager;
 
 
 /**
- * Maverick ViewFactory to use LSP pages in a Maverick application.
+ * Maverick TransformFactory for using XSLT with LSP.
  */
-public class LSPViewFactory extends DocumentViewFactory
+public class XSLTransformFactory implements TransformFactory
 {
-    protected LSPManager lspManager;    
-
-
-    public void init(org.jdom.Element factoryNode, ServletConfig servletCfg)
-        throws ConfigException    
-    {
-        super.init(factoryNode, servletCfg);
+	protected ServletContext servletContext;
+	protected String defaultFinalContentType = "text/html";
+	protected URIResolver uriResolver = null;
+    
+    protected LSPManager lspManager;
+    
+    
+	public void init(Element factoryNode, ServletConfig servletCfg) 
+        throws ConfigException
+	{
+		this.servletContext = servletCfg.getServletContext();
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null)
@@ -76,24 +75,54 @@ public class LSPViewFactory extends DocumentViewFactory
         
         lspManager = LSPManager.getInstance(
             servletCfg.getServletContext(),
-            classLoader);            
-    }
-    
-    
-    public View createView(org.jdom.Element viewNode)
-        throws ConfigException
-    {
-		String path = XML.getValue(viewNode, "path");
-
-		if (path == null || path.length()==0)
-			throw new ConfigException("View node must have a path:  " + XML.toString(viewNode));
-
-        String beanName = XML.getValue(viewNode, ATTR_BEAN_NAME);
-        if (beanName == null || beanName.length()==0)
-            beanName = this.defaultBeanName;
+            classLoader);                    
         
-		return new LSPView(path, beanName, lspManager);                
-    }
+		if (factoryNode != null)
+		{
+			String ot = XML.getValue(factoryNode,  "default-output-type");
+			if (ot != null)
+				this.defaultFinalContentType = ot;
+
+			String uriResolverStr = XML.getValue(factoryNode, "uri-resolver");
+			if (uriResolverStr != null)
+			{
+				try
+				{
+					Class resolverClass = Class.forName(uriResolverStr, true, classLoader);
+					this.uriResolver = (URIResolver)resolverClass.newInstance();
+				}
+				catch (ClassNotFoundException e)
+				{
+					throw new ConfigException(e);
+				}
+				catch (InstantiationException e)
+				{
+					throw new ConfigException(e);
+				}
+				catch (IllegalAccessException e)
+				{
+					throw new ConfigException(e);
+				}
+			}
+		}
+	}
     
+    
+	public Transform createTransform(Element transformNode) 
+        throws ConfigException
+	{
+		String outputType = XML.getValue(transformNode, "output-type");
+		if (outputType == null)
+			outputType = this.defaultFinalContentType;
+
+		String path = XML.getValue(transformNode, "path");
+		if (path == null)
+			throw new ConfigException("XSLT transform node must have a \"path\" attribute:  "
+										+ XML.toString(transformNode));
+
+		return new XSLTransform(path, servletContext, 
+            lspManager, outputType, uriResolver);
+	}
+
 }
 

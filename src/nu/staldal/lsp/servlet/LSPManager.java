@@ -123,7 +123,18 @@ public class LSPManager
             throw new RuntimeException("Unable to load LocaleBundleFactory", e);    
         }
 	}
-
+    
+    
+    /**
+     * Obtain the underlaying {@link nu.staldal.lsp.LSPHelper}.
+     *
+     * @return the {@link nu.staldal.lsp.LSPHelper}     
+     */
+    public LSPHelper getLSPHelper()
+    {
+        return helper;    
+    }
+    
 	
 	/**
 	 * Get the {@link nu.staldal.lsp.LSPPage} instance for a given page name.

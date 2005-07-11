@@ -4,6 +4,7 @@
 
     <modules>
         <view-factory type="lsp" provider="nu.staldal.lsp.maverick.LSPViewFactory"/>
+        <transform-factory type="xslt" provider="nu.staldal.lsp.maverick.XSLTransformFactory"/>        
     </modules>
 
 	<views>

@@ -42,6 +42,13 @@
           <exclude name="**/*.java" />
         </fileset>
       </copy>
+
+      <copy todir="${output.dir}/WEB-INF/classes">
+        <fileset dir="classes">
+          <include name="**/*" />
+        </fileset>
+      </copy>
+
 	</target>
 
     <target name="lsp">

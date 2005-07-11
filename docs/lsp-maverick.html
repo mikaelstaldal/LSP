@@ -13,6 +13,7 @@
 <pre class="boxed">
 &lt;modules&gt;
     &lt;view-factory type="lsp" provider="nu.staldal.lsp.maverick.LSPViewFactory"/&gt;
+    &lt;transform-factory type="xslt" provider="nu.staldal.lsp.maverick.XSLTransformFactory"/&gt;        
 &lt;/modules&gt;
 </pre>
 
@@ -30,9 +31,9 @@ the LSP page, and can be accessed as a tuple in the LSP page.</p>
 
 <p>Use XSLT if you want to transform the output of an LSP page. The LSP page 
 will send its output directly to the XSLT processor using SAX events, with no need for
-XML parsing. Please note that Maverick expects to find the XSLT stylesheets 
-along with the static content of your web application (and not in 
-<code>WEB-INF/classes</code>).</p>
+XML parsing. If you install the custom XSLT transform factory as above, you
+can place the stylesheets in <code>WEB-INF/classes</code> (and not with the 
+web content as Maverick use to have it).</p>
 
 <p>Sample part of <code>maverick.xml</code> file:</p>
 
@@ -41,6 +42,7 @@ along with the static content of your web application (and not in
 
   &lt;modules&gt;
     &lt;view-factory type="lsp" provider="nu.staldal.lsp.maverick.LSPViewFactory"/&gt;
+    &lt;transform-factory type="xslt" provider="nu.staldal.lsp.maverick.XSLTransformFactory"/&gt;        
   &lt;/modules&gt;
 
   &lt;views&gt;
