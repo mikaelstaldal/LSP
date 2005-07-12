@@ -270,6 +270,10 @@ public abstract class LSPPageBase implements LSPPage
         {
             return new LSPResultSetTupleList((java.sql.ResultSet)value);    
         }
+        else if (value instanceof Enum)
+        {
+            return value.toString();    
+        }
         else
         {
             try {
