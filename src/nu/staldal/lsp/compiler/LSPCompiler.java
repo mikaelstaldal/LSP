@@ -169,6 +169,13 @@ public class LSPCompiler
             "startCompile() must be invoked before finishCompile()");
 
         Element tree = tb.getTree();
+        
+        // temporary lower current thread priority
+        int currentPriority = Thread.currentThread().getPriority();        
+        if (currentPriority > 3)
+        {
+            Thread.currentThread().setPriority(currentPriority-2);
+        }
 
 		long startTime = System.currentTimeMillis();
 		if (DEBUG) System.out.println("LSP Compile...");
@@ -228,6 +235,9 @@ public class LSPCompiler
 
 		long timeElapsed = System.currentTimeMillis()-startTime;
 		if (DEBUG) System.out.println("in " + timeElapsed + " ms");
+
+        // restore current thread priority
+        Thread.currentThread().setPriority(currentPriority);
     }
 	
 	

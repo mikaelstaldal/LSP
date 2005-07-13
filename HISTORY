@@ -92,4 +92,5 @@
 * encodeURL in Servlet extension library.
 * Custom XSLT transform factory for Maverick to load stylesheets from
   WEB-INF/classes and use the improved formatting code.
-
+* LSP compiler lower thread priority to be allow other processes to run 
+  during compilation.
