@@ -13,14 +13,14 @@ import nu.staldal.lsp.framework.*;
 public class Setlocale implements Service
 {
     
-    public void init()
+    public void init(ServletContext context)
         throws ServletException
     {
         // nothing to do
     }
          
     
-    public String execute(ServletContext context, 
+    public String execute(
                 HttpServletRequest request, HttpServletResponse response,
                 Map pageParams, int requestType)
         throws ServletException, IOException

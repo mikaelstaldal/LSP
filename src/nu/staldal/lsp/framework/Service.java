@@ -96,9 +96,11 @@ public interface Service
     /**
      * Invoked once directly after instantiation, before first use.
      *
+     * @param context the {@link javax.servlet.ServletContext}
+     *
      * @throws ServletException  may throw ServletException
      */
-    public void init()
+    public void init(ServletContext context)
         throws ServletException;
     
     
@@ -136,7 +138,6 @@ public interface Service
      * only alt 1 may be used, and <code>response</code> may not be
      * modified in any way.
      *
-     * @param context     the {@link javax.servlet.ServletContext}
      * @param request     the {@link javax.servlet.http.HttpServletRequest}
      * @param response    the {@link javax.servlet.http.HttpServletResponse}
      * @param pageParams  map for page parameters
@@ -150,8 +151,7 @@ public interface Service
      * @throws ServletException  may throw ServletException
      * @throws IOException  may throw IOException
      */
-    public String execute(ServletContext context, 
-                HttpServletRequest request, HttpServletResponse response,
+    public String execute(HttpServletRequest request, HttpServletResponse response,
                 Map pageParams, int requestType)
         throws ServletException, IOException;
 

@@ -129,8 +129,7 @@ public class ServletExtLib extends SimpleExtLib
             }
             try {
                 templateName = 
-                    service.execute(context.getServletContext(), 
-                                    context.getServletRequest(), 
+                    service.execute(context.getServletRequest(), 
                                     context.getServletResponse(),
                                     lspParams, 
                                     Service.REQUEST_INCLUDE);

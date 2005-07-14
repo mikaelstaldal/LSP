@@ -145,7 +145,7 @@ public class DispatcherServlet extends HttpServlet
             else
             {
                 templateName = 
-                    service.execute(getServletContext(), request, response, lspParams, requestType);
+                    service.execute(request, response, lspParams, requestType);
             }
             if (!noService && templateName == null || templateName.length() == 0)
             {
@@ -283,7 +283,7 @@ public class DispatcherServlet extends HttpServlet
             if (serviceClass == null) return null;
             
             s = (Service)serviceClass.newInstance();
-            s.init();
+            s.init(getServletContext());
             
             serviceCache.put(serviceName, s);
         }
