@@ -69,15 +69,11 @@ public class ServletExtLib extends SimpleExtLib
         if (localName.equals("lang"))
         {
             String key = atts.getValue("", "key");
-            if (key == null || key.length() == 0)
+            if (key == null)
                 throw new LSPException(
                     "<s:lang> element missing \'key\' attribute");
 
-            String x = getLocalizedString(pageName, key, context);
-            if (x == null)
-                return '[' + key + ']';
-            else
-                return x;
+            return lang(pageName, key, context);
         }
         else if (localName.equals("include"))
         {
@@ -201,12 +197,7 @@ public class ServletExtLib extends SimpleExtLib
 				"Argument to s:lang(key) function must be a string"); 
 		String key = (String)_key;
 
-		if (key == null || key.length() == 0) return "";
-		String x = getLocalizedString(pageName, key, context);
-		if (x == null)
-			return '[' + key + ']';
-		else
-			return x;			
+		return lang(pageName, key, context);
 	}
 	
 
@@ -223,20 +214,21 @@ public class ServletExtLib extends SimpleExtLib
 				"Argument to s:encodeURL(url) function must be a string"); 
 		String url = (String)_url;
 
-        return context.getServletResponse().encodeURL(url);			
+        return context.encodeURL(url);			
 	}
     
 
-    /**
-     * Return <code>null</code> if not found.
-     */
-    private String getLocalizedString(String pageName, String key,
+    private String lang(String pageName, String key,
                 LSPServletContext context)
         throws SAXException
     {
-        try {
-            return context.getLSPManager().getLocalizedString(
-                context.getServletRequest(), pageName, key);
+        try {        
+            if (key == null || key.length() == 0) return "";
+            String x = context.lang(pageName, key);
+            if (x == null)
+                return '[' + key + ']';
+            else
+                return x;			
         }
         catch (RuntimeException e)
         {

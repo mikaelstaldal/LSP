@@ -112,5 +112,56 @@ public class LSPServletContext
         return lspManager;
     }
 
+
+    /**
+     * Get a localized resource for the user's locale.
+     *<p>
+     * This method is used by the LSP ExtLib <code>lang</code> 
+     * element and function.
+     *
+     * @param pageName LSP page name, 
+     *                 or <code>null</code> for global resources only
+     * @param key      the key
+     *
+     * @return [<var>key</var>] if not found.
+     */
+    public String lang(String pageName, String key)
+        throws Exception
+    {
+        if (key == null || key.length() == 0) return "";
+        
+        String x = getLSPManager().getLocalizedString(
+            getServletRequest(), pageName, key);
+        if (x == null)
+            return '[' + key + ']';
+        else
+            return x;			
+    }
+
+
+    /**
+     * Get a localized resource for the user's locale.
+     *
+     * @param key      the key
+     *
+     * @return [<var>key</var>] if not found.
+     */
+    public String lang(String key)
+        throws Exception
+    {
+        return lang(null, key);
+    }
+    
+    
+    /**
+     * Encode an URL for Servlet session tracking.
+     * 
+     * @see javax.servlet.http.HttpServletResponse#encodeURL
+     */
+    public String encodeURL(String url)
+    {
+        return getServletResponse().encodeURL(url);
+    }
+    
 }
 
