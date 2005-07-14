@@ -79,8 +79,9 @@ public class LSPTestServlet extends HttpServlet
         }
         else if (function.equals("/SETLOCALE"))
         {
-            HttpSession sess = req.getSession();
+            HttpSession sess = req.getSession(true);
             sess.setAttribute(LSPManager.LOCALE_KEY, Locale.ENGLISH);
+            lspManager.getRequestDispatcher("Setlocale").forward(req, resp);
         }
         else if (function.equals("/FUNC4"))
         {
