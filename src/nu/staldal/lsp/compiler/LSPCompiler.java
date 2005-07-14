@@ -69,8 +69,6 @@ public class LSPCompiler
     private static final String XML_NS = "http://www.w3.org/XML/1998/namespace";
     private static final String XHTML_NS = "http://www.w3.org/1999/xhtml";
     
-    private boolean acceptNull;
-    
     private TreeBuilder tb;
 	private String pageName;
     private URLResolver resolver;
@@ -94,6 +92,8 @@ public class LSPCompiler
     private Properties outputProperties;
 
     private boolean xhtml;
+    private boolean acceptNull;
+    
 
     /**
 	 * Create a new LSP compiler. The instance may be reused, 
@@ -108,6 +108,7 @@ public class LSPCompiler
         resolver = null;
 		jvmCompiler = new LSPJVMCompiler();
         xhtml = false;
+        acceptNull = false;
     }
     
     
@@ -148,7 +149,7 @@ public class LSPCompiler
 		pageName = page;
         resolver = r;
         tb = new TreeBuilder();
-
+        
         return tb;
     }
 
