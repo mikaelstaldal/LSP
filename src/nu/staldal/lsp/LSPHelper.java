@@ -389,8 +389,7 @@ public class LSPHelper
 
                 th = tfactory.newTransformerHandler(
                     compiledStylesheet);
-                th.getTransformer().setParameter("lsp", extContext);
-    
+                    
                 Serializer ser = Serializer.createSerializer(
                     new StreamResult(out), outputProperties);
                 
@@ -449,7 +448,6 @@ public class LSPHelper
 
 			TransformerHandler th = tfactory.newTransformerHandler(
                 compiledStylesheet);
-            th.getTransformer().setParameter("lsp", extContext);                
             
             SAXResult saxResult = new SAXResult(ser);
             saxResult.setLexicalHandler(ser);
