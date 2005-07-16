@@ -292,12 +292,16 @@ public class LSPHelper
 	}
 
 
-    /**
-     * Get Content-Type for the LSP page. If the LSP page specifies a 
-     * stylesheet, the Content-Type for the stylesheet will be returned.
-     *<p>
-     * Includes encoding with the "charset" parameter.
-     */
+	/**
+     * Get Content-Type (Internet Media Type, MIME type) with character 
+	 * encoding as "charset" parameter from an LSP page. If the LSP page 
+	 * specifies a stylesheet, the Content-Type for the stylesheet will 
+	 * be returned.
+	 *
+	 * @param thePage the LSP page.
+	 *
+	 * @return the Content-Type
+	 */
     public String getContentType(LSPPage thePage)
     {
         Properties outputProperties = thePage.getOutputProperties();
@@ -317,11 +321,14 @@ public class LSPHelper
     }
 
     
-    /**
-     * Get Content-Type for the compiled stylesheet.
-     *<p>
-     * Includes encoding with the "charset" parameter.
-     */
+	/**
+     * Get Content-Type (Internet Media Type, MIME type) with character 
+	 * encoding as "charset" parameter from compiled stylesheet.
+	 *
+	 * @param compiledStylesheet the compiled stylesheet
+	 *
+	 * @return the Content-Type
+	 */
     public String getContentType(Templates compiledStylesheet)
     {
         Properties outputProperties = compiledStylesheet.getOutputProperties();
@@ -330,7 +337,18 @@ public class LSPHelper
     }
 
     
-    private String getContentType(Properties outputProperties)
+    /**
+     * Get Content-Type (Internet Media Type, MIME type) with character 
+	 * encoding as "charset" parameter from an JAXP/TrAX OutputProperties 
+	 * object.
+	 *
+	 * @see javax.xml.transform.OutputKeys
+	 *
+	 * @param outputProperties JAXP/TrAX OutputProperties object.
+	 *
+	 * @return the Content-Type
+     */
+    public static String getContentType(Properties outputProperties)
     {
         return outputProperties.getProperty(OutputKeys.MEDIA_TYPE)+
             "; charset="+outputProperties.getProperty(OutputKeys.ENCODING);
@@ -502,4 +520,3 @@ public class LSPHelper
     }
 	    
 }
-
