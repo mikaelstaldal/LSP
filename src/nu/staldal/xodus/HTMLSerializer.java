@@ -159,6 +159,12 @@ public class HTMLSerializer extends Serializer
     private void writeAttribute(String attQName, String attValue)
         throws IOException
     {
+        if (attQName.equals("xmlns") || attQName.startsWith("xmlns:"))
+        {
+            // do not output XML namespace declarations
+            return;
+        }
+        
         out.write(' ');
         out.write(attQName);
         

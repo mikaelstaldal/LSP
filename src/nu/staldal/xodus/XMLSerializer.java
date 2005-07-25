@@ -328,6 +328,9 @@ public class XMLSerializer extends Serializer
             out.write('<');
             out.write(qName);
 
+            boolean hasXmlns = false;
+            Set xmlns = new HashSet();
+            
             for (int j = 0; j<atts.getLength(); j++)
             {
                 String attQName = atts.getQName(j);
@@ -350,6 +353,14 @@ public class XMLSerializer extends Serializer
                         attQName = prefix + ':' + attLocalName;
                     }
                 }
+                if (attQName.equals("xmlns"))
+                {
+                    hasXmlns = true;    
+                }
+                else if (attQName.startsWith("xmlns:"))
+                {
+                    xmlns.add(attQName.substring(6));
+                }
                 writeAttribute(attQName, atts.getValue(j));                
             }
             
@@ -360,11 +371,19 @@ public class XMLSerializer extends Serializer
 				String uri = nsSup.getURI(prefix);
 				if (prefix.length() == 0)
 				{
-					writeAttribute("xmlns", uri);
+					if (!hasXmlns)
+                    {
+                        writeAttribute("xmlns", uri);
+                        hasXmlns = true;
+                    }
 				}
 				else
 				{
-					writeAttribute("xmlns:"+prefix, uri);
+					if (!xmlns.contains(prefix))
+                    {
+                        writeAttribute("xmlns:"+prefix, uri);
+                        xmlns.add(prefix);
+                    }
 				}
 			}            
         }
