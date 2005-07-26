@@ -666,7 +666,7 @@ public abstract class LSPPageBase implements LSPPage
 			char ch = a.charAt(i);
 			int index = b.indexOf(ch);
 			if (index < 0)
-				sb.append(c);
+				sb.append(ch);
 			else if (index >= c.length())
 				;
 			else
