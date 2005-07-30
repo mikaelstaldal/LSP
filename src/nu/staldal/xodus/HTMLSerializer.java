@@ -318,7 +318,7 @@ public class HTMLSerializer extends Serializer
         if (localName == null || localName.length() == 0)
         {
             localName = qName;
-        }        
+        }
         int colon = localName.indexOf(':');
         if (colon > -1)
         {
