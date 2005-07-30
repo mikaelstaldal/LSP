@@ -67,15 +67,7 @@ public class XSLTransformFactory implements TransformFactory
 	{
 		this.servletContext = servletCfg.getServletContext();
 
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null)
-        {
-            classLoader = DefaultControllerFactory.class.getClassLoader();
-        }
-        
-        lspManager = LSPManager.getInstance(
-            servletCfg.getServletContext(),
-            classLoader);                    
+        lspManager = LSPManager.getInstance(servletCfg.getServletContext());
         
 		if (factoryNode != null)
 		{
@@ -88,7 +80,8 @@ public class XSLTransformFactory implements TransformFactory
 			{
 				try
 				{
-					Class resolverClass = Class.forName(uriResolverStr, true, classLoader);
+					Class resolverClass = Class.forName(uriResolverStr, true, 
+                        lspManager.getClassLoader());
 					this.uriResolver = (URIResolver)resolverClass.newInstance();
 				}
 				catch (ClassNotFoundException e)

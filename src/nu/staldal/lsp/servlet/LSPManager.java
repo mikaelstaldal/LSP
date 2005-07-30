@@ -74,10 +74,27 @@ public class LSPManager
 	 * Obtain the the LSPManager instance for the given 
 	 * {@link javax.servlet.ServletContext}. Creates a new instance 
 	 * if nessecary.
-     *<p>
-     * <code>servletClassLoader</code> may be <code>null</code>
-     * if and only if an LSPManager already has been created for
-     * the given {@link javax.servlet.ServletContext}
+	 *
+	 * @param  context  the {@link javax.servlet.ServletContext}
+	 *
+	 * @return  the LSPManager instance for the given {@link javax.servlet.ServletContext}
+	 */
+	public static LSPManager getInstance(ServletContext context) 
+	{
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) 
+        {
+            classLoader = LSPManager.class.getClassLoader();
+        }
+        
+        return getInstance(context, classLoader);
+	}
+	
+
+	/**
+	 * Obtain the the LSPManager instance for the given 
+	 * {@link javax.servlet.ServletContext}. Creates a new instance 
+	 * if nessecary.
 	 *
 	 * @param  context  the {@link javax.servlet.ServletContext}
 	 * @param  servletClassLoader  the {@link java.lang.ClassLoader} 
@@ -86,9 +103,6 @@ public class LSPManager
 	 *                             on the Servlet.
 	 *
 	 * @return  the LSPManager instance for the given {@link javax.servlet.ServletContext}
-     *
-     * @throws NullPointerException if servletClassLoader is <code>null</code>
-     * and no LSPManager was previously created.
 	 */
 	public static LSPManager getInstance(ServletContext context, 
 										 ClassLoader servletClassLoader)
@@ -98,8 +112,6 @@ public class LSPManager
 		
 		if (manager == null)
 		{
-            if (servletClassLoader == null)
-                throw new NullPointerException("ClassLoader is null");
 			manager = new LSPManager(context, servletClassLoader);
 			context.setAttribute(LSPManager.class.getName(), manager);
 		}

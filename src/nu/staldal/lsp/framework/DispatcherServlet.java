@@ -88,8 +88,7 @@ public class DispatcherServlet extends HttpServlet
         
         defaultService = getInitParameter("DefaultService");
         
-        lspManager = LSPManager.getInstance(getServletContext(),
-            Thread.currentThread().getContextClassLoader());
+        lspManager = LSPManager.getInstance(getServletContext());
         
         serviceCache = new HashMap();
         

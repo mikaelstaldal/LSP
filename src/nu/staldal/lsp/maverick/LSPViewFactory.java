@@ -67,16 +67,8 @@ public class LSPViewFactory extends DocumentViewFactory
         throws ConfigException    
     {
         super.init(factoryNode, servletCfg);
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null)
-        {
-            classLoader = DefaultControllerFactory.class.getClassLoader();
-        }
         
-        lspManager = LSPManager.getInstance(
-            servletCfg.getServletContext(),
-            classLoader);            
+        lspManager = LSPManager.getInstance(servletCfg.getServletContext());
     }
     
     

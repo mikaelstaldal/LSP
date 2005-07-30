@@ -67,9 +67,7 @@ public class LSPRequestProcessor extends RequestProcessor
     {
         super.init(servlet, moduleConfig);
 
-        lspManager = LSPManager.getInstance(
-            servlet.getServletContext(),
-            Thread.currentThread().getContextClassLoader());            
+        lspManager = LSPManager.getInstance(servlet.getServletContext());
     }
     
     
