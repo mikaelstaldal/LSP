@@ -4,6 +4,7 @@
 ]>
 <root xmlns:lsp="http://staldal.nu/LSP/core"
       title="Friends">
+<lsp:root xmlns="http://www.w3.org/1999/xhtml">
 <p>
 	Here is a list of all of your friends:
 </p>
@@ -79,5 +80,6 @@
       </lsp:let>
 	</lsp:for-each>
 </table>
+</lsp:root>
 </root>
 

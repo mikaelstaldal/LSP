@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE root [
+<!DOCTYPE lsp:root [
 <!ENTITY nbsp "&#160;">
 ]>
 <!-- This file is imported. Expects to have a page variable "dest" already set. -->
-<lsp:root xmlns:lsp="http://staldal.nu/LSP/core">
+<lsp:root xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:lsp="http://staldal.nu/LSP/core">
 <form action="loginSubmit.m" method="post">
 	<input type="hidden" name="dest" value="{$dest}"/>
 	<table border="0">

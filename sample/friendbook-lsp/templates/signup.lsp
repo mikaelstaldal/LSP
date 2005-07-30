@@ -4,6 +4,7 @@
 ]>
 <root xmlns:lsp="http://staldal.nu/LSP/core"
       title="Sign Up">
+<lsp:root xmlns="http://www.w3.org/1999/xhtml">
 <p>
 	To create an account, just fill out this form:
 </p>
@@ -31,4 +32,6 @@
 		</tr>
 	</table>
 </form>
+</lsp:root>
 </root>
+

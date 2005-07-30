@@ -4,6 +4,7 @@
 ]>
 <root xmlns:lsp="http://staldal.nu/LSP/core"
       title="Change Password">
+<lsp:root xmlns="http://www.w3.org/1999/xhtml">
 <p>
 	You can change your password by entering it here:
 </p>
@@ -42,5 +43,6 @@
 		</tr>
 	</table>
 </form>
+</lsp:root>
 </root>
 

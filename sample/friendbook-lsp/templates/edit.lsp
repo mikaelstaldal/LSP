@@ -4,6 +4,7 @@
 ]>
 <root xmlns:lsp="http://staldal.nu/LSP/core"
       title="Edit Your Info">
+<lsp:root xmlns="http://www.w3.org/1999/xhtml">
 <p>
 	Please make your changes:
 </p>
@@ -120,5 +121,6 @@
 		</tr>
 	</table>
 </form>
+</lsp:root>
 </root>
 

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE root [
+<!DOCTYPE html [
 <!ENTITY nbsp "&#160;">
 ]>
-<html xmlns:lsp="http://staldal.nu/LSP/core">
+<html xmlns:lsp="http://staldal.nu/LSP/core"
+      xmlns="http://www.w3.org/1999/xhtml">
+    <lsp:output method="html" encoding="UTF-8"/>
 	<head>
 		<title>Welcome</title>
 		<link rel="stylesheet" href="stylesheet.css" type="text/css" />
