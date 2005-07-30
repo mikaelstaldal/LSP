@@ -223,13 +223,14 @@ public class HTMLSerializer extends Serializer
     {
         fixTag();
 
-        if (qName == null || qName.length() == 0)
+        if (localName == null || localName.length() == 0)
         {
-            qName = localName;    
-        }
-        else if (localName == null || localName.length() == 0)
+            localName = qName;
+        }        
+        int colon = localName.indexOf(':');
+        if (colon > -1)
         {
-            localName = qName;    
+            localName = localName.substring(colon+1);
         }
                 
         try {
@@ -238,7 +239,7 @@ public class HTMLSerializer extends Serializer
                 if (outputConfig.doctype_system != null)
                 {
                     out.write("<!DOCTYPE ");
-                    out.write(qName);
+                    out.write(localName);
                     out.write(' ');
                     writeExternalId(outputConfig.doctype_public,
                         outputConfig.doctype_system);
@@ -263,7 +264,7 @@ public class HTMLSerializer extends Serializer
                 }
             }
             out.write('<');
-            out.write(qName);
+            out.write(localName);
 
             for (int j = 0; j<atts.getLength(); j++)
             {
@@ -314,13 +315,14 @@ public class HTMLSerializer extends Serializer
     {        
         elementDepth--;
                 
-        if (qName == null || qName.length() == 0)
+        if (localName == null || localName.length() == 0)
         {
-            qName = localName;    
-        }
-        else if (localName == null || localName.length() == 0)
+            localName = qName;
+        }        
+        int colon = localName.indexOf(':');
+        if (colon > -1)
         {
-            localName = qName;    
+            localName = localName.substring(colon+1);
         }
                 
         try {
@@ -345,7 +347,7 @@ public class HTMLSerializer extends Serializer
                     }
                 }
                 out.write("</");
-                out.write(qName);
+                out.write(localName);
                 out.write('>');
             }
             emptyElement = false;
