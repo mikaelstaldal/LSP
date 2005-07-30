@@ -95,3 +95,5 @@
 * LSP compiler lower thread priority to be allow other processes to run 
   during compilation.
 * Fixed bug in LSP translate function.
+* HTML formatter strip namespace prefixes in all cases.
+
