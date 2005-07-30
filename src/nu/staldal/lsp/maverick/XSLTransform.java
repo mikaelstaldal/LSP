@@ -155,10 +155,16 @@ class XSLTransform implements Transform
             }                        
 			
 			if (this.getNext().isLast())
-                tHandler.setResult(new SAXResult(getSerializer(this.getNext().getResponse().getOutputStream(), 
-                    stylesheet)));                
+            {
+                ServletResponse response = this.getNext().getResponse();
+                response.setContentType(lspManager.getLSPHelper().getContentType(stylesheet));
+                tHandler.setResult(new SAXResult(getSerializer(response.getOutputStream(), 
+                    stylesheet)));
+            }
 			else
+            {
 				tHandler.setResult(new SAXResult(this.getNext().getSAXHandler()));
+            }
 				
 			return tHandler;
 		}
