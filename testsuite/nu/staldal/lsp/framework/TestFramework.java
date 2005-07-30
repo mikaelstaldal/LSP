@@ -10,25 +10,32 @@ public class TestFramework extends TestCase
         super(name);
     }
 
+    private DispatcherServlet dispatcherServlet;
+    
+    public  void setUp()
+    {
+        dispatcherServlet = new DispatcherServlet();
+    }
+    
     public void testFixServiceName() throws Exception
     {
-        assertEquals("foobar", DispatcherServlet.fixServiceName("foobar"));
-        assertEquals("foobar", DispatcherServlet.fixServiceName("/foobar"));
-        assertEquals("foobar", DispatcherServlet.fixServiceName("foobar.s"));
-        assertEquals("foobar", DispatcherServlet.fixServiceName("/foobar.s"));
-        assertEquals("foobar", DispatcherServlet.fixServiceName("foobar.sss"));
+        assertEquals("foobar", dispatcherServlet.fixServiceName("foobar"));
+        assertEquals("foobar", dispatcherServlet.fixServiceName("/foobar"));
+        assertEquals("foobar", dispatcherServlet.fixServiceName("foobar.s"));
+        assertEquals("foobar", dispatcherServlet.fixServiceName("/foobar.s"));
+        assertEquals("foobar", dispatcherServlet.fixServiceName("foobar.sss"));
         
-        assertEquals("foo/bar", DispatcherServlet.fixServiceName("foo/bar"));
-        assertEquals("foo/bar", DispatcherServlet.fixServiceName("/foo/bar"));
-        assertEquals("foo/bar", DispatcherServlet.fixServiceName("foo/bar.s"));
-        assertEquals("foo/bar", DispatcherServlet.fixServiceName("/foo/bar.s"));
+        assertEquals("foo/bar", dispatcherServlet.fixServiceName("foo/bar"));
+        assertEquals("foo/bar", dispatcherServlet.fixServiceName("/foo/bar"));
+        assertEquals("foo/bar", dispatcherServlet.fixServiceName("foo/bar.s"));
+        assertEquals("foo/bar", dispatcherServlet.fixServiceName("/foo/bar.s"));
         
-        assertEquals("", DispatcherServlet.fixServiceName(""));
-        assertEquals("", DispatcherServlet.fixServiceName("/"));
-        assertEquals("", DispatcherServlet.fixServiceName("/."));
-        assertEquals("", DispatcherServlet.fixServiceName("/.s"));
-        assertEquals("", DispatcherServlet.fixServiceName("/.sss"));
-        assertEquals("", DispatcherServlet.fixServiceName(null));
+        assertEquals("", dispatcherServlet.fixServiceName(""));
+        assertEquals("", dispatcherServlet.fixServiceName("/"));
+        assertEquals("", dispatcherServlet.fixServiceName("/."));
+        assertEquals("", dispatcherServlet.fixServiceName("/.s"));
+        assertEquals("", dispatcherServlet.fixServiceName("/.sss"));
+        assertEquals("", dispatcherServlet.fixServiceName(null));
 	}
 	
 }
