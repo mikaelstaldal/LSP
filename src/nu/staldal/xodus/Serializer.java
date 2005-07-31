@@ -41,6 +41,8 @@
 package nu.staldal.xodus;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -153,9 +155,34 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
         }
         else if (systemId != null)
         {
-            URL url = new URL(systemId);
-            URLConnection urlConn = url.openConnection();
-            OutputStream _os = urlConn.getOutputStream();
+            OutputStream _os;
+            
+            try {
+                URI uri = new URI(systemId);    
+                if (!uri.isAbsolute())
+                {
+                    File file = new File(systemId);
+                    _os = new FileOutputStream(file);
+                }
+                else if (uri.getScheme().equals("file"))
+                {
+                    File file = new File(uri);
+                    _os = new FileOutputStream(file);
+                }
+                else // Absolute URI with other scheme than "file:"
+                {
+                    URL url = uri.toURL();
+                    URLConnection urlConn = url.openConnection();
+                    urlConn.setDoOutput(true);
+                    _os = urlConn.getOutputStream();
+                }
+            }
+            catch (URISyntaxException e)
+            {
+                throw new IllegalArgumentException(
+                    "Invalid systemId: " + e.getMessage());    
+            }
+            
             os = new BufferedOutputStream(_os); 
             out = new XMLCharacterEncoder(os, outputConfig.encoding);
             doClose = true;
