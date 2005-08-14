@@ -54,6 +54,46 @@ values.</p>
 <p>Encodes an URL for session tracking, using the 
 <code>javax.servlet.http.HttpServletResponse.encodeURL(String)</code> method.</p>
 
+<h2>XSLT</h2>
+
+<p>The extension functions can also be used from XSLT stylesheets.</p>
+
+<p>The LSP runtime passes two parameters to XSLT stylesheets:<br />
+<code>context</code> The LSP context<br/>
+<code>pageName</code> The name of the current LSP page</p>
+
+<p>Use the static methods in the class 
+<a href="javadoc/nu/staldal/lsp/servlet/XSLTExt.html"><code>nu.staldal.lsp.servlet.XSLTExt</code></a>
+with <code>context</code> as the first parameter. Like this:</p>
+
+<pre class="boxed">
+&lt;xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version="1.0"
+                xmlns:s="java://nu.staldal.lsp.servlet.XSLTExt"                
+                exclude-result-prefixes="s">
+&lt;xsl:param name="context"/>
+&lt;xsl:param name="pageName"/>
+&lt;xsl:template match="/">
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title>Extension library test&lt;/title&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;h1&gt;Using extensions from XSLT&lt;/h1&gt;
+    &lt;p>&lt;a href="{s:encodeURL($context,'FUNC1')}"&gt;Link to FUNC1 with URLencoding&lt;/a&gt;&lt;/p&gt;
+   
+    &lt;p&gt;foo: &lt;xsl:value-of select="s:lang($context, 'foo')"/&gt;&lt;/p&gt;
+    &lt;p&gt;bar: &lt;xsl:value-of select="s:lang($context, 'bar')"/&gt;&lt;/p&gt;
+    &lt;p&gt;foobar: &lt;img alt="{s:lang($context,$pageName,'foobar')}" src="theimage.png"/&gt;&lt;/p&gt;
+   
+  &lt;/body&gt;
+&lt;/html&gt;
+&lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+</pre>
+
 </body>
 </html>
 

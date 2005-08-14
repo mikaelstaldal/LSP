@@ -389,6 +389,8 @@ public class LSPHelper
 
                 th = tfactory.newTransformerHandler(
                     compiledStylesheet);
+                th.getTransformer().setParameter("pageName", thePage.getPageName());
+                th.getTransformer().setParameter("context", extContext);
                     
                 Serializer ser = Serializer.createSerializer(
                     new StreamResult(out), outputProperties);
@@ -448,6 +450,8 @@ public class LSPHelper
 
 			TransformerHandler th = tfactory.newTransformerHandler(
                 compiledStylesheet);
+            th.getTransformer().setParameter("pageName", thePage.getPageName());
+            th.getTransformer().setParameter("context", extContext);
             
             SAXResult saxResult = new SAXResult(ser);
             saxResult.setLexicalHandler(ser);

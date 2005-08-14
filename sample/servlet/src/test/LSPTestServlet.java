@@ -111,6 +111,23 @@ public class LSPTestServlet extends HttpServlet
                 throw new ServletException(e);    
             }
         }
+        else if (function.equals("/XSLTEXT"))
+        {
+            req.getSession(true);
+            try {
+                Map lspParams = new HashMap();
+                LSPPage thePage = lspManager.getPage("xsltext");
+                lspManager.executePage(thePage, lspParams, "extlib.xsl", req, resp);
+            }
+            catch (org.xml.sax.SAXException e)
+            {
+                throw new ServletException(e);    
+            }
+            catch (javax.xml.transform.TransformerConfigurationException e)
+            {
+                throw new ServletException(e);    
+            }
+        }
         else
         {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, 
