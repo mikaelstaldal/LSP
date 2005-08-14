@@ -141,6 +141,8 @@ public class LSPServletContext
 
     /**
      * Get a localized resource for the user's locale.
+     *<p>
+     * Same as <code>lang(null,<var>key</var>)</code>.
      *
      * @param key      the key
      *
