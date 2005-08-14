@@ -165,7 +165,7 @@ public class OutputConfig
             if (isHtml)
                 media_type = "text/html";
             else if (isXhtml)
-                media_type = "application/xhtml+xml";
+                media_type = "text/html";
             else if (isText)
                 media_type = "text/plain";
             else

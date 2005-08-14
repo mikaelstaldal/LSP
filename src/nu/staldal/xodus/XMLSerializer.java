@@ -49,6 +49,7 @@ import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.ext.DeclHandler;
 import org.xml.sax.helpers.NamespaceSupport;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -400,7 +401,18 @@ public class XMLSerializer extends Serializer
         
         elementDepth++; 
         emptyElement = true;
-        wasStartTag = true;        
+        wasStartTag = true;
+
+        if (outputConfig.isXhtml && localName.equals("head"))
+        {
+            AttributesImpl metaAtts = new AttributesImpl();
+            metaAtts.addAttribute("", "http-equiv", "", "CDATA", 
+                "Content-Type");
+            metaAtts.addAttribute("", "content", "", "CDATA", 
+                outputConfig.media_type+"; charset="+outputConfig.encoding);
+            startElement("", "meta", "", metaAtts);
+            endElement("", "meta", "");            
+        }        
     }
 
 
