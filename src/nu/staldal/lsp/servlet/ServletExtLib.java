@@ -222,12 +222,7 @@ public class ServletExtLib extends SimpleExtLib
         throws SAXException
     {
         try {        
-            if (key == null || key.length() == 0) return "";
-            String x = context.lang(pageName, key);
-            if (x == null)
-                return '[' + key + ']';
-            else
-                return x;			
+            return context.lang(pageName, key);
         }
         catch (RuntimeException e)
         {
