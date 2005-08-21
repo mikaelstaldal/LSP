@@ -5,6 +5,7 @@ import java.io.*;
 import nu.staldal.syntax.ParseException;
 import nu.staldal.lsp.Utils;
 import nu.staldal.lsp.compiler.*;
+import nu.staldal.lsp.expr.*;
 
 import junit.framework.*;
 
@@ -28,6 +29,12 @@ public class TestLSPParse extends TestCase
     public static final String invalidExpr = "1+2-a-3.2*f($a.b,$c)";
     public static final String invalidExpr2 = "if 5 else 8";
 
+    public static final String correctName1 = "theName";
+    public static final String invalidName1 = "$theName";
+    public static final String invalidName2 = "theName$";
+    public static final String invalidName3 = "the.Name";
+    
+    
     public TestLSPParse(String name)
     {
         super(name);
@@ -58,9 +65,37 @@ public class TestLSPParse extends TestCase
                 + invalidExpr2);
         }
         catch (ParseException e)
-        { }
-
+        { }                
 	}
+    
+    public void testCheckName() throws ParseException
+    {
+        LSPExprParser.checkName(correctName1);        
+
+        try {
+            LSPExprParser.checkName(invalidName1);        
+            fail("Parser did not signal error in invalid name: "
+                + invalidName1);
+        }
+        catch (ParseException e)
+        { }                
+
+        try {
+            LSPExprParser.checkName(invalidName2);        
+            fail("Parser did not signal error in invalid name: "
+                + invalidName2);
+        }
+        catch (ParseException e)
+        { }                
+
+        try {
+            LSPExprParser.checkName(invalidName3);        
+            fail("Parser did not signal error in invalid name: "
+                + invalidName3);
+        }
+        catch (ParseException e)
+        { }                
+    }
 	
 	public static void main(String[] args)
 	{

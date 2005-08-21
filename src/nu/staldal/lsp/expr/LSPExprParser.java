@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2003, Mikael Ståldal
+ * Copyright (c) 2001-200`5, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -118,6 +118,31 @@ public class LSPExprParser extends Parser
 		}
 	}
 
+    
+	public static void checkName(String s)
+		throws ParseException
+	{
+		LSPExprLexer lexer = new LSPExprLexer(new StringReader(s));
+
+		try {  
+            Token token = lexer.nextToken();
+            if (!(token instanceof NameToken))
+            {
+                throw new ParseException("Illegal name", token);                
+            }
+            token = lexer.nextToken();
+            if (!(token instanceof EOFToken))
+            {
+                throw new ParseException(
+                    "Unexpected garbage after name", token);
+            }            
+		}
+		catch (java.io.IOException e)
+		{
+			throw new Error("IOException when reading from String: " + e);
+		}
+	}
+    
 
 	/**
 	 * Expr ::= OrExpr

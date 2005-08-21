@@ -1098,10 +1098,26 @@ public class LSPCompiler
 		throws SAXException
 	{
         removeWhitespace(el);
+
+		String var = getAttr("var", el, true);
+        try {
+            LSPExprParser.checkName(var);
+		}
+		catch (ParseException e)
+		{
+			throw fixParseException(el, var, e);
+		}
+            
+		String status = getAttr("status", el, false);
+        try {
+            if (status != null) LSPExprParser.checkName(status);
+        }
+		catch (ParseException e)
+		{
+			throw fixParseException(el, status, e);
+		}
         
 		String exp = getAttr("select", el, true);
-		String var = getAttr("var", el, true); 
-		String status = getAttr("status", el, false); 
 		try {
 			LSPExpr theList = LSPExpr.parseFromString(exp);
 
