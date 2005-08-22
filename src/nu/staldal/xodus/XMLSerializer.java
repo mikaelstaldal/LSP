@@ -410,8 +410,8 @@ public class XMLSerializer extends Serializer
                 "Content-Type");
             metaAtts.addAttribute("", "content", "", "CDATA", 
                 outputConfig.media_type+"; charset="+outputConfig.encoding);
-            startElement("", "meta", "", metaAtts);
-            endElement("", "meta", "");            
+            startElement(XHTML_NS, "meta", "", metaAtts);
+            endElement(XHTML_NS, "meta", "");            
         }        
     }
 
