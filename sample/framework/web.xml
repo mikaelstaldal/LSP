@@ -19,6 +19,11 @@
       <param-name>DefaultService</param-name>
       <param-value>Menu</param-value>
   </init-param>
+  
+  <init-param>
+      <param-name>RequestCharset</param-name>
+      <param-value>iso-8859-1</param-value>
+  </init-param>
 </servlet>
 
 <servlet-mapping>

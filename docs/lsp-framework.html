@@ -39,6 +39,11 @@ element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.<
       &lt;param-name&gt;ServicePackages&lt;/param-name&gt;
       &lt;param-value&gt;<var>list of Java packages, separated by comma</var>&lt;/param-value&gt;
   &lt;/init-param&gt;
+  
+  &lt;init-param&gt;
+      &lt;param-name&gt;RequestCharset&lt;/param-name&gt;
+      &lt;param-value&gt;<var>charset to decode HTTP requests with</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
 &lt;/servlet&gt;
 
 &lt;servlet-mapping&gt;
@@ -46,6 +51,9 @@ element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.<
   &lt;url-pattern&gt;*.s&lt;/url-pattern&gt;
 &lt;/servlet-mapping&gt;
 </pre>
+
+<p><code>RequestCharset</code> should be set to the same charset as your 
+HTML pages are encoded with.</p>
 
 <p>If you want to use a service (e.g. <var>Menu</var>) as welcome page to your web 
 application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
@@ -60,6 +68,11 @@ application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
       &lt;param-value&gt;<var>list of Java packages, separated by comma</var>&lt;/param-value&gt;
   &lt;/init-param&gt;
 
+  &lt;init-param&gt;
+      &lt;param-name&gt;RequestCharset&lt;/param-name&gt;
+      &lt;param-value&gt;<var>charset to decode HTTP requests with</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+  
   &lt;init-param&gt;
       &lt;param-name&gt;DefaultService&lt;/param-name&gt;
       &lt;param-value&gt;<var>Menu</var>&lt;/param-value&gt;

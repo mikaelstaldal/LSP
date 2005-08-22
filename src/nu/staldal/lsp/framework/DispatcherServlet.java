@@ -65,6 +65,7 @@ public class DispatcherServlet extends HttpServlet
     
     private List servicePackages;
     private String defaultService;
+    private String requestCharset;
 
     
     public void init()
@@ -87,6 +88,7 @@ public class DispatcherServlet extends HttpServlet
         }        
         
         defaultService = getInitParameter("DefaultService");
+        requestCharset = getInitParameter("RequestCharset");
         
         lspManager = LSPManager.getInstance(getServletContext());
         
@@ -114,6 +116,11 @@ public class DispatcherServlet extends HttpServlet
             int requestType)
         throws ServletException, IOException
     {
+        if (requestCharset != null)
+        {
+            request.setCharacterEncoding(requestCharset);
+        }
+        
         String serviceName = fixServiceName(request.getServletPath());
 
         Map lspParams = new HashMap();
