@@ -127,6 +127,8 @@ public class ServletExtLib extends SimpleExtLib
                     context.getServletRequest().setAttribute(Service.INCLUDE_ATTR_PREFIX+aName, aValue);    
                 }                    
             }
+            context.getServletRequest().setAttribute(
+                ContentHandler.class.getName(), out); 
             try {
                 templateName = 
                     service.execute(context.getServletRequest(), 
@@ -152,11 +154,12 @@ public class ServletExtLib extends SimpleExtLib
             {
                 throw new SAXException(e);
             }
+            context.getServletRequest().removeAttribute(
+                ContentHandler.class.getName()); 
             
             if (templateName == null || templateName.length() == 0)
             {
-                throw new LSPException( 
-                    "Included service \'"+name+"\' didn\'t return any page");                    
+                return null;
             }
             else if (templateName.charAt(0) == '*')
             {

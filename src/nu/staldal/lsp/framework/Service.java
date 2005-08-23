@@ -127,16 +127,22 @@ public interface Service
      * touch <code>response</code> after this method returns, and will not
      * use <code>pageParams</code>. This can be used if you want
      * to use {@link javax.servlet.http.HttpServletResponse#sendError sendError}
-     * or {@link javax.servlet.http.HttpServletResponse#sendRedirect sendRedirect}</li>
-     *<li>Return name name of an other service to forward the request to,
+     * or {@link javax.servlet.http.HttpServletResponse#sendRedirect sendRedirect}.</li>
+     *<li>Return the name of an other service to forward the request to,
      * prefixed by "*". Any parameters added to <code>pageParams</code> are 
      * retained. You may add attributes to <code>request</code> in order to
      * comnunicate with the other service.</li>
      *</ol>
-     *
+     *<p>
      * If <code>requestType</code> is {@link #REQUEST_INCLUDE},
-     * only alt 1 may be used, and <code>response</code> may not be
-     * modified in any way.
+     * choice 2 and 3 may not be used, and <code>response</code> may not be
+     * modified in any way. You may either return the name of page, or use 
+     * the SAX2 {@link org.xml.sax.ContentHandler} passed as a request 
+     * attribute with name "org.xml.sax.ContentHandler" and 
+     * return <code>null</code>. <code>startDocument</code> and 
+     * <code>endDocument</code> must not be invoked on the ContentHandler, use
+     * {@link nu.staldal.lsp.ContentHandlerStartEndDocumentFilter} if this is 
+     * a problem.
      *
      * @param request     the {@link javax.servlet.http.HttpServletRequest}
      * @param response    the {@link javax.servlet.http.HttpServletResponse}
