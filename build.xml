@@ -44,15 +44,27 @@
   <target name="lsprt" depends="init"
   	description="Compiles LSP runtime">
     <javac srcdir="${src.dir}"
-    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/util/*,nu/staldal/xodus/*,nu/staldal/lsp/framework/*"
+    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/util/*,nu/staldal/xodus/*"
            destdir="${build.classes}"
-           optimize="on" debug="on"
+           encoding="iso-8859-1"
            source="1.4" target="1.4"
+           optimize="on" debug="on"
            deprecation="on">
        <classpath location="${Servlet}" />
        <classpath location="${Struts}" />
        <classpath location="${Maverick}" />
        <classpath location="${JDOM}" />
+       <classpath location="${CommonsCollections}" />
+	</javac>
+    <javac srcdir="${src.dir}"
+    	   includes="nu/staldal/lsp/framework/*"
+           destdir="${build.classes}"
+           encoding="iso-8859-1"
+           source="1.5" target="1.5"
+           optimize="on" debug="on"
+           deprecation="on">
+       <compilerarg value="-Xlint:unchecked"/>           
+       <classpath location="${Servlet}" />
        <classpath location="${CommonsCollections}" />
 	</javac>
 
@@ -99,8 +111,9 @@
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/compiler/*,nu/staldal/lsp/compile/*,nu/staldal/lsp/expr/*,nu/staldal/lsp/compiledexpr/*,nu/staldal/syntax/**/*,nu/staldal/xtree/**/*"
            destdir="${build.classes}"
-           optimize="on" debug="on"
+           encoding="iso-8859-1"
            source="1.4" target="1.4"
+           optimize="on" debug="on"
            deprecation="on">
        <classpath location="${Ant}" />
        <classpath location="${BCEL}" />
@@ -139,8 +152,9 @@
     <javac srcdir="${src.testsuite}"
     	   includes="nu/staldal/**/*"
            destdir="${build.testsuite}"
+           encoding="iso-8859-1"
+           source="1.5" target="1.5"
            optimize="off" debug="on"
-           source="1.4" target="1.4"
            deprecation="on">
     	<classpath>
             <pathelement location="${build.classes}" />

@@ -61,9 +61,9 @@ import nu.staldal.lsp.servlet.*;
 public class DispatcherServlet extends HttpServlet
 {
     private LSPManager lspManager;
-    private Map serviceCache;
+    private Map<String,Service> serviceCache;
     
-    private List servicePackages;
+    private List<String> servicePackages;
     private String defaultService;
     private String requestCharset;
 
@@ -76,7 +76,7 @@ public class DispatcherServlet extends HttpServlet
         {
             throw new ServletException("ServicePackages parameter missing");    
         }
-        servicePackages = new ArrayList();
+        servicePackages = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(sp, ",");
         while (st.hasMoreTokens())
         {
@@ -92,7 +92,7 @@ public class DispatcherServlet extends HttpServlet
         
         lspManager = LSPManager.getInstance(getServletContext());
         
-        serviceCache = new HashMap();
+        serviceCache = new HashMap<String,Service>();
         
         getServletContext().setAttribute(getClass().getName(), this);
     }
@@ -123,7 +123,7 @@ public class DispatcherServlet extends HttpServlet
         
         String serviceName = fixServiceName(request.getServletPath());
 
-        Map lspParams = new HashMap();
+        Map<String,Object> pageParams = new HashMap<String,Object>();
         while (true)
         {
             boolean noService = false;
@@ -151,7 +151,7 @@ public class DispatcherServlet extends HttpServlet
             else
             {
                 templateName = 
-                    service.execute(request, response, lspParams, requestType);
+                    service.execute(request, response, pageParams, requestType);
             }
             if (!noService && templateName == null || templateName.length() == 0)
             {
@@ -181,7 +181,7 @@ public class DispatcherServlet extends HttpServlet
                 }           
                     
                 try {		
-                    lspManager.executePage(lspPage, lspParams, request, response);
+                    lspManager.executePage(lspPage, pageParams, request, response);
                 }
                 catch (SAXException e)
                 {

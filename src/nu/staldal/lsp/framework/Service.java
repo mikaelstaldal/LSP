@@ -158,7 +158,7 @@ public interface Service
      * @throws IOException  may throw IOException
      */
     public String execute(HttpServletRequest request, HttpServletResponse response,
-                Map pageParams, int requestType)
+                Map<String,Object> pageParams, int requestType)
         throws ServletException, IOException;
 
 
