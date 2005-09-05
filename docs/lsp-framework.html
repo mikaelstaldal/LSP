@@ -11,8 +11,9 @@
 <p>This framework consists of a Servlet which dispatches requests to 
 services. Each service is a Java class implementing the 
 <a href="javadoc/nu/staldal/lsp/framework/Service.html">nu.staldal.lsp.framework.Service</a> 
-interface. The mapping is done based in the class name, so no explicit 
-mapping file is needed.</p>
+interface (probably by extending the class
+<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html">nu.staldal.lsp.framework.ServiceBase</a>).
+The mapping is done based in the class name, so no explicit mapping file is needed.</p>
 
 <p>If your web application is mounted on the URL 
 <var>http://www.example.com/myapp</var> and ServicePackages is set to 
@@ -93,7 +94,26 @@ application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
 </pre>
 
 <p>and create an empty file <code>.s</code> in your web application.</p>
- 
+
+<p>If you want to use a database, add the following to your <code>WEB-INF/web.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;context-param&gt;
+  &lt;param-name&gt;nu.staldal.lsp.servlet.framework.DB&lt;/param-name&gt;
+  &lt;param-value&gt;<var>jdbc/TheDB</var>&lt;/param-value&gt;
+&lt;/context-param&gt;
+
+&lt;resource-ref&gt;
+  &lt;description&gt;The DB Connection&lt;/description&gt;
+  &lt;res-ref-name&gt;<var>jdbc/TheDB</var>&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+&lt;/resource-ref&gt;
+</pre>
+
+<p>and you will get a connection to the database in 
+<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html#execute(javax.servlet.http.HttpServletRequest,%20javax.servlet.http.HttpServletResponse,%20java.util.Map,%20int,%20nu.staldal.lsp.framework.DBConnection)">nu.staldal.lsp.framework.ServiceBase.execute()</a>.</p>
+
 <p>See the <code>sample/framework</code> directory for a complete example.</p>
 
 </body>
