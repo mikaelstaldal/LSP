@@ -15,8 +15,8 @@
 
   <property name="Name" value="LSP"/>
   <property name="name" value="lsp"/>
-  <property name="version" value="1.4"/>
-  <property name="ver" value="14"/>
+  <property name="version" value="1.5"/>
+  <property name="ver" value="15"/>
 
   <property name="src.dir" value="src"/>
   <property name="src.testsuite" value="testsuite"/>
@@ -192,6 +192,7 @@
     </copy>
     <mkdir dir="dist/docs/javadoc"/>
     <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet,nu.staldal.xodus,nu.staldal.lsp.framework"
+             encoding="iso-8859-1"
     	     sourcepath="${src.dir}"
              classpath="${Ant};${BCEL};${Servlet}"
              destdir="dist/docs/javadoc"
