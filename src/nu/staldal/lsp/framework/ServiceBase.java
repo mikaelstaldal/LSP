@@ -73,10 +73,13 @@ public abstract class ServiceBase implements Service
     /**
      * Invoked once directly after instantiation, before first use.
      *
-     * @throws ServletException  may throw ServletException
+     * @param dbConn  database connection, 
+     *                or <code>null</code> if no database has been setup
+     *
+     * @throws Exception  may throw any Exception
      */
-    public void init()
-        throws ServletException
+    public void init(DBConnection dbConn)
+        throws Exception
     {
         // nothing to do here, may be overridden
     }
@@ -103,7 +106,43 @@ public abstract class ServiceBase implements Service
             }
         }
         
-        init();
+        Connection conn = null;
+        try {
+            DBConnection dbConn = null;
+            if (mainDB != null)
+            {
+                conn = mainDB.getConnection();
+                conn.setAutoCommit(false);
+                dbConn = new DBConnection(conn);
+            }
+                    
+            init(dbConn);
+        }
+        catch (Exception e)
+        {
+            try {
+                if (conn != null) conn.rollback();
+            }
+            catch (SQLException ee)
+            {
+                throw new ServletException(ee);    
+            }                
+            
+            if (e instanceof ServletException)                
+                throw (ServletException)e;
+            else
+                throw new ServletException(e);   
+        }
+        finally
+        {
+            try {
+                if (conn != null) conn.close();
+            }
+            catch (SQLException ee)
+            {
+                throw new ServletException(ee);    
+            }                
+        }                    
     }
     
     
