@@ -533,6 +533,9 @@ Digits ::= [0-9]+
 <li>list seq(start, end, step?) - generate a list of numbers with the
 specified sequence</li>
 </ul>
+<ul>
+<li>boolean isset(variable) - is the variable bound?</li>
+</ul>
 
 <p>Namespaced functions are <a href="#extlib">extension functions</a>.</p>
 
@@ -548,7 +551,8 @@ in the outermost scope.</p>
 Unless the <code>acceptNull</code> parameter is passed to the compiler,
 then an unbound variable will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
-or the empty tuple.</p>
+or the empty tuple. The isset() function can be used to test if a 
+variable is bound, it will never generate runtime error.</p>
 
 
 <h2>The LSP compiler</h2>

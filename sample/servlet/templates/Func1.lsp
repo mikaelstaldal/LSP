@@ -12,6 +12,12 @@
     <p>string: <lsp:value-of select="$str"/></p>
     <p>number: <lsp:value-of select="$num"/></p>
     
+    <p>isset($str): <lsp:value-of select="isset($str)"/></p>
+    <p>isset($foo): <lsp:value-of select="isset($foo)"/></p>
+
+    <lsp:if test="isset($str)"><p>$str is set</p></lsp:if>
+    <lsp:if test="isset($foo)"><p>$foo is set</p></lsp:if>
+    
     <p><a href="{s:encodeURL('FUNC2')}">Shortcut to Func2</a></p>
   </body>
 </html>

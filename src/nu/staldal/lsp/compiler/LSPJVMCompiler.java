@@ -2209,6 +2209,41 @@ class LSPJVMCompiler implements Constants
 
 			return Collection.class;
 		}
+		else if (expr.getName().equals("isset"))
+		{
+			if (expr.numberOfArgs() != 1)
+				throw new LSPException(
+					"isset() function must have 1 argument");
+
+            LSPExpr theVar = expr.getArg(0);
+            if (theVar instanceof VariableReference)
+            {
+                String varName = ((VariableReference)theVar).getName(); 
+                
+                instrList.append(instrFactory.createLoad(
+                    Type.getType(Environment.class), PARAM_env));
+                instrList.append(new PUSH(constGen, varName));
+                // Object o = env.lookup(varName);
+                instrList.append(instrFactory.createInvoke(
+                    Environment.class.getName(),
+                    "lookup",
+                    Type.OBJECT,
+                    new Type[] { Type.OBJECT },
+                    INVOKEVIRTUAL));
+
+                instrList.append(instrFactory.createInvoke(
+                    Boolean.class.getName(), "valueOf",
+                    Type.getType(Boolean.class),
+                    new Type[] { Type.BOOLEAN },
+                    INVOKESTATIC));			                
+                return Boolean.class;
+            }
+            else                        
+            {
+				throw new LSPException(
+                    "argument to isset() function must be a variable"); 
+            }                                                                                
+		}
 		else
 		{
 			throw new LSPException("Unrecognized built-in function: "

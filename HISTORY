@@ -98,4 +98,5 @@
 * Fixed bug in LSP translate function.
 * HTML formatter strip namespace prefixes in all cases.
 * HTML and XHTML formatter add <meta> with charset declaration.
+* isset() function to test if a variable is set.
 
