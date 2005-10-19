@@ -7,7 +7,7 @@
      the Ant optional tasks installed -->
 <!-- Get Junit from http://sourceforge.net/projects/junit/ -->
 
-<!-- Assumes Java2 SDK 1.4 or later -->
+<!-- Assumes Java 1.5 or later -->
 
 <project name="LSP" default="lspc">
 
@@ -15,8 +15,8 @@
 
   <property name="Name" value="LSP"/>
   <property name="name" value="lsp"/>
-  <property name="version" value="1.5"/>
-  <property name="ver" value="15"/>
+  <property name="version" value="1.5.1"/>
+  <property name="ver" value="151"/>
 
   <property name="src.dir" value="src"/>
   <property name="src.testsuite" value="testsuite"/>
@@ -44,20 +44,15 @@
   <target name="lsprt" depends="init"
   	description="Compiles LSP runtime">
     <javac srcdir="${src.dir}"
-    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/util/*,nu/staldal/xodus/*"
+    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/util/*,nu/staldal/xodus/*"
            destdir="${build.classes}"
            encoding="iso-8859-1"
            source="1.4" target="1.4"
            optimize="on" debug="on"
            deprecation="on">
-       <classpath location="${Servlet}" />
-       <classpath location="${Struts}" />
-       <classpath location="${Maverick}" />
-       <classpath location="${JDOM}" />
-       <classpath location="${CommonsCollections}" />
 	</javac>
     <javac srcdir="${src.dir}"
-    	   includes="nu/staldal/lsp/framework/*"
+    	   includes="nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/lsp/framework/**/*"
            destdir="${build.classes}"
            encoding="iso-8859-1"
            source="1.5" target="1.5"
@@ -66,6 +61,9 @@
        <compilerarg value="-Xlint:unchecked"/>           
        <classpath location="${Servlet}" />
        <classpath location="${CommonsCollections}" />
+       <classpath location="${Struts}" />
+       <classpath location="${Maverick}" />
+       <classpath location="${JDOM}" />
 	</javac>
 
     <copy todir="${build.classes}" includeEmptyDirs="no">
