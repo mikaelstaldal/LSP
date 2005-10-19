@@ -2230,7 +2230,20 @@ class LSPJVMCompiler implements Constants
                     Type.OBJECT,
                     new Type[] { Type.OBJECT },
                     INVOKEVIRTUAL));
+                    
+                BranchInstruction branch1 = instrFactory.createBranchInstruction(
+                    IFNULL, null);
+                instrList.append(branch1);                
+                instrList.append(new PUSH(constGen, 1));
+                BranchInstruction branch2 = instrFactory.createBranchInstruction(
+                    GOTO, null);
+                instrList.append(branch2);                
 
+                branch1.setTarget(instrList.append(InstructionConstants.NOP));
+                instrList.append(new PUSH(constGen, 0));
+                
+                branch2.setTarget(instrList.append(InstructionConstants.NOP));
+                
                 instrList.append(instrFactory.createInvoke(
                     Boolean.class.getName(), "valueOf",
                     Type.getType(Boolean.class),
