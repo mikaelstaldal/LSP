@@ -213,10 +213,18 @@ public class DBConnection
     private void setParams(PreparedStatement pstmt, Object[] params)
         throws SQLException
     {
+        ParameterMetaData pMetaData = pstmt.getParameterMetaData();
         int i = 1;
         for (Object p : params)
         {
-            pstmt.setObject(i, p);
+            if (p == null)
+            {
+                pstmt.setNull(i, pMetaData.getParameterType(i));                
+            }
+            else
+            {
+                pstmt.setObject(i, p);
+            }
             i++;
         }        
     }
@@ -224,8 +232,6 @@ public class DBConnection
     
     /**
      * Execute a parameterized query.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.
      *<p>
      * You should pass the returned ResultSet to {@link #closeResultSet}
      * when done (unless you pass it to {@link #copyResultSet}).    
@@ -370,8 +376,6 @@ public class DBConnection
     /**
      * Execute a parameterized query which and return the first object
      * in the first row of the ResultSet. Any subsequent rows are ignored.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameter values
@@ -410,8 +414,6 @@ public class DBConnection
      * Execute a parameterized query which and return the first object
      * in the first row of the ResultSet as a string.
      * Any subsequent rows are ignored.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameter values
@@ -450,8 +452,6 @@ public class DBConnection
      * Execute a parameterized query which and return the first object
      * in the first row of the ResultSet as an integer.
      * Any subsequent rows are ignored.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameter values
@@ -490,8 +490,6 @@ public class DBConnection
      * Execute a parameterized query which and return the first object
      * in the first row of the ResultSet as a boolean.
      * Any subsequent rows are ignored.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameter values
@@ -514,8 +512,6 @@ public class DBConnection
     /**
      * Execute a parameterized query which and check whether it returns any 
      * rows.
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameter values
@@ -550,8 +546,6 @@ public class DBConnection
     
     /**
      * Execute a parameterized update query.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameters
@@ -580,8 +574,6 @@ public class DBConnection
     
     /**
      * Insert a row into a table     
-     *<p>
-     * Note that you cannot pass <code>null</code> as value.     
      * 
      * @param table   name of the table
      * @param colList list of column names, separated with ','
@@ -614,8 +606,6 @@ public class DBConnection
     
     /**
      * Delete rows from a table.     
-     *<p>
-     * Note that you cannot pass <code>null</code> as parameter.     
      * 
      * @param table        name of the table
      * @param whereClause  WHERE clause (without "WHERE") for the DELETE query,
@@ -623,7 +613,7 @@ public class DBConnection
      * @param params       parameter values to the WHERE clause 
      *
      * @return number of rows deleted, or -1 if FOREIGN KEY contraint 
-     *         violation (SQLState "23000") occurs
+     *         violation (SQLState "23") occurs
      *
      * @throws SQLException  if a database error occurs
      *
@@ -638,7 +628,7 @@ public class DBConnection
         }
         catch (SQLException e)
         {
-            if (e.getSQLState().equals("23000"))
+            if (e.getSQLState().startsWith("23"))
             {
                 return -1; 
             }
