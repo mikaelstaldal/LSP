@@ -539,7 +539,7 @@ public class HTMLSerializer extends Serializer
             out.write("PUBLIC \"");
             out.write(publicId);
             out.write('\"');
-            if (systemId != null)
+            if (systemId != null && systemId.length() > 0)
             {
                 out.write(" \"");
                 out.write(systemId);

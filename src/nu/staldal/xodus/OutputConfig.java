@@ -59,7 +59,7 @@ public class OutputConfig
     
     public String encoding;
     
-    public boolean omit_xml_declaration;
+    public int omit_xml_declaration;
     
     public boolean standalone;
     
@@ -109,11 +109,11 @@ public class OutputConfig
         
         String omit = outputProps.getProperty(OutputKeys.OMIT_XML_DECLARATION);
         if (omit == null)
-            omit_xml_declaration = false;
+            omit_xml_declaration = 0;
         else if (omit.equals("yes") || omit.equals("omit_xml_declaration"))
-            omit_xml_declaration = true;
+            omit_xml_declaration = 1;
         else if (omit.equals("no"))
-            omit_xml_declaration = false;
+            omit_xml_declaration = -1;
         else
             throw new IllegalArgumentException("Illegal omit_xml_declaration value: " + omit);                        
         

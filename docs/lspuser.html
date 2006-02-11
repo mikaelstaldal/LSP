@@ -75,155 +75,6 @@ The prupose of this whitespace stripping is to make it possible to
 format the LSP source in a readable way without getting a lot of unnessecary 
 whitespace in the output.</p>
 
-<h4>lsp:output</h4>
-
-<p class="element-syntax">
-<a name="element-output"></a>&lt;lsp:output<br />
-&#160;&#160;method = "xml" | "html" | "xhtml" | "text"<br />
-&#160;&#160;version = <var>nmtoken</var><br />
-&#160;&#160;encoding = <var>string</var><br />
-&#160;&#160;omit-xml-declaration = "yes" | "no"<br />
-&#160;&#160;standalone = "yes" | "no"<br />
-&#160;&#160;doctype-public = <var>string</var><br />
-&#160;&#160;doctype-system = <var>string</var><br />
-&#160;&#160;indent = "yes" | "no"<br />
-&#160;&#160;media-type = <var>string</var>&#160;<br />
-&#160;&#160;stylesheet = <var>string</var>&#160;/&gt;
-</p>
-
-<p>The <code>lsp:output</code> specifies how the LSP page should be 
-serialized to a byte stream. The parameters has the same meaning as in 
-<a href="http://www.w3.org/TR/xslt#output">XSLT 1.0</a>, with the addition of the 
-<code>xhtml</code> output method. The <code>xhtml</code> 
-output method works as the <code>xml</code> output method, but uses the applicable
-HTML compatibility guidelines published in 
-<a href="http://www.w3.org/TR/xhtml1/#guidelines">Appendix C of the XHTML 1.0 
-specification</a>.</p>
-
-<p>An LSP page may contain at most one <code>lsp:output</code> element.</p>
-
-<p>Any whitespace immediately before an <code>lsp:output</code> element 
-will be stripped, unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
-
-<p>If an LSP page contains no <code>lsp:output</code> element with a 
-<code>method</code> parameter, the output method is choosen as follows at
-compile time:</p>
-<ul>
-<li>If the root element is <code>html</code> (in any case) with 
-null namespace URI, the output method is <code>html</code>.</li>
-
-<li>If the root element is <code>html</code> (in lower case) with 
-namespace URI <code>http://www.w3.org/1999/xhtml</code>,
-the output method is <code>html</code> or <code>xhtml</code> depending
-on the "xhtml" parameter to the LSP compiler.</li>
-
-<li>In all other cases, the output method is <code>xml</code>.</li>
-
-</ul>
-
-<p>If the <code>stylesheet</code> parameter is specified, an XSLT stylesheet is used 
-to transform the output of the LSP page. All other output parameters are
-ignored and the output parameters in the XSLT stylesheet are used instead.
-Note that XSLT might use an other algorithm to determine default output 
-method, so be sure to always specify output method in the XSLT stylesheet 
-explicitly.</p> 
-
-
-<h4>lsp:import</h4>
-
-<p class="element-syntax">
-<a name="element-import"></a>&lt;lsp:import<br />
-&#160;&#160;<b>file</b> = <var>URL</var>&#160;/&gt;
-</p>
-
-<p>The <code>lsp:import</code> includes a file when the page is
-compiled. Any LSP elements and templates in the included file are
-processed.</p>
-
-
-<h4>lsp:root</h4>
-
-<p class="element-syntax">
-<a name="element-root"></a>&lt;lsp:root&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
-&lt;/lsp:root&gt;
-</p>
-
-<p>The <code>lsp:root</code> element simply outputs all of its content.
-Useful as document root element in files to be <code>import</code>ed. 
-The <code>lsp:root</code> element can be nested.</p>
-
-
-<h4>lsp:processing-instruction</h4>
-
-<p class="element-syntax">
-<a name="element-processing-instruction"></a>
-&lt;lsp:processing-instruction<br />
-&#160;&#160;<b>name</b> = { <var>ncname</var> }&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction, lsp:element, lsp:attribute) --&gt;<br />
-&lt;/lsp:processing-instruction&gt;
-</p>
-
-<p>The <code>lsp:processing-instruction</code> element creates a
-processing instruction in the output. The <code>name</code> attribute
-is used as the processing instruction target, and the character data of
-the content is used as the processing instruction data.
-<code>lsp:processing-instruction</code> may <em>not</em> be nested.</p>
-
-
-<h4>lsp:element</h4>
-
-<p class="element-syntax">
-<a name="element-element"></a>
-&lt;lsp:element<br />
-&#160;&#160;<b>name</b> = { <var>ncname</var> }<br />
-&#160;&#160;namespace = { <var>URI</var> }&gt;<br />
-&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
-&lt;/lsp:element&gt;
-</p>
-
-<p>The <code>lsp:element</code> element creates an
-element with a computed name in the output. The <code>name</code> attribute
-is used as the local name of the element. The <code>namespace</code> attribute
-is used as the namespace URI of the element (if omitted, the generated element
-will be in the default namespace in effect, set <code>namespace</code> 
-attribute to the empty string to explicitly place the element in the null 
-namespace).</p>
-
-<p><em>Note:</em> unlike the similar element in 
-XSLT, the value of the <code>name</code> attribute may not be a QName.</p>
-
-
-<h4>lsp:attribute</h4>
-
-<p class="element-syntax">
-<a name="element-attribute"></a>
-&lt;lsp:attribute<br />
-&#160;&#160;<b>name</b> = { <var>ncname</var> }<br />
-&#160;&#160;namespace = { <var>URI</var> }<br />
-&#160;&#160;<b>value</b> = { <var>any</var> }/&gt;
-</p>
-
-<p>The <code>lsp:attribute</code> element creates an attribute with a 
-computed name in the output. The attribute is attached to the enclosing 
-element (which may be either an <code>lsp:element</code> or a normal literal element).
-The <code>name</code> attribute is used as the local name of the attribute. The <code>namespace</code> attribute
-is used as the namespace URI of the atribute (if omitted, the created attribute
-will be in the null namespace). May not be used to create namespace 
-declarations, the value of the <code>name</code> attribute may not be "<code>xmlns</code>".
-It's an error to add an attribute with the same name as an already 
-existing attribute, this error cannot be detected at compile time, and will 
-result in undefined behaviour at runtime. If the <code>name</code> 
-expression evaluates to the empty string, no attribute will be created.</p>
-
-<p>Any whitespace immediately before an <code>lsp:attribute</code> element,
-and any whitespace immediately after an <code>lsp:attribute</code> element 
-if there are no more children of the parent element, will be stripped. 
-Unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
-
-<p><em>Note:</em> unlike the similar element in XSLT, the value of the 
-<code>name</code> attribute may not be a QName.</p>
-
 
 <h4>lsp:value-of</h4>
 
@@ -344,6 +195,160 @@ same name in the enclosing scope is shadowed.</p>
 <p>Each expression is evaulated, and the value is bound to a variable with the 
 same name as the attribute within the body of the <code>lsp:let</code> element.
 Any variables with the same name in the enclosing scope are shadowed.</p>
+
+
+<h4>lsp:import</h4>
+
+<p class="element-syntax">
+<a name="element-import"></a>&lt;lsp:import<br />
+&#160;&#160;<b>file</b> = <var>URL</var>&#160;/&gt;
+</p>
+
+<p>The <code>lsp:import</code> includes a file when the page is
+compiled. Any LSP elements and templates in the included file are
+processed.</p>
+
+
+<h4>lsp:root</h4>
+
+<p class="element-syntax">
+<a name="element-root"></a>&lt;lsp:root&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:root&gt;
+</p>
+
+<p>The <code>lsp:root</code> element simply outputs all of its content.
+Useful as document root element in files to be <code>import</code>ed. 
+The <code>lsp:root</code> element can be nested.</p>
+
+
+<h4>lsp:processing-instruction</h4>
+
+<p class="element-syntax">
+<a name="element-processing-instruction"></a>
+&lt;lsp:processing-instruction<br />
+&#160;&#160;<b>name</b> = { <var>ncname</var> }&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> &#160; -(lsp:processing-instruction, lsp:element, lsp:attribute) --&gt;<br />
+&lt;/lsp:processing-instruction&gt;
+</p>
+
+<p>The <code>lsp:processing-instruction</code> element creates a
+processing instruction in the output. The <code>name</code> attribute
+is used as the processing instruction target, and the character data of
+the content is used as the processing instruction data.
+<code>lsp:processing-instruction</code> may <em>not</em> be nested.</p>
+
+
+<h4>lsp:element</h4>
+
+<p class="element-syntax">
+<a name="element-element"></a>
+&lt;lsp:element<br />
+&#160;&#160;<b>name</b> = { <var>ncname</var> }<br />
+&#160;&#160;namespace = { <var>URI</var> }&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any</var> --&gt;<br />
+&lt;/lsp:element&gt;
+</p>
+
+<p>The <code>lsp:element</code> element creates an
+element with a computed name in the output. The <code>name</code> attribute
+is used as the local name of the element. The <code>namespace</code> attribute
+is used as the namespace URI of the element (if omitted, the generated element
+will be in the default namespace in effect, set <code>namespace</code> 
+attribute to the empty string to explicitly place the element in the null 
+namespace).</p>
+
+<p><em>Note:</em> unlike the similar element in 
+XSLT, the value of the <code>name</code> attribute may not be a QName.</p>
+
+
+<h4>lsp:attribute</h4>
+
+<p class="element-syntax">
+<a name="element-attribute"></a>
+&lt;lsp:attribute<br />
+&#160;&#160;<b>name</b> = { <var>ncname</var> }<br />
+&#160;&#160;namespace = { <var>URI</var> }<br />
+&#160;&#160;<b>value</b> = { <var>any</var> }/&gt;
+</p>
+
+<p>The <code>lsp:attribute</code> element creates an attribute with a 
+computed name in the output. The attribute is attached to the enclosing 
+element (which may be either an <code>lsp:element</code> or a normal literal element).
+The <code>name</code> attribute is used as the local name of the attribute. The <code>namespace</code> attribute
+is used as the namespace URI of the atribute (if omitted, the created attribute
+will be in the null namespace). May not be used to create namespace 
+declarations, the value of the <code>name</code> attribute may not be "<code>xmlns</code>".
+It's an error to add an attribute with the same name as an already 
+existing attribute, this error cannot be detected at compile time, and will 
+result in undefined behaviour at runtime. If the <code>name</code> 
+expression evaluates to the empty string, no attribute will be created.</p>
+
+<p>Any whitespace immediately before an <code>lsp:attribute</code> element,
+and any whitespace immediately after an <code>lsp:attribute</code> element 
+if there are no more children of the parent element, will be stripped. 
+Unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
+
+<p><em>Note:</em> unlike the similar element in XSLT, the value of the 
+<code>name</code> attribute may not be a QName.</p>
+
+<h4>lsp:output</h4>
+
+<p class="element-syntax">
+<a name="element-output"></a>&lt;lsp:output<br />
+&#160;&#160;method = "xml" | "html" | "xhtml" | "text"<br />
+&#160;&#160;version = <var>nmtoken</var><br />
+&#160;&#160;encoding = <var>string</var><br />
+&#160;&#160;omit-xml-declaration = "yes" | "no"<br />
+&#160;&#160;standalone = "yes" | "no"<br />
+&#160;&#160;doctype-public = <var>string</var><br />
+&#160;&#160;doctype-system = <var>string</var><br />
+&#160;&#160;indent = "yes" | "no"<br />
+&#160;&#160;media-type = <var>string</var>&#160;<br />
+&#160;&#160;stylesheet = <var>string</var>&#160;/&gt;
+</p>
+
+<p>The <code>lsp:output</code> specifies how the LSP page should be 
+serialized to a byte stream. The parameters has the same meaning as in 
+<a href="http://www.w3.org/TR/xslt#output">XSLT 1.0</a>, with the addition of the 
+<code>xhtml</code> output method. The <code>xhtml</code> 
+output method works as the <code>xml</code> output method, but uses the applicable
+HTML compatibility guidelines published in 
+<a href="http://www.w3.org/TR/xhtml1/#guidelines">Appendix C of the XHTML 1.0 
+specification</a>.</p>
+
+<p>The <code>xhtml</code> 
+output method attempt to omit the XML declaration by default, 
+set <code>omit-xml-declaration="no"</code> to force generation of 
+XML declaration.</p> 
+
+<p>An LSP page may contain at most one <code>lsp:output</code> element.</p>
+
+<p>Any whitespace immediately before an <code>lsp:output</code> element 
+will be stripped, unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
+
+<p>If an LSP page contains no <code>lsp:output</code> element with a 
+<code>method</code> parameter, the output method is choosen as follows at
+compile time:</p>
+<ul>
+<li>If the root element is <code>html</code> (in any case) with 
+null namespace URI, the output method is <code>html</code>.</li>
+
+<li>If the root element is <code>html</code> (in lower case) with 
+namespace URI <code>http://www.w3.org/1999/xhtml</code>,
+the output method is <code>html</code> or <code>xhtml</code> depending
+on the "xhtml" parameter to the LSP compiler.</li>
+
+<li>In all other cases, the output method is <code>xml</code>.</li>
+
+</ul>
+
+<p>If the <code>stylesheet</code> parameter is specified, an XSLT stylesheet is used 
+to transform the output of the LSP page. All other output parameters are
+ignored and the output parameters in the XSLT stylesheet are used instead.
+Note that XSLT might use an other algorithm to determine default output 
+method, so be sure to always specify output method in the XSLT stylesheet 
+explicitly.</p> 
 
 
 <a name="template"><h2>Templates</h2></a>

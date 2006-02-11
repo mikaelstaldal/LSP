@@ -100,3 +100,9 @@
 * HTML and XHTML formatter add <meta> with charset declaration.
 * isset() function to test if a variable is set.
 
+
+1.5.2
+-----
+* Allow setting parameters to SQL NULL using Java null value in DBConnection.
+* Possible to omit SYSTEM component in DOCTYPE in HTML serialization.
+* Possbile to force <?xml?> declaration in XHTML serialization.

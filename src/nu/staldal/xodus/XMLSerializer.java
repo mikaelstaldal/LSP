@@ -143,9 +143,10 @@ public class XMLSerializer extends Serializer
         wasStartTag = false;
         
         try {
-            if (!outputConfig.omit_xml_declaration)
+            if (outputConfig.omit_xml_declaration < 1)
             {
-                if (outputConfig.isXhtml 
+                if (outputConfig.isXhtml
+                        && outputConfig.omit_xml_declaration == 0
                         && !outputConfig.standalone
                         && outputConfig.version.equals("1.0")
                         && (outputConfig.encoding.equalsIgnoreCase("UTF-8")
