@@ -50,6 +50,7 @@
            source="1.4" target="1.4"
            optimize="on" debug="on"
            deprecation="on">
+       <classpath location="${CommonsCollections}" />
 	</javac>
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/lsp/framework/**/*"
