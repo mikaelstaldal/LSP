@@ -106,3 +106,9 @@
 * Allow setting parameters to SQL NULL using Java null value in DBConnection.
 * Possible to omit SYSTEM component in DOCTYPE in HTML serialization.
 * Possbile to force <?xml?> declaration in XHTML serialization.
+
+
+1.5.3
+-----
+* Fixed formatting of float values.
+

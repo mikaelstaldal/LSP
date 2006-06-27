@@ -40,6 +40,12 @@ public class LSPTestServlet extends HttpServlet
             req.setAttribute("num", new Integer(4711));
             lspManager.getRequestDispatcher("Func1").forward(req, resp);
         }
+        else if (function.equals("/FloatTest"))
+        {
+            req.setAttribute("theFloat", new Float(1.11));
+            req.setAttribute("theDouble", new Double(1.11));
+            lspManager.getRequestDispatcher("FloatTest").forward(req, resp);
+        }
         else if (function.equals("/FUNC2"))
         {
             req.setAttribute("hello", "Hi, there!");

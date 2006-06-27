@@ -307,7 +307,7 @@ public abstract class LSPPageBase implements LSPPage
 			else if (d == Math.rint(d))
 				return Long.toString(Math.round(d));
 			else
-				return Double.toString(d);
+				return value.toString();
 		}
 		else if (value instanceof Boolean)
 		{
