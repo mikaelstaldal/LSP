@@ -177,8 +177,13 @@
         <test name="nu.staldal.util.TestEnvironment"/>
         <test name="nu.staldal.lsp.TestLSPParse"/>
         <test name="nu.staldal.lsp.framework.TestFramework"/>
-        <test name="nu.staldal.xodus.TestXMLCharacterEncoderOutputStream"/>
+
+    	<!-- JUnit 4 tests, does not work with Ant yet
+    	<test name="nu.staldal.xodus.TestXMLCharacterEncoderOutputStream"/>
         <test name="nu.staldal.xodus.TestXMLCharacterEncodingWriter"/>
+        <test name="nu.staldal.xodus.TestXMLSerializer"/>
+        -->
+    	
         <classpath>
             <pathelement location="${build.classes}" />
             <pathelement location="${build.testsuite}" />
