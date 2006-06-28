@@ -1,7 +1,5 @@
 package nu.staldal.lsp;
 
-import java.io.*;
-
 import nu.staldal.syntax.ParseException;
 import nu.staldal.lsp.Utils;
 import nu.staldal.lsp.compiler.*;
