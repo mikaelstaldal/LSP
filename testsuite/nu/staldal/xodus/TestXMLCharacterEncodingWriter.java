@@ -17,14 +17,6 @@ import org.junit.Test;
  */
 public class TestXMLCharacterEncodingWriter
 {
-    /**
-     * Junit 3 compatibility. 
-     */
-    public static junit.framework.Test suite() 
-    { 
-        return new junit.framework.JUnit4TestAdapter(TestXMLCharacterEncodingWriter.class); 
-    }
-    
     StringWriter w;
     XMLCharacterEncoder encoder;
     
