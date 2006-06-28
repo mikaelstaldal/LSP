@@ -42,13 +42,8 @@ package nu.staldal.xodus;
 
 import java.util.*;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 
 import org.xml.sax.*;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.ext.DeclHandler;
-import org.xml.sax.helpers.NamespaceSupport;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.transform.Result;
