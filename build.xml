@@ -47,7 +47,7 @@
     	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/util/*,nu/staldal/xodus/*"
            destdir="${build.classes}"
            encoding="iso-8859-1"
-           source="1.4" target="1.4"
+           source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
        <classpath location="${CommonsCollections}" />

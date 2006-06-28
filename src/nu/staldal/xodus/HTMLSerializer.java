@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Ståldal
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -380,6 +380,54 @@ public class HTMLSerializer extends Serializer
     }
 
 
+    public void characters(CharSequence cs)
+	    throws SAXException
+    {
+        wasEndTag = false;
+        wasStartTag = false;
+
+        fixTag();
+        
+        try {
+            if (disableOutputEscaping || nestedCDATA > 0
+                    || inNotEscapeElement > 0)
+            {
+                out.append(cs);
+            }
+            else
+            {
+                out.enableEscaping();
+                for (int i = 0; i<cs.length(); i++)
+                {
+                    char c = cs.charAt(i);
+                    switch (c)
+                    {
+                    case '<':
+                        out.write("&lt;");
+                        break;
+
+                    case '>':
+                        out.write("&gt;");
+                        break;
+                    
+                    case '&':
+                        out.write("&amp;");
+                        break;
+                    
+                    default:
+                        out.write(c);
+                    }
+                }
+                out.disableEscaping();
+            }
+        }
+        catch (IOException e)
+        {
+            throw new SAXException(e);    
+        }
+    }
+
+
     public void characters(char ch[], int start, int length)
 	    throws SAXException
     {
@@ -425,6 +473,13 @@ public class HTMLSerializer extends Serializer
         {
             throw new SAXException(e);    
         }
+    }
+
+
+    public void ignorableWhitespace(CharSequence cs)
+	    throws SAXException
+    {
+        characters(cs);
     }
 
 
@@ -685,6 +740,24 @@ public class HTMLSerializer extends Serializer
         {
             throw new SAXException(e);    
         }
+    }
+
+
+    public void comment(CharSequence cs)
+	    throws SAXException
+    {
+        fixDTD();        
+        fixTag();
+        
+        try {
+            out.write("<!-- ");
+            out.append(cs);
+            out.write(" -->");
+        }
+        catch (IOException e)
+        {
+            throw new SAXException(e);    
+        }        
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Ståldal
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -106,6 +106,19 @@ public class TextSerializer extends Serializer
     }
 
 
+    public void characters(CharSequence cs)
+	    throws SAXException
+    {
+        try {
+            out.append(cs);
+        }
+        catch (IOException e)
+        {
+            throw new SAXException(e);    
+        }
+    }
+
+
     public void characters(char ch[], int start, int length)
 	    throws SAXException
     {
@@ -116,6 +129,13 @@ public class TextSerializer extends Serializer
         {
             throw new SAXException(e);    
         }
+    }
+
+
+    public void ignorableWhitespace(CharSequence cs)
+	    throws SAXException
+    {
+        characters(cs);
     }
 
 
@@ -187,6 +207,12 @@ public class TextSerializer extends Serializer
     public void endCDATA()
 	    throws SAXException
     {        
+    }
+
+
+    public void comment(CharSequence cs)
+	    throws SAXException
+    {
     }
 
 

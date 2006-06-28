@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Ståldal
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,12 +55,13 @@ import java.nio.charset.*;
  * <em>Note:</em> Does <em>not</em> insert the gt, lt, qout, amp and apos 
  * entites.
  *<p>
- * The <code>write</code> methods will throw {@link java.io.CharConversionException} 
- * if character encoding or escaping fails.
+ * The <code>write</code> and <code>append</code> methods will throw 
+ * {@link java.io.CharConversionException} if character encoding or escaping 
+ * fails.
  *<p>
  * This class is <em>not</em> thread safe.
  */
-public class XMLCharacterEncoder extends Writer
+public class XMLCharacterEncoder implements Appendable
 {
     private Charset charset;
     private CharsetEncoder encoder;
@@ -157,6 +158,54 @@ public class XMLCharacterEncoder extends Writer
     
     
     // java.io.Writer implementation    
+
+
+    public Appendable append(char c)
+        throws IOException 
+    {
+        if (writer != null)
+        {
+            writer.append(c);    
+        }
+        else
+        {
+            CharBuffer in = CharBuffer.allocate(1);
+            in.put(c);
+            in.rewind();
+            encodeWrite(in);    
+        }
+        return this;
+    }
+
+
+    public Appendable append(CharSequence cs) 
+        throws IOException 
+    {
+        if (writer != null)
+        {
+            writer.append(cs);    
+        }
+        else
+        {
+            encodeWrite(CharBuffer.wrap(cs));
+        }        
+        return this;
+    }
+
+
+    public Appendable append(CharSequence cs, int start, int end) 
+        throws IOException 
+    {
+        if (writer != null)
+        {
+            writer.append(cs, start, end);    
+        }
+        else
+        {
+            encodeWrite(CharBuffer.wrap(cs, start, end));
+        }        
+        return this;
+    }
 
 
     public void write(int c)

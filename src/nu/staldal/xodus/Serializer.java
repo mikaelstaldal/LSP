@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Ståldal
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -210,5 +210,33 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
         out.write('\n');    
     }
 
-}
+    /**
+     * Alternative method for convenience and efficiency 
+     * (no need to copy a String into a char[]).
+     *
+     * @param cs  a {@link java.lang.CharSequence}, 
+     *            e.g. a {@link java.lang.String}.
+     */
+    public abstract void characters(CharSequence cs)
+        throws SAXException;
 
+    /**
+     * Alternative method for convenience and efficiency 
+     * (no need to copy a String into a char[]).
+     *
+     * @param cs  a {@link java.lang.CharSequence}, 
+     *            e.g. a {@link java.lang.String}.
+     */
+    public abstract void ignorableWhitespace(CharSequence cs)
+        throws SAXException;
+
+    /**
+     * Alternative method for convenience and efficiency 
+     * (no need to copy a String into a char[]).
+     *
+     * @param cs  a {@link java.lang.CharSequence}, 
+     *            e.g. a {@link java.lang.String}.
+     */
+    public abstract void comment(CharSequence cs)
+        throws SAXException;
+}
