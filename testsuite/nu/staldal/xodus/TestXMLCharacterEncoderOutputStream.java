@@ -17,6 +17,14 @@ import org.junit.Test;
  */
 public class TestXMLCharacterEncoderOutputStream
 {
+    /**
+     * Junit 3 compatibility. 
+     */
+    public static junit.framework.Test suite() 
+    { 
+        return new junit.framework.JUnit4TestAdapter(TestXMLCharacterEncoderOutputStream.class); 
+    }
+    
     public static final String ENC = "ISO-8859-1";
     
     ByteArrayOutputStream os;
