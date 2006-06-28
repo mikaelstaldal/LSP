@@ -100,12 +100,14 @@
     </jar>
   </target>
 
+  <target name="lexer" depends="init"
+	  	description="Compile LSP expression lexer with JFlex">
+     <jflex file="${src.dir}/nu/staldal/lsp/expr/LSPExprLexer.lex"
+	      nobak="on"/>
+  </target>
 
-  <target name="lspc" depends="init,lsprt"
+  <target name="lspc" depends="init,lsprt,lexer"
   	description="Compiles LSP compiler">
-
-    <jflex file="${src.dir}/nu/staldal/lsp/expr/LSPExprLexer.lex"
-        nobak="on"/>
 
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/compiler/*,nu/staldal/lsp/compile/*,nu/staldal/lsp/expr/*,nu/staldal/lsp/compiledexpr/*,nu/staldal/syntax/**/*,nu/staldal/xtree/**/*"
