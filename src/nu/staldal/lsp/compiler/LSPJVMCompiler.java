@@ -64,13 +64,14 @@ import org.apache.bcel.generic.*;
  *<p>
  * An instance of this class may be reused, but is not thread safe.
  */
+@SuppressWarnings("static-access")
 class LSPJVMCompiler implements Constants
 {
 	private static final String EXT_LIBS_URLS = "_extLibsURLs";
 	private static final String EXT_LIBS_CLASS_NAMES = "_extLibsClassNames";
 	private static final String COMPILE_DEPENDENT_FILES = "_compileDependentFiles"; 
 
-	private static final int PARAM_this = 0;
+	// private static final int PARAM_this = 0;
 	private static final int PARAM_origSax = 1;
 	private static final int PARAM_env = 2;
 	private static final int PARAM_extLibs = 3;
@@ -1259,6 +1260,7 @@ class LSPJVMCompiler implements Constants
 
 
 	// returns double value
+	@SuppressWarnings("unused")
 	private void compileExprAsNumberValue(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
@@ -1331,6 +1333,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 	
+	@SuppressWarnings("unused")
 	private void compileExprAsTuple(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException

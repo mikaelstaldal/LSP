@@ -529,8 +529,6 @@ public class DBConnection
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         
-        boolean ret;
-        
         try {
             pstmt = dbConn.prepareStatement(query);
             setParams(pstmt, params);        

@@ -154,7 +154,6 @@ public class LSPCompilerAntTask extends Task
 		
 		for (int i = 0; i<srcFiles.length; i++)
 		{
-			File srcFile = new File(fromDir, srcFiles[i]);
 			try {
 				if (compiler.doCompile(srcFiles[i], force))
 					log("Compiling " + srcFiles[i]);

@@ -67,7 +67,7 @@ public class LSPManager
     private final ClassLoader servletClassLoader;
 
     private final LocaleBundleFactory localeBundleFactory;
-    private final Map localeBundleCache;	
+    private final Map<Locale,Map> localeBundleCache;	
     
 	
 	/**
@@ -126,7 +126,7 @@ public class LSPManager
         this.servletClassLoader = servletClassLoader;
 		this.helper = new LSPHelper(servletClassLoader);
         
-        this.localeBundleCache = Collections.synchronizedMap(new HashMap());
+        this.localeBundleCache = Collections.synchronizedMap(new HashMap<Locale,Map>());
         
         String localeBundleFactortClassName = context.getInitParameter(
             "nu.staldal.lsp.servlet.LocaleBundleFactory");

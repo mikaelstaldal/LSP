@@ -52,13 +52,11 @@ import nu.staldal.lsp.framework.*;
 
 /**
  * LSP extension library for Servlet environment.
+ * 
+ * Namespace URI: "http://staldal.nu/LSP/ExtLib/Servlet"
  */
 public class ServletExtLib extends SimpleExtLib
 {
-	private static final String myNamespaceURI = 
-		"http://staldal.nu/LSP/ExtLib/Servlet";
-			
-	
     public String handleElement(String localName, Attributes atts,
                                 ContentHandler out)
         throws SAXException
@@ -114,7 +112,7 @@ public class ServletExtLib extends SimpleExtLib
                     "Included service \'"+name+"\' not found");    
             }
     
-            Map lspParams = new HashMap();
+            Map<String,Object> lspParams = new HashMap<String,Object>();
             String templateName;
             for (int i = 0; i < atts.getLength(); i++)
             {

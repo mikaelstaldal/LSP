@@ -153,7 +153,7 @@ public abstract class LSPPageBase implements LSPPage
 		
 		for (int i = 0; i < extLibsURLs.length; i++)
 		{
-			String nsURI = extLibsURLs[i];
+			// String nsURI = extLibsURLs[i];
 			String className = extLibsClassNames[i];
 			
 			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);			
