@@ -40,11 +40,7 @@
 
 package nu.staldal.lsp.compile;
 
-import java.util.Vector;
-
 import org.xml.sax.Locator;
-
-import nu.staldal.lsp.compiler.LSPExpr;
 
 public class LSPExtElement extends LSPElement
 {

@@ -41,11 +41,8 @@
 package nu.staldal.lsp.compiler;
 
 import java.io.*;
-import java.util.Properties;
 
-import org.xml.sax.SAXException;
 import org.apache.tools.ant.*;
-import org.apache.tools.ant.util.*;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 

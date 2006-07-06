@@ -40,18 +40,12 @@
 
 package nu.staldal.lsp.maverick;
 
-import java.util.*;
-
 import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.xml.sax.*;
 
 import org.infohazard.maverick.flow.*; 
 import org.infohazard.maverick.util.*; 
 import org.infohazard.maverick.view.DocumentViewFactory; 
 
-import nu.staldal.lsp.LSPPage;
 import nu.staldal.lsp.servlet.LSPManager;
 
 

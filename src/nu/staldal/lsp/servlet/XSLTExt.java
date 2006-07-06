@@ -40,12 +40,6 @@
 
 package nu.staldal.lsp.servlet;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import nu.staldal.lsp.*;
-
-
 /**
  * Access LSP functions from XSLT stylesheets.
  */

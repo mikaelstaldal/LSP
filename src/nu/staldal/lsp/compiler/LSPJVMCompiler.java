@@ -52,7 +52,6 @@ import nu.staldal.lsp.compile.*;
 import nu.staldal.lsp.compiledexpr.*;
 
 import org.apache.bcel.Constants;
-import org.apache.bcel.util.InstructionFinder;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.classfile.JavaClass;

@@ -45,7 +45,6 @@ import java.util.*;
 import javax.servlet.*;
 
 import org.xml.sax.*;
-import org.xml.sax.helpers.AttributesImpl;
 
 import nu.staldal.lsp.*;
 import nu.staldal.lsp.framework.*;

@@ -40,8 +40,6 @@
 
 package nu.staldal.lsp.compile;
 
-import java.util.Vector;
-
 import org.xml.sax.Locator;
 
 

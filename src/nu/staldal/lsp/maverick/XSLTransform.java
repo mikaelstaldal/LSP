@@ -42,7 +42,6 @@ package nu.staldal.lsp.maverick;
 
 import java.io.*;
 import java.util.*;
-import java.net.MalformedURLException;
 
 import javax.servlet.*;
 
@@ -51,7 +50,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.xml.sax.*;
 

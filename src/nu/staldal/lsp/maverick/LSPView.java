@@ -44,12 +44,10 @@ import java.util.*;
 import java.io.IOException;
 
 import javax.servlet.*;
-import javax.servlet.http.*;
 
 import org.xml.sax.*;
 
 import org.infohazard.maverick.flow.*; 
-import org.infohazard.maverick.util.*;
 
 import org.apache.commons.collections.BeanMap;
 

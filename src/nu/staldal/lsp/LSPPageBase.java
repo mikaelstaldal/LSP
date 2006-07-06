@@ -49,9 +49,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import nu.staldal.util.*;
 
-import nu.staldal.lsp.expr.*;
-import nu.staldal.lsp.compile.*;
-import nu.staldal.lsp.compiledexpr.*;
 import nu.staldal.lsp.wrapper.*;
 
 

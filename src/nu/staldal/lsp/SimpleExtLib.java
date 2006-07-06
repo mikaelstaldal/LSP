@@ -40,8 +40,6 @@
 
 package nu.staldal.lsp;
 
-import java.util.*;
-
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 

@@ -43,8 +43,6 @@ package nu.staldal.lsp.servlet;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import nu.staldal.lsp.*;
-
 
 /**
  * Context for LSP extension libraries.

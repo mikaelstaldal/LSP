@@ -40,9 +40,6 @@
 
 package nu.staldal.lsp;
 
-import java.io.*;
-import java.util.*;
-
 import org.xml.sax.*;
 
 
