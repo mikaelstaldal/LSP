@@ -9,7 +9,7 @@
 
 <!-- Assumes Java 1.5 or later -->
 
-<project name="LSP" default="lspc">
+<project name="LSP" default="build">
 
   <property file="build.properties"/>
 
@@ -39,10 +39,14 @@
     <mkdir dir="${build.testsuite}"/>
     <mkdir dir="dist"/>
   </target>
-  
+
+  <target name="build" depends="lsprt,lspc"
+  	description="Compiles LSP"/>
 
   <target name="lsprt" depends="init"
   	description="Compiles LSP runtime">
+
+	<!-- LSP core runtime -->
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/util/*,nu/staldal/xodus/*"
            destdir="${build.classes}"
@@ -52,6 +56,8 @@
            deprecation="on">
        <classpath location="${CommonsCollections}" />
 	</javac>
+
+	<!-- Servlet and Java EE integration -->
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/lsp/framework/**/*"
            destdir="${build.classes}"
@@ -113,7 +119,7 @@
     	   includes="nu/staldal/lsp/compiler/*,nu/staldal/lsp/compile/*,nu/staldal/lsp/expr/*,nu/staldal/lsp/compiledexpr/*,nu/staldal/syntax/**/*,nu/staldal/xtree/**/*"
            destdir="${build.classes}"
            encoding="iso-8859-1"
-           source="1.4" target="1.4"
+           source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
        <classpath location="${Ant}" />
@@ -148,7 +154,7 @@
   </target>
 
 
-  <target name="testsuite" depends="init,lspc"
+  <target name="testsuite" depends="init,lsprt,lspc"
   	description="Compiles and run testsuite">
     <javac srcdir="${src.testsuite}"
     	   includes="nu/staldal/**/*"
@@ -251,4 +257,3 @@
   </target>
 
 </project>
-
