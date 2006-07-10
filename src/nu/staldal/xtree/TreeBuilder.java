@@ -60,8 +60,8 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 
 	private Element rootElement = null;
 	private Stack<Element> elementStack;
-	private Vector<String> nsPrefix = null;
-	private Vector<String> nsURI = null;
+	private ArrayList<String> nsPrefix = null;
+	private ArrayList<String> nsURI = null;
     private StringBuffer textBuffer = null;
     private String textSystemId = null;
     private int textLine = -1;
@@ -304,11 +304,11 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 
 		if (nsPrefix == null)
 		{
-			nsPrefix = new Vector<String>();
-			nsURI = new Vector<String>();
+			nsPrefix = new ArrayList<String>();
+			nsURI = new ArrayList<String>();
 		}
-		nsPrefix.addElement(prefix);
-		nsURI.addElement(uri);
+		nsPrefix.add(prefix);
+		nsURI.add(uri);
     }
 
     public void endPrefixMapping(String prefix)

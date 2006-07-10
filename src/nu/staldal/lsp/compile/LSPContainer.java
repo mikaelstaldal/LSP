@@ -40,23 +40,23 @@
 
 package nu.staldal.lsp.compile;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.xml.sax.Locator;
 
 
 public abstract class LSPContainer extends LSPNode
 {
-    private Vector<LSPNode> children;
+    private ArrayList<LSPNode> children;
 
     public LSPContainer(int capacity, Locator locator)
     {
         super(locator);
         
         if (capacity >= 0)
-            children = new Vector<LSPNode>(capacity);
+            children = new ArrayList<LSPNode>(capacity);
         else
-            children = new Vector<LSPNode>();
+            children = new ArrayList<LSPNode>();
     }
 
     public int numberOfChildren()
@@ -67,39 +67,20 @@ public abstract class LSPContainer extends LSPNode
     public LSPNode getChild(int index)
         throws ArrayIndexOutOfBoundsException
     {
-        return (LSPNode)children.elementAt(index);
+        return (LSPNode)children.get(index);
     }
 
     public void addChild(LSPNode newChild)
     {
-        children.addElement(newChild);
+        children.add(newChild);
     }
 
     public LSPNode replaceChild(LSPNode newChild, int index)
         throws ArrayIndexOutOfBoundsException
     {
-        LSPNode oldChild = (LSPNode)children.elementAt(index);
-        children.setElementAt(newChild, index);
+        LSPNode oldChild = (LSPNode)children.get(index);
+        children.set(index, newChild);
         return oldChild;
     }
 
-    /**
-     * Inefficient
-     */
-    public LSPNode removeChild(int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        LSPNode child = (LSPNode)children.elementAt(index);
-        children.removeElementAt(index);
-        return child;
-    }
-
-    /**
-     * Inefficient
-     */
-    public void insertChild(LSPNode newChild, int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        children.insertElementAt(newChild, index);
-    }
 }

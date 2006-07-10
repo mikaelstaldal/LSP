@@ -42,7 +42,7 @@ package nu.staldal.lsp.compiledexpr;
 
 import nu.staldal.lsp.compiler.LSPExpr;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * An extension function call
@@ -51,7 +51,7 @@ public class ExtensionFunctionCall extends LSPExpr
 {
 	protected String className;
     protected String name;
-	protected Vector<LSPExpr> args;
+	protected ArrayList<LSPExpr> args;
 
 	
 	/**
@@ -61,7 +61,7 @@ public class ExtensionFunctionCall extends LSPExpr
 	{
 		this.className = className;
         this.name = name;
-		args = new Vector<LSPExpr>(numArgs);
+		args = new ArrayList<LSPExpr>(numArgs);
 	}
 
 	
@@ -72,7 +72,7 @@ public class ExtensionFunctionCall extends LSPExpr
 	{
 		this.className = className;
         this.name = name;
-		args = new Vector<LSPExpr>();
+		args = new ArrayList<LSPExpr>();
 	}
 	
 
@@ -83,7 +83,7 @@ public class ExtensionFunctionCall extends LSPExpr
 	 */
 	public void addArgument(LSPExpr arg)
 	{
-		args.addElement(arg);
+		args.add(arg);
 	}
 
 
@@ -121,7 +121,7 @@ public class ExtensionFunctionCall extends LSPExpr
 	public LSPExpr getArg(int index)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return (LSPExpr)args.elementAt(index);
+		return (LSPExpr)args.get(index);
 	}
 
 

@@ -40,7 +40,7 @@
 
 package nu.staldal.lsp.compile;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.xml.sax.Locator;
 
@@ -54,13 +54,13 @@ public class LSPElement extends LSPContainer
 	LSPExpr namespaceURIExpr;
 	LSPExpr localNameExpr;
 
-	Vector<LSPExpr> attrNamespace;
-    Vector<LSPExpr> attrName;
-    Vector<LSPExpr> attrValue;
-    Vector<String> attrType;
+	ArrayList<LSPExpr> attrNamespace;
+    ArrayList<LSPExpr> attrName;
+    ArrayList<LSPExpr> attrValue;
+    ArrayList<String> attrType;
 
-    Vector<String> namespacePrefixes;
-    Vector<String> namespaceURIs;
+    ArrayList<String> namespacePrefixes;
+    ArrayList<String> namespaceURIs;
 
 
     public LSPElement(String namespaceURI, String localName,
@@ -70,20 +70,20 @@ public class LSPElement extends LSPContainer
         super(numberOfChildren, locator);
         if (numberOfAttributes >= 0)
         {
-			attrNamespace = new Vector<LSPExpr>(numberOfAttributes);
-            attrName = new Vector<LSPExpr>(numberOfAttributes);
-            attrValue = new Vector<LSPExpr>(numberOfAttributes);
-            attrType = new Vector<String>(numberOfAttributes);
+			attrNamespace = new ArrayList<LSPExpr>(numberOfAttributes);
+            attrName = new ArrayList<LSPExpr>(numberOfAttributes);
+            attrValue = new ArrayList<LSPExpr>(numberOfAttributes);
+            attrType = new ArrayList<String>(numberOfAttributes);
         }
         else
         {
-            attrNamespace = new Vector<LSPExpr>();
-            attrName = new Vector<LSPExpr>();
-            attrValue = new Vector<LSPExpr>();
-            attrType = new Vector<String>();
+            attrNamespace = new ArrayList<LSPExpr>();
+            attrName = new ArrayList<LSPExpr>();
+            attrValue = new ArrayList<LSPExpr>();
+            attrType = new ArrayList<String>();
         }
-        namespaceURIs = new Vector<String>();
-        namespacePrefixes = new Vector<String>();
+        namespaceURIs = new ArrayList<String>();
+        namespacePrefixes = new ArrayList<String>();
         this.namespaceURI = namespaceURI;
         this.localName = localName;
     }
@@ -96,20 +96,20 @@ public class LSPElement extends LSPContainer
         super(numberOfChildren, locator);
         if (numberOfAttributes >= 0)
         {
-            attrNamespace = new Vector<LSPExpr>(numberOfAttributes);
-            attrName = new Vector<LSPExpr>(numberOfAttributes);
-            attrValue = new Vector<LSPExpr>(numberOfAttributes);
-            attrType = new Vector<String>(numberOfAttributes);
+            attrNamespace = new ArrayList<LSPExpr>(numberOfAttributes);
+            attrName = new ArrayList<LSPExpr>(numberOfAttributes);
+            attrValue = new ArrayList<LSPExpr>(numberOfAttributes);
+            attrType = new ArrayList<String>(numberOfAttributes);
         }
         else
         {
-            attrNamespace = new Vector<LSPExpr>();
-            attrName = new Vector<LSPExpr>();
-            attrValue = new Vector<LSPExpr>();
-            attrType = new Vector<String>();
+            attrNamespace = new ArrayList<LSPExpr>();
+            attrName = new ArrayList<LSPExpr>();
+            attrValue = new ArrayList<LSPExpr>();
+            attrType = new ArrayList<String>();
         }
-        namespaceURIs = new Vector<String>();
-        namespacePrefixes = new Vector<String>();
+        namespaceURIs = new ArrayList<String>();
+        namespacePrefixes = new ArrayList<String>();
         this.namespaceURIExpr = namespaceURI;
         this.localNameExpr = localName;
     }
@@ -140,20 +140,11 @@ public class LSPElement extends LSPContainer
     public void addAttribute(LSPExpr namespaceURI, LSPExpr localName,
     						 String type, LSPExpr value)
     {
-		attrNamespace.addElement(namespaceURI);
-		attrName.addElement(localName);
-		attrType.addElement(type);
-		attrValue.addElement(value);
+		attrNamespace.add(namespaceURI);
+		attrName.add(localName);
+		attrType.add(type);
+		attrValue.add(value);
 	}
-
-    public void removeAttribute(int index)
-        throws ArrayIndexOutOfBoundsException
-    {
-        attrNamespace.removeElementAt(index);
-        attrName.removeElementAt(index);
-        attrType.removeElementAt(index);
-        attrValue.removeElementAt(index);
-    }
 
 	public int numberOfAttributes()
 	{
@@ -163,32 +154,32 @@ public class LSPElement extends LSPContainer
 	public LSPExpr getAttributeNamespaceURI(int index)
 	{
         if (index == -1) return null;
-		return (LSPExpr)attrNamespace.elementAt(index);
+		return (LSPExpr)attrNamespace.get(index);
 	}
 
 	public LSPExpr getAttributeLocalName(int index)
 	{
         if (index == -1) return null;
-		return (LSPExpr)attrName.elementAt(index);
+		return (LSPExpr)attrName.get(index);
 	}
 
 	public String getAttributeType(int index)
 	{
         if (index == -1) return null;
-		return (String)attrType.elementAt(index);
+		return (String)attrType.get(index);
 	}
 
 	public LSPExpr getAttributeValue(int index)
 	{
         if (index == -1) return null;
-		return (LSPExpr)attrValue.elementAt(index);
+		return (LSPExpr)attrValue.get(index);
 	}
 
 
 	public void addNamespaceMapping(String prefix, String URI)
 	{
-		namespacePrefixes.addElement(prefix);
-		namespaceURIs.addElement(URI);
+		namespacePrefixes.add(prefix);
+		namespaceURIs.add(URI);
 	}
 
 	public int numberOfNamespaceMappings()
@@ -200,8 +191,8 @@ public class LSPElement extends LSPContainer
 		throws ArrayIndexOutOfBoundsException
 	{
 		return new String[] {
-			(String)namespacePrefixes.elementAt(index),
-			(String)namespaceURIs.elementAt(index) };
+			(String)namespacePrefixes.get(index),
+			(String)namespaceURIs.get(index) };
 	}
 
 }

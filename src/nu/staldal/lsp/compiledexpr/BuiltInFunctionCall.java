@@ -42,7 +42,7 @@ package nu.staldal.lsp.compiledexpr;
 
 import nu.staldal.lsp.compiler.LSPExpr;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * A built-in function call
@@ -50,7 +50,7 @@ import java.util.Vector;
 public class BuiltInFunctionCall extends LSPExpr
 {
 	protected String name;
-	protected Vector<LSPExpr> args;
+	protected ArrayList<LSPExpr> args;
 
 	
 	/**
@@ -59,7 +59,7 @@ public class BuiltInFunctionCall extends LSPExpr
 	public BuiltInFunctionCall(String name, int numArgs)
 	{
 		this.name = name;
-		args = new Vector<LSPExpr>(numArgs);
+		args = new ArrayList<LSPExpr>(numArgs);
 	}
 
 	
@@ -69,7 +69,7 @@ public class BuiltInFunctionCall extends LSPExpr
 	public BuiltInFunctionCall(String name)
 	{
 		this.name = name;
-		args = new Vector<LSPExpr>();
+		args = new ArrayList<LSPExpr>();
 	}
 	
 
@@ -80,7 +80,7 @@ public class BuiltInFunctionCall extends LSPExpr
 	 */
 	public void addArgument(LSPExpr arg)
 	{
-		args.addElement(arg);
+		args.add(arg);
 	}
 
 
@@ -109,7 +109,7 @@ public class BuiltInFunctionCall extends LSPExpr
 	public LSPExpr getArg(int index)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return (LSPExpr)args.elementAt(index);
+		return (LSPExpr)args.get(index);
 	}
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2003, Mikael Ståldal
+ * Copyright (c) 2001-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,7 @@
 
 package nu.staldal.lsp.compile;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.xml.sax.Locator;
 
@@ -48,22 +48,22 @@ import nu.staldal.lsp.compiler.LSPExpr;
 
 public class LSPChoose extends LSPNode
 {
-	private Vector<LSPExpr> whenTests;
-	private Vector<LSPNode> whenBodies;
+	private ArrayList<LSPExpr> whenTests;
+	private ArrayList<LSPNode> whenBodies;
 	private LSPNode otherwise;
 
 	public LSPChoose(int nWhens, Locator locator)
 	{
         super(locator);
-		whenTests = new Vector<LSPExpr>(nWhens);
-		whenBodies = new Vector<LSPNode>(nWhens);
+		whenTests = new ArrayList<LSPExpr>(nWhens);
+		whenBodies = new ArrayList<LSPNode>(nWhens);
 		otherwise = null;
 	}
 
 	public void addWhen(LSPExpr test, LSPNode body)
 	{
-		whenTests.addElement(test);
-		whenBodies.addElement(body);
+		whenTests.add(test);
+		whenBodies.add(body);
 	}
 
 	public void setOtherwise(LSPNode body)
@@ -79,12 +79,12 @@ public class LSPChoose extends LSPNode
 
 	public LSPExpr getWhenTest(int i)
 	{
-		return (LSPExpr)whenTests.elementAt(i);
+		return (LSPExpr)whenTests.get(i);
 	}
 
 	public LSPNode getWhenBody(int i)
 	{
-		return (LSPNode)whenBodies.elementAt(i);
+		return (LSPNode)whenBodies.get(i);
 	}
 
 	public LSPNode getOtherwise()

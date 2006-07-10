@@ -40,7 +40,7 @@
 
 package nu.staldal.xtree;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 
 /**
@@ -48,7 +48,7 @@ import java.util.Vector;
  */
 public abstract class NodeWithChildren extends Node
 {
-    private Vector<Node> children;
+    private ArrayList<Node> children;
 
 	/**
 	 * Construct a node which children.
@@ -59,9 +59,9 @@ public abstract class NodeWithChildren extends Node
     public NodeWithChildren(int capacity)
     {
         if (capacity >= 0)
-            children = new Vector<Node>(capacity);
+            children = new ArrayList<Node>(capacity);
         else
-            children = new Vector<Node>();
+            children = new ArrayList<Node>();
     }
 
 
@@ -84,7 +84,7 @@ public abstract class NodeWithChildren extends Node
     public Node getChild(int index)
         throws IndexOutOfBoundsException
     {
-        return (Node)children.elementAt(index);
+        return (Node)children.get(index);
     }
 
 	
@@ -94,7 +94,7 @@ public abstract class NodeWithChildren extends Node
     public void addChild(Node newChild)
     {
         newChild.setParent(this);
-        children.addElement(newChild);
+        children.add(newChild);
     }
 	
 
@@ -110,51 +110,11 @@ public abstract class NodeWithChildren extends Node
     public Node replaceChild(Node newChild, int index)
         throws IndexOutOfBoundsException
     {
-        Node oldChild = (Node)children.elementAt(index);
+        Node oldChild = (Node)children.get(index);
         oldChild.setParent(null);
         newChild.setParent(this);
-        children.setElementAt(newChild, index);
+        children.set(index, newChild);
         return oldChild;
-    }
-
-	
-    /**
-	 * Remove a child from this node. This method is a bit inefficient.
-	 *
-	 * @param index  index of the child to replace
-	 *
-	 * @return  the removed child
-	 * @throws IndexOutOfBoundsException  if no such child exist
-     */
-    public Node removeChild(int index)
-        throws IndexOutOfBoundsException
-    {
-        Node child = (Node)children.elementAt(index);
-        children.removeElementAt(index);
-        child.setParent(null);
-        return child;
-    }
-
-
-    /**
-	 * Insert a new child at a specific point in sequence. 
-	 * This method is a bit inefficient.
-	 *
-	 * Inserts the new child at the specified index. 
-	 * Each child with an index greater or equal to the specified index 
-	 * is shifted upward to have an index one greater than the value it 
-	 * had previously. 
-	 *
-	 * @param newChild  the new child
-	 * @param index  index of the new child
-	 *
-	 * @throws IndexOutOfBoundsException  if the index is invalid.
-     */
-    public void insertChild(Node newChild, int index)
-        throws IndexOutOfBoundsException
-    {
-        newChild.setParent(this);
-        children.insertElementAt(newChild, index);
     }
 	
 }

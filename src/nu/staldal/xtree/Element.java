@@ -40,7 +40,7 @@
 
 package nu.staldal.xtree;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.net.URL;
 
 import org.xml.sax.*;
@@ -59,12 +59,12 @@ public class Element extends NodeWithChildren
 
 	URL baseURI = null;
 
-    Vector<String> attrName;
-    Vector<String> attrValue;
-    Vector<String> attrType;
+    ArrayList<String> attrName;
+    ArrayList<String> attrValue;
+    ArrayList<String> attrType;
 
-    Vector<String> namespacePrefixes;
-    Vector<String> namespaceURIs;
+    ArrayList<String> namespacePrefixes;
+    ArrayList<String> namespaceURIs;
 
     char xmlSpaceAttribute = ' ';
 
@@ -118,18 +118,18 @@ public class Element extends NodeWithChildren
         
         if (numberOfAttributes >= 0)
         {
-            attrName = new Vector<String>(numberOfAttributes);
-            attrValue = new Vector<String>(numberOfAttributes);
-            attrType = new Vector<String>(numberOfAttributes);
+            attrName = new ArrayList<String>(numberOfAttributes);
+            attrValue = new ArrayList<String>(numberOfAttributes);
+            attrType = new ArrayList<String>(numberOfAttributes);
         }
         else
         {
-            attrName = new Vector<String>();
-            attrValue = new Vector<String>();
-            attrType = new Vector<String>();
+            attrName = new ArrayList<String>();
+            attrValue = new ArrayList<String>();
+            attrType = new ArrayList<String>();
         }
-        namespaceURIs = new Vector<String>();
-        namespacePrefixes = new Vector<String>();
+        namespaceURIs = new ArrayList<String>();
+        namespacePrefixes = new ArrayList<String>();
         this.namespaceURI = namespaceURI;
         this.localName = localName;
     }
@@ -187,9 +187,9 @@ public class Element extends NodeWithChildren
     public void addAttribute(String namespaceURI, String localName,
     						 String type, String value)
     {
-		attrName.addElement(localName + '^' + namespaceURI);
-		attrType.addElement(type);
-		attrValue.addElement(value);
+		attrName.add(localName + '^' + namespaceURI);
+		attrType.add(type);
+		attrValue.add(value);
         
         if (namespaceURI.equals(XML_NS) && localName.equals("space"))
         {
@@ -200,22 +200,6 @@ public class Element extends NodeWithChildren
         }
 	}
    
-
-	/**
-	 * Remove an attribute at the specified index. 
-	 * This method is a bit inefficient.
-	 *
-	 * @param index  the index as returned from {@link #lookupAttribute}
-	 * @throws IndexOutOfBoundException  if no such attribute exist.
-	 */
-    public void removeAttribute(int index)
-        throws IndexOutOfBoundsException
-    {
-        attrName.removeElementAt(index);
-        attrType.removeElementAt(index);
-        attrValue.removeElementAt(index);
-    }
-
 	
 	/**
 	 * Return the number of attributes this element have.
@@ -239,7 +223,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		String s = (String)attrName.elementAt(index);
+		String s = (String)attrName.get(index);
 		return s.substring(s.indexOf('^')+1);
 	}
 
@@ -257,7 +241,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		String s = (String)attrName.elementAt(index);
+		String s = (String)attrName.get(index);
 		return s.substring(0, s.indexOf('^'));
 	}
 
@@ -278,7 +262,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		return (String)attrType.elementAt(index);
+		return (String)attrType.get(index);
 	}
 
 
@@ -294,11 +278,11 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		return (String)attrValue.elementAt(index);
+		return (String)attrValue.get(index);
 	}
 
 
-	void setNamespaceMappings(Vector<String> prefixes, Vector<String> URIs)
+	void setNamespaceMappings(ArrayList<String> prefixes, ArrayList<String> URIs)
 	{
 		namespacePrefixes = prefixes;
 		namespaceURIs = URIs;
@@ -313,8 +297,8 @@ public class Element extends NodeWithChildren
 	 */
 	public void addNamespaceMapping(String prefix, String URI)
 	{
-		namespacePrefixes.addElement(prefix);
-		namespaceURIs.addElement(URI);
+		namespacePrefixes.add(prefix);
+		namespaceURIs.add(URI);
 	}
 
 
@@ -336,8 +320,8 @@ public class Element extends NodeWithChildren
 		throws IndexOutOfBoundsException
 	{
 		return new String[] {
-			(String)namespacePrefixes.elementAt(index),
-			(String)namespaceURIs.elementAt(index) };
+			(String)namespacePrefixes.get(index),
+			(String)namespaceURIs.get(index) };
 	}
 
 
@@ -364,7 +348,7 @@ public class Element extends NodeWithChildren
 		}
 		else
 		{
-			return (String)namespaceURIs.elementAt(index);
+			return (String)namespaceURIs.get(index);
 		}
 	}
 
@@ -392,7 +376,7 @@ public class Element extends NodeWithChildren
 		}
 		else
 		{
-			return (String)namespacePrefixes.elementAt(index);
+			return (String)namespacePrefixes.get(index);
 		}
 	}
 
@@ -473,19 +457,19 @@ public class Element extends NodeWithChildren
 	{
 		for (int i = 0; i < namespacePrefixes.size(); i++)
 		{
-			sax.startPrefixMapping((String)namespacePrefixes.elementAt(i),
-								   (String)namespaceURIs.elementAt(i));
+			sax.startPrefixMapping((String)namespacePrefixes.get(i),
+								   (String)namespaceURIs.get(i));
 		}
 
 		AttributesImpl atts = new AttributesImpl();
 		for (int i = 0; i < attrName.size(); i++)
 		{
-			String s = (String)attrName.elementAt(i);
+			String s = (String)attrName.get(i);
 			String URI = s.substring(s.indexOf('^')+1);
 			String local = s.substring(0, s.indexOf('^'));
 
-			atts.addAttribute(URI, local, "", (String)attrType.elementAt(i),
-				(String)attrValue.elementAt(i));
+			atts.addAttribute(URI, local, "", (String)attrType.get(i),
+				(String)attrValue.get(i));
 		}
 		sax.startElement(namespaceURI, localName, "", atts);
 	}
@@ -502,7 +486,7 @@ public class Element extends NodeWithChildren
 
 		for (int i = 0; i < namespacePrefixes.size(); i++)
 		{
-			sax.endPrefixMapping((String)namespacePrefixes.elementAt(i));
+			sax.endPrefixMapping((String)namespacePrefixes.get(i));
 		}
 	}
 

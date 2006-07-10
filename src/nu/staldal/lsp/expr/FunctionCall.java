@@ -42,7 +42,7 @@ package nu.staldal.lsp.expr;
 
 import nu.staldal.lsp.compiler.LSPExpr;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * A function call
@@ -51,7 +51,7 @@ public class FunctionCall extends LSPExpr
 {
 	protected String prefix;
 	protected String name;
-	protected Vector<LSPExpr> args;
+	protected ArrayList<LSPExpr> args;
 
 
 	/**
@@ -61,7 +61,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = (prefix == null) ? null : prefix.getName();
 		this.name = name.getName();
-		args = new Vector<LSPExpr>(numArgs);
+		args = new ArrayList<LSPExpr>(numArgs);
 	}
 	
 	
@@ -72,7 +72,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = prefix;
 		this.name = name;
-		args = new Vector<LSPExpr>(numArgs);
+		args = new ArrayList<LSPExpr>(numArgs);
 	}
 
 	
@@ -83,7 +83,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = (prefix == null) ? null : prefix.getName();
 		this.name = name.getName();
-		args = new Vector<LSPExpr>();
+		args = new ArrayList<LSPExpr>();
 	}
 	
 	
@@ -94,7 +94,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = prefix;
 		this.name = name;
-		args = new Vector<LSPExpr>();
+		args = new ArrayList<LSPExpr>();
 	}
 	
 
@@ -105,7 +105,7 @@ public class FunctionCall extends LSPExpr
 	 */
 	public void addArgument(LSPExpr arg)
 	{
-		args.addElement(arg);
+		args.add(arg);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class FunctionCall extends LSPExpr
 	public LSPExpr getArg(int index)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return (LSPExpr)args.elementAt(index);
+		return (LSPExpr)args.get(index);
 	}
 
 
