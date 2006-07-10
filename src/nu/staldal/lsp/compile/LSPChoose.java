@@ -48,15 +48,15 @@ import nu.staldal.lsp.compiler.LSPExpr;
 
 public class LSPChoose extends LSPNode
 {
-	private Vector whenTests;
-	private Vector whenBodies;
+	private Vector<LSPExpr> whenTests;
+	private Vector<LSPNode> whenBodies;
 	private LSPNode otherwise;
 
 	public LSPChoose(int nWhens, Locator locator)
 	{
         super(locator);
-		whenTests = new Vector(nWhens);
-		whenBodies = new Vector(nWhens);
+		whenTests = new Vector<LSPExpr>(nWhens);
+		whenBodies = new Vector<LSPNode>(nWhens);
 		otherwise = null;
 	}
 

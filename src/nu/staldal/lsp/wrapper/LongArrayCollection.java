@@ -83,6 +83,7 @@ public class LongArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
+    @SuppressWarnings("unchecked")
     public Object[] toArray(Object a[])
     {
         throw new UnsupportedOperationException();    

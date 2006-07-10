@@ -56,7 +56,7 @@ public class LSPCompilerCLI
 
 	public static void main(String[] args)
 	{
-		ArrayList mainPages = new ArrayList();
+		ArrayList<String> mainPages = new ArrayList<String>();
 		
 		boolean verbose = false;
 		boolean force = false;

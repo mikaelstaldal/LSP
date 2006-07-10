@@ -64,8 +64,8 @@ import nu.staldal.xodus.*;
 public class LSPHelper
 {
     private final ClassLoader classLoader;
-    private final Map lspPages;
-    private final Map stylesheets;
+    private final Map<String,LSPPage> lspPages;
+    private final Map<String,Templates> stylesheets;
 	private final SAXTransformerFactory tfactory;
 
     private String htmlType = "text/html";
@@ -89,8 +89,8 @@ public class LSPHelper
 	{
         this.classLoader = classLoader;
 
-		this.lspPages = new HashMap();
-		this.stylesheets = new HashMap();
+		this.lspPages = new HashMap<String,LSPPage>();
+		this.stylesheets = new HashMap<String,Templates>();
 
 		TransformerFactory tf = TransformerFactory.newInstance();
         if (!(tf.getFeature(SAXTransformerFactory.FEATURE)

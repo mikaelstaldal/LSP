@@ -91,10 +91,11 @@ class LSPView implements View
     /**
      * Interface method.
      */
-    public void go(ViewContext vctx) 
+    @SuppressWarnings("unchecked")
+	public void go(ViewContext vctx) 
         throws IOException, ServletException
     {
-        Map lspParams = new HashMap();
+        Map<String,Object> lspParams = new HashMap<String,Object>();
         
         if (vctx.getViewParams() != null)
         {

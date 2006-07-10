@@ -47,16 +47,16 @@ import org.xml.sax.Locator;
 
 public abstract class LSPContainer extends LSPNode
 {
-    private Vector children;
+    private Vector<LSPNode> children;
 
     public LSPContainer(int capacity, Locator locator)
     {
         super(locator);
         
         if (capacity >= 0)
-            children = new Vector(capacity);
+            children = new Vector<LSPNode>(capacity);
         else
-            children = new Vector();
+            children = new Vector<LSPNode>();
     }
 
     public int numberOfChildren()

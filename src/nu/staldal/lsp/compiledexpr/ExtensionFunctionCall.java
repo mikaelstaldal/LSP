@@ -51,7 +51,7 @@ public class ExtensionFunctionCall extends LSPExpr
 {
 	protected String className;
     protected String name;
-	protected Vector args;
+	protected Vector<LSPExpr> args;
 
 	
 	/**
@@ -61,7 +61,7 @@ public class ExtensionFunctionCall extends LSPExpr
 	{
 		this.className = className;
         this.name = name;
-		args = new Vector(numArgs);
+		args = new Vector<LSPExpr>(numArgs);
 	}
 
 	
@@ -72,7 +72,7 @@ public class ExtensionFunctionCall extends LSPExpr
 	{
 		this.className = className;
         this.name = name;
-		args = new Vector();
+		args = new Vector<LSPExpr>();
 	}
 	
 

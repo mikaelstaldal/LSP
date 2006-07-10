@@ -50,7 +50,7 @@ import java.util.Vector;
 public class BuiltInFunctionCall extends LSPExpr
 {
 	protected String name;
-	protected Vector args;
+	protected Vector<LSPExpr> args;
 
 	
 	/**
@@ -59,7 +59,7 @@ public class BuiltInFunctionCall extends LSPExpr
 	public BuiltInFunctionCall(String name, int numArgs)
 	{
 		this.name = name;
-		args = new Vector(numArgs);
+		args = new Vector<LSPExpr>(numArgs);
 	}
 
 	
@@ -69,7 +69,7 @@ public class BuiltInFunctionCall extends LSPExpr
 	public BuiltInFunctionCall(String name)
 	{
 		this.name = name;
-		args = new Vector();
+		args = new Vector<LSPExpr>();
 	}
 	
 

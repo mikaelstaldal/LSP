@@ -112,6 +112,7 @@ public class LSPResultSetTupleList implements List
         throw new UnsupportedOperationException();    
     }
 
+    @SuppressWarnings("unchecked")
     public Object[] toArray(Object a[])
     {
         throw new UnsupportedOperationException();    

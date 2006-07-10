@@ -54,13 +54,13 @@ public class LSPElement extends LSPContainer
 	LSPExpr namespaceURIExpr;
 	LSPExpr localNameExpr;
 
-	Vector attrNamespace;
-    Vector attrName;
-    Vector attrValue;
-    Vector attrType;
+	Vector<LSPExpr> attrNamespace;
+    Vector<LSPExpr> attrName;
+    Vector<LSPExpr> attrValue;
+    Vector<String> attrType;
 
-    Vector namespacePrefixes;
-    Vector namespaceURIs;
+    Vector<String> namespacePrefixes;
+    Vector<String> namespaceURIs;
 
 
     public LSPElement(String namespaceURI, String localName,
@@ -70,20 +70,20 @@ public class LSPElement extends LSPContainer
         super(numberOfChildren, locator);
         if (numberOfAttributes >= 0)
         {
-			attrNamespace = new Vector(numberOfAttributes);
-            attrName = new Vector(numberOfAttributes);
-            attrValue = new Vector(numberOfAttributes);
-            attrType = new Vector(numberOfAttributes);
+			attrNamespace = new Vector<LSPExpr>(numberOfAttributes);
+            attrName = new Vector<LSPExpr>(numberOfAttributes);
+            attrValue = new Vector<LSPExpr>(numberOfAttributes);
+            attrType = new Vector<String>(numberOfAttributes);
         }
         else
         {
-            attrNamespace = new Vector();
-            attrName = new Vector();
-            attrValue = new Vector();
-            attrType = new Vector();
+            attrNamespace = new Vector<LSPExpr>();
+            attrName = new Vector<LSPExpr>();
+            attrValue = new Vector<LSPExpr>();
+            attrType = new Vector<String>();
         }
-        namespaceURIs = new Vector();
-        namespacePrefixes = new Vector();
+        namespaceURIs = new Vector<String>();
+        namespacePrefixes = new Vector<String>();
         this.namespaceURI = namespaceURI;
         this.localName = localName;
     }
@@ -96,20 +96,20 @@ public class LSPElement extends LSPContainer
         super(numberOfChildren, locator);
         if (numberOfAttributes >= 0)
         {
-            attrNamespace = new Vector(numberOfAttributes);
-            attrName = new Vector(numberOfAttributes);
-            attrValue = new Vector(numberOfAttributes);
-            attrType = new Vector(numberOfAttributes);
+            attrNamespace = new Vector<LSPExpr>(numberOfAttributes);
+            attrName = new Vector<LSPExpr>(numberOfAttributes);
+            attrValue = new Vector<LSPExpr>(numberOfAttributes);
+            attrType = new Vector<String>(numberOfAttributes);
         }
         else
         {
-            attrNamespace = new Vector();
-            attrName = new Vector();
-            attrValue = new Vector();
-            attrType = new Vector();
+            attrNamespace = new Vector<LSPExpr>();
+            attrName = new Vector<LSPExpr>();
+            attrValue = new Vector<LSPExpr>();
+            attrType = new Vector<String>();
         }
-        namespaceURIs = new Vector();
-        namespacePrefixes = new Vector();
+        namespaceURIs = new Vector<String>();
+        namespacePrefixes = new Vector<String>();
         this.namespaceURIExpr = namespaceURI;
         this.localNameExpr = localName;
     }

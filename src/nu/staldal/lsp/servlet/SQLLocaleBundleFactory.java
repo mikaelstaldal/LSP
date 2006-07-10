@@ -79,7 +79,7 @@ class SQLLocaleBundleFactory implements LocaleBundleFactory
     public Map loadBundle(Locale locale)
         throws SQLException
     {        
-        Map m = new HashMap();
+        Map<String,String> m = new HashMap<String,String>();
         
         Connection conn = null;
         PreparedStatement pstmt = null;

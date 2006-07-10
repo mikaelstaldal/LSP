@@ -59,9 +59,9 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 	public static final boolean DEBUG = false;
 
 	private Element rootElement = null;
-	private Stack elementStack;
-	private Vector nsPrefix = null;
-	private Vector nsURI = null;
+	private Stack<Element> elementStack;
+	private Vector<String> nsPrefix = null;
+	private Vector<String> nsURI = null;
     private StringBuffer textBuffer = null;
     private String textSystemId = null;
     private int textLine = -1;
@@ -154,7 +154,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 	 */
 	public TreeBuilder(URL base)
 	{
-		elementStack = new Stack();
+		elementStack = new Stack<Element>();
 		baseURI = base;
 	}
 
@@ -181,7 +181,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 	void reset()
 	{
 		rootElement = null;
-		elementStack = new Stack();
+		elementStack = new Stack<Element>();
 	 	nsPrefix = null;
 	 	nsURI = null;
      	textBuffer = null;
@@ -304,8 +304,8 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 
 		if (nsPrefix == null)
 		{
-			nsPrefix = new Vector();
-			nsURI = new Vector();
+			nsPrefix = new Vector<String>();
+			nsURI = new Vector<String>();
 		}
 		nsPrefix.addElement(prefix);
 		nsURI.addElement(uri);

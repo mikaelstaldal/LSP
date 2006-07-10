@@ -59,12 +59,12 @@ public class Element extends NodeWithChildren
 
 	URL baseURI = null;
 
-    Vector attrName;
-    Vector attrValue;
-    Vector attrType;
+    Vector<String> attrName;
+    Vector<String> attrValue;
+    Vector<String> attrType;
 
-    Vector namespacePrefixes;
-    Vector namespaceURIs;
+    Vector<String> namespacePrefixes;
+    Vector<String> namespaceURIs;
 
     char xmlSpaceAttribute = ' ';
 
@@ -118,18 +118,18 @@ public class Element extends NodeWithChildren
         
         if (numberOfAttributes >= 0)
         {
-            attrName = new Vector(numberOfAttributes);
-            attrValue = new Vector(numberOfAttributes);
-            attrType = new Vector(numberOfAttributes);
+            attrName = new Vector<String>(numberOfAttributes);
+            attrValue = new Vector<String>(numberOfAttributes);
+            attrType = new Vector<String>(numberOfAttributes);
         }
         else
         {
-            attrName = new Vector();
-            attrValue = new Vector();
-            attrType = new Vector();
+            attrName = new Vector<String>();
+            attrValue = new Vector<String>();
+            attrType = new Vector<String>();
         }
-        namespaceURIs = new Vector();
-        namespacePrefixes = new Vector();
+        namespaceURIs = new Vector<String>();
+        namespacePrefixes = new Vector<String>();
         this.namespaceURI = namespaceURI;
         this.localName = localName;
     }
@@ -298,7 +298,7 @@ public class Element extends NodeWithChildren
 	}
 
 
-	void setNamespaceMappings(Vector prefixes, Vector URIs)
+	void setNamespaceMappings(Vector<String> prefixes, Vector<String> URIs)
 	{
 		namespacePrefixes = prefixes;
 		namespaceURIs = URIs;

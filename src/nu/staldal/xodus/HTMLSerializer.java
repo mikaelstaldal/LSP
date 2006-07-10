@@ -65,10 +65,10 @@ public class HTMLSerializer extends Serializer
     private int inFormattedElement = 0;
     private int inNotEscapeElement = 0;
     
-    private final Set emptyElements;
-    private final Set formattedElements;
-    private final Set notEscapeElements;
-    private final Set booleanAttributes;
+    private final Set<String> emptyElements;
+    private final Set<String> formattedElements;
+    private final Set<String> notEscapeElements;
+    private final Set<String> booleanAttributes;
     
     
     HTMLSerializer(StreamResult result, OutputConfig outputConfig)
@@ -77,7 +77,7 @@ public class HTMLSerializer extends Serializer
     {
         super(result, outputConfig);
                 
-        emptyElements = new HashSet(13);
+        emptyElements = new HashSet<String>(13);
         emptyElements.add("area");
         emptyElements.add("base");
         emptyElements.add("basefont");
@@ -92,17 +92,17 @@ public class HTMLSerializer extends Serializer
         emptyElements.add("isindex");
         emptyElements.add("param");
 
-        formattedElements = new HashSet(4);
+        formattedElements = new HashSet<String>(4);
         formattedElements.add("pre");
         formattedElements.add("script");
         formattedElements.add("style");
         formattedElements.add("textarea");
 
-        notEscapeElements = new HashSet(2);
+        notEscapeElements = new HashSet<String>(2);
         notEscapeElements.add("script");
         notEscapeElements.add("style");
         
-        booleanAttributes = new HashSet(13);        
+        booleanAttributes = new HashSet<String>(13);        
         booleanAttributes.add("selected");
         booleanAttributes.add("disabled");
         booleanAttributes.add("readonly");       

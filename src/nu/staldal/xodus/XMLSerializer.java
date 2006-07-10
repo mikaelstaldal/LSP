@@ -71,8 +71,8 @@ public class XMLSerializer extends Serializer
     private boolean wasStartTag = false;
     private int inFormattedElement = 0;
     
-    private final Set emptyElements;
-    private final Set formattedElements;
+    private final Set<String> emptyElements;
+    private final Set<String> formattedElements;
     
     
     XMLSerializer(StreamResult result, OutputConfig outputConfig)
@@ -87,7 +87,7 @@ public class XMLSerializer extends Serializer
         
         if (outputConfig.isXhtml)
         {
-            emptyElements = new HashSet(13);
+            emptyElements = new HashSet<String>(13);
             emptyElements.add("area");
             emptyElements.add("base");
             emptyElements.add("br");
@@ -102,7 +102,7 @@ public class XMLSerializer extends Serializer
             emptyElements.add("isindex");
             emptyElements.add("param");
 
-            formattedElements = new HashSet(4);
+            formattedElements = new HashSet<String>(4);
             formattedElements.add("pre");
             formattedElements.add("script");
             formattedElements.add("style");
@@ -327,7 +327,7 @@ public class XMLSerializer extends Serializer
             out.write(qName);
 
             boolean hasXmlns = false;
-            Set xmlns = new HashSet();
+            Set<String> xmlns = new HashSet<String>();
             
             for (int j = 0; j<atts.getLength(); j++)
             {

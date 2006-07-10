@@ -163,6 +163,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
+	@SuppressWarnings("unchecked")
 	protected static final LSPExtLib lookupExtensionHandler(Map extLibs, String nsURI, String className)
 		throws SAXException
 	{
@@ -679,6 +680,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	protected static Collection fnSeq(double start, double end, double step)
 	{
 		ArrayList vec = new ArrayList((int)((end-start)/step));
@@ -694,4 +696,3 @@ public abstract class LSPPageBase implements LSPPage
 			Map extLibs, ContentHandler _sax, AttributesImpl attrs)
 		throws SAXException, IllegalArgumentException;	
 }
-

@@ -83,7 +83,8 @@ public class BooleanArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    public Object[] toArray(Object a[])
+    @SuppressWarnings("unchecked")
+	public Object[] toArray(Object a[])
     {
         throw new UnsupportedOperationException();    
     }

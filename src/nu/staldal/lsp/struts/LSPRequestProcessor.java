@@ -97,7 +97,7 @@ public class LSPRequestProcessor extends RequestProcessor
                 throw new ServletException("Unable to find LSP page: " + pageName);
             }
             
-            Map lspParams = new HashMap();
+            Map<String,Object> lspParams = new HashMap<String,Object>();
             for (Enumeration e = request.getAttributeNames(); e.hasMoreElements(); )
             {                
                 String name = (String)e.nextElement();

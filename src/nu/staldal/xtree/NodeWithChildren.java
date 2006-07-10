@@ -48,7 +48,7 @@ import java.util.Vector;
  */
 public abstract class NodeWithChildren extends Node
 {
-    private Vector children;
+    private Vector<Node> children;
 
 	/**
 	 * Construct a node which children.
@@ -59,9 +59,9 @@ public abstract class NodeWithChildren extends Node
     public NodeWithChildren(int capacity)
     {
         if (capacity >= 0)
-            children = new Vector(capacity);
+            children = new Vector<Node>(capacity);
         else
-            children = new Vector();
+            children = new Vector<Node>();
     }
 
 

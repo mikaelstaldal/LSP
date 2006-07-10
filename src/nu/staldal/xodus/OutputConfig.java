@@ -66,7 +66,7 @@ public class OutputConfig
     public String doctype_public;
     public String doctype_system;
     
-    public Set cdata_section_elements;
+    public Set<String> cdata_section_elements;
     
     public boolean indent;
     
@@ -137,11 +137,11 @@ public class OutputConfig
         String cdata = outputProps.getProperty(OutputKeys.CDATA_SECTION_ELEMENTS);         
         if (cdata == null)
         {
-            cdata_section_elements = Collections.EMPTY_SET;
+            cdata_section_elements = Collections.emptySet();
         }
         else
         {
-            cdata_section_elements = new HashSet();
+            cdata_section_elements = new HashSet<String>();
             for (StringTokenizer st = new StringTokenizer(cdata);
                  st.hasMoreTokens(); )
             {

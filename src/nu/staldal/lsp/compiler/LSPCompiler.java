@@ -73,11 +73,11 @@ public class LSPCompiler
     private URLResolver resolver;
 	private LSPJVMCompiler jvmCompiler;
 
-    private HashMap importedFiles;
+    private HashMap<String,String> importedFiles;
     private boolean compileDynamic;
 
-	// (String)namespaceURI -> (String)className
-	private HashMap extLibsInPage; 
+	// namespaceURI -> className
+	private HashMap<String,String> extLibsInPage; 
 
 	private boolean inPi;
 	private boolean inExtElement;
@@ -85,8 +85,8 @@ public class LSPCompiler
 	private Element currentSourceElement;
 	private LSPElement currentElement;
 	
-	// (String)namespaceURI -> (String)className
-	private HashMap extDict = new HashMap();
+	// namespaceURI -> className
+	private HashMap<String,String> extDict = new HashMap<String,String>();
     
     private Properties outputProperties;
 
@@ -141,9 +141,9 @@ public class LSPCompiler
 	 */
 	public ContentHandler startCompile(String page, URLResolver r)
     {
-    	importedFiles = new HashMap();
+    	importedFiles = new HashMap<String,String>();
         compileDynamic = false;
-		extLibsInPage = new HashMap();
+		extLibsInPage = new HashMap<String,String>();
 
 		pageName = page;
         resolver = r;
@@ -322,7 +322,7 @@ public class LSPCompiler
         String template)
         throws SAXException
 	{
-		ArrayList vector = new ArrayList(template.length()/16);
+		ArrayList<Object> vector = new ArrayList<Object>(template.length()/16);
 		StringBuffer text = new StringBuffer();
 		StringBuffer expr = null;
 		char quote = 0;

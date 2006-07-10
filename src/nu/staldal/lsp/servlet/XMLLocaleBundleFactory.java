@@ -107,7 +107,7 @@ class XMLLocaleBundleFactory implements LocaleBundleFactory
     
     class LocaleBuilder implements ContentHandler
     {        
-        private final Map res;
+        private final Map<String,String> res;
         private int elementDepth;
         private String currentPage;
         private String currentKey;
@@ -115,7 +115,7 @@ class XMLLocaleBundleFactory implements LocaleBundleFactory
         
         LocaleBuilder() 
         {
-            res = new HashMap();
+            res = new HashMap<String,String>();
         }
         
         Map getRes()

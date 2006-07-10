@@ -203,6 +203,7 @@ public class Environment
 			return obj;
 		}
 		
+		@SuppressWarnings("unchecked")
 		Object bind(Object key, Object value)
 		{
 			return map.put(key, value);

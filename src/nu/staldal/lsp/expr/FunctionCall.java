@@ -51,7 +51,7 @@ public class FunctionCall extends LSPExpr
 {
 	protected String prefix;
 	protected String name;
-	protected Vector args;
+	protected Vector<LSPExpr> args;
 
 
 	/**
@@ -61,7 +61,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = (prefix == null) ? null : prefix.getName();
 		this.name = name.getName();
-		args = new Vector(numArgs);
+		args = new Vector<LSPExpr>(numArgs);
 	}
 	
 	
@@ -72,7 +72,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = prefix;
 		this.name = name;
-		args = new Vector(numArgs);
+		args = new Vector<LSPExpr>(numArgs);
 	}
 
 	
@@ -83,7 +83,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = (prefix == null) ? null : prefix.getName();
 		this.name = name.getName();
-		args = new Vector();
+		args = new Vector<LSPExpr>();
 	}
 	
 	
@@ -94,7 +94,7 @@ public class FunctionCall extends LSPExpr
 	{
 		this.prefix = prefix;
 		this.name = name;
-		args = new Vector();
+		args = new Vector<LSPExpr>();
 	}
 	
 
