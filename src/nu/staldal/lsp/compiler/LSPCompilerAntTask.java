@@ -146,8 +146,8 @@ public class LSPCompilerAntTask extends Task
             compiler.sourcePath = sp;            
         }
 
-		DirectoryScanner ds = fileset.getDirectoryScanner(project);
-		File fromDir = fileset.getDir(project);
+		DirectoryScanner ds = fileset.getDirectoryScanner(getProject());
+		File fromDir = fileset.getDir(getProject());
 		compiler.startDir = fromDir;
 
 		String[] srcFiles = ds.getIncludedFiles();
