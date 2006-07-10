@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2005, Mikael Ståldal
+ * Copyright (c) 2001-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -138,9 +138,14 @@ public class LSPCompiler
 	 * @param r          {@link URLResolver} to use for resolving <code>&lt;lsp:import&gt;</code>
 	 *
 	 * @return SAX2 ContentHandler to feed the LSP source into
+     * @throws LSPException 
 	 */
-	public ContentHandler startCompile(String page, URLResolver r)
+	public ContentHandler startCompile(String page, URLResolver r) 
+		throws LSPException
     {
+		if (!checkPageName(page))
+			throw new LSPException("Illegal page name: " + page);
+		
     	importedFiles = new HashMap<String,String>();
         compileDynamic = false;
 		extLibsInPage = new HashMap<String,String>();
@@ -152,6 +157,23 @@ public class LSPCompiler
         return tb;
     }
 
+	static boolean checkPageName(CharSequence pageName)
+	{
+		if (pageName.length() == 0) 
+			return false;
+
+		if (!Character.isJavaIdentifierStart(pageName.charAt(0)))
+			return false;
+		
+		for (int i = 1; i<pageName.length(); i++)
+		{
+			char ch = pageName.charAt(i);
+			if (!Character.isJavaIdentifierPart(ch))
+				return false;
+		}
+		return true;
+	}
+	
 
     /**
 	 * Finish the compilation.
@@ -849,13 +871,13 @@ public class LSPCompiler
             return;        
         Node firstNode = el.getChild(0);
         if (firstNode.isWhitespaceNode() && !firstNode.getPreserveSpace())
-            el.removeChild(0);
+            el.replaceChild(new Element(LSP_CORE_NS, "root"), 0);
         
         if (el.numberOfChildren() == 0)
             return;        
         Node lastNode = el.getChild(el.numberOfChildren()-1);
         if (lastNode.isWhitespaceNode() && !lastNode.getPreserveSpace())
-            el.removeChild(el.numberOfChildren()-1);                
+            el.replaceChild(new Element(LSP_CORE_NS, "root"), el.numberOfChildren()-1);                
     }    
     
 
