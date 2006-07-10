@@ -50,7 +50,7 @@ public class TestLSPParse extends TestCase
         assertEquals(correctTest3, correctParsed3.toString());
 
         try {
-    		LSPExpr invalidParsed = LSPExpr.parseFromString(invalidExpr);
+    		LSPExpr.parseFromString(invalidExpr);
             fail("Parser did not signal error in invalid expression: "
                 + invalidExpr);
         }
@@ -58,7 +58,7 @@ public class TestLSPParse extends TestCase
         { }
 
         try {
-    		LSPExpr invalidParsed = LSPExpr.parseFromString(invalidExpr2);
+    		LSPExpr.parseFromString(invalidExpr2);
             fail("Parser did not signal error in invalid expression: "
                 + invalidExpr2);
         }
