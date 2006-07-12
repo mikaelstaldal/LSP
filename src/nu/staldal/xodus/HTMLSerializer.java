@@ -369,7 +369,7 @@ public class HTMLSerializer extends Serializer
             inFormattedElement--;
         
         if (notEscapeElements.contains(localName.toLowerCase()))
-            inNotEscapeElement++;        
+            inNotEscapeElement--;        
         
         wasEndTag = true;
     }
