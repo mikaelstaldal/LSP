@@ -60,6 +60,9 @@ import java.nio.charset.*;
  * fails.
  *<p>
  * This class is <em>not</em> thread safe.
+ *<p>
+ * This class implements all <code>write</code> methods of {@link java.io.Writer},
+ * but does not extend {@link java.io.Writer} due to technical reasons.
  */
 public class XMLCharacterEncoder implements Appendable
 {
@@ -154,11 +157,8 @@ public class XMLCharacterEncoder implements Appendable
     public void disableEscaping()
     {
         doEscape = false;
-    }
+    }    
     
-    
-    // java.io.Writer implementation    
-
 
     public Appendable append(char c)
         throws IOException 
@@ -435,4 +435,3 @@ public class XMLCharacterEncoder implements Appendable
         xce.close();
     } */
 }
-
