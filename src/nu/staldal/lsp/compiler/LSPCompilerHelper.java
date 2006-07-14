@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005, Mikael Ståldal
+ * Copyright (c) 2003-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,11 @@ import nu.staldal.lsp.*;
 /**
  * Wrapper around LSPCompiler to handle reading input files and
  * writing the result to a file.
+ *<p>
+ * Instances of this class may be reused, 
+ * but may <em>not</em> be used from several threads concurrently.
+ * Create several instances if multiple threads needs to compile 
+ * concurrently. 
  *
  * @see LSPCompiler
  */
@@ -66,23 +71,11 @@ public class LSPCompilerHelper
 	
 	private File currentPagePath;
 
-	/**
-	 * Where to look for files to compile, default is current directory.
-	 */
-	public File startDir;
+	private File startDir;
+	private File[] sourcePath;
+	private File targetDir;
+		
 	
-	/**
-	 * Where to look for imported files with relative URL:s
-     * (will search the directory where the source file is as well).
-	 */
-	public File[] sourcePath;
-
-	/**
-	 * Where to place generated files, default is current directory.
-	 */
-	public File targetDir;
-
-
     /**
 	 * Create a new LSP compiler. The instance may be reused, 
 	 * but may <em>not</em> be used from several threads concurrently.
@@ -107,32 +100,13 @@ public class LSPCompilerHelper
 		{
 			throw new Error("Unable to configure XML parser");	
 		}
-
+		
 		compiler = new LSPCompiler();
 				
 		startDir = new File(System.getProperty("user.dir", "."));
 		sourcePath = new File[0];
 		targetDir = new File(System.getProperty("user.dir", "."));
 	}
-
-    /**
-     * Set to <code>true</code> to use <code>xhtml</code> as default output 
-     * type.
-     */
-    public void setXhtml(boolean xhtml)
-    {
-        compiler.setXhtml(xhtml);    
-    }
-        
-
-    /**
-	 * Set to <code>true</code> to make the compiled page accept 
-     * <code>null</code> values without runtime error.
-     */
-    public void setAcceptNull(boolean acceptNull)
-    {
-        compiler.setAcceptNull(acceptNull);    
-    }
 
 
 	private boolean checkDepend(boolean force, File outputFile, File inputFile)
@@ -247,8 +221,8 @@ public class LSPCompilerHelper
 						getFileAsSAX(url, ch);	
 					}
 				});
-			
-			getFileAsSAX(inputFile.toURL().toString(), sax);
+
+            getFileAsSAX(inputFile.toURL().toString(), sax);            
 					
 			FileOutputStream fos = new FileOutputStream(outputFile);
 			try {
@@ -321,7 +295,7 @@ public class LSPCompilerHelper
 	 *
 	 * @throws LSPException with an error message if unsuccessful
 	 */
-	public byte[] doCompileFromString(String pageName, String lspData)
+	byte[] doCompileFromString(String pageName, String lspData)
 		throws LSPException
 	{
 		try {
@@ -480,8 +454,7 @@ public class LSPCompilerHelper
 		{
 			throw new SAXException(e);
 		}		
-	}
-	
+	}	
 
 	/**
 	 * Get pageName.
@@ -494,5 +467,46 @@ public class LSPCompilerHelper
 		return basename;		
 	}
 
-}
+	/**
+	 * Where to look for files to compile, default is current directory.
+	 */
+	public void setStartDir(File startDir) 
+	{
+		this.startDir = startDir;
+	}
 
+	/**
+	 * Where to look for imported files with relative URL:s
+     * (will search the directory where the source file is as well).
+	 */
+	public void setSourcePath(File[] sourcePath) 
+	{
+		this.sourcePath = sourcePath;
+	}
+
+	/**
+	 * Where to place generated files, default is current directory.
+	 */
+	public void setTargetDir(File targetDir) 
+	{
+		this.targetDir = targetDir;
+	}
+
+    /**
+     * Set to <code>true</code> to use <code>xhtml</code> as default output 
+     * type.
+     */
+    public void setXhtml(boolean xhtml)
+    {
+        compiler.setXhtml(xhtml);    
+    }
+        
+    /**
+	 * Set to <code>true</code> to make the compiled page accept 
+     * <code>null</code> values without runtime error.
+     */
+    public void setAcceptNull(boolean acceptNull)
+    {
+        compiler.setAcceptNull(acceptNull);    
+    }
+}
