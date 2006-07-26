@@ -3,66 +3,87 @@ package nu.staldal.lsp.compiler;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collections;
 
 import nu.staldal.lsp.LSPHelper;
 import nu.staldal.lsp.LSPPage;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestLSPCompilation
 {
-	private static LSPCompilerHelper lspCompilerHelper;
-	private static LSPHelper lspHelper;
-	private static MemoryClassLoader classLoader;
+	private static File classDir;
 	
+	private LSPCompilerHelper lspCompilerHelper;
+	private LSPHelper lspHelper;
+		
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception
 	{
+		classDir = new File("LSPclasses");
+		classDir.mkdir();
+	}
+		
+	@Before
+	public void setUp() throws Exception
+	{
 		lspCompilerHelper = new LSPCompilerHelper();
-		classLoader = new MemoryClassLoader();
-		lspHelper = new LSPHelper(classLoader);
+		lspCompilerHelper.setTargetDir(classDir);
+		lspCompilerHelper.setStartDir(new File(new File("testsuite"), "lspPages"));
+		lspHelper = new LSPHelper(new URLClassLoader(new URL[] { classDir.toURL() }));
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception
+	@After
+	public void tearDown() throws Exception
 	{
 		lspCompilerHelper = null;
 		lspHelper = null;
 	}
 
-	private void doTest(String name, String lspText, String expectedResult)
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception
+	{
+		for (File f : classDir.listFiles()) { f.delete(); }
+		classDir.delete();
+	}
+
+	private void doTest(String pageName, String expectedResult)
 		throws Exception
 	{
-    	byte[] classData = lspCompilerHelper.doCompileFromString(name, lspText);
-    	classLoader.addClass("_LSP_"+name, classData);
+    	lspCompilerHelper.doCompile(pageName + ".lsp", true);
     	
-    	LSPPage thePage = lspHelper.getPage(name);
+    	LSPPage thePage = lspHelper.getPage(pageName);
     	assertNotNull(thePage);
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	lspHelper.executePage(thePage, Collections.emptyMap(), null, baos);
     	assertEquals(expectedResult, baos.toString("UTF-8"));		
 	}
 	
+    @Test(expected=nu.staldal.lsp.LSPException.class)
+    public void testSimplePageWithError()
+		throws Exception
+    {
+    	doTest("SimplePage",
+    			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    		  + "<root>\n"
+    		  + "<p>Hello, world!</p>\n"
+    		  + "</root>");
+    }
+	
     @Test
     public void testWhitespacePreserve()
 		throws Exception
     {
     	doTest("WhitespacePreserve",
-
-    			"<root xmlns:lsp='http://staldal.nu/LSP/core'>\n"
-    		  + "<lsp:output encoding='UTF-8'/>"
-    		  + "<ul xml:space='preserve'>\n"
-    		  + "<lsp:for-each select='seq(1,10)' var='ent'>\n"
-    		  + "<li><lsp:value-of select='$ent'/></li>\n"
-    		  + "</lsp:for-each>\n"
-    		  + "</ul>\n"
-    		  + "</root>\n",
-    		  
     			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-    		  + "<root>"
+    		  + "<root>\n"
     		  + "<ul xml:space=\"preserve\">\n"
     		  + "\n"	    
     		  + "<li>1</li>\n"
@@ -93,18 +114,8 @@ public class TestLSPCompilation
     public void testWhitespaceStrip() throws Exception
     {
     	doTest("WhitespaceStrip",
-
-    			"<root xmlns:lsp='http://staldal.nu/LSP/core'>\n"
-    		  + "<lsp:output encoding='UTF-8'/>"
-    		  + "<ul>\n"
-    		  + "<lsp:for-each select='seq(1,10)' var='ent'>\n"
-    		  + "<li><lsp:value-of select='$ent'/></li>\n"
-    		  + "</lsp:for-each>\n"
-    		  + "</ul>\n"
-    		  + "</root>\n",
-    		  
     			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-    		  + "<root>"
+    		  + "<root>\n"
     		  + "<ul>\n"
     		  + "<li>1</li>"
     		  + "<li>2</li>"
@@ -119,5 +130,4 @@ public class TestLSPCompilation
     		  +	"</ul>\n"
     		  + "</root>");
     }
-	
 }

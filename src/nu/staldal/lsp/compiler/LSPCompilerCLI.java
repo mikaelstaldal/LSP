@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005, Mikael Ståldal
+ * Copyright (c) 2003-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,6 +65,7 @@ public class LSPCompilerCLI
         
 		String sourcePathSpec = null;
 		File targetDir = null;
+		File encloseFile = null;
 
 		for (int i = 0; i<args.length; i++)
 		{
@@ -96,6 +97,11 @@ public class LSPCompilerCLI
 					i++;
 					targetDir = new File(args[i]);
 				}
+				else if (args[i].equals("-enclose"))
+				{
+					i++;
+					encloseFile = new File(args[i]);
+				}
 				else
 				{
 					syntaxError();
@@ -117,7 +123,6 @@ public class LSPCompilerCLI
         LSPCompilerHelper compiler = new LSPCompilerHelper();
         compiler.setXhtml(xhtml);
         compiler.setAcceptNull(acceptNull);
-		if (targetDir != null) compiler.targetDir = targetDir;
 
         if (sourcePathSpec != null)
         {
@@ -129,8 +134,12 @@ public class LSPCompilerCLI
                 sp[i] = new File(st.nextToken());
                 i++;
             }
-            compiler.sourcePath = sp;
+            compiler.setSourcePath(sp);
         }
+        
+		if (targetDir != null) compiler.setTargetDir(targetDir);
+		
+		if (encloseFile != null) compiler.setEncloseFile(encloseFile);
 		
 		for (Iterator it = mainPages.iterator(); it.hasNext(); )
 		{
@@ -150,8 +159,7 @@ public class LSPCompilerCLI
 	private static void syntaxError()
 	{
 	    System.err.println("LSP compiler version " + LSPPage.LSP_VERSION_NAME);
-	    System.err.println("Syntax: lspc [-verbose] [-force] [-xhtml] [-acceptNull] [-sourcepath sourcepath] [-d destpath] inputFile ...");	
+	    System.err.println("Syntax: lspc [-verbose] [-force] [-xhtml] [-acceptNull] [-sourcepath sourcepath] [-d destpath] [-enclose encloseFile] inputFile ...");	
 	}
 
 }
-

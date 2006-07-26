@@ -87,11 +87,14 @@ public class LSPCompiler
 	
 	// namespaceURI -> className
 	private HashMap<String,String> extDict = new HashMap<String,String>();
+	
+	private Map<String,Element> partMap; 	
     
     private Properties outputProperties;
 
     private boolean xhtml;
     private boolean acceptNull;
+    private String encloseURL;
     
 
     /**
@@ -108,6 +111,7 @@ public class LSPCompiler
 		jvmCompiler = new LSPJVMCompiler();
         xhtml = false;
         acceptNull = false;
+        encloseURL = null;
     }
     
     
@@ -131,11 +135,23 @@ public class LSPCompiler
     }
     
 
+	/**
+	 * Set enclose to use. Set to <code>null</code> to not use any enclose.
+	 * 
+	 * @param encloseURL URL to the enclose to use
+	 */
+    public void setEnclose(String encloseURL) 
+	{
+		this.encloseURL = encloseURL;		
+	}
+    
+	
     /**
 	 * Start compilation of an LSP page.
 	 *
 	 * @param page       page name
-	 * @param r          {@link URLResolver} to use for resolving <code>&lt;lsp:import&gt;</code>
+	 * @param r          {@link URLResolver} to use for resolving 
+	 *                   <code>&lt;lsp:import&gt;</code> and enclose
 	 *
 	 * @return SAX2 ContentHandler to feed the LSP source into
      * @throws LSPException 
@@ -202,7 +218,14 @@ public class LSPCompiler
 		long startTime = System.currentTimeMillis();
 		if (DEBUG) System.out.println("LSP Compile...");
 
-        processImports(tree);
+        if (encloseURL != null)
+        {
+    		partMap = new HashMap<String,Element>();
+        	tree = processEnclose(encloseURL, tree);
+        	partMap = null;
+        }
+		
+		processImports(tree);
 		
 		for (int i = 0; i<tree.numberOfNamespaceMappings(); i++)
 		{
@@ -475,8 +498,80 @@ public class LSPCompiler
         else
             return false;
     }
+
     
-    
+    private Element processEnclose(String encloseURL, Element main)
+		throws SAXException, IOException
+	{
+		TreeBuilder encloseTb = new TreeBuilder();
+		resolver.resolve(encloseURL, encloseTb);
+		Element enclose = encloseTb.getTree();
+		encloseTb = null;
+		
+		if (main.getNamespaceURI().equals(LSP_CORE_NS)
+				&& main.getLocalName().equals("part"))
+		{
+			String partName = getAttr("name", main, true);
+			partMap.put(partName, main);
+		}
+		else
+		{
+			for (int i = 0; i < main.numberOfChildren(); i++)
+			{
+				if (!(main.getChild(i) instanceof Element)) continue;
+		
+				Element child = (Element)main.getChild(i);
+		
+				if (child.getNamespaceURI().equals(LSP_CORE_NS)
+						&& child.getLocalName().equals("part"))
+				{
+					String partName = getAttr("name", child, true);
+					removeWhitespace(child);
+					if (partMap.put(partName, child) != null)
+	                    throw fixSourceException(child, "duplicate part name");	
+				}
+			}
+		}
+		
+		processEncloseInclude(enclose);
+		
+		return enclose;
+	}
+
+    private void processEncloseInclude(Element enclose)
+		throws SAXException, IOException
+	{   
+        for (int i = 0; i < enclose.numberOfChildren(); i++)
+		{
+			if (!(enclose.getChild(i) instanceof Element)) continue;
+	
+			Element child = (Element)enclose.getChild(i);
+	
+			if (child.getNamespaceURI().equals(LSP_CORE_NS)
+					&& child.getLocalName().equals("include"))
+			{
+				String partName = getAttr("part", child, true);
+				
+				Element includedPart = partMap.get(partName);
+	            
+				Element toInclude = new Element(LSP_CORE_NS, "root");
+				
+				if (includedPart != null)
+				{
+			        for (int j = 0; j < includedPart.numberOfChildren(); j++)			        	
+					{
+			        	toInclude.addChild(includedPart.getChild(j));
+					}
+				}
+				enclose.replaceChild(toInclude, i);
+			}
+			else
+			{
+				processEncloseInclude(child);
+			}
+		}
+	}
+
     private void processImports(Element el)
     	throws SAXException, IOException
     {
@@ -1295,5 +1390,5 @@ public class LSPCompiler
 				+ expr.getClass().getName());
 		}
 	}
-	
+
 }

@@ -48,6 +48,7 @@ import java.net.URLClassLoader;
 import java.net.MalformedURLException;
 
 import org.xml.sax.*;
+
 import javax.xml.parsers.*;
 
 import nu.staldal.lsp.*;
@@ -74,6 +75,7 @@ public class LSPCompilerHelper
 	private File startDir;
 	private File[] sourcePath;
 	private File targetDir;
+	private File encloseFile;
 		
 	
     /**
@@ -106,6 +108,7 @@ public class LSPCompilerHelper
 		startDir = new File(System.getProperty("user.dir", "."));
 		sourcePath = new File[0];
 		targetDir = new File(System.getProperty("user.dir", "."));
+		encloseFile = null;
 	}
 
 
@@ -122,6 +125,12 @@ public class LSPCompilerHelper
 		}
 		
 		if (outputFile.lastModified() < inputFile.lastModified())
+		{
+			return true;
+		}
+
+		if (encloseFile != null 
+				&& (outputFile.lastModified() < encloseFile.lastModified()))
 		{
 			return true;
 		}
@@ -285,90 +294,6 @@ public class LSPCompilerHelper
 		}
 	}
 
-
-	/**
-	 * Compiles LSP from a String to a byte[]. 
-	 * No dependency checking, compiles always.
-	 *
-	 * @param pageName  name of the LSP page
-	 * @param lspData   the LSP data
-	 *
-	 * @throws LSPException with an error message if unsuccessful
-	 */
-	byte[] doCompileFromString(String pageName, String lspData)
-		throws LSPException
-	{
-		try {
-			ContentHandler sax = compiler.startCompile(
-				pageName,
-				new URLResolver() {
-					public void resolve(String url, ContentHandler ch) 
-						throws IOException, SAXException
-					{
-						getFileAsSAX(url, ch);	
-					}
-				});
-			
-			getStringAsSAX(lspData, sax, pageName);
-					
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try {
-				compiler.finishCompile(baos);
-			}
-			catch (Exception e)
-			{
-				if (e instanceof SAXException)
-					throw (SAXException)e;
-				else if (e instanceof IOException)
-					throw (IOException)e;
-				else
-					throw (RuntimeException)e;
-			}
-			return baos.toByteArray();
-		}
-		catch (SAXParseException spe)
-		{
-			Exception ee = spe.getException();
-			if (ee instanceof RuntimeException)
-			{
-				throw (RuntimeException)ee;
-			}
-			try {
-				String sysId = (spe.getSystemId() == null)
-					? pageName 
-					: ((spe.getSystemId().startsWith("file:")) 
-						? new File(new URI(spe.getSystemId())).toString()
-						: spe.getSystemId());
-
-				throw new LSPException(sysId + ":" + spe.getLineNumber()
-					+ ":" + spe.getColumnNumber() + ": " + spe.getMessage());
-			}
-			catch (URISyntaxException ex)
-			{
-				throw new LSPException("Error building " + pageName + ":" 
-					+ ex.toString());				
-			}
-		}
-		catch (SAXException se)
-		{
-			Exception ee = se.getException();
-			if (ee instanceof RuntimeException)
-			{
-				throw (RuntimeException)ee;
-			}
-			else
-			{
-				throw new LSPException("Error building " + pageName
-					+ ": " + se.getMessage());    			
-			}
-		}
-		catch (IOException e)
-		{
-			throw new LSPException("Error building " + pageName
-					+ ": " + e.toString());
-		}
-	}
-
 	
 	private void getFileAsSAX(String url, ContentHandler ch)
 		throws SAXException, IOException
@@ -427,6 +352,24 @@ public class LSPCompilerHelper
 			XMLReader parser = spf.newSAXParser().getXMLReader(); 
 
 			parser.setContentHandler(ch);
+			parser.setErrorHandler(new ErrorHandler() {
+				public void fatalError(SAXParseException e) 
+					throws SAXParseException
+				{
+					throw e;
+				}
+
+				public void error(SAXParseException e) 
+					throws SAXParseException
+				{
+					throw e;
+				}
+
+				public void warning(SAXParseException e)
+				{
+					// do nothing
+				}				
+			});
 
 			parser.parse(is);
 		}
@@ -436,26 +379,7 @@ public class LSPCompilerHelper
 		}		
 	}
 
-
-	private void getStringAsSAX(String data, ContentHandler ch, String pageName)
-		throws SAXException, IOException
-	{
-		InputSource is = new InputSource(new StringReader(data));
-		is.setSystemId(pageName+".lsp");
 	
-		try {
-			XMLReader parser = spf.newSAXParser().getXMLReader(); 
-	
-			parser.setContentHandler(ch);
-	
-			parser.parse(is);
-		}
-		catch (ParserConfigurationException e)
-		{
-			throw new SAXException(e);
-		}		
-	}	
-
 	/**
 	 * Get pageName.
 	 */
@@ -490,6 +414,28 @@ public class LSPCompilerHelper
 	public void setTargetDir(File targetDir) 
 	{
 		this.targetDir = targetDir;
+	}
+
+	/**
+	 * Enclose to use. Set to <code>null</code> to not use any enclose.
+	 */
+	public void setEncloseFile(File encloseFile)
+	{
+		this.encloseFile = encloseFile;
+		if (encloseFile != null)
+		{
+			try {
+				compiler.setEnclose(encloseFile.toURL().toString());
+			}
+			catch (MalformedURLException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}
+		else
+		{
+			compiler.setEnclose(null);			
+		}
 	}
 
     /**

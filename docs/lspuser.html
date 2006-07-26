@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <html>
-<head><title>LSP User Guide</title></head>
+<head><title>LSP User Guide</title>
 <link rel="stylesheet" type="text/css" href="manual.css" />
+</head>
 <body>
 <h1>LSP User Guide</h1>
 
@@ -169,7 +170,7 @@ the list. If the <code>status</code> attribute is specified, a variable with
 that name is bound to an interator status object. Any variable with the 
 same name in the enclosing scope is shadowed.</p>
 
-<p>An iterator status object is a tuple with the following elements:
+<p>An iterator status object is a tuple with the following elements:</p>
 <ul>
 <li><code>index</code> - a number the position in the list, starting from 1</li>
 <li><code>first</code> - a boolean indicating if this is the first element</li>
@@ -177,7 +178,6 @@ same name in the enclosing scope is shadowed.</p>
 <li><code>even</code> - a boolean indicating if this is an even element</li>
 <li><code>odd</code> - a boolean indicating if this is an odd element</li>
 </ul>
-</p>
 
 <h4>lsp:let</h4>
 
@@ -218,8 +218,8 @@ processed.</p>
 </p>
 
 <p>The <code>lsp:root</code> element simply outputs all of its content.
-Useful as document root element in files to be <code>import</code>ed. 
-The <code>lsp:root</code> element can be nested.</p>
+Useful as document root element in files to be <code>import</code>ed and in 
+an <a href="#enclose">enclose</a>. The <code>lsp:root</code> element can be nested.</p>
 
 
 <h4>lsp:processing-instruction</h4>
@@ -351,7 +351,110 @@ method, so be sure to always specify output method in the XSLT stylesheet
 explicitly.</p> 
 
 
-<a name="template"><h2>Templates</h2></a>
+<h4>lsp:include</h4>
+
+<p class="element-syntax">
+<a name="element-include"></a>&lt;lsp:include<br />
+&#160;&#160;<b>part</b> = <var>name</var>&#160;/&gt;
+</p>
+
+<p>The <code>lsp:include</code> element is used to include a <em>part</em>. 
+May only be used in an <a href="#enclose">enclose</a>.</p>
+
+
+<h4>lsp:part</h4>
+
+<p class="element-syntax">
+<a name="element-part"></a>&lt;lsp:part<br />
+&#160;&#160;<b>name</b> = <var>name</var>&gt;<br />
+&#160;&#160;&lt;!-- Content: <var>any (whitespace stripping)</var> --&gt;<br />
+&lt;/lsp:part&gt;
+</p>
+
+<p>The <code>lsp:part</code> element is used to define a <em>part</em>
+to be included in an <a href="#enclose">enclose</a>.</p>
+
+<h2><a name="enclose">Enclose</a></h2>
+
+<p>A web application usually consists of several pages with similar structure.
+All pages may have a header and menu in common, but different content in the "middle" 
+of the page. You probably want a separate LSP file for each page, so you might end
+up with several LSP files with the common structure repeated in all of them. This is 
+inconvenient since you need to change several files when the common structure changes.</p>
+
+<p>Some common parts could be extracted to files you <code>import</code>, but that 
+strategy tends to be cumbersome due to the requirement of each imported file to have 
+well-balanced markup. Another way is to process the output with an XSLT stylesheet, but 
+the syntax is cumbersome and XSLT may degrade the performance. A better way to handle 
+this is to use the <em>enclose</em> feature of LSP.</p>
+
+<p>An <em>enclose</em> is a LSP file which defines the common structure of several 
+pages. The enclose uses the <code>&lt;lsp:include&gt;</code> element to include the parts
+that are different in each page. The main LSP files will contain a list of 
+<code>&lt;lsp:part&gt;</code> elements (use <code>&lt;lsp:root&gt;</code> to achieve 
+a well-formed file if there are several parts) to define the unique parts.</p>
+
+<p>An enclose file may use all LSP features, and have access to page parameters.
+The enclose processing is done by the LSP compiler, with no runtime performance 
+penalty.</p>
+
+<p>Example:</p>
+<p><b>enclose.lsp</b></p>
+<pre class="boxed">
+&lt;html xmlns:lsp="http://staldal.nu/LSP/core"
+      xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;lsp:output encoding="UTF-8" indent="no"/&gt;
+  &lt;head&gt;
+    &lt;title&gt;My web app&lt;/title&gt;
+    &lt;lsp:include part="head"/&gt;    
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;My web app&lt;/h1&gt;
+    &lt;div&gt;
+      &lt;lsp:include part="body"/&gt;    
+    &lt;/div&gt;        
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p><b>page1.lsp</b></p>
+<pre class="boxed">
+&lt;lsp:root xmlns:lsp="http://staldal.nu/LSP/core"
+          xmlns="http://www.w3.org/1999/xhtml"&gt;
+
+  &lt;lsp:part name="head"&gt;
+    &lt;meta name="foo" content="bar"/&gt;
+  &lt;/lsp:part&gt;
+
+  &lt;lsp:part name="body"&gt;
+    &lt;p&gt;Hello, world!&lt;/p&gt;
+  &lt;/lsp:part&gt;
+
+&lt;/lsp:root&gt;
+</pre>
+
+<p><b>page2.lsp</b></p>
+<pre class="boxed">
+&lt;lsp:root xmlns:lsp="http://staldal.nu/LSP/core"
+          xmlns="http://www.w3.org/1999/xhtml"&gt;
+
+  &lt;lsp:part name="head"&gt;
+    &lt;meta name="foo" content="whatever"/&gt;
+  &lt;/lsp:part&gt;
+
+  &lt;lsp:part name="body"&gt;
+    &lt;p&gt;Another page&lt;/p&gt;
+  &lt;/lsp:part&gt;
+
+&lt;/lsp:root&gt;
+</pre>
+
+<pre>
+# lspc -enclose enclose.lsp page1.lsp page2.lsp
+</pre>
+
+
+<h2><a name="template">Templates</a></h2>
 
 <p>All attribute values to non-LSP elements and the values of
 some attributes to LSP elements are processed as templates. This means
@@ -381,7 +484,6 @@ inhibit handling as a boolean.</p>
     &lt;/option&gt;
   &lt;/lsp:for-each&gt;
 &lt;/select&gt;
-
 </pre>
  
 
@@ -463,9 +565,9 @@ EqualityExpr ::= RelationalExpr
 
 RelationalExpr ::= AdditiveExpr
                  | RelationalExpr '&lt;' AdditiveExpr
-                 | RelationalExpr '>' AdditiveExpr
+                 | RelationalExpr '&gt;' AdditiveExpr
                  | RelationalExpr '&lt;=' AdditiveExpr
-                 | RelationalExpr '>=' AdditiveExpr
+                 | RelationalExpr '&gt;=' AdditiveExpr
 
 AdditiveExpr ::= MultiplicativeExpr
                | AdditiveExpr '+' MultiplicativeExpr
@@ -577,7 +679,7 @@ executing the compiled code. <code>lsprt.jar</code> is also needed by the compil
 <p>The LSP compiler is invoked by the application class
 <code>nu.staldal.lsp.compiler.LSPCompilerCLI</code>. The syntax is:</p>
 <pre>
-lspc [-verbose] [-force] [-xhtml] [-acceptNull] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] <em>inputFile</em> ...
+lspc [-verbose] [-force] [-xhtml] [-acceptNull] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] [-enclose <em>encloseFile</em>] <em>inputFile</em> ...
 </pre>
 
 <p><em>sourcepath</em> specifies where to look for imported files with 
@@ -586,8 +688,10 @@ search the directory where the source file is as well).
 <em>destdir</em> specifies where place generated files, default is current directory.
 Multiple input files can be specified. If <code>-force</code> is not specified, 
 files are only compiled if the source file is newer than the target file 
-(imported files are also checked, changing an imported file will trigger 
-recompile). If <code>-xhtml</code> is specified, 
+(imported files and encloses are also checked, changing an imported file or enclose
+will trigger recompile).</p>
+
+<p>If <code>-xhtml</code> is specified, 
 the default output method for XHTML pages will be <code>xhtml</code>, 
 otherwise it will be <code>html</code>.</p>
 
@@ -595,6 +699,8 @@ otherwise it will be <code>html</code>.</p>
 non-existing variables and tuple entries without runtime error. This
 may make it easier to develop the application, but may make it harder
 to debug.</p> 
+
+<p>If <code>-verbose</code> is specified, the name of compiled files will be displayed.</p> 
 
 <p>You have to put <code>bcel.jar</code> and <code>lsprt.jar</code> in CLASSPATH. 
 If you use any <a href="extlib">extension libraries</a>, you have to include them in the CLASSPATH as well.</p>
@@ -621,6 +727,7 @@ classpath as well.</p>
 <pre>
 &lt;lspc sourcepath="<em>sourcepath</em>"
          <b>destdir</b>="<em>where to place compiled code</em>"
+         enclose="<em>enclose file</em>"
          force="<em>force recompiling of all files</em>"
          xhtml="<em>use xhtml as default output method</em>"
          acceptNull="<em>allow non-existing variables and tuple entries</em>"&gt;
@@ -634,12 +741,14 @@ classpath as well.</p>
 relative URL:s, may contain multiple directories separated by ';' or ':' 
 (will search the directory where the source file is as well).
 If <code>force</code> is not set, files are only compiled if 
-the source file is newer than the target file (imported files are also checked, 
-changing an imported file will trigger recompile). If <code>xhtml</code> is set, 
+the source file is newer than the target file (imported files and encloses 
+are also checked, changing an imported file or enclose will trigger recompile).</p>
+
+<p>If <code>xhtml</code> is set, 
 the default output method for XHTML pages will be <code>xhtml</code>, 
 otherwise it will be <code>html</code>.</p>
 
-<p>If <code>acceptNull</code> is specified, the LSP page will accept 
+<p>If <code>acceptNull</code> is set, the LSP page will accept 
 non-existing variables and tuple entries without runtime error. This
 may make it easier to develop the application, but may make it harder
 to debug.</p> 
@@ -673,7 +782,7 @@ as external context.</p>
 
 <tr><td>string</td><td><code>java.lang.String</code><br/><code>char[]</code><br/>
 <code>byte[]</code> (which is assumed to be encoded using ISO-8859-1)<br/>
-<code>java.lang.Enum</code> (in Java 1.5)</td></tr>
+<code>java.lang.Enum</code></td></tr>
 
 <tr><td>list</td><td><code>java.util.Collection</code> (only the <code>iterator()</code>, <code>size()</code> and <code>isEmpty()</code> methods are used)<br/>
 <code>Object[]</code><br/>
@@ -736,4 +845,3 @@ name of your implementation.</p>
 
 </body>
 </html>
-

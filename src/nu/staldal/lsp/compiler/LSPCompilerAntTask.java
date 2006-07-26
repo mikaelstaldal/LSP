@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005, Mikael Ståldal
+ * Copyright (c) 2003-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -61,6 +61,7 @@ public class LSPCompilerAntTask extends Task
 	private Path sourcepath;
 	private File destdir;	
 	private FileSet fileset;
+	private File encloseFile;
 	private boolean force;
 	private boolean xhtml;
     private boolean acceptNull;
@@ -78,6 +79,7 @@ public class LSPCompilerAntTask extends Task
 		fileset = null;
 		sourcepath = null;		
 		destdir = null;
+		encloseFile = null;
 		force = false;
         xhtml = false;
         acceptNull= false;
@@ -111,6 +113,10 @@ public class LSPCompilerAntTask extends Task
 		this.destdir = destdir;
 	}
 
+	public void setEnclose(File encloseFile)
+	{
+		this.encloseFile = encloseFile;
+	}
 	
 	// Handle nested elements
 	
@@ -128,11 +134,13 @@ public class LSPCompilerAntTask extends Task
 		if (destdir == null)
 			throw new BuildException("Must have a destdir attribute");
 
-		compiler.targetDir = destdir;
-        
         compiler.setXhtml(xhtml);
         compiler.setAcceptNull(acceptNull);
 		
+		compiler.setTargetDir(destdir);
+				
+		if (encloseFile != null) compiler.setEncloseFile(encloseFile);
+        
 		if (sourcepath != null)
         {
             String[] _sp = sourcepath.list();
@@ -143,12 +151,12 @@ public class LSPCompilerAntTask extends Task
                 sp[i] = new File(_sp[i]);   
             }
             
-            compiler.sourcePath = sp;            
+            compiler.setSourcePath(sp);            
         }
 
 		DirectoryScanner ds = fileset.getDirectoryScanner(getProject());
 		File fromDir = fileset.getDir(getProject());
-		compiler.startDir = fromDir;
+		compiler.setStartDir(fromDir);
 
 		String[] srcFiles = ds.getIncludedFiles();
 		
@@ -167,4 +175,3 @@ public class LSPCompilerAntTask extends Task
 	}
 
 }
-

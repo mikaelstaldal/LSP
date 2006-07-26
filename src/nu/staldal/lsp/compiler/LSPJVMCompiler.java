@@ -122,7 +122,7 @@ class LSPJVMCompiler implements Constants
 		
 		classGen = new ClassGen(className, 
 			"nu.staldal.lsp.LSPPageBase",
-			getFileName(theTree.getSystemId()), 
+			pageName+".lsp", 
 			ACC_PUBLIC | ACC_FINAL | ACC_SUPER,
 			new String[] {}); 
 
