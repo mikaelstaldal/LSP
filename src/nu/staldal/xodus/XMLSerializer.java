@@ -367,22 +367,25 @@ public class XMLSerializer extends Serializer
 			{
 				String prefix = (String)e.nextElement();
 				String uri = nsSup.getURI(prefix);
-				if (prefix.length() == 0)
-				{
-					if (!hasXmlns)
-                    {
-                        writeAttribute("xmlns", uri);
-                        hasXmlns = true;
-                    }
-				}
-				else
-				{
-					if (!xmlns.contains(prefix))
-                    {
-                        writeAttribute("xmlns:"+prefix, uri);
-                        xmlns.add(prefix);
-                    }
-				}
+                if (uri != null)
+                {
+                    if (prefix.length() == 0)
+    				{
+    					if (!hasXmlns)
+                        {
+                            writeAttribute("xmlns", uri);
+                            hasXmlns = true;
+                        }
+    				}
+    				else
+    				{
+    					if (!xmlns.contains(prefix) && uri.length() > 0)
+                        {
+                            writeAttribute("xmlns:"+prefix, uri);
+                            xmlns.add(prefix);
+                        }
+    				}
+                }
 			}            
         }
         catch (IOException e)
@@ -1082,4 +1085,3 @@ public class XMLSerializer extends Serializer
     }
     
 }
-
