@@ -79,9 +79,12 @@ import javax.xml.transform.stream.StreamResult;
  * and 
  * <code>javax.xml.transform.Result.PI_ENABLE_OUTPUT_ESCAPING</code>
  *  can be used as processingInstruction targets to disable output escaping. 
+ *<p>
+ * The methods specified in the {@link java.lang.Appendable} interface will
+ * act like the {@link #characters} methods.
  */
 public abstract class Serializer implements ContentHandler, LexicalHandler, 
-                                            DTDHandler, DeclHandler
+                                            DTDHandler, DeclHandler, Appendable
 {
     protected final OutputConfig outputConfig; 
     protected final String systemId;

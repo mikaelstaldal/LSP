@@ -51,12 +51,15 @@ public class TestXMLSerializer
         ser.startElement("", "root", "", new AttributesImpl());
         ser.characters("Räksmörgås!");
         ser.characters("0123456789".toCharArray(), 5, 2);
+        ser.append('&');
+        ser.append("Gurka");
+        ser.append("0123456789", 5, 8);
         ser.endElement("", "root", "");
         ser.comment("Kommentar");
         ser.endDocument();
         
         assertEquals(
-                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<root>Räksmörgås!56</root><!-- Kommentar -->",
+                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<root>Räksmörgås!56&amp;Gurka567</root><!-- Kommentar -->",
                 os.toString(ENC));        
     }
 

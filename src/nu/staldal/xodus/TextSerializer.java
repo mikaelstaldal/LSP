@@ -257,6 +257,31 @@ public class TextSerializer extends Serializer
         throws SAXException
     {        
     }
+
+
+    // Appendable
+    
+    public Appendable append(CharSequence cs)
+        throws IOException
+    {
+        out.append(cs);
+        return this;
+    }
+
+
+    public Appendable append(char c) 
+        throws IOException
+    {
+        out.append(c);
+        return this;
+    }
+
+
+    public Appendable append(CharSequence cs, int start, int end) 
+        throws IOException
+    {
+        out.append(cs, start, end);
+        return this;
+    }
     
 }
-

@@ -112,3 +112,5 @@
 -----
 * Fixed formatting of float values.
 * Fixed escaping in HTML serialization.
+* New methods for convenience and efficiency in Serializer, 
+  send a String/CharSequence directly without converting to char[].

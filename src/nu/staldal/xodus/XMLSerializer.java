@@ -420,19 +420,26 @@ public class XMLSerializer extends Serializer
 	    throws SAXException
     {
         try {
-            if (emptyElement)
-            {
-                out.write('>');    
-                emptyElement = false;
-            }
+            _fixTag();
         }
         catch (IOException e)
         {
             throw new SAXException(e);    
         }        
     }
-    
 
+    
+    private void _fixTag()
+        throws IOException
+    {
+        if (emptyElement)
+        {
+            out.write('>');    
+            emptyElement = false;
+        }
+    }
+
+    
     public void endElement(String namespaceURI, String localName, String qName)
 	    throws SAXException
     {        
@@ -522,14 +529,51 @@ public class XMLSerializer extends Serializer
         nsSup.popContext();        
     }
 
-
-    public void characters(char ch[], int start, int length)
-	    throws SAXException
+    private void doFirstInCharacters()
+        throws SAXException
     {
         wasEndTag = false;
         wasStartTag = false;
 
-        fixTag();
+        fixTag();        
+    }
+
+    private void _doFirstInCharacters()
+        throws IOException
+    {
+        wasEndTag = false;
+        wasStartTag = false;
+
+        _fixTag();        
+    }
+
+    
+    private void outputEscapedCharacter(char c)
+        throws IOException
+    {
+        switch (c)
+        {
+        case '<':
+            out.write("&lt;");
+            break;
+
+        case '>':
+            out.write("&gt;");
+            break;
+        
+        case '&':
+            out.write("&amp;");
+            break;
+        
+        default:
+            out.write(c);
+        }        
+    }    
+    
+    public void characters(char ch[], int start, int length)
+	    throws SAXException
+    {
+        doFirstInCharacters();
         
         try {
             if (disableOutputEscaping || nestedCDATA > 0)
@@ -541,24 +585,7 @@ public class XMLSerializer extends Serializer
                 out.enableEscaping();
                 for (int i = start; i<start+length; i++)
                 {
-                    char c = ch[i];
-                    switch (c)
-                    {
-                    case '<':
-                        out.write("&lt;");
-                        break;
-
-                    case '>':
-                        out.write("&gt;");
-                        break;
-                    
-                    case '&':
-                        out.write("&amp;");
-                        break;
-                    
-                    default:
-                        out.write(c);
-                    }
+                    outputEscapedCharacter(ch[i]);
                 }
                 out.disableEscaping();
             }
@@ -569,46 +596,32 @@ public class XMLSerializer extends Serializer
         }
     }
 
+    
+    private void outputCharacters(CharSequence cs, int start, int end)
+        throws IOException
+    {
+        if (disableOutputEscaping || nestedCDATA > 0)
+        {
+            out.append(cs, start, end);
+        }
+        else
+        {
+            out.enableEscaping();
+            for (int i = start; i<end; i++)
+            {
+                outputEscapedCharacter(cs.charAt(i));
+            }
+            out.disableEscaping();
+        }        
+    }
 
     public void characters(CharSequence cs)
 	    throws SAXException
     {
-        wasEndTag = false;
-        wasStartTag = false;
-
-        fixTag();
+        doFirstInCharacters();
         
         try {
-            if (disableOutputEscaping || nestedCDATA > 0)
-            {
-                out.append(cs);
-            }
-            else
-            {
-                out.enableEscaping();
-                for (int i = 0; i<cs.length(); i++)
-                {
-                    char c = cs.charAt(i);
-                    switch (c)
-                    {
-                    case '<':
-                        out.write("&lt;");
-                        break;
-
-                    case '>':
-                        out.write("&gt;");
-                        break;
-                    
-                    case '&':
-                        out.write("&amp;");
-                        break;
-                    
-                    default:
-                        out.write(c);
-                    }
-                }
-                out.disableEscaping();
-            }
+            outputCharacters(cs, 0, cs.length());
         }
         catch (IOException e)
         {
@@ -1082,6 +1095,50 @@ public class XMLSerializer extends Serializer
         {
             throw new SAXException(e);    
         }                                
+    }
+
+
+    // Appendable
+    
+    public Appendable append(CharSequence cs)
+        throws IOException
+    {
+        _doFirstInCharacters();
+        
+        outputCharacters(cs, 0, cs.length());
+        
+        return this;
+    }
+
+
+    public Appendable append(char c) 
+        throws IOException
+    {
+        _doFirstInCharacters();
+        
+        if (disableOutputEscaping || nestedCDATA > 0)
+        {
+            out.append(c);
+        }
+        else
+        {
+            out.enableEscaping();
+            outputEscapedCharacter(c);
+            out.disableEscaping();
+        }        
+        
+        return this;
+    }
+
+
+    public Appendable append(CharSequence cs, int start, int end) 
+        throws IOException
+    {
+        _doFirstInCharacters();
+        
+        outputCharacters(cs, start, end);
+       
+        return this;
     }
     
 }
