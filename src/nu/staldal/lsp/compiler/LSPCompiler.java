@@ -271,7 +271,9 @@ public class LSPCompiler
         
 		jvmCompiler.compileToByteCode(pageName, compiledTree, 
 			importedFiles, compileDynamic,
-			extLibsInPage, outputProperties, out, acceptNull);
+			extLibsInPage, outputProperties, 
+            out, acceptNull,
+            (encloseURL != null));
 
 		outputProperties = null;
         tb = null;
@@ -376,7 +378,7 @@ public class LSPCompiler
 		for (int i = 0; i < template.length(); i++)
 		{
 			char c = template.charAt(i);
-			if (expr == null)
+			if (text != null)
 			{
 				if (c == left)
 				{
@@ -416,9 +418,10 @@ public class LSPCompiler
 					{
 						if (text.length() > 0)
 							vector.add(text.toString());
-						text = null;
-
+						
+                        text = null;
 						expr = new StringBuffer();
+                        
 						expr.append(c);
 						brace = 0;
 					}
@@ -432,7 +435,7 @@ public class LSPCompiler
 					}
 				}
 			}
-			else // expr != null
+			else if (expr != null)
 			{
 				if (c == quot1 || c == quot2)
 				{
@@ -457,10 +460,10 @@ public class LSPCompiler
                         }
                         catch (ParseException e)
                         {
-                            throw fixParseException(
-								n, exp, (ParseException)e);
+                            throw fixParseException(n, exp, e);
                         }
                         vector.add(res);
+                        
 						expr = null;
 						text = new StringBuffer();
 					}
@@ -474,6 +477,10 @@ public class LSPCompiler
 					expr.append(c);
 				}
 			}
+            else
+            {
+                throw new RuntimeException("Cannot happend: text and expr is null");
+            }
 		}
 
 		if (brace != 0)
@@ -760,7 +767,7 @@ public class LSPCompiler
 	private String lookupExtensionHandlerClass(Node el, String ns)
 		throws SAXException
 	{	
-	    String className = (String)extDict.get(ns);
+	    String className = extDict.get(ns);
 		
 		if (className == null)
         try
@@ -801,14 +808,12 @@ public class LSPCompiler
 	
 
     private LSPNode compileNode(Text text)
-        throws SAXException
     {
         return new LSPText(text.getValue(), text);
     }
 
 
     private LSPNode compileNode(ProcessingInstruction pi)
-        throws SAXException
     {
         return new LSPProcessingInstruction(
 			new StringLiteral(pi.getTarget()), 
@@ -960,7 +965,6 @@ public class LSPCompiler
 
     
     private void removeWhitespace(Element el)
-		throws SAXException
     {
         if (el.numberOfChildren() == 0)
             return;        

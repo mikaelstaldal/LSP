@@ -64,7 +64,6 @@ import org.apache.bcel.generic.*;
  *<p>
  * An instance of this class may be reused, but is not thread safe.
  */
-@SuppressWarnings("static-access")
 class LSPJVMCompiler implements Constants
 {
 	private static final String EXT_LIBS_URLS = "_extLibsURLs";
@@ -111,7 +110,7 @@ class LSPJVMCompiler implements Constants
     void compileToByteCode(String pageName, LSPNode theTree, 
 		    HashMap<String,String> importedFiles, boolean compileDynamic,
             HashMap<String,String> extLibsInPage, Properties outputProperties, 
-            OutputStream out, boolean acceptNull)
+            OutputStream out, boolean acceptNull, boolean hasEnclose)
         throws IOException, SAXException
 	{
         this.acceptNull = acceptNull;
@@ -130,23 +129,28 @@ class LSPJVMCompiler implements Constants
 
 		instrFactory = new InstructionFactory(classGen, constGen);
         
-        sourceFiles = new HashMap<String,Integer>(importedFiles.size());
+        sourceFiles = new HashMap<String,Integer>(importedFiles.size() + (hasEnclose ? 1 : 0));
         
         StringBuffer sourceMap = new StringBuffer();
         sourceMap.append("SMAP\n");
-        sourceMap.append(getFileName(theTree.getSystemId()) + '\n');
+        sourceMap.append(pageName+".lsp" + '\n');               
         sourceMap.append("LSP\n");        
         sourceMap.append("*S LSP\n");        
         sourceMap.append("*F\n");        
         {
             int i = 1;
-            sourceMap.append(i + " " + getFileName(theTree.getSystemId()) + '\n');
-            for (Iterator<String> it = importedFiles.keySet().iterator(); it.hasNext(); )
+            sourceMap.append(i + " " + pageName+".lsp" + '\n');
+            if (hasEnclose)
             {
-                String key = it.next();
+                i++;
+                sourceMap.append(i + " " + getFileName(theTree.getSystemId()) + '\n');
+                sourceFiles.put(theTree.getSystemId(), Integer.valueOf(i));                
+            }
+            for (String key : importedFiles.keySet())
+            {
                 i++;
                 sourceMap.append(i + " " + getFileName(key) + '\n');
-                sourceFiles.put(importedFiles.get(key), new Integer(i));
+                sourceFiles.put(importedFiles.get(key), Integer.valueOf(i));
             }
         }
         maxLineNumber = new int[sourceFiles.size()+2];
@@ -197,9 +201,8 @@ class LSPJVMCompiler implements Constants
 
 		ArrayList<String> extLibsURLs = new ArrayList<String>(extLibsInPage.size());
 		ArrayList<String> extLibsClassNames = new ArrayList<String>(extLibsInPage.size());
-		for (Iterator<Map.Entry<String,String>> iter = extLibsInPage.entrySet().iterator(); iter.hasNext(); )
+		for (Map.Entry<String,String> ent : extLibsInPage.entrySet())
 		{
-			Map.Entry<String,String> ent = iter.next();
 			extLibsURLs.add(ent.getKey());
 			extLibsClassNames.add(ent.getValue());
 		}
@@ -214,7 +217,7 @@ class LSPJVMCompiler implements Constants
 		{
 			instrList.append(InstructionConstants.DUP);
 			instrList.append(new PUSH(constGen, i));
-			instrList.append(new PUSH(constGen, (String)extLibsURLs.get(i)));
+			instrList.append(new PUSH(constGen, extLibsURLs.get(i)));
 			instrList.append(InstructionConstants.AASTORE);
 		}		
 		instrList.append(instrFactory.createFieldAccess(className, EXT_LIBS_URLS, new ArrayType(Type.STRING, 1), PUTSTATIC));
@@ -225,7 +228,7 @@ class LSPJVMCompiler implements Constants
 		{
 			instrList.append(InstructionConstants.DUP);
 			instrList.append(new PUSH(constGen, i));
-			instrList.append(new PUSH(constGen, (String)extLibsClassNames.get(i)));
+			instrList.append(new PUSH(constGen, extLibsClassNames.get(i)));
 			instrList.append(InstructionConstants.AASTORE);
 		}		
 		instrList.append(instrFactory.createFieldAccess(className, EXT_LIBS_CLASS_NAMES, new ArrayType(Type.STRING, 1), PUTSTATIC));
@@ -233,12 +236,12 @@ class LSPJVMCompiler implements Constants
 		instrList.append(new PUSH(constGen, importedFiles.size()));
 		instrList.append(instrFactory.createNewArray(Type.STRING, (short)1));
 		{ int i = 0;
-		for (Iterator iter = importedFiles.keySet().iterator(); 
+		for (Iterator<String> iter = importedFiles.keySet().iterator(); 
 			 iter.hasNext(); i++)
 		{
 			instrList.append(InstructionConstants.DUP);
 			instrList.append(new PUSH(constGen, i));
-			instrList.append(new PUSH(constGen, (String)iter.next()));
+			instrList.append(new PUSH(constGen, iter.next()));
 			instrList.append(InstructionConstants.AASTORE);
 		} }		
 		instrList.append(instrFactory.createFieldAccess(className, COMPILE_DEPENDENT_FILES, new ArrayType(Type.STRING, 1), PUTSTATIC));
@@ -824,7 +827,6 @@ class LSPJVMCompiler implements Constants
     private void compileNode(LSPText text,
 			MethodGen methodGen, InstructionList instrList, 
 			int split)	
-        throws SAXException
     {
         String chars = text.getValue();
         
@@ -1401,9 +1403,8 @@ class LSPJVMCompiler implements Constants
 	
 	private Class compileSubExpr(StringLiteral expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws SAXException
 	{
-		instrList.append(new PUSH(constGen, ((StringLiteral)expr).getValue()));
+		instrList.append(new PUSH(constGen, expr.getValue()));
 
 		return String.class;
 	}
@@ -1411,7 +1412,6 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(NumberLiteral expr,
 			MethodGen methodGen, InstructionList instrList)	
-		throws SAXException
 	{
 		instrList.append(new PUSH(constGen, expr.getValue()));
 		
@@ -1426,7 +1426,6 @@ class LSPJVMCompiler implements Constants
 
 	private Class compileSubExpr(VariableReference expr,
 			MethodGen methodGen, InstructionList instrList)
-		throws SAXException
 	{
 		instrList.append(instrFactory.createLoad(
 			Type.getType(Environment.class), PARAM_env));
