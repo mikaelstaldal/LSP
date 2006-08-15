@@ -63,7 +63,8 @@ public class TestLSPCompilation
     	assertNotNull(thePage);
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	lspHelper.executePage(thePage, Collections.emptyMap(), null, baos);
-    	assertEquals(expectedResult, baos.toString("UTF-8"));		
+        String result = baos.toString("UTF-8");
+    	assertEquals(expectedResult, result);		
 	}
 	
     @Test(expected=nu.staldal.lsp.LSPException.class)
@@ -129,5 +130,29 @@ public class TestLSPCompilation
     		  + "<li>10</li>\n"
     		  +	"</ul>\n"
     		  + "</root>");
+    }
+
+    @Test
+    public void testHtmlAttribute() throws Exception
+    {
+        doTest("HtmlAttribute",
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"
+              + "<html>\n"
+              + "<p class=\"foo&amp;\"></p>\n"
+              + "<p class=\"foo&{bar}\"></p>\n"
+              + "<p class=\"foo&amp;bar\"></p>\n"
+              + "</html>");
+    }
+
+    @Test
+    public void testXhtmlAttribute() throws Exception
+    {
+        doTest("XhtmlAttribute",
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+              + "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+              + "<p class=\"foo&amp;\"></p>\n"
+              + "<p class=\"foo&amp;{bar}\"></p>\n"
+              + "<p class=\"foo&amp;bar\"></p>\n"
+              + "</html>");
     }
 }

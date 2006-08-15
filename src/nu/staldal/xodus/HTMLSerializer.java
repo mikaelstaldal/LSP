@@ -186,7 +186,7 @@ public class HTMLSerializer extends Serializer
                     switch (c)
                     {
                     case '&':
-                        if (i<attValue.length() && attValue.charAt(i+1)=='{')
+                        if ((i+1)<attValue.length() && attValue.charAt(i+1)=='{')
                         {
                             // do not escape & immediately before { in HTML
                             out.write('&');    
