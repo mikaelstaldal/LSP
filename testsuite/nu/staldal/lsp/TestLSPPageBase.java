@@ -1,6 +1,5 @@
 package nu.staldal.lsp;
 
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import junit.framework.TestCase;
