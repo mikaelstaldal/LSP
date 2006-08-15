@@ -57,8 +57,11 @@ public class TestLSPCompilationEnclose
 	private void doTest(String pageName, String encloseName, String expectedResult)
 		throws Exception
 	{
-    	lspCompilerHelper.setEncloseFile(
-    		new File(new File(new File("testsuite"), "lspPages"), encloseName));
+    	if (encloseName != null) 
+        {
+            lspCompilerHelper.setEncloseFile(
+                    new File(new File(new File("testsuite"), "lspPages"), encloseName));
+        }
 		
 		lspCompilerHelper.doCompile(pageName + ".lsp", true);
     	
@@ -66,7 +69,7 @@ public class TestLSPCompilationEnclose
     	assertNotNull(thePage);
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
     	lspHelper.executePage(thePage, Collections.emptyMap(), null, baos);
-    	assertEquals(expectedResult, baos.toString("UTF-8"));
+    	if (expectedResult != null) assertEquals(expectedResult, baos.toString("UTF-8"));
 	}
 	
     @Test
@@ -130,11 +133,11 @@ public class TestLSPCompilationEnclose
     }	
 
     @Test
-    public void testError()
+    public void testError1()
 		throws Exception
     {
     	try {
-    		doTest("TransformedPageError", "htmlEnclose.lsp", "");
+    		doTest("TransformedPageError", "htmlEnclose.lsp", null);
     		fail("Should throw LSPException");
     	}
     	catch (nu.staldal.lsp.LSPException e)
@@ -148,7 +151,7 @@ public class TestLSPCompilationEnclose
 		throws Exception
     {
     	try {
-    		doTest("TransformedPageLSPError", "htmlEnclose.lsp", "");
+    		doTest("TransformedPageLSPError", "htmlEnclose.lsp", null);
     		fail("Should throw LSPException");
     	}
     	catch (nu.staldal.lsp.LSPException e)
@@ -156,4 +159,75 @@ public class TestLSPCompilationEnclose
     		System.err.println(e.toString());
     	}
     }	
+
+    @Test
+    public void testErrorInEnclose1()
+        throws Exception
+    {
+        try {
+            doTest("TransformedPage", "htmlEncloseError.lsp", null);
+            fail("Should throw LSPException");
+        }
+        catch (nu.staldal.lsp.LSPException e)
+        {
+            System.err.println(e.toString());
+        }
+    }   
+
+    @Test
+    public void testErrorInEnclose2()
+        throws Exception
+    {
+        try {
+            doTest("TransformedPage", "htmlEncloseLSPError.lsp", null);
+            fail("Should throw LSPException");
+        }
+        catch (nu.staldal.lsp.LSPException e)
+        {
+            System.err.println(e.toString());
+        }
+    }   
+
+    @Test
+    public void testRuntimeError()
+        throws Exception
+    {
+        try {
+            doTest("TransformedPageRuntimeError", "htmlEnclose.lsp", null);
+            fail("Should throw LSPException");
+        }
+        catch (nu.staldal.lsp.LSPException e)
+        {
+            e.printStackTrace();
+        }
+    }       
+
+    @Test
+    public void testRuntimeErrorInEnclose()
+        throws Exception
+    {
+        try {
+            doTest("TransformedPage", "htmlEncloseRuntimeError.lsp", null);
+            fail("Should throw LSPException");
+        }
+        catch (nu.staldal.lsp.LSPException e)
+        {
+            e.printStackTrace();
+        }
+    }       
+
+    @Test
+    public void testRuntimeErrorInInclude()
+        throws Exception
+    {
+        try {
+            doTest("PageWithImport", null, null);
+            fail("Should throw LSPException");
+        }
+        catch (nu.staldal.lsp.LSPException e)
+        {
+            e.printStackTrace();
+        }
+    }       
+
 }
