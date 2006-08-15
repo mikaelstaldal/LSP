@@ -59,7 +59,8 @@ public class UnaryExpr extends LSPExpr
 		return left;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "UnaryExpr(" + left + ")";
 	}

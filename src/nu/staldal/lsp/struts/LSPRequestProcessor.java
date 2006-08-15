@@ -62,6 +62,7 @@ public class LSPRequestProcessor extends RequestProcessor
     private LSPManager lspManager;    
     
     
+    @Override
     public void init(ActionServlet servlet, ModuleConfig moduleConfig)
        throws ServletException 
     {
@@ -71,6 +72,7 @@ public class LSPRequestProcessor extends RequestProcessor
     }
     
     
+    @Override
     protected void processForwardConfig(HttpServletRequest request,
                                         HttpServletResponse response,
                                         ForwardConfig forward)

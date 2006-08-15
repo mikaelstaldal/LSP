@@ -73,7 +73,8 @@ public class LSPCompilerAntTask extends Task
 	}
 
 
-	public void init()
+	@Override
+    public void init()
     	throws BuildException
 	{
 		fileset = null;
@@ -126,7 +127,8 @@ public class LSPCompilerAntTask extends Task
 	}
 	
 		
-	public void execute() throws BuildException
+	@Override
+    public void execute() throws BuildException
 	{
 		if (fileset == null)
 			throw new BuildException("Must have a nested <fileset> element");

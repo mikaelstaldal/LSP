@@ -158,11 +158,13 @@ public class LSPResultSetTupleList implements List
         throw new UnsupportedOperationException();    
     }
 
+    @Override
     public boolean equals(Object o)
     {
         throw new UnsupportedOperationException();    
     }
 
+    @Override
     public int hashCode()
     {
         throw new UnsupportedOperationException();    

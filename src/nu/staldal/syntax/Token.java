@@ -52,7 +52,7 @@ public abstract class Token
 	 *
 	 * @param line line number of the token in input (1-based),
      *  or -1 if unknown.
-	 * @param col  column number of the token in input (1-based),
+	 * @param column  column number of the token in input (1-based),
      *  or -1 if unknown.
 	 */
 	public Token(int line, int column)

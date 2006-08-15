@@ -440,6 +440,7 @@ public class HTMLSerializer extends Serializer
         }        
     }   
     
+    @Override
     public void characters(CharSequence cs)
 	    throws SAXException
     {
@@ -483,6 +484,7 @@ public class HTMLSerializer extends Serializer
     }
 
 
+    @Override
     public void ignorableWhitespace(CharSequence cs)
 	    throws SAXException
     {
@@ -750,6 +752,7 @@ public class HTMLSerializer extends Serializer
     }
 
 
+    @Override
     public void comment(CharSequence cs)
 	    throws SAXException
     {

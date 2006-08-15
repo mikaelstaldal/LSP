@@ -66,7 +66,8 @@ public class TupleExpr extends LSPExpr
 		return key;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "TupleExpr(" + base + "[" + key + "])";
 	}

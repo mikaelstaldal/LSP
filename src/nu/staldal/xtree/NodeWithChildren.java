@@ -84,7 +84,7 @@ public abstract class NodeWithChildren extends Node
     public Node getChild(int index)
         throws IndexOutOfBoundsException
     {
-        return (Node)children.get(index);
+        return children.get(index);
     }
 
 	
@@ -110,7 +110,7 @@ public abstract class NodeWithChildren extends Node
     public Node replaceChild(Node newChild, int index)
         throws IndexOutOfBoundsException
     {
-        Node oldChild = (Node)children.get(index);
+        Node oldChild = children.get(index);
         oldChild.setParent(null);
         newChild.setParent(this);
         children.set(index, newChild);

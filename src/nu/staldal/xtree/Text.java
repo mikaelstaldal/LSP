@@ -108,7 +108,8 @@ public class Text extends Node
 	}
 
 
-	public void toSAX(ContentHandler sax)
+	@Override
+    public void toSAX(ContentHandler sax)
 		throws SAXException
 	{
         obtainCharArray();
@@ -116,6 +117,7 @@ public class Text extends Node
 	}
     
     
+    @Override
     public boolean isWhitespaceNode()
     {
         for (int i = 0; i<value.length(); i++)

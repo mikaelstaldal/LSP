@@ -75,7 +75,6 @@ class XSLTransform implements Transform
                         LSPManager lspManager,
 						String finalContentType,
 						URIResolver uriResolver) 
-        throws ConfigException
 	{
         this.path = path;
         this.servletContext = servletContext;
@@ -122,7 +121,8 @@ class XSLTransform implements Transform
         }
         
 
-		public ContentHandler getSAXHandler() 
+		@Override
+        public ContentHandler getSAXHandler() 
             throws IOException, ServletException
 		{
 			this.handlerUsed = true;
@@ -168,7 +168,8 @@ class XSLTransform implements Transform
 		}
 
 
-		public void go(Source input) throws IOException, ServletException
+		@Override
+        public void go(Source input) throws IOException, ServletException
 		{
 			assignContentType(this.getTransformCtx());
 			
@@ -214,7 +215,8 @@ class XSLTransform implements Transform
 		}
 
         
-		public void done() 
+		@Override
+        public void done() 
             throws IOException, ServletException
 		{
 			if (this.fakeResponse == null)

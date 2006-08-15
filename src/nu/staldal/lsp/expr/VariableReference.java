@@ -67,7 +67,8 @@ public class VariableReference extends LSPExpr
 		return name;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "VariableReference(" + name + ")";
 	}

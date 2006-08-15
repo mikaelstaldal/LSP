@@ -68,6 +68,7 @@ public class DispatcherServlet extends HttpServlet
     private String requestCharset;
 
     
+    @Override
     public void init()
         throws ServletException
     {
@@ -98,6 +99,7 @@ public class DispatcherServlet extends HttpServlet
     }
          
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
@@ -105,6 +107,7 @@ public class DispatcherServlet extends HttpServlet
     }
     
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
@@ -203,6 +206,7 @@ public class DispatcherServlet extends HttpServlet
     }
     
     
+    @Override
     public void destroy()
     {
         for (Iterator it = serviceCache.values().iterator(); it.hasNext(); )
@@ -267,7 +271,7 @@ public class DispatcherServlet extends HttpServlet
     public synchronized Service lookupService(String serviceName)
         throws InstantiationException, IllegalAccessException, ServletException
     {
-        Service s = (Service)serviceCache.get(serviceName);
+        Service s = serviceCache.get(serviceName);
         
         if (s == null)
         {

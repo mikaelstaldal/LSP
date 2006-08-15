@@ -154,25 +154,25 @@ public class LSPElement extends LSPContainer
 	public LSPExpr getAttributeNamespaceURI(int index)
 	{
         if (index == -1) return null;
-		return (LSPExpr)attrNamespace.get(index);
+		return attrNamespace.get(index);
 	}
 
 	public LSPExpr getAttributeLocalName(int index)
 	{
         if (index == -1) return null;
-		return (LSPExpr)attrName.get(index);
+		return attrName.get(index);
 	}
 
 	public String getAttributeType(int index)
 	{
         if (index == -1) return null;
-		return (String)attrType.get(index);
+		return attrType.get(index);
 	}
 
 	public LSPExpr getAttributeValue(int index)
 	{
         if (index == -1) return null;
-		return (LSPExpr)attrValue.get(index);
+		return attrValue.get(index);
 	}
 
 
@@ -191,8 +191,8 @@ public class LSPElement extends LSPContainer
 		throws ArrayIndexOutOfBoundsException
 	{
 		return new String[] {
-			(String)namespacePrefixes.get(index),
-			(String)namespaceURIs.get(index) };
+			namespacePrefixes.get(index),
+			namespaceURIs.get(index) };
 	}
 
 }

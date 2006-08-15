@@ -195,7 +195,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
     {
         if ((textBuffer != null) && (textBuffer.length() > 0))
         {
-            Element parent = (Element)elementStack.peek();
+            Element parent = elementStack.peek();
 			Node node = new Text(textBuffer.toString());
 			node.setSystemId(textSystemId);
 			node.setLine(textLine);
@@ -249,7 +249,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 		}
 		else
 		{
-			Element parent = (Element)elementStack.peek();
+			Element parent = elementStack.peek();
 			parent.addChild(el);
 		}
 
@@ -350,7 +350,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 
 		if (DEBUG) System.out.println("processingInstruction("+target+','+data+')');
 
-		Element parent = (Element)elementStack.peek();
+		Element parent = elementStack.peek();
 		Node node = new ProcessingInstruction(target, data);
 		if (locator != null)
 		{

@@ -84,7 +84,8 @@ public class ProcessingInstruction extends Node
 	}
 
 
-	public void toSAX(ContentHandler sax)
+	@Override
+    public void toSAX(ContentHandler sax)
 		throws SAXException
 	{
 		sax.processingInstruction(target, value);

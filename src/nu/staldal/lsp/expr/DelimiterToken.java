@@ -104,7 +104,8 @@ class DelimiterToken extends Token
 		return type == t;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "DelimiterToken(" + type + ")";
 	}

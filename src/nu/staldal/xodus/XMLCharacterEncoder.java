@@ -396,7 +396,7 @@ public class XMLCharacterEncoder implements Appendable
                     out.clear();
                     for (int i = 0; i<cr.length(); i++)
                     {
-                        String entity = "&#x" + Integer.toHexString((int)in.get()) + ";";
+                        String entity = "&#x" + Integer.toHexString(in.get()) + ";";
                         disableEscaping();
                         encodeWrite(CharBuffer.wrap(entity));
                         enableEscaping();
@@ -406,14 +406,14 @@ public class XMLCharacterEncoder implements Appendable
                 {
                     throw new CharConversionException(
                         "Unmappable Unicode character \\u" 
-                            + Integer.toHexString((int)in.get()) 
+                            + Integer.toHexString(in.get()) 
                             + " in context where escaping is not possible");
                 }
             }
             else // if (cr.isMalformed())
             {
                 throw new CharConversionException(
-                    "Malformed Unicode character: \\u" + Integer.toHexString((int)in.get()));
+                    "Malformed Unicode character: \\u" + Integer.toHexString(in.get()));
             }
         }
         os.write(buf, 0, out.position());

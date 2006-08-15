@@ -59,7 +59,7 @@ import javax.xml.transform.stream.StreamResult;
  *<p>
  * Support output to XML, XHTML, HTML and Text. Full support for XML namespaces.
  *<p>
- * The {@link #startDocument} and {@link #endDocument} method must be used.
+ * The {@link org.xml.sax.ContentHandler#startDocument} and {@link org.xml.sax.ContentHandler#endDocument} method must be used.
  *<p>
  * Output properties controls the serialization process, it uses the keys in 
  * <code>javax.xml.transform.OutputKeys</code>.

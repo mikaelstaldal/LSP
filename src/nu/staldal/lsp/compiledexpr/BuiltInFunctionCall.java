@@ -55,6 +55,9 @@ public class BuiltInFunctionCall extends LSPExpr
 	
 	/**
 	 * Create a BuiltInFunctionCall
+     * 
+	 * @param name function name 
+	 * @param numArgs arity
 	 */
 	public BuiltInFunctionCall(String name, int numArgs)
 	{
@@ -65,6 +68,8 @@ public class BuiltInFunctionCall extends LSPExpr
 	
 	/**
 	 * Create a BuiltInFunctionCall
+     * 
+	 * @param name function name
 	 */
 	public BuiltInFunctionCall(String name)
 	{
@@ -87,6 +92,8 @@ public class BuiltInFunctionCall extends LSPExpr
 
 	/**
 	 * Get the function name
+     * 
+	 * @return the function name
 	 */
 	public String getName()
 	{
@@ -96,6 +103,8 @@ public class BuiltInFunctionCall extends LSPExpr
 
 	/**
 	 * Get the number of arguments to the function.
+     * 
+	 * @return the number of arguments 
 	 */
 	public int numberOfArgs()
 	{
@@ -105,15 +114,22 @@ public class BuiltInFunctionCall extends LSPExpr
 
 	/**
 	 * Get one argument to the function
+     * 
+	 * @param index  argument index
+     *  
+	 * @return the argument
+     * 
+	 * @throws ArrayIndexOutOfBoundsException  if the index is out of range 
 	 */
 	public LSPExpr getArg(int index)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return (LSPExpr)args.get(index);
+		return args.get(index);
 	}
 
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append("BuiltInFunctionCall(");

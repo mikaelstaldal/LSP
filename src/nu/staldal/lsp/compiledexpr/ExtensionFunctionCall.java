@@ -121,11 +121,12 @@ public class ExtensionFunctionCall extends LSPExpr
 	public LSPExpr getArg(int index)
 		throws ArrayIndexOutOfBoundsException
 	{
-		return (LSPExpr)args.get(index);
+		return args.get(index);
 	}
 
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append("ExtensionFunctionCall(");

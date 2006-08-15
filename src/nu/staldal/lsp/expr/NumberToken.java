@@ -69,7 +69,8 @@ class NumberToken extends Token
 		return value;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "NumberToken(" + value + ")";
 	}

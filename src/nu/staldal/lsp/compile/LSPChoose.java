@@ -79,12 +79,12 @@ public class LSPChoose extends LSPNode
 
 	public LSPExpr getWhenTest(int i)
 	{
-		return (LSPExpr)whenTests.get(i);
+		return whenTests.get(i);
 	}
 
 	public LSPNode getWhenBody(int i)
 	{
-		return (LSPNode)whenBodies.get(i);
+		return whenBodies.get(i);
 	}
 
 	public LSPNode getOtherwise()

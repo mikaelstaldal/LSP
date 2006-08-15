@@ -93,7 +93,8 @@ public class BinaryExpr extends LSPExpr
 		return op == o;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "BinaryExpr(" + left + "," + op + "," + right + ")";
 	}

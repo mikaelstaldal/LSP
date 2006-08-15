@@ -67,7 +67,7 @@ public abstract class LSPContainer extends LSPNode
     public LSPNode getChild(int index)
         throws ArrayIndexOutOfBoundsException
     {
-        return (LSPNode)children.get(index);
+        return children.get(index);
     }
 
     public void addChild(LSPNode newChild)
@@ -78,7 +78,7 @@ public abstract class LSPContainer extends LSPNode
     public LSPNode replaceChild(LSPNode newChild, int index)
         throws ArrayIndexOutOfBoundsException
     {
-        LSPNode oldChild = (LSPNode)children.get(index);
+        LSPNode oldChild = children.get(index);
         children.set(index, newChild);
         return oldChild;
     }

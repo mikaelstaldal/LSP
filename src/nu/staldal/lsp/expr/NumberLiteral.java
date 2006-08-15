@@ -67,7 +67,8 @@ public class NumberLiteral extends LSPExpr
 		return value;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "NumberLiteral(" + value + ")";
 	}

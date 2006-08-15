@@ -57,6 +57,7 @@ public class LSPViewFactory extends DocumentViewFactory
     protected LSPManager lspManager;    
 
 
+    @Override
     public void init(org.jdom.Element factoryNode, ServletConfig servletCfg)
         throws ConfigException    
     {
@@ -66,6 +67,7 @@ public class LSPViewFactory extends DocumentViewFactory
     }
     
     
+    @Override
     public View createView(org.jdom.Element viewNode)
         throws ConfigException
     {

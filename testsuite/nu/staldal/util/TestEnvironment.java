@@ -18,7 +18,8 @@ public class TestEnvironment extends TestCase
         super(name);
     }
 	
-	public void setUp()
+	@Override
+    public void setUp()
 	{
 		env = new Environment();	
 	}

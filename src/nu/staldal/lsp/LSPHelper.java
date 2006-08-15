@@ -208,7 +208,7 @@ public class LSPHelper
 	public synchronized Templates getStylesheet(String stylesheetName)
         throws TransformerConfigurationException
 	{
-		Templates compiledStylesheet = (Templates)stylesheets.get(stylesheetName);
+		Templates compiledStylesheet = stylesheets.get(stylesheetName);
 		
 		if (compiledStylesheet == null)
 		{
@@ -256,7 +256,7 @@ public class LSPHelper
 	public synchronized LSPPage getPage(String pageName)
         throws InstantiationException, IllegalAccessException, VerifyError 
 	{
-		LSPPage page = (LSPPage)lspPages.get(pageName);
+		LSPPage page = lspPages.get(pageName);
 		
 		if (page == null)
 		{

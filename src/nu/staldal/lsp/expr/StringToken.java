@@ -69,7 +69,8 @@ class StringToken extends Token
 		return value;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "StringToken(" + value + ")";
 	}

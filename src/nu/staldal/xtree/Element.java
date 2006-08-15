@@ -164,7 +164,6 @@ public class Element extends NodeWithChildren
 	 *
 	 * @see #getAttributeValue
 	 * @see #getAttributeType
-	 * @see #removeAttribute
      */
     public int lookupAttribute(String namespaceURI, String localName)
     {
@@ -223,7 +222,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		String s = (String)attrName.get(index);
+		String s = attrName.get(index);
 		return s.substring(s.indexOf('^')+1);
 	}
 
@@ -241,7 +240,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		String s = (String)attrName.get(index);
+		String s = attrName.get(index);
 		return s.substring(0, s.indexOf('^'));
 	}
 
@@ -262,7 +261,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		return (String)attrType.get(index);
+		return attrType.get(index);
 	}
 
 
@@ -278,7 +277,7 @@ public class Element extends NodeWithChildren
         throws IndexOutOfBoundsException
 	{
         if (index == -1) return null;
-		return (String)attrValue.get(index);
+		return attrValue.get(index);
 	}
 
 
@@ -320,12 +319,13 @@ public class Element extends NodeWithChildren
 		throws IndexOutOfBoundsException
 	{
 		return new String[] {
-			(String)namespacePrefixes.get(index),
-			(String)namespaceURIs.get(index) };
+			namespacePrefixes.get(index),
+			namespaceURIs.get(index) };
 	}
 
 
-	public String lookupNamespaceURI(String prefix)
+	@Override
+    public String lookupNamespaceURI(String prefix)
 	{
 		int index = namespacePrefixes.indexOf(prefix);
 		if (index == -1)
@@ -348,12 +348,13 @@ public class Element extends NodeWithChildren
 		}
 		else
 		{
-			return (String)namespaceURIs.get(index);
+			return namespaceURIs.get(index);
 		}
 	}
 
 
-	public String lookupNamespacePrefix(String URI)
+	@Override
+    public String lookupNamespacePrefix(String URI)
 	{
 		int index = namespaceURI.indexOf(URI);
 		if (index == -1)
@@ -376,7 +377,7 @@ public class Element extends NodeWithChildren
 		}
 		else
 		{
-			return (String)namespacePrefixes.get(index);
+			return namespacePrefixes.get(index);
 		}
 	}
 
@@ -392,7 +393,8 @@ public class Element extends NodeWithChildren
 	}
 
 	
-	public URL getBaseURI()
+	@Override
+    public URL getBaseURI()
 	{
 		if (baseURI != null)
 		{
@@ -412,7 +414,8 @@ public class Element extends NodeWithChildren
 	}
 
 
-	public boolean getPreserveSpace()
+	@Override
+    public boolean getPreserveSpace()
 	{
         switch (xmlSpaceAttribute)
         {
@@ -435,7 +438,8 @@ public class Element extends NodeWithChildren
 	}
     
 
-	public String getInheritedAttribute(String namespaceURI, 
+	@Override
+    public String getInheritedAttribute(String namespaceURI, 
                                              String localName)
 	{
 		String val = getAttrValueOrNull(namespaceURI, localName);
@@ -457,19 +461,19 @@ public class Element extends NodeWithChildren
 	{
 		for (int i = 0; i < namespacePrefixes.size(); i++)
 		{
-			sax.startPrefixMapping((String)namespacePrefixes.get(i),
-								   (String)namespaceURIs.get(i));
+			sax.startPrefixMapping(namespacePrefixes.get(i),
+								   namespaceURIs.get(i));
 		}
 
 		AttributesImpl atts = new AttributesImpl();
 		for (int i = 0; i < attrName.size(); i++)
 		{
-			String s = (String)attrName.get(i);
+			String s = attrName.get(i);
 			String URI = s.substring(s.indexOf('^')+1);
 			String local = s.substring(0, s.indexOf('^'));
 
-			atts.addAttribute(URI, local, "", (String)attrType.get(i),
-				(String)attrValue.get(i));
+			atts.addAttribute(URI, local, "", attrType.get(i),
+				attrValue.get(i));
 		}
 		sax.startElement(namespaceURI, localName, "", atts);
 	}
@@ -486,12 +490,13 @@ public class Element extends NodeWithChildren
 
 		for (int i = 0; i < namespacePrefixes.size(); i++)
 		{
-			sax.endPrefixMapping((String)namespacePrefixes.get(i));
+			sax.endPrefixMapping(namespacePrefixes.get(i));
 		}
 	}
 
 	
-	public void toSAX(ContentHandler sax)
+	@Override
+    public void toSAX(ContentHandler sax)
 		throws SAXException
 	{
 		outputStartElement(sax);

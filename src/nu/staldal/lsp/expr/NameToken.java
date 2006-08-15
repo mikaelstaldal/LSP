@@ -69,7 +69,8 @@ class NameToken extends Token
 		return name;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "NameToken(" + name + ")";
 	}

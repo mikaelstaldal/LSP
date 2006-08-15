@@ -50,7 +50,7 @@ public class EOFToken extends Token
 	 *
 	 * @param line line number of the token in input (1-based),
      *  or -1 if unknown.
-	 * @param col  column number of the token in input (1-based),
+	 * @param column  column number of the token in input (1-based),
      *  or -1 if unknown.
 	 */
 	public EOFToken(int line, int column)
@@ -58,7 +58,8 @@ public class EOFToken extends Token
 		super(line, column);
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "EOFToken()";
 	}

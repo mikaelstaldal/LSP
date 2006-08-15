@@ -79,7 +79,8 @@ public class StringLiteral extends LSPExpr
 		return value;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "StringLiteral(" + value + ")";
 	}

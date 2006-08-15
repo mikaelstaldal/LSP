@@ -129,11 +129,13 @@ public class BooleanArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
+    @Override
     public boolean equals(Object o)
     {
         throw new UnsupportedOperationException();    
     }
 
+    @Override
     public int hashCode()
     {
         throw new UnsupportedOperationException();    

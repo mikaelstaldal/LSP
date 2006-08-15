@@ -52,9 +52,9 @@ public class IllegalToken extends Token
 	 *
 	 * @param line line number of the token in input (1-based),
      *  or -1 if unknown.
-	 * @param col  column number of the token in input (1-based),
+	 * @param column  column number of the token in input (1-based),
      *  or -1 if unknown.
-	 * @param s  the illegal character sequence
+	 * @param chars  the illegal character sequence
 	 */
 	public IllegalToken(int line, int column, String chars)
 	{
@@ -70,7 +70,8 @@ public class IllegalToken extends Token
 		return chars;
 	}
 
-	public String toString()
+	@Override
+    public String toString()
 	{
 		return "IllegalToken(" + chars + ")";
 	}

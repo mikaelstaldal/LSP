@@ -126,7 +126,7 @@ public interface Service
      * and return <code>null</code>. In this case the framework will not 
      * touch <code>response</code> after this method returns, and will not
      * use <code>pageParams</code>. This can be used if you want
-     * to use {@link javax.servlet.http.HttpServletResponse#sendError sendError}
+     * to use {@link javax.servlet.http.HttpServletResponse#sendError(int) sendError}
      * or {@link javax.servlet.http.HttpServletResponse#sendRedirect sendRedirect}.</li>
      *<li>Return the name of an other service to forward the request to,
      * prefixed by "*". Any parameters added to <code>pageParams</code> are 

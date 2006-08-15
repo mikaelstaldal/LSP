@@ -58,7 +58,7 @@ import nu.staldal.lsp.*;
  * This class is thread-safe.
  *
  * There is one instance of LSPManager per {@link javax.servlet.ServletContext},
- * use the {@link #getInstance} method to obtain it.
+ * use {@link #getInstance(ServletContext)} or {@link #getInstance(ServletContext, ClassLoader)} to obtain it.
  */
 public class LSPManager
 {
@@ -410,7 +410,7 @@ public class LSPManager
     private Map loadBundle(Locale locale)
         throws Exception
     {
-        Map localeBundle = (Map)localeBundleCache.get(locale);
+        Map localeBundle = localeBundleCache.get(locale);
         if (localeBundle == null)
         {
             localeBundle = localeBundleFactory.loadBundle(locale);

@@ -57,6 +57,7 @@ import nu.staldal.lsp.framework.*;
  */
 public class ServletExtLib extends SimpleExtLib
 {
+    @Override
     public String handleElement(String localName, Attributes atts,
                                 ContentHandler out)
         throws SAXException

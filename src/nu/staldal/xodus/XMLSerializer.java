@@ -53,7 +53,7 @@ import javax.xml.transform.stream.StreamResult;
 
 public class XMLSerializer extends Serializer
 {
-    private final String XHTML_NS = "http://www.w3.org/1999/xhtml";
+    private static final String XHTML_NS = "http://www.w3.org/1999/xhtml";
 
     private boolean disableOutputEscaping = false;
     private boolean emptyElement = false;
@@ -272,7 +272,7 @@ public class XMLSerializer extends Serializer
 	                else
 					{
 	                    if (outputConfig.isXhtml && defaultURI == null 
-                                && namespaceURI.equals(XHTML_NS))
+                                && XHTML_NS.equals(namespaceURI))
                         {
                             prefix = "";    
                         }
@@ -615,6 +615,7 @@ public class XMLSerializer extends Serializer
         }        
     }
 
+    @Override
     public void characters(CharSequence cs)
 	    throws SAXException
     {
@@ -630,6 +631,7 @@ public class XMLSerializer extends Serializer
     }
 
 
+    @Override
     public void ignorableWhitespace(CharSequence cs)
 	    throws SAXException
     {
@@ -893,6 +895,7 @@ public class XMLSerializer extends Serializer
     }
 
 
+    @Override
     public void comment(CharSequence cs)
 	    throws SAXException
     {

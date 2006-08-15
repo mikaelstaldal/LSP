@@ -12,7 +12,8 @@ public class TestFramework extends TestCase
 
     private DispatcherServlet dispatcherServlet;
     
-    public  void setUp()
+    @Override
+    public void setUp()
     {
         dispatcherServlet = new DispatcherServlet();
     }
