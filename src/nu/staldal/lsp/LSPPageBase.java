@@ -463,7 +463,7 @@ public abstract class LSPPageBase implements LSPPage
 			char sc = s.charAt(si);
 			if (sc == '\r')
 			{
-				if (si<s.length() && (s.charAt(si+1) == '\n'))
+				if ((si+1)<s.length() && (s.charAt(si+1) == '\n'))
 					; // convert CR+LF to LF
 				else
 					cb[ci++] = '\n'; // convert alone CR to LF
