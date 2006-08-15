@@ -7,7 +7,7 @@ BCEL=bcel.jar
 JUnit=junit.jar
 Servlet=servlet.jar
 Struts=struts.jar
-Maveric=maverick.jar
+Maverick=maverick.jar
 JDOM=jdom.jar
 CommonsCollections=commons-collections.jar
 
