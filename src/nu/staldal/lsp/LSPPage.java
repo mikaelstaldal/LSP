@@ -54,30 +54,47 @@ import org.xml.sax.SAXException;
  */
 public interface LSPPage
 {
-    public static final String LSP_VERSION_NAME = "1.5.3";
+    /**
+     * Current version of LSP.
+     */
+    public static final String LSP_VERSION_NAME = "1.6";
+    
+    /**
+     * Version number to check compatibility between runtime and compiled pages.
+     * Will only be bumped with incompatibility in introduced (not nessecary 
+     * with each release).
+     */
     public static final int LSP_VERSION_NUM = 140;
     
 
     /**
 	 * Get a list of files which was imported with this page was compiled.
+     * 
+     * @return list of files which was imported with this page was compiled
 	 */
 	public String[] getCompileDependentFiles();
 
 	
     /**
 	 * Currently not used.
+     * 
+     * @return <code>true</code> if the page is compile dynamic 
 	 */
     public boolean isCompileDynamic();
 
     
 	/**
 	 * When this page was compiled.
+     * 
+	 * @return when the page was compiled, in the same format as {@link java.lang.System#currentTimeMillis()} 
 	 */
 	public long getTimeCompiled();
 
 
     /**
-	 * The name of this page.
+	 * Get the name of this page.
+     * 
+     * @return the name of this page. 
 	 */
 	public String getPageName();
 	
@@ -86,6 +103,8 @@ public interface LSPPage
 	 * Output properties to use then this page is serialized.
      *
      * From &lt;lsp:output&gt;.
+     * 
+     * @return output properties to use then this page is serialized
 	 */
 	public Properties getOutputProperties();
     

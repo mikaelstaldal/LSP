@@ -108,9 +108,12 @@
 * Possbile to force <?xml?> declaration in XHTML serialization.
 
 
-1.5.3
------
+1.6
+---
 * Fixed formatting of float values.
 * Fixed escaping in HTML serialization.
+* Fixed bug with & in attribute values in HTML serialization.
+* Fixed bug with odd line delimiters.
 * New methods for convenience and efficiency in Serializer, 
   send a String/CharSequence directly without converting to char[].
+* Enclose feature.
