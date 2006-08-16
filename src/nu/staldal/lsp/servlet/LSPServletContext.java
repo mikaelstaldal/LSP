@@ -55,6 +55,14 @@ public class LSPServletContext
     private final LSPManager lspManager;
 	
 
+    /**
+     * Create an LSPServletContext.
+     * 
+     * @param servletContext ServletContext
+     * @param servletRequest HttpServletRequest
+     * @param servletResponse HttpServletResponse
+     * @param lspManager LSPManager
+     */
     public LSPServletContext(ServletContext servletContext,
         HttpServletRequest servletRequest, 
         HttpServletResponse servletResponse,

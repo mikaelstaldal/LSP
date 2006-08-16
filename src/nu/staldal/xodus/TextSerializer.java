@@ -72,18 +72,21 @@ public class TextSerializer extends Serializer
     public void startDocument()
 	    throws SAXException
     {
+        // nothing to do    
     }
 
     
     public void startPrefixMapping(String prefix, String uri)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
     public void endPrefixMapping(String prefix)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
@@ -91,12 +94,14 @@ public class TextSerializer extends Serializer
 			      String qName, Attributes atts)
 	    throws SAXException
     {
+        // nothing to do    
     }
     
 
     public void endElement(String uri, String localName, String qName)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
@@ -145,12 +150,14 @@ public class TextSerializer extends Serializer
     public void processingInstruction(String target, String data)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
     
     public void skippedEntity(String name)
 	    throws SAXException
     {
+        // nothing to do    
     }
     
 
@@ -173,36 +180,42 @@ public class TextSerializer extends Serializer
     public void startDTD(String name, String publicId, String systemId)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
     public void endDTD()
 	    throws SAXException
     {
+        // nothing to do    
     }
     
     
     public void startEntity(String name)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
     public void endEntity(String name)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
     public void startCDATA()
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
     public void endCDATA()
 	    throws SAXException
     {        
+        // nothing to do    
     }
 
 
@@ -210,12 +223,14 @@ public class TextSerializer extends Serializer
     public void comment(CharSequence cs)
 	    throws SAXException
     {
+        // nothing to do    
     }
 
 
     public void comment(char ch[], int start, int length)
 	    throws SAXException
     {
+        // nothing to do    
     }
     
 
@@ -224,6 +239,7 @@ public class TextSerializer extends Serializer
     public void notationDecl(String name, String publicId, String systemId)
 	    throws SAXException
     {
+        // nothing to do    
     }
     
     
@@ -231,6 +247,7 @@ public class TextSerializer extends Serializer
 					               String systemId, String notationName)
         throws SAXException
     {        
+        // nothing to do    
     }
     
 
@@ -239,6 +256,7 @@ public class TextSerializer extends Serializer
     public void elementDecl(String name, String model)
 	    throws SAXException
     {        
+        // nothing to do    
     }
 
 
@@ -246,12 +264,14 @@ public class TextSerializer extends Serializer
 					          String type, String mode, String value)
         throws SAXException
     {        
+        // nothing to do    
     }
 
 
     public void internalEntityDecl(String name, String value)
 	    throws SAXException
     {        
+        // nothing to do    
     }
 
 
@@ -259,6 +279,7 @@ public class TextSerializer extends Serializer
 					               String systemId)
         throws SAXException
     {        
+        // nothing to do    
     }
 
 

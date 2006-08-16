@@ -95,6 +95,11 @@ public interface Service
     
     /**
      * Invoked once directly after instantiation, before first use.
+     *<p>
+     * The init method should not invoke {@link nu.staldal.lsp.framework.DispatcherServlet#lookupService(String)},
+     * {@link nu.staldal.lsp.framework.DispatcherServlet#doGet(HttpServletRequest, HttpServletResponse)},
+     * {@link nu.staldal.lsp.framework.DispatcherServlet#doPost(HttpServletRequest, HttpServletResponse)} or
+     * {@link nu.staldal.lsp.servlet.ServletExtLib#handleElement(String, org.xml.sax.Attributes, org.xml.sax.ContentHandler)}.
      *
      * @param context the {@link javax.servlet.ServletContext}
      *

@@ -52,7 +52,10 @@ public final class Utils
     /**
      * Private default constructor to prevent instantiation.
      */
-    private Utils() { }
+    private Utils() 
+    { 
+        // never invoked
+    }
 
 
     /**

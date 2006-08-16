@@ -93,7 +93,9 @@ public class OutputConfig
         if (method == null)
             throw new IllegalArgumentException("Output method must be specified");
         else if (method.equals("xml"))
-            ;
+        {
+            // nothing to do
+        }
         else if (method.equals("xhtml"))
             isXhtml = true;
         else if (method.equals("text"))

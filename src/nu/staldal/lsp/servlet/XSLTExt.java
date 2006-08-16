@@ -49,7 +49,10 @@ public class XSLTExt
     /**
      * Private default constructor to prevent instantiation.
      */
-    private XSLTExt() { }
+    private XSLTExt() 
+    {
+        // never invoked
+    }
 
     
     /**

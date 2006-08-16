@@ -289,7 +289,10 @@ public class DispatcherServlet extends HttpServlet
                         lspManager.getClassLoader());
                     break;
                 }
-                catch (ClassNotFoundException ignore) {}
+                catch (ClassNotFoundException ignore)
+                {
+                    // if class is not found, serviceClass will be set to null
+                }
             }
             
             if (serviceClass == null) return null;

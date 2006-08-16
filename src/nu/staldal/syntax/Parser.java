@@ -86,6 +86,7 @@ public abstract class Parser
 
 	public Parser()
 	{
+        // nothing to do
 	}
 
 	public void init(Lexer lexer)
