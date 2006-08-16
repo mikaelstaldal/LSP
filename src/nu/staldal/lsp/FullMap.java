@@ -53,7 +53,7 @@ import java.util.Map;
  */
 public class FullMap implements Map
 {
-    private static FullMap theInstance = null;
+    private static final FullMap theInstance = new FullMap();
    
     /**
      * Singleton.
@@ -61,15 +61,13 @@ public class FullMap implements Map
      * @return the instance 
      */
     public static FullMap getInstance()
-    {        
-        if (theInstance == null) theInstance = new FullMap(); 
-        
+    {                
         return theInstance;
     }
     
     private FullMap() 
     {
-        // never invoked
+        // nothing to do
     }
     
     /**
