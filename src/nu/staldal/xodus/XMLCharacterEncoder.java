@@ -297,6 +297,8 @@ public class XMLCharacterEncoder implements Appendable
 
     /**
      * Finish encoding and flush output, without closing underlaying stream.
+     * 
+     * @throws IOException if the output cannot be flushed 
      */
     public void finish()
         throws IOException

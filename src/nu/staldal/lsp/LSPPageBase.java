@@ -52,6 +52,14 @@ import nu.staldal.util.*;
 import nu.staldal.lsp.wrapper.*;
 
 
+/**
+ * Base class for compiled LSP pages.
+ *<p>
+ * This class is not part of the public API, it should only be used by compiled 
+ * LSP pages. It is declared public since compiled LSP pages needs to access it.  
+ * 
+ *  @author Mikael Ståldal
+ */
 public abstract class LSPPageBase implements LSPPage
 {
 	protected final String[] extLibsURLs;
@@ -464,9 +472,13 @@ public abstract class LSPPageBase implements LSPPage
 			if (sc == '\r')
 			{
 				if ((si+1)<s.length() && (s.charAt(si+1) == '\n'))
-					; // convert CR+LF to LF
+                {
+					// convert CR+LF to LF - skip this CR
+                }
 				else
-					cb[ci++] = '\n'; // convert alone CR to LF
+                {				
+                    cb[ci++] = '\n'; // convert alone CR to LF
+                }
 			}
 			else
 			{
@@ -666,9 +678,13 @@ public abstract class LSPPageBase implements LSPPage
 			if (index < 0)
 				sb.append(ch);
 			else if (index >= c.length())
-				;
+            {
+                 
+            }
 			else
+            {
 				sb.append(c.charAt(index));
+            }
 		}
 		return sb.toString();
 	}

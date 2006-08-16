@@ -49,13 +49,19 @@ public final class Utils
     /**
      * Private default constructor to prevent instantiation.
      */
-    private Utils() {}
+    private Utils() 
+    {
+        // never invoked
+    }
 
 
  	/**
 	 * Encode a path name or URL into a filename.
 	 *
-	 * The encoding function is not intended to be inversible. 
+	 * The encoding function is not intended to be inversible.
+     *  
+     * @param path  the path to encode 
+     * @return   the encoded path
 	 */
     public static String encodePath(String path)
     {
@@ -106,7 +112,10 @@ public final class Utils
  	/**
 	 * Encode a path name or URL into a Java identifier.
 	 *
-	 * The encoding function is not intended to be inversible. 
+	 * The encoding function is not intended to be inversible.
+     *  
+ 	 * @param path  the path to encode 
+ 	 * @return   the encoded path
 	 */
     public static String encodePathAsIdentifier(String path)
     {
@@ -134,7 +143,9 @@ public final class Utils
 
     /**
      * Check whether an URL is absolute.
-     * Returns true if the URL contains at least one colon, and
+     * 
+     * @param url the URL to check 
+     * @return <code>true</code> if the URL contains at least one colon, and
      * the first colon is before the first slash (if any).
      */
     public static boolean absoluteURL(String url)
@@ -151,7 +162,10 @@ public final class Utils
  
     /**
      * Check whether an URL is pseudo-absolute.
-     * Returns true if the URL start with a slash.
+     * 
+     * @param url the URL to check 
+     * 
+     * @return  <code>true</code> if the URL start with a slash.  
      */
     public static boolean pseudoAbsoluteURL(String url)
     {
@@ -162,6 +176,10 @@ public final class Utils
 	/**
 	 * Generate a {@link java.lang.String} with a specified number
 	 * of a given character.
+     * 
+	 * @param n  character count 
+	 * @param c  the character
+	 * @return   a string with c n times
 	 */
 	public static String nChars(int n, char c)
 	{

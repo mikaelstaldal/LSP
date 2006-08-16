@@ -75,6 +75,10 @@ public class OutputConfig
     
     /**
      * Factory method.
+     * 
+     * @param outputProps output properties
+     *  
+     * @return a new OutputConfig 
      */
     public static OutputConfig createOutputConfig(Properties outputProps)
     {

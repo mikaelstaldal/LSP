@@ -53,6 +53,17 @@ import org.xml.sax.*;
 public class LSPRunner
 {
     
+    /**
+     * Application main method.
+     * 
+     * @param args command line arguments
+     * 
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws VerifyError
+     * @throws SAXException
+     * @throws IOException
+     */
     public static void main(String[] args)
         throws InstantiationException, IllegalAccessException, VerifyError, 
             SAXException, IOException 

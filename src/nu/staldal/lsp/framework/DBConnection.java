@@ -63,6 +63,8 @@ public class DBConnection
      * JDBC NULL occurs.
      *<p>
      * Default is the empty string.
+     * 
+     * @param o the replacement object 
      */
     public void setNullReplacement(Object o)
     {
@@ -83,6 +85,8 @@ public class DBConnection
      * Default is <code>SimpleDateFormat("yyyy-MM-dd")</code>.
      *<p>
      * Set to <code>null</code> to not do any formatting.
+     * 
+     * @param df the DateFormat 
      */
     public void setDateFormatter(DateFormat df)
     {
@@ -91,6 +95,7 @@ public class DBConnection
     
     /**
      * Get formatter for the SQL DATE type.
+     * @return the DateFormat 
      */
     public DateFormat getDateFormatter()
     {
@@ -111,6 +116,8 @@ public class DBConnection
      * Default is <code>SimpleDateFormat("yyyy-MM-dd  HH:mm:ss")</code>.
      *<p>
      * Set to <code>null</code> to not do any formatting.
+     * 
+     * @param df the DateFormat 
      */
     public void setTimestampFormatter(DateFormat df)
     {
@@ -119,6 +126,8 @@ public class DBConnection
     
     /**
      * Get formatter for the SQL TIMESTAMP type.
+     * 
+     * @return the DateFormat 
      */
     public DateFormat getTimestampFormatter()
     {
@@ -139,6 +148,8 @@ public class DBConnection
      * Default is <code>SimpleDateFormat("HH:mm:ss")</code>.
      *<p>
      * Set to <code>null</code> to not do any formatting.
+     * 
+     * @param df the DateFormat 
      */
     public void setTimeFormatter(DateFormat df)
     {
@@ -147,6 +158,8 @@ public class DBConnection
     
     /**
      * Get formatter for the SQL TIME type.
+     * 
+     * @return the DateFormat 
      */
     public DateFormat getTimeFormatter()
     {

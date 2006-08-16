@@ -295,7 +295,7 @@ public class LSPCompilerHelper
 	}
 
 	
-	private void getFileAsSAX(String url, ContentHandler ch)
+	void getFileAsSAX(String url, ContentHandler ch)
 		throws SAXException, IOException
 	{
 		InputSource is;
@@ -382,6 +382,10 @@ public class LSPCompilerHelper
 	
 	/**
 	 * Get pageName.
+     * 
+	 * @param sourceFilename the source filename
+     *  
+	 * @return the page name
 	 */
 	public static String getPageName(String sourceFilename)
 	{
@@ -393,6 +397,8 @@ public class LSPCompilerHelper
 
 	/**
 	 * Where to look for files to compile, default is current directory.
+     * 
+	 * @param startDir the start directory 
 	 */
 	public void setStartDir(File startDir) 
 	{
@@ -402,6 +408,8 @@ public class LSPCompilerHelper
 	/**
 	 * Where to look for imported files with relative URL:s
      * (will search the directory where the source file is as well).
+     * 
+	 * @param sourcePath the source path 
 	 */
 	public void setSourcePath(File[] sourcePath) 
 	{
@@ -410,6 +418,8 @@ public class LSPCompilerHelper
 
 	/**
 	 * Where to place generated files, default is current directory.
+     * 
+     * @param targetDir the target directory
 	 */
 	public void setTargetDir(File targetDir) 
 	{
@@ -418,6 +428,8 @@ public class LSPCompilerHelper
 
 	/**
 	 * Enclose to use. Set to <code>null</code> to not use any enclose.
+     * 
+	 * @param encloseFile the enclose file 
 	 */
 	public void setEncloseFile(File encloseFile)
 	{
@@ -441,6 +453,8 @@ public class LSPCompilerHelper
     /**
      * Set to <code>true</code> to use <code>xhtml</code> as default output 
      * type.
+     * 
+     * @param xhtml 
      */
     public void setXhtml(boolean xhtml)
     {
@@ -450,6 +464,8 @@ public class LSPCompilerHelper
     /**
 	 * Set to <code>true</code> to make the compiled page accept 
      * <code>null</code> values without runtime error.
+     * 
+     * @param acceptNull 
      */
     public void setAcceptNull(boolean acceptNull)
     {

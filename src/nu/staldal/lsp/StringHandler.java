@@ -62,6 +62,8 @@ public class StringHandler implements ContentHandler
 
     /**
 	 * Obtain the captured PCDATA.
+     * 
+     * @return  the captured PCDATA 
 	 */
 	public StringBuffer getBuf()
     {

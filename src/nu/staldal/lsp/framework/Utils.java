@@ -88,6 +88,8 @@ public final class Utils
      *
      * @param s      the string to split
      * @param delim  the delimiter character
+     * 
+     * @return the splitted string 
      */
     public static List<String> splitString(CharSequence s, char delim)
     {
@@ -116,6 +118,8 @@ public final class Utils
      * like Java. Escapes \ " ' and newline (\n), CR (\r) is ignored.
      *
      * @param s  the string to escape
+     * 
+     * @return the escaped string 
      */
     public static String escapeJavascriptString(CharSequence s)
     {

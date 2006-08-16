@@ -48,7 +48,12 @@ import org.xml.sax.SAXException;
  */
 public class LSPException extends SAXException
 {
-	public LSPException(String s)
+	/**
+     * Create an LSPException
+     *  
+     * @param s  detail message
+	 */
+    public LSPException(String s)
 	{
 		super(s);
 	}

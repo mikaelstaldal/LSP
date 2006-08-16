@@ -106,7 +106,9 @@ public class LSPHelper
     /**
      * Set the default media-type for HTML.
      *<p>
-     * Default is "text/html", and this should not be changed. 
+     * Default is "text/html", and this should not be changed.
+     *  
+     * @param htmlType the default media-type for HTML
      */
     public void setHtmlType(String htmlType)
     {
@@ -118,7 +120,9 @@ public class LSPHelper
      * Set the default media-type for XHTML.
      *<p>
      * Default is "text/html", but another reasonable choice is 
-     * "application/xhtml+xml". 
+     * "application/xhtml+xml".
+     *  
+     * @param xhtmlType the default media-type for XHTML
      */
     public void setXhtmlType(String xhtmlType)
     {
@@ -130,7 +134,9 @@ public class LSPHelper
      * Set the default media-type for XML.
      *<p>
      * Default is "text/xml", but another reasonable choice is 
-     * "application/xml". 
+     * "application/xml".
+     *  
+     * @param xmlType the default media-type for XML
      */
     public void setXmlType(String xmlType)
     {
@@ -141,7 +147,9 @@ public class LSPHelper
     /**
      * Set the default media-type for TEXT.
      *<p>
-     * Default is "text/plain". 
+     * Default is "text/plain".
+     *  
+     * @param textType the default media-type for TEXT
      */
     public void setTextType(String textType)
     {
@@ -152,7 +160,9 @@ public class LSPHelper
     /**
      * Set the default character encoding for HTML.
      *<p>
-     * Default is "iso-8859-1". 
+     * Default is "iso-8859-1".
+     *  
+     * @param htmlEncoding default character encoding for HTML
      */
     public void setHtmlEncoding(String htmlEncoding)
     {
@@ -164,6 +174,8 @@ public class LSPHelper
      * Set the default character encoding for XHTML.
      *<p>
      * Default is "UTF-8". 
+     *  
+     * @param xhtmlEncoding default character encoding for XHTML
      */
     public void setXhtmlEncoding(String xhtmlEncoding)
     {
@@ -175,6 +187,8 @@ public class LSPHelper
      * Set the default character encoding for XML.
      *<p>
      * Default is "UTF-8". 
+     *  
+     * @param xmlEncoding default character encoding for XML
      */
     public void setXmlEncoding(String xmlEncoding)
     {
@@ -186,6 +200,8 @@ public class LSPHelper
      * Set the default character encoding for TEXT.
      *<p>
      * Default is "iso-8859-1". 
+     *  
+     * @param textEncoding default character encoding for TEXT
      */
     public void setTextEncoding(String textEncoding)
     {
@@ -315,7 +331,10 @@ public class LSPHelper
                     return getContentType(compiledStylesheet);    
                 }
             }
-            catch (TransformerConfigurationException ignore) {}
+            catch (TransformerConfigurationException ignore) 
+            {
+                // ignore stylesheet compilation problems
+            }
         }
         return getContentType(outputProperties);
     }

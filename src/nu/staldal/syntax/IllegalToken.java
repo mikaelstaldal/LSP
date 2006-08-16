@@ -64,6 +64,8 @@ public class IllegalToken extends Token
 
 	/**
 	 * Get the illegal character sequence
+     * 
+	 * @return the illegal character sequence
 	 */
 	public String getChars()
 	{

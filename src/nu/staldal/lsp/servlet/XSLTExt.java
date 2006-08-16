@@ -55,11 +55,14 @@ public class XSLTExt
     /**
      * Get a localized resource for the user's locale.
      *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
      * @param pageName LSP page name, 
      *                 or <code>null</code> for global resources only
      * @param key      the key
      *
      * @return [<var>key</var>] if not found.
+     * 
+     * @throws Exception  if the {@link nu.staldal.lsp.servlet.LocaleBundleFactory} throws any exception 
      */
     public static String lang(Object context, String pageName, String key)
         throws Exception
@@ -73,9 +76,12 @@ public class XSLTExt
      *<p>
      * Same as <code>lang(<var>context</var>,null,<var>key</var>)</code>.
      *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
      * @param key      the key
      *
      * @return [<var>key</var>] if not found.
+     * 
+     * @throws Exception  if the {@link nu.staldal.lsp.servlet.LocaleBundleFactory} throws any exception 
      */
     public static String lang(Object context, String key)
         throws Exception
@@ -86,6 +92,11 @@ public class XSLTExt
     
     /**
      * Encode an URL for Servlet session tracking.
+     *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
+     * @param url the URL to encode
+     *  
+     * @return the encoded URL 
      * 
      * @see javax.servlet.http.HttpServletResponse#encodeURL
      */

@@ -57,6 +57,8 @@ public class FullMap implements Map
    
     /**
      * Singleton.
+     * 
+     * @return the instance 
      */
     public static FullMap getInstance()
     {        
@@ -65,7 +67,10 @@ public class FullMap implements Map
         return theInstance;
     }
     
-    private FullMap() {}
+    private FullMap() 
+    {
+        // never invoked
+    }
     
     /**
      * @return <code>Void.TYPE</code> for all keys

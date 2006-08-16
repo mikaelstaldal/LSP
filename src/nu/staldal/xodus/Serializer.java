@@ -218,6 +218,9 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
      *
      * @param cs  a {@link java.lang.CharSequence}, 
      *            e.g. a {@link java.lang.String}.
+     *            
+     * @throws SAXException  declared to throw SAXException to be consistent 
+     * with {@link org.xml.sax.ContentHandler}   
      */
     public abstract void characters(CharSequence cs)
         throws SAXException;
@@ -228,6 +231,9 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
      *
      * @param cs  a {@link java.lang.CharSequence}, 
      *            e.g. a {@link java.lang.String}.
+     *            
+     * @throws SAXException  declared to throw SAXException to be consistent 
+     * with {@link org.xml.sax.ContentHandler}   
      */
     public abstract void ignorableWhitespace(CharSequence cs)
         throws SAXException;
@@ -238,6 +244,9 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
      *
      * @param cs  a {@link java.lang.CharSequence}, 
      *            e.g. a {@link java.lang.String}.
+     *            
+     * @throws SAXException  declared to throw SAXException to be consistent 
+     * with {@link org.xml.sax.ContentHandler}   
      */
     public abstract void comment(CharSequence cs)
         throws SAXException;

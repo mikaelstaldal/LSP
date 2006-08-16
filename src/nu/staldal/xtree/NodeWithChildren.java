@@ -67,6 +67,8 @@ public abstract class NodeWithChildren extends Node
 
 	/**
 	 * Get the current number of children this node have.
+     * 
+	 * @return the current number of children 
 	 */
     public int numberOfChildren()
     {
@@ -78,6 +80,8 @@ public abstract class NodeWithChildren extends Node
 	 * Get a specific child of this node.
 	 *
 	 * @param index  index of the node to get, the first child is 0.
+     * 
+	 * @return the child 
 	 *
 	 * @throws IndexOutOfBoundsException  if no such child exist.
 	 */
@@ -90,6 +94,8 @@ public abstract class NodeWithChildren extends Node
 	
 	/**
      * Add a new child to this node, last in sequence.
+     * 
+	 * @param newChild the new child 
 	 */
     public void addChild(Node newChild)
     {
@@ -118,4 +124,3 @@ public abstract class NodeWithChildren extends Node
     }
 	
 }
-

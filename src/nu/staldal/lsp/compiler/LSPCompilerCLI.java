@@ -54,7 +54,12 @@ import nu.staldal.lsp.*;
 public class LSPCompilerCLI
 {
 
-	public static void main(String[] args)
+    /**
+     * Application main method.
+     * 
+     * @param args command line arguments
+     */
+    public static void main(String[] args)
 	{
 		ArrayList<String> mainPages = new ArrayList<String>();
 		

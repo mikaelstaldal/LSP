@@ -78,7 +78,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 	 *
 	 * @return an InputSource
 	 * @throws FileNotFoundException  if the file doesn't exist
-	 * @throws FileNotFoundException  if some I/O error occurs
+	 * @throws IOException   if some I/O error occurs 
 	 */
 	public static InputSource fileToInputSource(File file)
 		throws FileNotFoundException, IOException
@@ -161,6 +161,8 @@ public class TreeBuilder implements ContentHandler, ErrorHandler
 
 	/**
 	 * Obtain the XTree built from SAX events.
+     * 
+	 * @return the XTree 
 	 *
 	 * @throws IllegalStateException  if the SAX events received so far
 	 * doesn't constitues a well-formed XML document.

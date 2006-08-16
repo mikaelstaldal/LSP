@@ -43,8 +43,22 @@ package nu.staldal.lsp.compiler;
 import nu.staldal.syntax.ParseException;
 import nu.staldal.lsp.expr.LSPExprParser;
 
+/**
+ * LSP expression.
+ *
+ * @author Mikael Ståldal
+ */
 public abstract class LSPExpr implements java.io.Serializable
 {
+	/**
+     * Parse an LSP expression from a String.
+     * 
+	 * @param s  the String to parse
+     *  
+	 * @return the parsed expression
+     * 
+	 * @throws ParseException  if the string is invalid
+	 */
 	public static LSPExpr parseFromString(String s)
 		throws ParseException
 	{

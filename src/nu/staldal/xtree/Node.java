@@ -104,7 +104,9 @@ public abstract class Node implements java.io.Serializable, Locator
 	 * Serialize this node, and recursively the (sub)tree beneath, 
 	 * into SAX2 events.
 	 *
-	 * @param sax  the SAX2 ContentHander to fire events on. 
+	 * @param sax  the SAX2 ContentHander to fire events on.
+     *  
+	 * @throws SAXException if any of the ContentHandler methods throw it 
 	 */
 	public abstract void toSAX(ContentHandler sax)
 		throws SAXException;

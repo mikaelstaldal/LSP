@@ -45,7 +45,7 @@ import javax.servlet.http.*;
 
 
 /**
- * Context for LSP extension libraries.
+ * Context for LSP extension libraries executed in Servlet environment.
  */
 public class LSPServletContext
 {
@@ -122,6 +122,8 @@ public class LSPServletContext
      * @param key      the key
      *
      * @return [<var>key</var>] if not found.
+     * 
+     * @throws Exception  if the {@link nu.staldal.lsp.servlet.LocaleBundleFactory} throws any exception 
      */
     public String lang(String pageName, String key)
         throws Exception
@@ -145,6 +147,8 @@ public class LSPServletContext
      * @param key      the key
      *
      * @return [<var>key</var>] if not found.
+     * 
+     * @throws Exception  if the {@link nu.staldal.lsp.servlet.LocaleBundleFactory} throws any exception 
      */
     public String lang(String key)
         throws Exception
@@ -156,6 +160,10 @@ public class LSPServletContext
     /**
      * Encode an URL for Servlet session tracking.
      * 
+     * @param url the URL to encode
+     *  
+     * @return the encoded URL 
+     * 
      * @see javax.servlet.http.HttpServletResponse#encodeURL
      */
     public String encodeURL(String url)
@@ -164,4 +172,3 @@ public class LSPServletContext
     }
     
 }
-

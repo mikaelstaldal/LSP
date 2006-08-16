@@ -568,7 +568,9 @@ class LSPJVMCompiler implements Constants
 
 			if ((localExpr instanceof StringLiteral)
 					&& ((StringLiteral)localExpr).getValue().length() > 0)
-				;
+            {
+				
+            }
 			else
 			{
 				// if (local.length() == 0) continue; // ignore attributes with empty name
@@ -617,7 +619,9 @@ class LSPJVMCompiler implements Constants
                 compileExprAsString(localExpr, methodGen, instrList);
             }            
             else if (valueType == String.class)
-                ;
+            {
+                
+            }
             else
             {
                 instrList.append(instrFactory.createInvoke(

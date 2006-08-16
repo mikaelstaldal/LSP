@@ -224,12 +224,14 @@ public class DispatcherServlet extends HttpServlet
     
     /**
      * Strip leading '/' and extension, apply defaultService.
+     * 
+     * @param requestPath the HTTP request path
      *
      * @return never return <code>null</code>
      */
-    public String fixServiceName(String serviceName)
+    public String fixServiceName(String requestPath)
     {
-        if (serviceName == null || serviceName.length() == 0)
+        if (requestPath == null || requestPath.length() == 0)
         {
             if (defaultService == null)
                 return "";
@@ -237,12 +239,12 @@ public class DispatcherServlet extends HttpServlet
                 return defaultService;                    
         }
 
-        int startPos = serviceName.startsWith("/") ? 1 : 0;
+        int startPos = requestPath.startsWith("/") ? 1 : 0;
 
-        int dot = serviceName.lastIndexOf('.');
-        if (dot < 0) dot = serviceName.length();
+        int dot = requestPath.lastIndexOf('.');
+        if (dot < 0) dot = requestPath.length();
         
-        String ret = serviceName.substring(startPos, dot);
+        String ret = requestPath.substring(startPos, dot);
         if (ret.length() == 0)
         {
             if (defaultService == null)

@@ -137,6 +137,8 @@ public class Element extends NodeWithChildren
 
 	/**
 	 * Get the namespace URI for this element. May be the empty string.
+     * 
+	 * @return the namespace URI for this element
 	 */
     public String getNamespaceURI()
     {
@@ -147,6 +149,8 @@ public class Element extends NodeWithChildren
 	/**
 	 * Get the name of this element. 
 	 * The name does not include namespace URI or prefix.
+     * 
+	 * @return the name of this element
 	 */
     public String getLocalName()
     {
@@ -202,6 +206,8 @@ public class Element extends NodeWithChildren
 	
 	/**
 	 * Return the number of attributes this element have.
+     * 
+	 * @return the number of attributes 
 	 */
 	public int numberOfAttributes()
 	{
@@ -302,7 +308,9 @@ public class Element extends NodeWithChildren
 
 
 	/**
-	 * Return the number of namespace mapping for this element.
+	 * Return the number of namespace mappings for this element.
+     * 
+	 * @return the number of namespace mappings 
 	 */
 	public int numberOfNamespaceMappings()
 	{
@@ -311,6 +319,8 @@ public class Element extends NodeWithChildren
 	
 	/**
 	 * Return a namespace mapping at the specified index.
+     * 
+	 * @param index  the index 
 	 *
 	 * @return a String[] with [0] = prefix, [1] = namespace URI
 	 * @throws IndexOutOfBoundsException  if no such mapping exist.	 
@@ -455,6 +465,10 @@ public class Element extends NodeWithChildren
 	/**
 	 * Fire the startElement event to the given SAX2 ContentHandler.
 	 * Will also fire startPrefixMapping events.
+     * 
+	 * @param sax the ContentHandler 
+     *  
+     * @throws SAXException if any of the ContentHandler methods throw it 
 	 */
 	public void outputStartElement(ContentHandler sax)
 		throws SAXException
@@ -482,6 +496,10 @@ public class Element extends NodeWithChildren
 	/**
 	 * Fire the endElement event to the given SAX2 ContentHandler.
 	 * Will also fire endPrefixMapping events.
+     * 
+     * @param sax the ContentHandler 
+     *  
+     * @throws SAXException if any of the ContentHandler methods throw it 
 	 */
 	public void outputEndElement(ContentHandler sax)
 		throws SAXException
@@ -513,6 +531,8 @@ public class Element extends NodeWithChildren
     /**
      * Shortcut method for getting the value of an attribute without 
 	 * namespace.
+     * 
+     * @param localName  the local name of the attribute 
      *
      * @return the attrubute value, or <code>null</code>
 	 * 		if the attribute doesn't exist
@@ -527,7 +547,10 @@ public class Element extends NodeWithChildren
      * Shortcut method for getting the value of an attribute without 
 	 * namespace.
      *
+     * @param localName  the local name of the attribute 
+     *
      * @return the attrubute value, never <code>null</code>
+     * 
 	 * @throws SAXParseException if the attribute doesn't exist
      */
 	public String getAttrValue(String localName)
@@ -544,6 +567,9 @@ public class Element extends NodeWithChildren
     /**
      * Shortcut method for getting the value of an attribute with
      * namespace.
+     * 
+     * @param namespaceURI  the namespace URI of the attribute
+     * @param localName  the local name of the attribute 
      *
      * @return the attrubute value, or <code>null</code>
 	 * 		if the attribute doesn't exist
@@ -557,6 +583,9 @@ public class Element extends NodeWithChildren
     /**
      * Shortcut method for getting the value of an attribute with
      * namespace.
+     *
+     * @param namespaceURI  the namespace URI of the attribute
+     * @param localName  the local name of the attribute 
      *
      * @return the attrubute value, never <code>null</code>
 	 * @throws SAXParseException if the attribute doesn't exist
@@ -626,6 +655,9 @@ public class Element extends NodeWithChildren
      * Shortcut method for getting the first Element child with a
      * specified name.
      *
+     * @param namespaceURI  the namespace URI of the element
+     * @param localName  the local name of the element
+     *
      * @return  the first child Element with the specified name,
      *          or <code>null</code> if there is no such child.
      */
@@ -649,6 +681,9 @@ public class Element extends NodeWithChildren
     /**
      * Shortcut method for getting the first Element child with a
      * specified name.
+     * 
+     * @param namespaceURI  the namespace URI of the element
+     * @param localName  the local name of the element
      *
      * @return  the first child Element with the specified name,
      *          never <code>null</code>.

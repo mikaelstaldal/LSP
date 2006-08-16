@@ -118,6 +118,8 @@ public class LSPCompiler
     /**
      * Set to <code>true</code> to use <code>xhtml</code> as default output 
      * type.
+     * 
+     * @param xhtml  
      */
     public void setXhtml(boolean xhtml)
     {
@@ -128,6 +130,8 @@ public class LSPCompiler
     /**
 	 * Set to <code>true</code> to make the compiled page accept 
      * <code>null</code> values without runtime error.
+     * 
+     * @param acceptNull
      */    
     public void setAcceptNull(boolean acceptNull)
     {

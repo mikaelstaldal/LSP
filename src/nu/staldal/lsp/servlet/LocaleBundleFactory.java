@@ -62,6 +62,8 @@ public interface LocaleBundleFactory
      *
      * @param classLoader    the {@link java.lang.ClassLoader} to use
      * @param servletContext the {@link javax.servlet.ServletContext}
+     * 
+     * @throws Exception  may throw any Exception 
      */    
     public void init(ClassLoader classLoader, ServletContext servletContext)
         throws Exception;    
@@ -82,8 +84,9 @@ public interface LocaleBundleFactory
      *
      * @return the {@link java.util.Map} with localization data, 
      * or <code>null</code> if none found for the given locale
+     * 
+     * @throws Exception  may throw any Exception 
      */    
     public Map loadBundle(Locale locale)
         throws Exception;    
 }
-

@@ -186,6 +186,14 @@ public class ServletExtLib extends SimpleExtLib
 
 	/**
 	 * Extension function <code>lang(key)</code>.
+     * 
+     * @param _key      the key (String)
+     *
+     * @return [<var>key</var>] if not found (String)
+     *  
+	 * @throws SAXException
+     * 
+     * @see nu.staldal.lsp.servlet.LSPServletContext#lang(String, String)
 	 */
 	public Object _lang(Object _key)
 		throws SAXException
@@ -203,6 +211,14 @@ public class ServletExtLib extends SimpleExtLib
 
 	/**
 	 * Extension function <code>encodeURL(url)</code>.
+     * 
+     * @param _url  the URL to encode (String)
+     *  
+     * @return the encoded URL (String)
+     *  
+	 * @throws SAXException
+     *  
+     * @see nu.staldal.lsp.servlet.LSPServletContext#encodeURL(String)
 	 */
 	public Object _encodeURL(Object _url)
 		throws SAXException

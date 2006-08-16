@@ -67,6 +67,9 @@ public class LSPCompilerAntTask extends Task
     private boolean acceptNull;
 
 	
+	/**
+	 * Create a new LSPCompilerAntTask.
+	 */
 	public LSPCompilerAntTask()
 	{
 		compiler = new LSPCompilerHelper();
@@ -89,31 +92,61 @@ public class LSPCompilerAntTask extends Task
 	
 	// Attribute setter methods
 	
+	/**
+     * Force compilation even if the compiled class exists and is up-to-date.
+     * 
+	 * @param force
+	 */
 	public void setForce(boolean force)
 	{
 		this.force = force;
 	}
 	
+    /**
+     * Use XHTML as default output method instead of HTML.
+     * 
+     * @param xhtml
+     */
 	public void setXhtml(boolean xhtml)
 	{
 		this.xhtml = xhtml;
 	}
 
+	/**
+     * Accept <code>null</code> as variable value without runtime exception.
+     * 
+	 * @param acceptNull
+	 */
 	public void setAcceptNull(boolean acceptNull)
 	{
 		this.acceptNull = acceptNull;
 	}
 
+	/**
+     * Path to search for enclose and included files. 
+     * 
+	 * @param sourcepath
+	 */
 	public void setSourcepath(Path sourcepath)
 	{
 		this.sourcepath = sourcepath;
 	}
 		
+	/**
+     * Where to place generated class files.
+     * 
+	 * @param destdir
+	 */
 	public void setDestdir(File destdir)
 	{
 		this.destdir = destdir;
 	}
 
+	/**
+     * Set enclose file.
+     * 
+	 * @param encloseFile
+	 */
 	public void setEnclose(File encloseFile)
 	{
 		this.encloseFile = encloseFile;
@@ -121,6 +154,11 @@ public class LSPCompilerAntTask extends Task
 	
 	// Handle nested elements
 	
+	/**
+     * Input files.
+     * 
+	 * @param fileset
+	 */
 	public void addConfiguredFileset(FileSet fileset)
 	{
 		this.fileset = fileset;	

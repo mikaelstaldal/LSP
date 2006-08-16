@@ -85,6 +85,8 @@ public class Text extends Node
 
 	/**
 	 * Get the charater content as a string
+     * 
+	 * @return the character content 
 	 */
 	public String getValue()
 	{
@@ -100,6 +102,8 @@ public class Text extends Node
 
 	/**
 	 * Get the charater content as a char[].
+     * 
+	 * @return the char[] 
 	 */
 	public char[] asCharArray()
 	{

@@ -68,6 +68,8 @@ public class ProcessingInstruction extends Node
 	
 	/**
 	 * Get the target.
+     * 
+	 * @return the target 
 	 */
 	public String getTarget()
 	{
@@ -77,6 +79,8 @@ public class ProcessingInstruction extends Node
 
 	/**
 	 * Get the value.
+     * 
+     * @return the value 
 	 */
 	public String getValue()
 	{

@@ -42,17 +42,33 @@ package nu.staldal.lsp;
 
 import java.util.*;
 
+/**
+ * Used compiled LSP pages to implement the status object in for-each loops.
+ *<p>
+ * This class is not part of the public API, it should only be used by compiled 
+ * LSP pages. It is declared public since compiled LSP pages needs to access it. 
+ *
+ * @author Mikael Ståldal
+ */
 public class LSPForEachStatus implements Map
 {
     private Iterator theIterator;
     private int index;
 
+    /**
+     * Create an LSPForEachStatus.
+     * 
+     * @param theIterator   the Iterator to watch
+     */
     public LSPForEachStatus(Iterator theIterator)
     {
         this.theIterator = theIterator;
         this.index = 0;
     }
     
+    /**
+     * Should be invoked when the iterator is advanced.
+     */
     public void next()
     {
         index++;    

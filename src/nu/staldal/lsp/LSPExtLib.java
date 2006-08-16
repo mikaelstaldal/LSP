@@ -84,6 +84,8 @@ public interface LSPExtLib
 	 * Initialize this Extension Library.
 	 *
 	 * @param namespaceURI  the namespace URI to serve
+     * 
+	 * @throws SAXException may throw SAXException 
 	 */
 	public void init(String namespaceURI)
 		throws SAXException;
@@ -94,6 +96,8 @@ public interface LSPExtLib
 	 *
 	 * @param extContext  external context passed to LSP execution engine
 	 * @param pageName    name of the LSP page
+     * 
+     * @throws SAXException may throw SAXException 
 	 */
 	public void startPage(Object extContext, 
 						  String pageName)
@@ -106,6 +110,8 @@ public interface LSPExtLib
 	 * @param out     where to write XML output.
      *
 	 * @return  a ContentHandler to send input to.
+     * 
+     * @throws SAXException may throw SAXException 
 	 */
 	public ContentHandler beforeElement(ContentHandler out)			
 		throws SAXException;
@@ -115,6 +121,8 @@ public interface LSPExtLib
 	 * Invoked after the element is sent.
 	 *
 	 * @return  a string output.
+     * 
+     * @throws SAXException may throw SAXException 
 	 */
 	public String afterElement()
 		throws SAXException;
@@ -122,9 +130,10 @@ public interface LSPExtLib
 
 	/**
 	 * Indicate the end of an LSP page.
+     * 
+     * @throws SAXException may throw SAXException 
 	 */
 	public void endPage()
 		throws SAXException;
 
 }
-

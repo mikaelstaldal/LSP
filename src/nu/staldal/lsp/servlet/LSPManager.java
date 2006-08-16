@@ -187,9 +187,22 @@ public class LSPManager
 	}
 
 
-	/**
+    /**
+     * Executes an LSP page and write the result to a 
+     * {@link javax.servlet.http.HttpServletResponse}. Uses any stylesheet 
+     * specified in the LSP page. 
+     *
+     * @param thePage     the LSP page
+     * @param lspParams   parameters to the LSP page
+     * @param request     the {@link javax.servlet.http.HttpServletRequest}
+     * @param response    the {@link javax.servlet.http.HttpServletResponse}
+     *
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+     * 
      * @deprecated use {@link #executePage(LSPPage,Map,HttpServletRequest,HttpServletResponse)} instead
-	 */	
+	 */
+    @Deprecated
 	public void executePage(LSPPage thePage, Map lspParams, 
 							ServletRequest request, ServletResponse response)
 		throws SAXException, IOException
@@ -224,9 +237,28 @@ public class LSPManager
     }
 
     
-	/**
-     * @deprecated use {@link #executePage(LSPPage,Map,String,HttpServletRequest,HttpServletResponse)} instead
-	 */	
+    /**
+     * Executes an LSP page and transform the the result with an
+     * XSLT stylesheet.
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Make sure
+     * to specify the output method in the stylesheet using &lt;xsl:output&gt;.
+     *
+     * @param thePage         the LSP page
+     * @param lspParams       parameters to the LSP page
+     * @param stylesheetName  the XSLT stylesheet
+     * @param request         the {@link javax.servlet.http.HttpServletRequest}
+     * @param response        the {@link javax.servlet.http.HttpServletResponse}
+     *
+     * @throws SAXException     if any error occurs while executing the page
+     * @throws FileNotFoundException  if the stylesheet cannot be found
+     * @throws IOException      if any I/O error occurs while executing the page
+     * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
+     * 
+	 * @deprecated use {@link #executePage(LSPPage,Map,String,HttpServletRequest,HttpServletResponse)} instead
+	 */
+    @Deprecated
 	public void executePage(LSPPage thePage, Map lspParams, 
 							String stylesheetName, 
                             ServletRequest request, ServletResponse response)
@@ -331,6 +363,8 @@ public class LSPManager
      * @param key      the key
      *
      * @return <code>null</code> if not found.
+     * 
+     * @throws Exception  if the {@link LocaleBundleFactory} throws any exception 
      */
     public String getLocalizedString(HttpServletRequest request, String key)
         throws Exception
@@ -352,10 +386,12 @@ public class LSPManager
      * @param key      the key
      *
      * @return <code>null</code> if not found.
+     * 
+     * @throws Exception  if the {@link nu.staldal.lsp.servlet.LocaleBundleFactory} throws any exception 
      */
     public String getLocalizedString(HttpServletRequest request, 
                                      String pageName, String key)
-        throws Exception
+       throws Exception
     {
         Map localeBundle = null;        
         
@@ -408,7 +444,7 @@ public class LSPManager
 
 
     private Map loadBundle(Locale locale)
-        throws Exception
+       throws Exception
     {
         Map localeBundle = localeBundleCache.get(locale);
         if (localeBundle == null)
