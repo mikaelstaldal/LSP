@@ -52,13 +52,13 @@ import java.sql.*;
  */
 public class LSPResultSetTupleList implements List
 {
-	private final ResultSet rs;
+	final ResultSet rs;
 
-    private int theLength = 0;
-	private boolean atEnd = false;
-	private boolean nextFetched = false;
+    int theLength = 0;
+	boolean atEnd = false;
+	boolean nextFetched = false;
 
-	private void getNext()
+	void getNext()
 		throws SQLException
 	{
 		if (!nextFetched && !atEnd)
