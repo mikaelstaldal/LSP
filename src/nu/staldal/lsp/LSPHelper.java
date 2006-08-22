@@ -474,10 +474,9 @@ public class LSPHelper
     public String executePage(LSPPage thePage, Map lspParams, Object extContext)
         throws FileNotFoundException, SAXException, IOException
     {
-        // TODO can be done more efficiently with no synchronization and less copying
-        StringWriter sw = new StringWriter();
-        executePage(thePage, lspParams, extContext, new StreamResult(sw));
-        return sw.toString();
+        StringBuilder sb = new StringBuilder();
+        executePage(thePage, lspParams, extContext, new AppendableStreamResult(sb));
+        return sb.toString();
     }
 
     
@@ -585,11 +584,10 @@ public class LSPHelper
                             Templates compiledStylesheet)
         throws SAXException, IOException
     {
-        // TODO can be done more efficiently with no synchronization and less copying
-        StringWriter sw = new StringWriter();
-        executePage(thePage, lspParams, extContext, compiledStylesheet, 
-                new StreamResult(sw));
-        return sw.toString();
+        StringBuilder sb = new StringBuilder();
+        executePage(thePage, lspParams, extContext, compiledStylesheet,
+                new AppendableStreamResult(sb));
+        return sb.toString();
     }
 
     

@@ -4,20 +4,19 @@ package nu.staldal.xodus;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test XMLCharacterEncoder for Writer.
+ * Test XMLCharacterEncoder with Appendable.
  *
  * @author Mikael Ståldal
  */
-public class TestXMLCharacterEncodingWriter
+public class TestXMLCharacterEncoderAppendable
 {
-    StringWriter w;
+    StringBuilder sb;
     XMLCharacterEncoder encoder;
     
     /**
@@ -26,8 +25,8 @@ public class TestXMLCharacterEncodingWriter
     @Before
     public void setUp() throws Exception
     {
-        w = new StringWriter();
-        encoder = new XMLCharacterEncoder(w);
+        sb = new StringBuilder();
+        encoder = new XMLCharacterEncoder(sb, true);
     }
 
     /**
@@ -37,7 +36,7 @@ public class TestXMLCharacterEncodingWriter
     public void tearDown() throws Exception
     {
         encoder = null;
-        w = null;
+        sb = null;
     }
 
     
@@ -56,6 +55,6 @@ public class TestXMLCharacterEncodingWriter
         encoder.write("---$$$---".toCharArray(),3,3);
         encoder.finish();
         
-        assertEquals("not encoded", "ABCDEF234Zåäö***###***$$$", w.toString());
+        assertEquals("not encoded", "ABCDEF234Zåäö***###***$$$", sb.toString());
     }
 }

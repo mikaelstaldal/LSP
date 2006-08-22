@@ -140,7 +140,14 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
         this.systemId = result.getSystemId();
         OutputStream os = result.getOutputStream();
         Writer w = result.getWriter();
-        if (os != null)
+        if ((result instanceof AppendableStreamResult)
+                && (((AppendableStreamResult)result).getAppendable() != null))
+        {
+            Appendable a = ((AppendableStreamResult)result).getAppendable();
+            out = new XMLCharacterEncoder(a, true);
+            doClose = false;            
+        }
+        else if (os != null)
         {
             out = new XMLCharacterEncoder(os, outputConfig.encoding);
             doClose = false;

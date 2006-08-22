@@ -68,6 +68,7 @@ public class XMLCharacterEncoder implements Appendable
 {
     private Charset charset;
     private CharsetEncoder encoder;
+    private Appendable appendable = null;
     private Writer writer = null;
     private OutputStream os = null;
     
@@ -137,6 +138,22 @@ public class XMLCharacterEncoder implements Appendable
 
     
     /**
+     * Constructs an XMLCharacterEncoder which writes to the given
+     * {@link java.lang.Appendable}. Does not encode or escape.
+     *
+     * @param a  the {@link java.lang.Appendable} to write to.
+     * @param isAppendable  dummy parameter to avoid overloading problems
+     */
+    public XMLCharacterEncoder(Appendable a, boolean isAppendable)
+    {
+        charset = null;
+        encoder = null;
+
+        this.appendable = a;
+    }
+
+    
+    /**
      * Enable escaping with XML character entites. In effect until 
      * {@link #disableEscaping()} is invoked.
      *<p>  
@@ -163,7 +180,11 @@ public class XMLCharacterEncoder implements Appendable
     public Appendable append(char c)
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(c);    
+        }
+        else if (writer != null)
         {
             writer.append(c);    
         }
@@ -181,7 +202,11 @@ public class XMLCharacterEncoder implements Appendable
     public Appendable append(CharSequence cs) 
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(cs);    
+        }
+        else if (writer != null)
         {
             writer.append(cs);    
         }
@@ -196,7 +221,11 @@ public class XMLCharacterEncoder implements Appendable
     public Appendable append(CharSequence cs, int start, int end) 
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(cs, start, end);    
+        }
+        else if (writer != null)
         {
             writer.append(cs, start, end);    
         }
@@ -211,7 +240,11 @@ public class XMLCharacterEncoder implements Appendable
     public void write(int c)
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append((char)c);    
+        }
+        else if (writer != null)
         {
             writer.write(c);    
         }
@@ -228,7 +261,11 @@ public class XMLCharacterEncoder implements Appendable
     public void write(char cbuf[]) 
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(CharSequenceWrapper.valueOf(cbuf));     
+        }
+        else if (writer != null)
         {
             writer.write(cbuf);    
         }
@@ -242,7 +279,11 @@ public class XMLCharacterEncoder implements Appendable
     public void write(char cbuf[], int off, int len)
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(CharSequenceWrapper.valueOf(cbuf, off, off+len));     
+        }
+        else if (writer != null)
         {
             writer.write(cbuf, off, len);    
         }
@@ -256,7 +297,11 @@ public class XMLCharacterEncoder implements Appendable
     public void write(String str) 
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(str);     
+        }
+        else if (writer != null)
         {
             writer.write(str);    
         }
@@ -270,7 +315,11 @@ public class XMLCharacterEncoder implements Appendable
     public void write(String str, int off, int len) 
         throws IOException 
     {
-        if (writer != null)
+        if (appendable != null)
+        {
+            appendable.append(str, off, off+len);     
+        }
+        else if (writer != null)
         {
             writer.write(str, off, len);    
         }
@@ -288,7 +337,7 @@ public class XMLCharacterEncoder implements Appendable
         {
             writer.flush();    
         }
-        else
+        else if (os != null)
         {
             os.flush();    
         }
@@ -315,7 +364,11 @@ public class XMLCharacterEncoder implements Appendable
     {
         if (hasFinished) return;
         
-        if (writer != null)
+        if (appendable != null)
+        {
+            // nothing to do
+        }
+        else if (writer != null)
         {
             // nothing to do
         }
@@ -349,7 +402,11 @@ public class XMLCharacterEncoder implements Appendable
     {
         _finish();
             
-        if (writer != null)
+        if (appendable != null)
+        {
+            // nothing to do
+        }
+        else if (writer != null)
         {
             writer.close();    
         }
