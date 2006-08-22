@@ -2,4 +2,4 @@
 <root xmlns:lsp='http://staldal.nu/LSP/core'>
 <lsp:output encoding='UTF-8'/>
 <p>Hello, world!</p>
-</root>
+</roo>

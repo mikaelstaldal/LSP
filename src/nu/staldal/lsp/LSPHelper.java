@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, Mikael Ståldal
+ * Copyright (c) 2004-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -374,7 +374,68 @@ public class LSPHelper
     }
     
 
-	/**
+    /**
+     * Executes an LSP page and serialize the result to an 
+     * {@link javax.xml.transform.stream.StreamResult}.
+     * Uses any stylesheet specified in the LSP page. 
+     *
+     * @param thePage     the LSP page
+     * @param lspParams   parameters to the LSP page
+     * @param extContext  external context which will be passed to ExtLibs
+     * @param out         the {@link javax.xml.transform.stream.StreamResult}
+     *
+     * @throws FileNotFoundException  if the stylesheet cannot be found
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+     */ 
+    public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+                            StreamResult out)
+        throws FileNotFoundException, SAXException, IOException
+    {
+        ContentHandler sax;                     
+        try {
+            Properties outputProperties = thePage.getOutputProperties();
+            String stylesheetName = outputProperties.getProperty("stylesheet");
+            if (stylesheetName != null)
+            {
+                TransformerHandler th;
+
+                Templates compiledStylesheet = getStylesheet(stylesheetName);
+                if (compiledStylesheet == null)                    
+                    throw new FileNotFoundException(stylesheetName);
+                
+                outputProperties = compiledStylesheet.getOutputProperties();
+
+                th = tfactory.newTransformerHandler(
+                    compiledStylesheet);
+                th.getTransformer().setParameter("pageName", thePage.getPageName());
+                th.getTransformer().setParameter("context", extContext);
+                    
+                Serializer ser = Serializer.createSerializer(out, outputProperties);
+                
+                SAXResult saxResult = new SAXResult(ser);
+                saxResult.setLexicalHandler(ser);
+                th.setResult(saxResult);
+                
+                sax = th;                            
+            }                
+            else
+            {
+                sax = Serializer.createSerializer(out, outputProperties);
+            }
+        }
+        catch (TransformerConfigurationException e)
+        {
+            throw new SAXException(e.getMessage());
+        }
+                    
+        sax.startDocument();
+        thePage.execute(sax, lspParams, extContext);
+        sax.endDocument();
+    }
+
+    
+    /**
 	 * Executes an LSP page and serialize the result to an 
 	 * {@link java.io.OutputStream}. Uses any stylesheet specified in the 
      * LSP page. 
@@ -392,54 +453,91 @@ public class LSPHelper
 							OutputStream out)
 		throws FileNotFoundException, SAXException, IOException
 	{
-		ContentHandler sax;						
-		try {
-			Properties outputProperties = thePage.getOutputProperties();
-            String stylesheetName = outputProperties.getProperty("stylesheet");
-            if (stylesheetName != null)
-            {
-                TransformerHandler th;
-
-                Templates compiledStylesheet = getStylesheet(stylesheetName);
-                if (compiledStylesheet == null)                    
-                    throw new FileNotFoundException(stylesheetName);
-                
-                outputProperties = compiledStylesheet.getOutputProperties();
-
-                th = tfactory.newTransformerHandler(
-                    compiledStylesheet);
-                th.getTransformer().setParameter("pageName", thePage.getPageName());
-                th.getTransformer().setParameter("context", extContext);
-                    
-                Serializer ser = Serializer.createSerializer(
-                    new StreamResult(out), outputProperties);
-                
-                SAXResult saxResult = new SAXResult(ser);
-                saxResult.setLexicalHandler(ser);
-                th.setResult(saxResult);
-                
-                sax = th;                            
-            }                
-            else
-            {
-                sax = Serializer.createSerializer(
-                    new StreamResult(out), outputProperties);
-            }
-		}
-		catch (TransformerConfigurationException e)
-		{
-			throw new SAXException(e.getMessage());
-		}
-					
-		sax.startDocument();
-		thePage.execute(sax, lspParams, extContext);
-		sax.endDocument();
+        executePage(thePage, lspParams, extContext, new StreamResult(out));
     }
 
 
+    /**
+     * Executes an LSP page and serialize the result to a String 
+     * Uses any stylesheet specified in the LSP page. 
+     *
+     * @param thePage     the LSP page
+     * @param lspParams   parameters to the LSP page
+     * @param extContext  external context which will be passed to ExtLibs
+     * 
+     * @return the result of the LSP execution 
+     *
+     * @throws FileNotFoundException  if the stylesheet cannot be found
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+     */ 
+    public String executePage(LSPPage thePage, Map lspParams, Object extContext)
+        throws FileNotFoundException, SAXException, IOException
+    {
+        // TODO can be done more efficiently with no synchronization and less copying
+        StringWriter sw = new StringWriter();
+        executePage(thePage, lspParams, extContext, new StreamResult(sw));
+        return sw.toString();
+    }
+
+    
+    /**
+     * Executes an LSP page, transform the the result with an
+     * XSLT stylesheet and serialize the result to an 
+     * {@link javax.xml.transform.stream.StreamResult}
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Also, the default
+     * output properties specified in this class will be ignored. Make sure
+     * to specify the output method in the stylesheet using &lt;xsl:output&gt;.
+     *
+     * @param thePage             the LSP page
+     * @param lspParams           parameters to the LSP page
+     * @param extContext          external context which will be passed to ExtLibs
+     * @param compiledStylesheet  the compiled XSLT stylesheet
+     * @param out                 the {@link javax.xml.transform.stream.StreamResult}
+     *
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+     */ 
+    public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+                            Templates compiledStylesheet, StreamResult out)
+        throws SAXException, IOException
+    {
+        ContentHandler sax;                     
+        try {
+            Properties outputProperties = 
+                compiledStylesheet.getOutputProperties();
+                
+            Serializer ser = Serializer.createSerializer(
+                out, outputProperties);
+
+            TransformerHandler th = tfactory.newTransformerHandler(
+                compiledStylesheet);
+            th.getTransformer().setParameter("pageName", thePage.getPageName());
+            th.getTransformer().setParameter("context", extContext);
+            
+            SAXResult saxResult = new SAXResult(ser);
+            saxResult.setLexicalHandler(ser);
+            th.setResult(saxResult);
+                    
+            sax = th;            
+        }
+        catch (TransformerConfigurationException e)
+        {
+            throw new SAXException(e.getMessage());
+        }
+                    
+        sax.startDocument();
+        thePage.execute(sax, lspParams, extContext);
+        sax.endDocument();
+    }
+
+    
 	/**
-	 * Executes an LSP page and transform the the result with an
-     * XSLT stylesheet.
+	 * Executes an LSP page, transform the the result with an
+     * XSLT stylesheet and serialize the result to an 
+     * {@link java.io.OutputStream}
      *<p>
      * The output properties specified in the stylesheet will be used, 
      * and those specified in the LSP page will be ignored. Also, the default
@@ -459,36 +557,42 @@ public class LSPHelper
 							Templates compiledStylesheet, OutputStream out)
 		throws SAXException, IOException
 	{
-		ContentHandler sax;						
-		try {
-			Properties outputProperties = 
-                compiledStylesheet.getOutputProperties();
-                
-            Serializer ser = Serializer.createSerializer(
-                new StreamResult(out), outputProperties);
-
-			TransformerHandler th = tfactory.newTransformerHandler(
-                compiledStylesheet);
-            th.getTransformer().setParameter("pageName", thePage.getPageName());
-            th.getTransformer().setParameter("context", extContext);
-            
-            SAXResult saxResult = new SAXResult(ser);
-            saxResult.setLexicalHandler(ser);
-			th.setResult(saxResult);
-		            
-            sax = th;            
-		}
-		catch (TransformerConfigurationException e)
-		{
-			throw new SAXException(e.getMessage());
-		}
-					
-		sax.startDocument();
-		thePage.execute(sax, lspParams, extContext);
-		sax.endDocument();
+        executePage(thePage, lspParams, extContext, compiledStylesheet, 
+                new StreamResult(out));
     }
 
+    
+    /**
+     * Executes an LSP page, transform the the result with an
+     * XSLT stylesheet and serialize the result to a String. 
+     *<p>
+     * The output properties specified in the stylesheet will be used, 
+     * and those specified in the LSP page will be ignored. Also, the default
+     * output properties specified in this class will be ignored. Make sure
+     * to specify the output method in the stylesheet using &lt;xsl:output&gt;.
+     *
+     * @param thePage             the LSP page
+     * @param lspParams           parameters to the LSP page
+     * @param extContext          external context which will be passed to ExtLibs
+     * @param compiledStylesheet  the compiled XSLT stylesheet
+     *
+     * @return the result of the LSP execution
+     *  
+     * @throws SAXException  if any error occurs while executing the page
+     * @throws IOException   if any I/O error occurs while executing the page
+     */ 
+    public String executePage(LSPPage thePage, Map lspParams, Object extContext,
+                            Templates compiledStylesheet)
+        throws SAXException, IOException
+    {
+        // TODO can be done more efficiently with no synchronization and less copying
+        StringWriter sw = new StringWriter();
+        executePage(thePage, lspParams, extContext, compiledStylesheet, 
+                new StreamResult(sw));
+        return sw.toString();
+    }
 
+    
     /**
      * Fix output properties for serializing LSP page output.
      * 

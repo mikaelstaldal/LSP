@@ -71,7 +71,7 @@ public class TestLSPCompilation
     public void testSimplePageWithError()
 		throws Exception
     {
-    	doTest("SimplePage",
+    	doTest("SimplePageError",
     			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
     		  + "<root>\n"
     		  + "<p>Hello, world!</p>\n"
