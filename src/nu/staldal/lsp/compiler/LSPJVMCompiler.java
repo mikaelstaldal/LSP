@@ -91,6 +91,7 @@ class LSPJVMCompiler implements Constants
 
     LSPJVMCompiler()
     {
+        // default constructor
     }
 
 
