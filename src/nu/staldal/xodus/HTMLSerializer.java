@@ -179,7 +179,7 @@ public class HTMLSerializer extends Serializer
             }
             else
             {
-                out.enableEscaping();
+                // out.enableEscaping();
                 for (int i = 0; i<attValue.length(); i++)
                 {
                     char c = attValue.charAt(i);
@@ -205,7 +205,7 @@ public class HTMLSerializer extends Serializer
                         out.write(c);
                     }
                 }
-                out.disableEscaping();
+                // out.disableEscaping();
             }
             
             out.write('\"');
@@ -431,12 +431,12 @@ public class HTMLSerializer extends Serializer
         }
         else
         {
-            out.enableEscaping();
+            // out.enableEscaping();
             for (int i = start; i<end; i++)
             {
                 outputEscapedCharacter(cs.charAt(i));
             }
-            out.disableEscaping();
+            // out.disableEscaping();
         }        
     }   
     
@@ -469,12 +469,12 @@ public class HTMLSerializer extends Serializer
             }
             else
             {
-                out.enableEscaping();
+                // out.enableEscaping();
                 for (int i = start; i<start+length; i++)
                 {
                     outputEscapedCharacter(ch[i]);
                 }
-                out.disableEscaping();
+                // out.disableEscaping();
             }
         }
         catch (IOException e)
@@ -982,9 +982,9 @@ public class HTMLSerializer extends Serializer
         }
         else
         {
-            out.enableEscaping();
+            // out.enableEscaping();
             outputEscapedCharacter(c);
-            out.disableEscaping();
+            // out.disableEscaping();
         }        
         
         return this;

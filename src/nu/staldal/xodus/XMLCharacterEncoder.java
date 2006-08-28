@@ -64,18 +64,21 @@ import java.nio.charset.*;
  * This class implements all <code>write</code> methods of {@link java.io.Writer},
  * but does not extend {@link java.io.Writer} due to technical reasons.
  */
-public class XMLCharacterEncoder implements Appendable
+public class XMLCharacterEncoder implements Appendable, Closeable
 {
-    private Charset charset;
-    private CharsetEncoder encoder;
-    private Appendable appendable = null;
-    private Writer writer = null;
-    private OutputStream os = null;
+    private static final int BUFFER_SIZE = 1024;
+    private static final int BUFFER_TRESHOLD = 64;
     
-    private boolean doEscape = false;
+    private final Charset charset;
+    private final CharsetEncoder encoder;
+    private final CharBuffer encBuffer;
+    
+    private final Appendable appendable;
+    private final Writer writer;
+    private final OutputStream os;
+    
     private boolean hasFinished = false;
-    
-    
+        
     /**
      * Constructs an XMLCharacterEncoder which writes to the given
      * {@link java.io.OutputStream}.
@@ -95,6 +98,10 @@ public class XMLCharacterEncoder implements Appendable
             encoder.onMalformedInput(CodingErrorAction.REPORT);             
             encoder.onUnmappableCharacter(CodingErrorAction.REPORT);             
             encoder.reset();
+            encBuffer = CharBuffer.allocate(BUFFER_SIZE);
+            
+            writer = null;
+            appendable = null;
         }
         catch (IllegalCharsetNameException e)
         {
@@ -132,8 +139,11 @@ public class XMLCharacterEncoder implements Appendable
     {
         charset = null;
         encoder = null;
+        encBuffer = null;
 
         this.writer = writer;
+        appendable = null;
+        os = null;
     }
 
     
@@ -148,35 +158,14 @@ public class XMLCharacterEncoder implements Appendable
     {
         charset = null;
         encoder = null;
+        encBuffer = null;
 
         this.appendable = a;
+        writer = null;
+        os = null;
     }
 
     
-    /**
-     * Enable escaping with XML character entites. In effect until 
-     * {@link #disableEscaping()} is invoked.
-     *<p>  
-     * <em>Note:</em> Escaping is disabled at start. 
-     */
-    public void enableEscaping()
-    {
-        doEscape = true;
-    }
-    
-
-    /**
-     * Disable escaping with XML character entites. In effect until 
-     * {@link #enableEscaping()} is invoked.
-     *<p>  
-     * <em>Note:</em> Escaping is disabled at start. 
-     */
-    public void disableEscaping()
-    {
-        doEscape = false;
-    }    
-    
-
     public Appendable append(char c)
         throws IOException 
     {
@@ -190,10 +179,15 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            CharBuffer in = CharBuffer.allocate(1);
-            in.put(c);
-            in.rewind();
-            encodeWrite(in);    
+            if (1 <= encBuffer.remaining())
+            {
+                encBuffer.put(c);
+            }
+            else
+            {
+                _flush();
+                encBuffer.put(c);                
+            }            
         }
         return this;
     }
@@ -212,7 +206,22 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            encodeWrite(CharBuffer.wrap(cs));
+            if (cs.length() <= encBuffer.remaining())
+            {
+                encBuffer.append(cs);
+            }
+            else
+            {
+                _flush();
+                if (cs.length() < BUFFER_TRESHOLD)
+                {
+                    encBuffer.append(cs);                    
+                }
+                else
+                {
+                    encodeWrite(CharBuffer.wrap(cs));
+                }
+            }
         }        
         return this;
     }
@@ -231,7 +240,22 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            encodeWrite(CharBuffer.wrap(cs, start, end));
+            if ((end-start) <= encBuffer.remaining())
+            {
+                encBuffer.append(cs, start, end);
+            }
+            else
+            {
+                _flush();
+                if (cs.length() < BUFFER_TRESHOLD)
+                {
+                    encBuffer.append(cs, start, end);                    
+                }
+                else
+                {
+                    encodeWrite(CharBuffer.wrap(cs, start, end));
+                }
+            }
         }        
         return this;
     }
@@ -250,10 +274,15 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            CharBuffer in = CharBuffer.allocate(1);
-            in.put((char)c);
-            in.rewind();
-            encodeWrite(in);    
+            if (1 <= encBuffer.remaining())
+            {
+                encBuffer.put((char)c);
+            }
+            else
+            {
+                _flush();
+                encBuffer.put((char)c);                
+            }            
         }
     }
 
@@ -271,7 +300,22 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            encodeWrite(CharBuffer.wrap(cbuf));
+            if (cbuf.length <= encBuffer.remaining())
+            {
+                encBuffer.put(cbuf);
+            }
+            else
+            {
+                _flush();
+                if (cbuf.length < BUFFER_TRESHOLD)
+                {
+                    encBuffer.put(cbuf);
+                }
+                else
+                {
+                    encodeWrite(CharBuffer.wrap(cbuf));
+                }
+            }
         }
     }
 
@@ -289,7 +333,22 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            encodeWrite(CharBuffer.wrap(cbuf, off, len));
+            if (len <= encBuffer.remaining())
+            {
+                encBuffer.put(cbuf, off, len);
+            }
+            else
+            {
+                _flush();
+                if (cbuf.length < BUFFER_TRESHOLD)
+                {
+                    encBuffer.put(cbuf, off, len);
+                }
+                else
+                {
+                    encodeWrite(CharBuffer.wrap(cbuf, off, len));
+                }
+            }
         }        
     }
     
@@ -307,7 +366,22 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {
-            encodeWrite(CharBuffer.wrap(str));
+            if (str.length() <= encBuffer.remaining())
+            {
+                encBuffer.put(str);
+            }
+            else
+            {
+                _flush();
+                if (str.length() < BUFFER_TRESHOLD)
+                {
+                    encBuffer.put(str);
+                }
+                else
+                {
+                    encodeWrite(CharBuffer.wrap(str));
+                }
+            }
         }        
     }
 
@@ -325,107 +399,41 @@ public class XMLCharacterEncoder implements Appendable
         }
         else
         {            
-            encodeWrite(CharBuffer.wrap(str, off, off+len));
-        }        
-    }
-
-
-    public void flush() 
-        throws IOException
-    {
-        if (writer != null)
-        {
-            writer.flush();    
-        }
-        else if (os != null)
-        {
-            os.flush();    
-        }
-    }
-    
-
-    /**
-     * Finish encoding and flush output, without closing underlaying stream.
-     * 
-     * @throws IOException if the output cannot be flushed 
-     */
-    public void finish()
-        throws IOException
-    {
-        if (hasFinished) return;
-        
-        _finish();
-        flush();
-    }
-
-     
-    private void _finish()
-        throws IOException
-    {
-        if (hasFinished) return;
-        
-        if (appendable != null)
-        {
-            // nothing to do
-        }
-        else if (writer != null)
-        {
-            // nothing to do
-        }
-        else
-        {
-            byte[] buf = new byte[16];
-            ByteBuffer out = ByteBuffer.wrap(buf);
-    
-            while (true)
-            {                
-                CoderResult cr = encoder.flush(out);
-                if (cr.isUnderflow())
+            if (len <= encBuffer.remaining())
+            {
+                encBuffer.put(str, off, off+len);
+            }
+            else
+            {
+                _flush();
+                if (str.length() < BUFFER_TRESHOLD)
                 {
-                    break;
+                    encBuffer.put(str, off, off+len);
                 }
-                else if (cr.isOverflow())
+                else
                 {
-                    os.write(buf, 0, out.position());
-                    out.clear();
+                    encodeWrite(CharBuffer.wrap(str, off, off+len));
                 }
             }
-            if (out.position() > 0) os.write(buf, 0, out.position());
         }        
-        
-        hasFinished = true;
-    }
-
-
-    public void close() 
-        throws IOException
-    {
-        _finish();
-            
-        if (appendable != null)
-        {
-            // nothing to do
-        }
-        else if (writer != null)
-        {
-            writer.close();    
-        }
-        else
-        {
-            os.close();
-        }
     }
     
-
+    private void _flush() 
+        throws IOException
+    {
+        if (encBuffer != null)
+        {
+            encBuffer.flip();
+            encodeWrite(encBuffer);
+            encBuffer.clear();        
+        }
+    }    
+    
     private void encodeWrite(CharBuffer in)
         throws IOException
     {
-        int size = doEscape 
-            ? (int)(in.remaining()*encoder.averageBytesPerChar()*1.1)
-            : (int)(in.remaining()*encoder.averageBytesPerChar());
-            
+        int size = (int)(in.remaining()*encoder.averageBytesPerChar()*1.1);
         if (size % 2 > 0) size++; // make size even
-        if (size < 256) size = 256;
         
         byte[] buf = new byte[size];
         ByteBuffer out = ByteBuffer.wrap(buf);
@@ -433,7 +441,7 @@ public class XMLCharacterEncoder implements Appendable
         CoderResult cr;
         while (true)
         {                
-            cr = encoder.encode(in, out, true);
+            cr = encoder.encode(in, out, false);
             if (cr.isUnderflow())
             {
                 if (in.hasRemaining())
@@ -449,24 +457,12 @@ public class XMLCharacterEncoder implements Appendable
             }
             else if (cr.isUnmappable())
             {
-                if (doEscape)
+                os.write(buf, 0, out.position());
+                out.clear();
+                for (int i = 0; i<cr.length(); i++)
                 {
-                    os.write(buf, 0, out.position());
-                    out.clear();
-                    for (int i = 0; i<cr.length(); i++)
-                    {
-                        String entity = "&#x" + Integer.toHexString(in.get()) + ";";
-                        disableEscaping();
-                        encodeWrite(CharBuffer.wrap(entity));
-                        enableEscaping();
-                    }
-                }
-                else
-                {
-                    throw new CharConversionException(
-                        "Unmappable Unicode character \\u" 
-                            + Integer.toHexString(in.get()) 
-                            + " in context where escaping is not possible");
+                    String entity = "&#x" + Integer.toHexString(in.get()) + ";";
+                    encodeWrite(CharBuffer.wrap(entity));
                 }
             }
             else // if (cr.isMalformed())
@@ -477,20 +473,70 @@ public class XMLCharacterEncoder implements Appendable
         }
         os.write(buf, 0, out.position());
     }
-
     
-    /**
-     * For testing only.
-     */
-/*    public static void main(String[] args)
-        throws Exception
+    public void finish() 
+        throws IOException
     {
-        String encoding = args[0];
+        if (hasFinished) return;
         
-        XMLCharacterEncoder xce = new XMLCharacterEncoder(System.out, encoding);
-        xce.enableEscaping();
-        xce.write(args[1]);
-        xce.disableEscaping();
-        xce.close();
-    } */
+        if (encBuffer != null)
+        {
+            encBuffer.flip();
+            encodeWrite(encBuffer);
+            encBuffer.clear();
+            encBuffer.flip();
+            
+            byte[] buf = new byte[16];
+            ByteBuffer out = ByteBuffer.wrap(buf);
+            
+            while (true)
+            {                
+                CoderResult cr = encoder.encode(encBuffer, out, true);
+                if (cr.isUnderflow())
+                {
+                    break;
+                }
+                else if (cr.isOverflow())
+                {
+                    os.write(buf, 0, out.position());
+                    out.clear();
+                }
+            }
+            if (out.position() > 0) os.write(buf, 0, out.position());
+            out.clear();
+            
+            while (true)
+            {                
+                CoderResult cr = encoder.flush(out);
+                if (cr.isUnderflow())
+                {
+                    break;
+                }
+                else if (cr.isOverflow())
+                {
+                    os.write(buf, 0, out.position());
+                    out.clear();
+                }
+            }
+            if (out.position() > 0) os.write(buf, 0, out.position());
+        }
+        
+        hasFinished = true;
+    }
+
+    public void close() 
+        throws IOException
+    {
+        finish();
+            
+        if (writer != null)
+        {
+            writer.close();    
+        }
+        else if (os != null)
+        {
+            os.close();
+        }
+    }
+    
 }

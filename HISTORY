@@ -117,3 +117,8 @@
 * New methods for convenience and efficiency in Serializer, 
   send a String/CharSequence directly without converting to char[].
 * Enclose feature.
+
+
+1.6.1
+-----
+* Buffering in serialization for better performance

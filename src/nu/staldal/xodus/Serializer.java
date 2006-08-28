@@ -82,6 +82,13 @@ import javax.xml.transform.stream.StreamResult;
  *<p>
  * The methods specified in the {@link java.lang.Appendable} interface will
  * act like the {@link #characters} methods.
+ *<p>
+ * Illegal XML/HTML output may be created for inproper input, this class does 
+ * not make effort to detect errors.
+ *<p>
+ * If the {@link javax.xml.transform.stream.StreamResult} specifies a 
+ * {@link java.io.Writer} or {@link java.lang.Appendable}, non-ASCII characters
+ * will not be escaped. "<", ">", "&", '"' and "'" are always escaped properly. 
  */
 public abstract class Serializer implements ContentHandler, LexicalHandler, 
                                             DTDHandler, DeclHandler, Appendable
@@ -206,7 +213,9 @@ public abstract class Serializer implements ContentHandler, LexicalHandler,
         throws IOException
     {
         out.finish();
-        if (doClose) out.close();        
+        
+        if (doClose) 
+            out.close();
     }
     
 
