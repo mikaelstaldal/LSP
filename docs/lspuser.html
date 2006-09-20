@@ -296,7 +296,7 @@ Unless the <code>xml:space</code> attribute is set to <code>preserve</code>.</p>
 
 <p class="element-syntax">
 <a name="element-output"></a>&lt;lsp:output<br />
-&#160;&#160;method = "xml" | "html" | "xhtml" | "text"<br />
+&#160;&#160;method = "xml" | "html" | "xhtml" | "text" | "html-fragment" | "xhtml-fragment"<br />
 &#160;&#160;version = <var>nmtoken</var><br />
 &#160;&#160;encoding = <var>string</var><br />
 &#160;&#160;omit-xml-declaration = "yes" | "no"<br />
@@ -315,7 +315,10 @@ serialized to a byte stream. The parameters has the same meaning as in
 output method works as the <code>xml</code> output method, but uses the applicable
 HTML compatibility guidelines published in 
 <a href="http://www.w3.org/TR/xhtml1/#guidelines">Appendix C of the XHTML 1.0 
-specification</a>.</p>
+specification</a>. In addition, the methods <code>html-fragment</code> and
+<code>xhtml-fragment</code> are provided which doesn't output any XML declaration or 
+DOCTYPE declaration, they are useful to generate fragments for inclusion in a page 
+within an AJAX application.</p>
 
 <p>The <code>xhtml</code> 
 output method attempt to omit the XML declaration by default, 

@@ -121,4 +121,6 @@
 
 1.6.1
 -----
-* Buffering in serialization for better performance
+* Buffering in serialization for better performance.
+* html-fragment and xhtml-fragment output methods for AJAX support.
+

@@ -606,12 +606,24 @@ public class LSPHelper
                 outputProperties.setProperty(OutputKeys.MEDIA_TYPE, htmlType);
 			if (!outputProperties.containsKey(OutputKeys.ENCODING)) 
                 outputProperties.setProperty(OutputKeys.ENCODING, htmlEncoding); 
-			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_PUBLIC)) 
+			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_PUBLIC))
+            {
                 outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
                     "-//W3C//DTD HTML 4.01 Transitional//EN");
-			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_SYSTEM)) 
+            }
+			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_SYSTEM))
+            {
                 outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
                     "http://www.w3.org/TR/html4/loose.dtd");				
+            }
+        }
+        else if (method.equals("html-fragment"))
+        {
+            outputProperties.setProperty(OutputKeys.METHOD, "html");
+            if (!outputProperties.containsKey(OutputKeys.MEDIA_TYPE)) 
+                outputProperties.setProperty(OutputKeys.MEDIA_TYPE, htmlType);
+            if (!outputProperties.containsKey(OutputKeys.ENCODING)) 
+                outputProperties.setProperty(OutputKeys.ENCODING, htmlEncoding);            
         }
         else if (method.equals("xhtml"))
         {
@@ -619,12 +631,25 @@ public class LSPHelper
                 outputProperties.setProperty(OutputKeys.MEDIA_TYPE, xhtmlType);
 			if (!outputProperties.containsKey(OutputKeys.ENCODING)) 
                 outputProperties.setProperty(OutputKeys.ENCODING, xhtmlEncoding); 
-			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_PUBLIC)) 
+			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_PUBLIC))
+            {
                 outputProperties.setProperty(OutputKeys.DOCTYPE_PUBLIC,
                     "-//W3C//DTD XHTML 1.0 Transitional//EN");
-			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_SYSTEM)) 
+            }
+			if (!outputProperties.containsKey(OutputKeys.DOCTYPE_SYSTEM))
+            {
                 outputProperties.setProperty(OutputKeys.DOCTYPE_SYSTEM,
                     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
+            }
+        }
+        else if (method.equals("xhtml-fragment"))
+        {
+            outputProperties.setProperty(OutputKeys.METHOD, "xhtml");
+            outputProperties.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            if (!outputProperties.containsKey(OutputKeys.MEDIA_TYPE)) 
+                outputProperties.setProperty(OutputKeys.MEDIA_TYPE, xhtmlType);
+            if (!outputProperties.containsKey(OutputKeys.ENCODING)) 
+                outputProperties.setProperty(OutputKeys.ENCODING, xhtmlEncoding); 
         }
         else if (method.equals("xml"))
         {

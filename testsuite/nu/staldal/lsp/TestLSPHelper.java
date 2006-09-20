@@ -70,4 +70,108 @@ public class TestLSPHelper
                       + "</root>",
                     result);       
     }
+
+    @Test
+    public void testHtmlMethod()
+        throws Exception
+    {
+        lspCompilerHelper.doCompile("HtmlMethod.lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage("HtmlMethod");
+        assertNotNull(thePage);
+        String result = lspHelper.executePage(thePage, Collections.emptyMap(), null);
+        System.out.println(result);
+        assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html>\n"
+                + "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><title>Test</title></head>\n"
+                + "<body>\n"                
+                + "<p>Hello,<br>world!</p>\n"
+                + "</body>\n"
+                + "</html>",
+                result);       
+    }
+
+    @Test
+    public void testHtmlFragmentMethod()
+        throws Exception
+    {
+        lspCompilerHelper.doCompile("HtmlFragmentMethod.lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage("HtmlFragmentMethod");
+        assertNotNull(thePage);
+        String result = lspHelper.executePage(thePage, Collections.emptyMap(), null);
+        System.out.println(result);
+        assertEquals("<div>\n"
+                   + "<p>Hello,<br>world!</p>\n"
+                   + "</div>",
+                    result);       
+    }
+
+    @Test
+    public void testXhtmlMethod()
+        throws Exception
+    {
+        lspCompilerHelper.doCompile("XhtmlMethod.lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage("XhtmlMethod");
+        assertNotNull(thePage);
+        String result = lspHelper.executePage(thePage, Collections.emptyMap(), null);
+        System.out.println(result);
+        assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+                + "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>Test</title></head>\n"
+                + "<body>\n"                
+                + "<p>Hello,<br />world!</p>\n"
+                + "</body>\n"
+                + "</html>",
+                    result);       
+    }
+
+    @Test
+    public void testXhtmlFragmentMethod()
+        throws Exception
+    {
+        lspCompilerHelper.doCompile("XhtmlFragmentMethod.lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage("XhtmlFragmentMethod");
+        assertNotNull(thePage);
+        String result = lspHelper.executePage(thePage, Collections.emptyMap(), null);
+        System.out.println(result);
+        assertEquals("<div xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+                   + "<p>Hello,<br />world!</p>\n"
+                   + "</div>",
+                    result);       
+    }
+
+    @Test
+    public void testXmlMethod()
+        throws Exception
+    {
+        lspCompilerHelper.doCompile("XmlMethod.lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage("XmlMethod");
+        assertNotNull(thePage);
+        String result = lspHelper.executePage(thePage, Collections.emptyMap(), null);
+        System.out.println(result);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                   + "<foo xmlns=\"http://foobar.com/foo\">\n"
+                   + "<p>Hello,<br/>world!</p>\n"
+                   + "</foo>",
+                    result);       
+    }
+
+    @Test
+    public void testTextMethod()
+        throws Exception
+    {
+        lspCompilerHelper.doCompile("TextMethod.lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage("TextMethod");
+        assertNotNull(thePage);
+        String result = lspHelper.executePage(thePage, Collections.emptyMap(), null);
+        System.out.println(result);
+        assertEquals("First line\n"
+                   + "Second line\n"
+                   + "Third line\n",
+                    result);       
+    }
+    
 }
