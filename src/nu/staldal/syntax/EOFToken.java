@@ -41,7 +41,7 @@
 package nu.staldal.syntax;
 
 /**
- * Indicates EOF.
+ * Indicates end of input.
  */
 public class EOFToken extends Token
 {

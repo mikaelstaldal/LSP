@@ -54,6 +54,9 @@ import nu.staldal.lsp.servlet.LSPManager;
  */
 public class LSPViewFactory extends DocumentViewFactory
 {
+    /**
+     * The {@link nu.staldal.lsp.servlet.LSPManager}.
+     */
     protected LSPManager lspManager;    
 
 

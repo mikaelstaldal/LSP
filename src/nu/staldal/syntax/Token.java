@@ -45,7 +45,17 @@ package nu.staldal.syntax;
  */
 public abstract class Token
 {
-	protected int line, column;
+	/**
+	 * Line number where this token occurs  1-based),
+     * or -1 if unknown.
+	 */
+	protected int line;
+    
+    /**
+     * Column number where this token occurs (1-based),
+     * or -1 if unknown.
+     */
+    protected int column;
 
 	/**
 	 * Create a Token.

@@ -55,7 +55,14 @@ import javax.servlet.http.*;
  */
 public abstract class ServiceBase implements Service
 {
+    /**
+     * The {@link javax.servlet.ServletContext}.
+     */
     protected ServletContext context;
+    
+    /**
+     * The {@link javax.sql.DataSource} to main database.
+     */
     protected DataSource mainDB;
 
     

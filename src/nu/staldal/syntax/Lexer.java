@@ -48,8 +48,9 @@ public interface Lexer
     /**
      * Get the next token from input.
      *
-     * @return  the next token from input, or EOFToken on EOF,
-     *          or IllegalToken if there is an lexical error in input.
+     * @return  the next token from input, 
+     *          or {@link nu.staldal.syntax.EOFToken} on EOF,
+     *          or {@link nu.staldal.syntax.IllegalToken} if there is an lexical error in input.
      *
      * @throws java.io.IOException  if an error occurs when reading input.
      */

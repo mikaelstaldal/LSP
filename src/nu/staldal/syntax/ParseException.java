@@ -51,7 +51,7 @@ public class ParseException extends Exception
      * Create a ParseException.
      *
      * @param msg    a message
-     * @param token  the offending token, may be null
+     * @param token  the offending token, may be <code>null</code>
      */
     public ParseException(String msg, Token token)
 	{
@@ -62,7 +62,7 @@ public class ParseException extends Exception
     /**
      * Get the offenting Token.
      *
-     * @return  the offenting token, may be null.
+     * @return  the offenting token, may be <code>null</code>.
      */
 	public Token getToken()
 	{

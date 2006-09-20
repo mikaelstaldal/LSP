@@ -40,11 +40,17 @@
 
 package nu.staldal.lsp.expr;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import nu.staldal.lsp.compiler.LSPExpr;
 import nu.staldal.syntax.*;
 
+/**
+ * Parser for LSP expressions.
+ *
+ * @author Mikael Ståldal
+ */
 public class LSPExprParser extends Parser
 {
 
@@ -81,14 +87,27 @@ public class LSPExprParser extends Parser
 	}
 
 
+	/**
+	 * Create a new parser.
+	 */
 	public LSPExprParser()
 	{
 		super();
 	}
 
 
+	/**
+     * Parse from a {@link nu.staldal.syntax.Lexer}
+     * 
+	 * @param lexer  the {@link nu.staldal.syntax.Lexer}
+     * 
+	 * @return the expression
+     * 
+	 * @throws ParseException the input has syntax error
+	 * @throws IOException if the {@link nu.staldal.syntax.Lexer} throws it
+	 */
 	public LSPExpr parse(Lexer lexer)
-		throws ParseException, java.io.IOException
+		throws ParseException, IOException
 	{
 		init(lexer);
 

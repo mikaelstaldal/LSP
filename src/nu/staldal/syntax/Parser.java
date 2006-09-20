@@ -40,16 +40,33 @@
 
 package nu.staldal.syntax;
 
+import java.io.IOException;
+
 /**
- * Abstract base class for parsers.
+ * Abstract base class for building recursive descent parsers.
  */
 public abstract class Parser
 {
+	/**
+	 * The {@link nu.staldal.syntax.Lexer} to read from.
+	 */
 	protected Lexer lexer;
+    
+	/**
+	 * The current {@link nu.staldal.syntax.Token}.
+	 */
 	protected Token token;
 
+	/**
+     * Consume a token of any type.
+     * 
+	 * @return the consumed token.
+     * 
+	 * @throws ParseException if EOF or an illegal token is reached  
+	 * @throws IOException if the {@link nu.staldal.syntax.Lexer} throws it
+	 */
 	protected Token consumeToken()
-		throws ParseException, java.io.IOException
+		throws ParseException, IOException
 	{
 		Token t = token;
 		if (token instanceof EOFToken)
@@ -64,6 +81,16 @@ public abstract class Parser
 		return t;
 	}
 
+    /**
+     * Consume a token of a specific type.
+     * 
+     * @param cls the type of Token to expect 
+     * 
+     * @return the consumed token.
+     * 
+     * @throws ParseException if EOF or an illegal token is reached
+     * @throws IOException if the {@link nu.staldal.syntax.Lexer} throws it
+     */
 	protected Token consumeToken(Class cls)
 		throws ParseException, java.io.IOException
 	{
@@ -84,11 +111,21 @@ public abstract class Parser
 		return t;
 	}
 
+	/**
+	 * Create a new parser.
+	 */
 	public Parser()
 	{
         // nothing to do
 	}
 
+	/**
+     * Initialize this parser with a {@link nu.staldal.syntax.Lexer}.
+     * 
+	 * @param lexer    the {@link nu.staldal.syntax.Lexer}
+     * 
+	 * @throws IOException if the {@link nu.staldal.syntax.Lexer} throws it
+	 */
 	public void init(Lexer lexer)
 		throws java.io.IOException
 	{

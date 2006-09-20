@@ -45,6 +45,9 @@ package nu.staldal.syntax;
  */
 public class IllegalToken extends Token
 {
+	/**
+	 * The illegal character sequence.
+	 */
 	protected String chars;
 
 	/**
