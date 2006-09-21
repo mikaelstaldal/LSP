@@ -65,7 +65,7 @@ public class LSPCompilerCLI
 		
 		boolean verbose = false;
 		boolean force = false;
-		boolean xhtml = false;
+		boolean html = false;
 		boolean acceptNull = false;
         
 		String sourcePathSpec = null;
@@ -86,8 +86,12 @@ public class LSPCompilerCLI
 				}
 				else if (args[i].equals("-xhtml"))
 				{
-					xhtml = true;
+					// nothing to do
 				}
+                else if (args[i].equals("-html"))
+                {
+                    html = true;
+                }
 				else if (args[i].equals("-acceptNull"))
 				{
 					acceptNull = true;
@@ -126,7 +130,7 @@ public class LSPCompilerCLI
 		}			
 
         LSPCompilerHelper compiler = new LSPCompilerHelper();
-        compiler.setXhtml(xhtml);
+        compiler.setHtml(html);
         compiler.setAcceptNull(acceptNull);
 
         if (sourcePathSpec != null)

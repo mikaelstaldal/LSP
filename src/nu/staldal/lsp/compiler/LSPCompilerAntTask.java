@@ -63,7 +63,7 @@ public class LSPCompilerAntTask extends Task
 	private FileSet fileset;
 	private File encloseFile;
 	private boolean force;
-	private boolean xhtml;
+	private boolean html;
     private boolean acceptNull;
 
 	
@@ -85,7 +85,7 @@ public class LSPCompilerAntTask extends Task
 		destdir = null;
 		encloseFile = null;
 		force = false;
-        xhtml = false;
+        html = false;
         acceptNull= false;
     }
 
@@ -106,12 +106,24 @@ public class LSPCompilerAntTask extends Task
      * Use XHTML as default output method instead of HTML.
      * 
      * @param xhtml
+     *  
+     * @deprecated XHTML is now default, use {@link #setHtml(boolean)} to override it.
      */
 	public void setXhtml(boolean xhtml)
 	{
-		this.xhtml = xhtml;
+        this.html = !xhtml;
 	}
 
+    /**
+     * Use HTML as default output method instead of XHTML.
+     * 
+     * @param html
+     */
+    public void setHtml(boolean html)
+    {
+        this.html = html;
+    }
+    
 	/**
      * Accept <code>null</code> as variable value without runtime exception.
      * 
@@ -174,7 +186,7 @@ public class LSPCompilerAntTask extends Task
 		if (destdir == null)
 			throw new BuildException("Must have a destdir attribute");
 
-        compiler.setXhtml(xhtml);
+        compiler.setHtml(html);
         compiler.setAcceptNull(acceptNull);
 		
 		compiler.setTargetDir(destdir);

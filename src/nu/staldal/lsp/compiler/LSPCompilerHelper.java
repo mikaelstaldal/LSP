@@ -454,13 +454,26 @@ public class LSPCompilerHelper
      * Set to <code>true</code> to use <code>xhtml</code> as default output 
      * type.
      * 
-     * @param xhtml 
+     * @param xhtml
+     *  
+     * @deprecated XHTML is now default, use {@link #setHtml(boolean)} to override it.
      */
     public void setXhtml(boolean xhtml)
     {
         compiler.setXhtml(xhtml);    
     }
-        
+    
+    /**
+     * Set to <code>true</code> to use <code>html</code> as default output 
+     * type.
+     * 
+     * @param html  
+     */
+    public void setHtml(boolean html)
+    {
+        compiler.setHtml(html);    
+    }    
+    
     /**
 	 * Set to <code>true</code> to make the compiled page accept 
      * <code>null</code> values without runtime error.

@@ -92,7 +92,7 @@ public class LSPCompiler
     
     private Properties outputProperties;
 
-    private boolean xhtml;
+    private boolean html;
     private boolean acceptNull;
     private String encloseURL;
     
@@ -109,7 +109,7 @@ public class LSPCompiler
 		pageName = null;
         resolver = null;
 		jvmCompiler = new LSPJVMCompiler();
-        xhtml = false;
+        html = false;
         acceptNull = false;
         encloseURL = null;
     }
@@ -119,13 +119,26 @@ public class LSPCompiler
      * Set to <code>true</code> to use <code>xhtml</code> as default output 
      * type.
      * 
-     * @param xhtml  
+     * @param xhtml
+     * 
+     * @deprecated XHTML is now default, use {@link #setHtml(boolean)} to override it.
      */
     public void setXhtml(boolean xhtml)
     {
-        this.xhtml = xhtml;    
+        this.html = !xhtml;    
     }
 
+    /**
+     * Set to <code>true</code> to use <code>html</code> as default output 
+     * type.
+     * 
+     * @param html  
+     */
+    public void setHtml(boolean html)
+    {
+        this.html = html;    
+    }
+    
     
     /**
 	 * Set to <code>true</code> to make the compiled page accept 
@@ -263,7 +276,7 @@ public class LSPCompiler
             else if (tree.getLocalName().equals("html")
                         && tree.getNamespaceURI().equals(XHTML_NS))
             {
-                method = xhtml ? "xhtml" : "html";
+                method = html ? "html" : "xhtml";
             }
             else
             {
