@@ -789,17 +789,24 @@ public class LSPCompiler
 		if (className == null)
         try
         {
-			String fileName = "/nu/staldal/lsp/extlib/" 
-				+ Utils.encodePath(ns);
-			InputStream is = getClass().getResourceAsStream(fileName);
-			if (is == null) return null;
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
-			className = br.readLine();
-			br.close();
-			if (className == null)
-				throw fixSourceException(el,
-					"Illegal LSP Extension config file: " + fileName);
+            if (ns.startsWith("lsp:extlib:") && (ns.length() > 12))
+            {                
+                className = ns.substring(11);
+            }
+            else
+            {
+    			String fileName = "/nu/staldal/lsp/extlib/" 
+    				+ Utils.encodePath(ns);
+    			InputStream is = getClass().getResourceAsStream(fileName);
+    			if (is == null) return null;
+    
+    			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    			className = br.readLine();
+    			br.close();
+    			if (className == null)
+    				throw fixSourceException(el,
+    					"Illegal LSP Extension config file: " + fileName);
+            }
 
 			Class cls = Class.forName(className);
 			if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(cls))

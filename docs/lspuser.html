@@ -824,27 +824,10 @@ extension libraries. An extension library is a Java class implementing
 the <a href="javadoc/nu/staldal/lsp/LSPExtLib.html"><code>nu.staldal.lsp.LSPExtLib</code></a> 
 interface, possibly by extending the <a href="javadoc/nu/staldal/lsp/SimpleExtLib.html"><code>nu.staldal.lsp.SimpleExtLib</code></a> class.</p>
 
-<p>Choose an namespace URL for your extension library, and plug it in to LSP by
-making a file <code>/nu/staldal/lsp/extlib/<em>encodedURL</em></code>
-visible in the CLASSPATH. That file should contain the fully qualified class
-name of your implementation.</p>
-
-<p>The URL is encoded by doing the following replacements:</p>
-<ul>
-<li>- =&gt; --</li>
-<li>$ =&gt; $$</li>
-<li>~ =&gt; ~~</li>
-
-<li>/ =&gt; -</li>
-<li>? =&gt; $</li>
-<li>: =&gt; ~</li>
-</ul>
-
-<p>This encoding is performed by the method <a href="javadoc/nu/staldal/lsp/Utils.html#encodePath(java.lang.String)"><code>nu.staldal.lsp.Utils.encodePath(String)</code></a>.</p>
-
-<p>E.g. <code>http://example.com/TheExtLib</code> =&gt; <code>http~--example.com-TheExtLib</code></p> 
-  
-<p>The extension library must be available to both compiler and runtime.</p>
+<p>Refer to an extension library by using a namespace URI starting with "<code>lsp:extlib:</code>" followed by the 
+fully qualified class name of the implementation class.</p>
+ 
+<p>The extension library implementation class must be available to both compiler and runtime.</p>
 
 </body>
 </html>

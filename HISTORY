@@ -124,3 +124,8 @@
 * Buffering in serialization for better performance.
 * html-fragment and xhtml-fragment output methods for AJAX support.
 * Change default output type from HTML to XHTML.
+
+
+1.6.2
+-----
+* New method for extension library discovery.
