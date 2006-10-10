@@ -168,7 +168,7 @@ public class LSPCompilerCLI
 	private static void syntaxError()
 	{
 	    System.err.println("LSP compiler version " + LSPPage.LSP_VERSION_NAME);
-	    System.err.println("Syntax: lspc [-verbose] [-force] [-xhtml] [-acceptNull] [-sourcepath sourcepath] [-d destpath] [-enclose encloseFile] inputFile ...");	
+	    System.err.println("Syntax: lspc [-verbose] [-force] [-html] [-acceptNull] [-sourcepath sourcepath] [-d destpath] [-enclose encloseFile] inputFile ...");	
 	}
 
 }
