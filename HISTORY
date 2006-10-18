@@ -134,3 +134,5 @@
 1.6.3
 -----
 * haselement() function.
+* Support CharSequence.
+* Support ResourceBundle.

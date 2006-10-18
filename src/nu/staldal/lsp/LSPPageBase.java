@@ -211,7 +211,7 @@ public abstract class LSPPageBase implements LSPPage
 
 	protected static Object convertObjectToLSP(Object value, String name)
 		throws LSPException
-	{
+	{        
 		if (value == null)
 			throw new LSPException(name + ": LSP cannot handle null objects");
 		else if (value == Void.TYPE)
@@ -272,9 +272,17 @@ public abstract class LSPPageBase implements LSPPage
             else
                 return Arrays.asList(arr);
         }
+        else if (value instanceof ResourceBundle)
+        {
+            return new ResourceBundleTuple((ResourceBundle)value);
+        }        
         else if (value instanceof java.sql.ResultSet)
         {
             return new LSPResultSetTupleList((java.sql.ResultSet)value);    
+        }
+        else if (value instanceof CharSequence)
+        {
+            return value.toString();
         }
         else if (value instanceof Enum)
         {
