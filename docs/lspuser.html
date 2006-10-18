@@ -528,11 +528,12 @@ converted to a string before used as key for lookup, this means that a
 mapping with another type of key will not be found by LSP (e.g. you cannot 
 use a Java Number).</p>
 
-<p>It's a runtime error to attempt to reference a non-existing tuple entry. 
+<p>It's a runtime error to attempt to reference a non-existing tuple element. 
 Unless the <code>acceptNull</code> parameter is passed to the compiler,
-then an non-existing tuple entry  will result in a special value convertible to 
+then an non-existing tuple element will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
-or the empty tuple.</p>
+or the empty tuple. The <code>haselement()</code> function can be used to test if a 
+tuple has a given element, it will never generate runtime error.</p>
 
 
 <h3>Grammar</h3>
@@ -644,6 +645,7 @@ specified sequence</li>
 </ul>
 <ul>
 <li>boolean isset(variable) - is the variable bound?</li>
+<li>boolean haselement(tuple, string) - has the tuple a value with the given key?</li>
 </ul>
 
 <p>Namespaced functions are <a href="#extlib">extension functions</a>.</p>
@@ -660,7 +662,7 @@ in the outermost scope.</p>
 Unless the <code>acceptNull</code> parameter is passed to the compiler,
 then an unbound variable will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
-or the empty tuple. The isset() function can be used to test if a 
+or the empty tuple. The <code>isset()</code> function can be used to test if a 
 variable is bound, it will never generate runtime error.</p>
 
 

@@ -2263,6 +2263,44 @@ class LSPJVMCompiler implements Constants
                     "argument to isset() function must be a variable"); 
             }                                                                                
 		}
+        else if (expr.getName().equals("haselement"))
+        {
+            if (expr.numberOfArgs() != 2)
+                throw new LSPException(
+                    "haselement() function must have 2 argument");
+
+            // Map tuple = evalExprAsTuple(expr.getBase());
+            compileSubExprAsTuple(expr.getArg(0), methodGen, instrList);
+            // String key = evalSubExprAsString(expr.getKey());
+            compileSubExprAsString(expr.getArg(1), methodGen, instrList);        
+
+            instrList.append(instrFactory.createInvoke(
+                Map.class.getName(),
+                "get",
+                Type.OBJECT,
+                new Type[] { Type.OBJECT },
+                INVOKEINTERFACE));     
+            
+            BranchInstruction branch1 = instrFactory.createBranchInstruction(
+                IFNULL, null);
+            instrList.append(branch1);                
+            instrList.append(new PUSH(constGen, 1));
+            BranchInstruction branch2 = instrFactory.createBranchInstruction(
+                GOTO, null);
+            instrList.append(branch2);                
+
+            branch1.setTarget(instrList.append(InstructionConstants.NOP));
+            instrList.append(new PUSH(constGen, 0));
+            
+            branch2.setTarget(instrList.append(InstructionConstants.NOP));
+            
+            instrList.append(instrFactory.createInvoke(
+                Boolean.class.getName(), "valueOf",
+                Type.getType(Boolean.class),
+                new Type[] { Type.BOOLEAN },
+                INVOKESTATIC));                         
+            return Boolean.class;
+        }
 		else
 		{
 			throw new LSPException("Unrecognized built-in function: "
