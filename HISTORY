@@ -129,3 +129,8 @@
 1.6.2
 -----
 * New method for extension library discovery.
+
+
+1.6.3
+-----
+* haselement() function.
