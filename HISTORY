@@ -131,8 +131,9 @@
 * New method for extension library discovery.
 
 
-1.6.3
------
+1.7
+---
 * haselement() function.
 * Support CharSequence.
 * Support ResourceBundle.
+* null values can be passed to LSP for use as arguments to extension functions.
