@@ -7,7 +7,10 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import nu.staldal.lsp.LSPException;
 import nu.staldal.lsp.LSPHelper;
 import nu.staldal.lsp.LSPPage;
 
@@ -57,16 +60,29 @@ public class TestLSPCompilation
 	private void doTest(String pageName, String expectedResult)
 		throws Exception
 	{
-    	lspCompilerHelper.doCompile(pageName + ".lsp", true);
-    	
-    	LSPPage thePage = lspHelper.getPage(pageName);
-    	assertNotNull(thePage);
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	lspHelper.executePage(thePage, Collections.emptyMap(), null, baos);
-        String result = baos.toString("UTF-8");
-    	assertEquals(expectedResult, result);		
+        doTest(pageName, expectedResult, Collections.emptyMap());
 	}
-	
+
+    private void doTest(String pageName, String expectedResult, Map params)
+        throws Exception
+    {
+        lspCompilerHelper.doCompile(pageName + ".lsp", true);
+        
+        LSPPage thePage = lspHelper.getPage(pageName);
+        assertNotNull(thePage);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            lspHelper.executePage(thePage, params, null, baos);
+        }
+        catch (LSPException e)
+        {
+            e.printStackTrace();
+            throw e;
+        }
+        String result = baos.toString("UTF-8");
+        assertEquals(expectedResult, result);       
+    }
+    
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testSimplePageWithError()
 		throws Exception
@@ -155,4 +171,38 @@ public class TestLSPCompilation
               + "<p class=\"foo&amp;bar\"></p>\n"
               + "</html>");
     }
+    
+    @Test(expected=nu.staldal.lsp.LSPException.class)
+    public void testNullVariable1() throws Exception
+    {
+        doTest("NullVariable", "");
+    }
+
+    @Test(expected=nu.staldal.lsp.LSPException.class)
+    public void testNullVariable2() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("theVar", null);
+        doTest("NullVariable", "", params);
+    }
+    
+    @Test(expected=nu.staldal.lsp.LSPException.class)
+    public void testNullTupleValue1() throws Exception
+    {
+        Map params = new HashMap();
+        Map tuple = new HashMap();
+        params.put("theTuple", tuple);
+        doTest("NullTupleValue", "", params);
+    }
+
+    @Test(expected=nu.staldal.lsp.LSPException.class)
+    public void testNullTupleValue2() throws Exception
+    {
+        Map params = new HashMap();
+        Map tuple = new HashMap();
+        tuple.put("theNullValue", null);
+        params.put("theTuple", tuple);
+        doTest("NullTupleValue", "", params);
+    }
+    
 }

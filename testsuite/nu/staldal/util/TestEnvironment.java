@@ -69,5 +69,60 @@ public class TestEnvironment extends TestCase
         catch (EmptyStackException e)
         { }
 	}
-	
+
+    public void testNull()
+    {
+        assertNull(env.bind(key1, null));
+        assertNull(env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        assertNull(env.lookup(key2));
+        assertFalse(env.containsKey(key2));
+        
+        assertNull(env.unbind(key1));
+        assertFalse(env.containsKey(key1));
+    }
+    
+    public void testFrameNull()
+    {
+        assertNull(env.bind(key1, null));
+        assertNull(env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        
+        env.pushFrame();
+        assertNull(env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        assertFalse(env.containsKey(key2));        
+        assertNull(env.bind(key1, value2));
+        assertEquals(value2, env.lookup(key1));
+
+        env.popFrame();
+        assertNull(env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        
+        env.pushFrame();
+        assertNull(env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        assertNull(env.unbind(key1));
+        assertNull(env.lookup(key1));
+        
+        env.pushFrame();
+        assertNull(env.bind(key2, value2));
+        assertEquals(value2, env.lookup(key2));     
+        assertTrue(env.containsKey(key2));       
+        
+        env.popFrame();
+        assertNull(env.lookup(key2));       
+        assertFalse(env.containsKey(key2));       
+        
+        env.popFrame();
+        assertNull(env.lookup(key1));     
+        
+        try {
+            env.popFrame();
+            fail("Environment did not throw any Exception when trying to pop last frame");
+        }
+        catch (EmptyStackException e)
+        { }
+    }
+    
 }

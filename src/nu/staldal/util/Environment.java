@@ -45,7 +45,7 @@ import java.util.*;
 /**
  * An Environment is used to store bindings from keys to values.
  * <p>
- * Keys and values are non-null Objects.
+ * Keys are non-null Objects, values are Objects which may be <code>null</code>.
  * <p>
  * An environment consists of several <em>frames</em> in a stack.
  * All modifications are made in the <em>current frame</em> 
@@ -82,12 +82,28 @@ public class Environment
 		currentFrame = new Frame(initial);
 	}
 
-	/**
+    /**
+     * Check if there is any value bound to the given key.
+     *
+     * @param key  the key
+     *
+     * @return true if there is any value (possibly <code>null</code>)
+     *         bound to the given key 
+     */
+    public boolean containsKey(Object key)
+    {
+        if (key == null) 
+            throw new NullPointerException("Key may not be null");
+        
+        return currentFrame.containsKey(key);
+    }
+
+    /**
 	 * Lookup the value bound to the given key.
 	 *
 	 * @param key  the key
 	 *
-	 * @return the value bound to the given key, 
+	 * @return the value bound to the given key 
 	 * or <code>null</code> if no value is bound to the given key.
 	 */
 	public Object lookup(Object key)
@@ -104,7 +120,7 @@ public class Environment
 	 * current key in any parent frame.
 	 *
 	 * @param key    the key, may not be <code>null</code>
-	 * @param value  the value, may not be <code>null</code>
+	 * @param value  the value, may be <code>null</code>
 	 *
 	 * @return the previous value for the given key, 
 	 *         or <code>null</code> if the given key has no value
@@ -114,9 +130,7 @@ public class Environment
 	{
 		if (key == null) 
 			throw new NullPointerException("Key may not be null");
-		if (value == null) 
-			throw new NullPointerException("Value may not be null");
-		
+        
 		return currentFrame.bind(key, value);
 	}
 
@@ -193,6 +207,16 @@ public class Environment
 			return parent;	
 		}
 		
+        boolean containsKey(Object key)
+        {
+            boolean contains = map.containsKey(key);
+            if (!contains && parent != null)
+            {
+                contains = parent.containsKey(key);   
+            }
+            return contains;            
+        }
+        
 		Object lookup(Object key)
 		{
 			Object obj = map.get(key);

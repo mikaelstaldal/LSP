@@ -208,107 +208,36 @@ public abstract class LSPPageBase implements LSPPage
 		}
 	}
 
-
-	protected static Object convertObjectToLSP(Object value, String name)
-		throws LSPException
-	{        
-		if (value == null)
-			throw new LSPException(name + ": LSP cannot handle null objects");
-		else if (value == Void.TYPE)
-			return value;
-		else if (value instanceof String)
-			return value;
-		else if (value instanceof Boolean)
-			return value;
-		else if (value instanceof Number)
-			return value;
-		else if (value instanceof Collection) 
-			return value;
-		else if (value instanceof Map) 
-			return value;
-		else if (value instanceof int[])
+    
+	protected static String convertToString(Object value) throws LSPException
+	{
+        if (value instanceof String)
         {
-			return new IntArrayCollection((int[])value);
+            return (String)value;
         }
-		else if (value instanceof short[])
+        else if (value instanceof char[])
         {
-			return new ShortArrayCollection((short[])value);
+            return new String((char[])value);
         }
-		else if (value instanceof long[])
+        else if (value instanceof byte[])
         {
-			return new LongArrayCollection((long[])value);
-        }
-		else if (value instanceof float[])
-        {
-			return new FloatArrayCollection((float[])value);
-        }
-		else if (value instanceof double[])
-        {
-			return new DoubleArrayCollection((double[])value);
-        }
-		else if (value instanceof boolean[])
-        {
-			return new BooleanArrayCollection((boolean[])value);
-        }
-		else if (value instanceof char[])
-        {
-			return new String((char[])value);
-        }
-		else if (value instanceof byte[])
-		{
-			try {
-				return new String((byte[])value, "ISO-8859-1");
-			}
-			catch (UnsupportedEncodingException e)
-			{
-				throw new Error("JVM doesn't support ISO-8859-1 encoding");	
-			}
-		}
-		else if (value instanceof Object[])
-        {
-            Object[] arr = (Object[])value;
-            if (arr.length == 0)
-                return Collections.EMPTY_LIST;
-            else
-                return Arrays.asList(arr);
-        }
-        else if (value instanceof ResourceBundle)
-        {
-            return new ResourceBundleTuple((ResourceBundle)value);
-        }        
-        else if (value instanceof java.sql.ResultSet)
-        {
-            return new LSPResultSetTupleList((java.sql.ResultSet)value);    
+            try {
+                return new String((byte[])value, "ISO-8859-1");
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new Error("JVM doesn't support ISO-8859-1 encoding"); 
+            }
         }
         else if (value instanceof CharSequence)
         {
+            // TODO handle CharSequence directly?
             return value.toString();
         }
         else if (value instanceof Enum)
         {
             return value.toString();    
         }
-        else
-        {
-            try {
-                return new org.apache.commons.collections.BeanMap(value);
-            }
-            catch (NoClassDefFoundError e)
-            {
-                throw new LSPException(
-				    name + ": LSP cannot handle objects of type "
-                    + value.getClass().getName());
-            }
-        }
-	}
-
-	
-	protected static String convertToString(Object value) throws LSPException
-	{
-		if (value instanceof String)
-		{
-			return (String)value;
-		}
         else if (value == Void.TYPE)
         {
             return "";
@@ -327,10 +256,15 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return value.toString();
 		}
+        else if (value == null)
+        {
+            throw new LSPException(
+                "Convert to string not implemented for null");
+        }
 		else
 		{
 			throw new LSPException(
-				"Convert to String not implemented for type "
+				"Convert to string not implemented for type "
 				+ value.getClass().getName());
 		}
 	}
@@ -360,10 +294,15 @@ public abstract class LSPPageBase implements LSPPage
 				return Double.NaN;
 			}
 		}
+        else if (value == null)
+        {
+            throw new LSPException(
+                "Convert to number not implemented for null");
+        }
 		else
 		{
 			throw new LSPException(
-				"Convert to Number not implemented for type "
+				"Convert to number not implemented for type "
 				+ value.getClass().getName());
 		}
 	}
@@ -392,10 +331,15 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return !(((Collection)value).isEmpty());
 		}
+        else if (value == null)
+        {
+            throw new LSPException(
+                "Convert to boolean not implemented for null");
+        }
 		else
 		{
 			throw new LSPException(
-				"Convert to Boolean not implemented for type "
+				"Convert to boolean not implemented for type "
 				+ value.getClass().getName());
 		}
 	}
@@ -432,38 +376,111 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return true;
 		}
+        else if (value == null)
+        {
+            throw new LSPException(
+                "Convert to boolean not implemented for null");
+        }
 		else
 		{
 			throw new LSPException(
-				"Convert to Boolean not implemented for type "
+				"Convert to boolean not implemented for type "
 				+ value.getClass().getName());
 		}
 	}
 
 
 	protected static Collection convertToList(Object value) throws LSPException
-	{
-		if (value instanceof Collection) 
+	{        
+        if (value instanceof Collection)
+        {
 			return (Collection)value;
+        }
         else if (value == Void.TYPE)
+        {
             return Collections.EMPTY_LIST;
-		else           
+        }
+        else if (value instanceof int[])
+        {
+            return new IntArrayCollection((int[])value);
+        }
+        else if (value instanceof short[])
+        {
+            return new ShortArrayCollection((short[])value);
+        }
+        else if (value instanceof long[])
+        {
+            return new LongArrayCollection((long[])value);
+        }
+        else if (value instanceof float[])
+        {
+            return new FloatArrayCollection((float[])value);
+        }
+        else if (value instanceof double[])
+        {
+            return new DoubleArrayCollection((double[])value);
+        }
+        else if (value instanceof boolean[])
+        {
+            return new BooleanArrayCollection((boolean[])value);
+        }
+        else if (value instanceof Object[])
+        {
+            Object[] arr = (Object[])value;
+            if (arr.length == 0)
+                return Collections.EMPTY_LIST;
+            else
+                return Arrays.asList(arr);
+        }
+        else if (value instanceof java.sql.ResultSet)
+        {
+            return new LSPResultSetTupleList((java.sql.ResultSet)value);    
+        }
+        else if (value == null)
+        {
+            throw new LSPException(
+                "Convert to list not implemented for null");
+        }
+        else
+        {
 			throw new LSPException(
 				"Convert to list not implemented for type "
 				+ value.getClass().getName());
+        }
 	}
 
 
 	protected static Map convertToTuple(Object value) throws LSPException
 	{
-		if (value instanceof Map) 
+		if (value instanceof Map)
+        {
 			return (Map)value;
-        else if (value == Void.TYPE)
+        }
+        else if (value == Void.TYPE)           
+        {
             return FullMap.getInstance();
-		else
-			throw new LSPException(
-				"Convert to tuple not implemented for type "
-				+ value.getClass().getName());
+        }
+        else if (value instanceof ResourceBundle)
+        {
+            return new ResourceBundleTuple((ResourceBundle)value);
+        }        
+        else if (value == null)
+        {
+            throw new LSPException(
+                "Convert to tuple not implemented for null");
+        }
+        else
+        {
+            try {
+                return new org.apache.commons.collections.BeanMap(value);
+            }
+            catch (NoClassDefFoundError e)
+            {
+                throw new LSPException(
+                    "Convert to tuple not implemented for type "
+                    + value.getClass().getName());
+            }
+        }
 	}
 
 
@@ -520,7 +537,7 @@ public abstract class LSPPageBase implements LSPPage
             }
         }
         
-        return convertObjectToLSP(o, "."+key);
+        return o;
 	}
 
 	
@@ -537,7 +554,7 @@ public abstract class LSPPageBase implements LSPPage
             }
         }
         
-        return convertObjectToLSP(o, "."+key);
+        return o;
 	}
 
 
@@ -555,7 +572,7 @@ public abstract class LSPPageBase implements LSPPage
             }
         }
         
-        return convertObjectToLSP(o, varName);
+        return o;
 	}
     
     
@@ -572,7 +589,7 @@ public abstract class LSPPageBase implements LSPPage
             }
         }
         
-        return convertObjectToLSP(o, varName);
+		return o;
 	}
 				
 

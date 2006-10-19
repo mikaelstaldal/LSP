@@ -2316,15 +2316,6 @@ class LSPJVMCompiler implements Constants
 			argTypes,
 			INVOKEVIRTUAL));
 
-		// return convertObjectToLSP(res, expr.getName() + "()");
-		instrList.append(new PUSH(constGen, expr.getName()+"()"));		
-		instrList.append(instrFactory.createInvoke(
-			LSPPageBase.class.getName(),
-			"convertObjectToLSP",
-			Type.OBJECT,
-			new Type[] { Type.OBJECT, Type.STRING },
-			INVOKESTATIC));
-
 		return Object.class;
 	}
 	
