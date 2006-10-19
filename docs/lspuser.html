@@ -809,8 +809,8 @@ as external context.</p>
 However, it can only be traversed once, and the count function can only be 
 used after traversion.</p>
 
-<p>A Java object of another type is considered to be a JavaBean, and an attempt
-is made to use its properties as a tuple. This uses the <code>BeanMap</code>
+<p>If a Java object of another type is used as a tuple, it is considered to be a JavaBean, 
+and an attempt is made to use its properties as tuple values. This uses the <code>BeanMap</code>
 class from <a href="http://jakarta.apache.org/commons/collections">Apache Commons Collections</a>,
 <code>commons-collections.jar</code> must be available in order for this to work.</p>
 
@@ -820,6 +820,8 @@ the empty list or the a tuple giving <code>java.lang.Void.TYPE</code> this
 value for every possible key
 (implemented with <a href="javadoc/nu/staldal/lsp/FullMap.html"><code>FullMap</code></a>).</p>
 
+<p>An object of any type, even <code>null</code>, can be passed as a variable and used as parameter to
+an <a href="#extlib">extension function</a>.</p>
 
 <h2><a name="extlib">Extension libraries</a></h2>
 

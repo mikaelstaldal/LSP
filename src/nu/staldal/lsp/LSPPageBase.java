@@ -208,12 +208,58 @@ public abstract class LSPPageBase implements LSPPage
 		}
 	}
 
-    
-	protected static String convertToString(Object value) throws LSPException
-	{
+
+    protected static Object convertObjectToLSP(Object value)
+        throws LSPException
+    {        
         if (value instanceof String)
         {
-            return (String)value;
+            return value;
+        }
+        else if (value instanceof CharSequence)
+        {
+            // TODO handle CharSequence directly?
+            return value.toString();
+        }
+        else if (value instanceof Boolean)
+        {
+            return value;
+        }
+        else if (value instanceof Number)
+        {
+            return value;
+        }
+        else if (value instanceof Collection)
+        {
+            return value;
+        }
+        else if (value instanceof Map)
+        {
+            return value;
+        }
+        else if (value instanceof int[])
+        {
+            return new IntArrayCollection((int[])value);
+        }
+        else if (value instanceof short[])
+        {
+            return new ShortArrayCollection((short[])value);
+        }
+        else if (value instanceof long[])
+        {
+            return new LongArrayCollection((long[])value);
+        }
+        else if (value instanceof float[])
+        {
+            return new FloatArrayCollection((float[])value);
+        }
+        else if (value instanceof double[])
+        {
+            return new DoubleArrayCollection((double[])value);
+        }
+        else if (value instanceof boolean[])
+        {
+            return new BooleanArrayCollection((boolean[])value);
         }
         else if (value instanceof char[])
         {
@@ -229,14 +275,40 @@ public abstract class LSPPageBase implements LSPPage
                 throw new Error("JVM doesn't support ISO-8859-1 encoding"); 
             }
         }
-        else if (value instanceof CharSequence)
+        else if (value instanceof Object[])
         {
-            // TODO handle CharSequence directly?
-            return value.toString();
+            Object[] arr = (Object[])value;
+            if (arr.length == 0)
+                return Collections.EMPTY_LIST;
+            else
+                return Arrays.asList(arr);
+        }
+        else if (value instanceof ResourceBundle)
+        {
+            return new ResourceBundleTuple((ResourceBundle)value);
+        }        
+        else if (value instanceof java.sql.ResultSet)
+        {
+            return new LSPResultSetTupleList((java.sql.ResultSet)value);    
         }
         else if (value instanceof Enum)
         {
             return value.toString();    
+        }
+        else
+        {
+            return value;
+        }
+    }
+        
+    
+	protected static String convertToString(Object _value) throws LSPException
+	{
+        Object value = convertObjectToLSP(_value);
+        
+        if (value instanceof String)
+        {
+            return (String)value;
         }
         else if (value == Void.TYPE)
         {
@@ -270,9 +342,11 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 	
-	protected static double convertToNumber(Object value) throws LSPException
+	protected static double convertToNumber(Object _value) throws LSPException
 	{
-		if (value instanceof Number)
+        Object value = convertObjectToLSP(_value);        
+		
+        if (value instanceof Number)
 		{
 			return ((Number)value).doubleValue();
 		}
@@ -280,36 +354,38 @@ public abstract class LSPPageBase implements LSPPage
         {
             return 0.0d;
         }
+        else if (value instanceof String)
+        {
+            try {
+                return Double.valueOf((String)value).doubleValue();
+            }
+            catch (NumberFormatException e)
+            {
+                return Double.NaN;
+            }
+        }
 		else if (value instanceof Boolean)
 		{
 			return ((Boolean)value).booleanValue() ? 1.0d : 0.0d;
-		}
-		else if (value instanceof String)
-		{
-			try {
-				return Double.valueOf((String)value).doubleValue();
-			}
-			catch (NumberFormatException e)
-			{
-				return Double.NaN;
-			}
 		}
         else if (value == null)
         {
             throw new LSPException(
                 "Convert to number not implemented for null");
         }
-		else
-		{
-			throw new LSPException(
-				"Convert to number not implemented for type "
-				+ value.getClass().getName());
-		}
+        else
+        {
+            throw new LSPException(
+                "Convert to number not implemented for type "
+                + value.getClass().getName());
+        }
 	}
 
 
-	protected static boolean convertToBoolean(Object value) throws LSPException
+	protected static boolean convertToBoolean(Object _value) throws LSPException
 	{
+        Object value = convertObjectToLSP(_value);
+        
 		if (value instanceof Boolean)
 		{
 			return ((Boolean)value).booleanValue();
@@ -323,30 +399,32 @@ public abstract class LSPPageBase implements LSPPage
 			double d = ((Number)value).doubleValue();
 			return !((d == 0) || Double.isNaN(d));
 		}
-		else if (value instanceof String)
-		{
-			return ((String)value).length() > 0;
-		}
-		else if (value instanceof Collection)
-		{
-			return !(((Collection)value).isEmpty());
-		}
+        else if (value instanceof String)            
+        {
+            return ((String)value).length() > 0;
+        }
+        else if (value instanceof Collection)
+        {
+            return !(((Collection)value).isEmpty());
+        }
         else if (value == null)
         {
             throw new LSPException(
                 "Convert to boolean not implemented for null");
         }
-		else
-		{
-			throw new LSPException(
-				"Convert to boolean not implemented for type "
-				+ value.getClass().getName());
-		}
+        else
+        {
+            throw new LSPException(
+                "Convert to boolean not implemented for type "
+                + value.getClass().getName());
+        }
 	}
 
 
-	protected static boolean convertToBooleanAcceptNull(Object value) throws LSPException
+	protected static boolean convertToBooleanAcceptNull(Object _value) throws LSPException
 	{
+        Object value = convertObjectToLSP(_value);
+        
 		if (value instanceof Boolean)
 		{
 			return ((Boolean)value).booleanValue();
@@ -360,14 +438,10 @@ public abstract class LSPPageBase implements LSPPage
 			double d = ((Number)value).doubleValue();
 			return !((d == 0) || Double.isNaN(d));
 		}
-		else if (value instanceof String)
-		{
-			return ((String)value).length() > 0;
-		}
-		else if (value instanceof Collection)
-		{
-			return !(((Collection)value).isEmpty());
-		}
+        else if (value instanceof String)            
+        {
+            return ((String)value).length() > 0;
+        }
 		else if (value instanceof FullMap)
 		{
 			return false;
@@ -376,22 +450,28 @@ public abstract class LSPPageBase implements LSPPage
 		{
 			return true;
 		}
+        else if (value instanceof Collection)
+        {
+            return !(((Collection)value).isEmpty());
+        }
         else if (value == null)
         {
             throw new LSPException(
                 "Convert to boolean not implemented for null");
         }
-		else
-		{
-			throw new LSPException(
-				"Convert to boolean not implemented for type "
-				+ value.getClass().getName());
-		}
+        else
+        {
+            throw new LSPException(
+                "Convert to boolean not implemented for type "
+                + value.getClass().getName());
+        }
 	}
 
 
-	protected static Collection convertToList(Object value) throws LSPException
+	protected static Collection convertToList(Object _value) throws LSPException
 	{        
+        Object value = convertObjectToLSP(_value);
+        
         if (value instanceof Collection)
         {
 			return (Collection)value;
@@ -399,42 +479,6 @@ public abstract class LSPPageBase implements LSPPage
         else if (value == Void.TYPE)
         {
             return Collections.EMPTY_LIST;
-        }
-        else if (value instanceof int[])
-        {
-            return new IntArrayCollection((int[])value);
-        }
-        else if (value instanceof short[])
-        {
-            return new ShortArrayCollection((short[])value);
-        }
-        else if (value instanceof long[])
-        {
-            return new LongArrayCollection((long[])value);
-        }
-        else if (value instanceof float[])
-        {
-            return new FloatArrayCollection((float[])value);
-        }
-        else if (value instanceof double[])
-        {
-            return new DoubleArrayCollection((double[])value);
-        }
-        else if (value instanceof boolean[])
-        {
-            return new BooleanArrayCollection((boolean[])value);
-        }
-        else if (value instanceof Object[])
-        {
-            Object[] arr = (Object[])value;
-            if (arr.length == 0)
-                return Collections.EMPTY_LIST;
-            else
-                return Arrays.asList(arr);
-        }
-        else if (value instanceof java.sql.ResultSet)
-        {
-            return new LSPResultSetTupleList((java.sql.ResultSet)value);    
         }
         else if (value == null)
         {
@@ -450,8 +494,10 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
-	protected static Map convertToTuple(Object value) throws LSPException
+	protected static Map convertToTuple(Object _value) throws LSPException
 	{
+        Object value = convertObjectToLSP(_value);
+        
 		if (value instanceof Map)
         {
 			return (Map)value;
@@ -460,10 +506,6 @@ public abstract class LSPPageBase implements LSPPage
         {
             return FullMap.getInstance();
         }
-        else if (value instanceof ResourceBundle)
-        {
-            return new ResourceBundleTuple((ResourceBundle)value);
-        }        
         else if (value == null)
         {
             throw new LSPException(
