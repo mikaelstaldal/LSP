@@ -514,13 +514,13 @@ public abstract class LSPPageBase implements LSPPage
 		
         if (o == null)
         {
-            throw new LSPException(
-                "Element \'" + key + "\' not found in tuple");
+            if (!tuple.containsKey(key))
+            {
+                throw new LSPException("Element \'" + key + "\' not found in tuple");                
+            }
         }
-        else
-        {
-            return convertObjectToLSP(o, "."+key);
-        }
+        
+        return convertObjectToLSP(o, "."+key);
 	}
 
 	
@@ -531,12 +531,13 @@ public abstract class LSPPageBase implements LSPPage
 		
         if (o == null)
         {
-            return Void.TYPE;
+            if (!tuple.containsKey(key))
+            {
+                return Void.TYPE;
+            }
         }
-        else
-        {
-            return convertObjectToLSP(o, "."+key);
-        }
+        
+        return convertObjectToLSP(o, "."+key);
 	}
 
 
@@ -547,13 +548,14 @@ public abstract class LSPPageBase implements LSPPage
 		
 		if (o == null)
         {
-            throw new LSPException(
-                "Attempt to reference unbound variable: " + varName);
+            if (!env.containsKey(varName))
+            {
+                throw new LSPException(
+                        "Attempt to reference unbound variable: " + varName);
+            }
         }
-		else
-        {
-			return convertObjectToLSP(o, varName);
-        }
+        
+        return convertObjectToLSP(o, varName);
 	}
     
     
@@ -564,12 +566,13 @@ public abstract class LSPPageBase implements LSPPage
 		
 		if (o == null)
         {
-            return Void.TYPE;
+            if (!env.containsKey(varName))
+            {
+                return Void.TYPE;
+            }
         }
-		else
-        {
-			return convertObjectToLSP(o, varName);
-        }
+        
+        return convertObjectToLSP(o, varName);
 	}
 				
 

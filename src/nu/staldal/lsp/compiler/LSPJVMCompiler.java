@@ -2229,27 +2229,14 @@ class LSPJVMCompiler implements Constants
                 instrList.append(instrFactory.createLoad(
                     Type.getType(Environment.class), PARAM_env));
                 instrList.append(new PUSH(constGen, varName));
-                // Object o = env.lookup(varName);
+                
                 instrList.append(instrFactory.createInvoke(
                     Environment.class.getName(),
-                    "lookup",
-                    Type.OBJECT,
+                    "containsKey",
+                    Type.BOOLEAN,
                     new Type[] { Type.OBJECT },
                     INVOKEVIRTUAL));
                     
-                BranchInstruction branch1 = instrFactory.createBranchInstruction(
-                    IFNULL, null);
-                instrList.append(branch1);                
-                instrList.append(new PUSH(constGen, 1));
-                BranchInstruction branch2 = instrFactory.createBranchInstruction(
-                    GOTO, null);
-                instrList.append(branch2);                
-
-                branch1.setTarget(instrList.append(InstructionConstants.NOP));
-                instrList.append(new PUSH(constGen, 0));
-                
-                branch2.setTarget(instrList.append(InstructionConstants.NOP));
-                
                 instrList.append(instrFactory.createInvoke(
                     Boolean.class.getName(), "valueOf",
                     Type.getType(Boolean.class),
@@ -2276,23 +2263,10 @@ class LSPJVMCompiler implements Constants
 
             instrList.append(instrFactory.createInvoke(
                 Map.class.getName(),
-                "get",
-                Type.OBJECT,
+                "containsKey",
+                Type.BOOLEAN,
                 new Type[] { Type.OBJECT },
                 INVOKEINTERFACE));     
-            
-            BranchInstruction branch1 = instrFactory.createBranchInstruction(
-                IFNULL, null);
-            instrList.append(branch1);                
-            instrList.append(new PUSH(constGen, 1));
-            BranchInstruction branch2 = instrFactory.createBranchInstruction(
-                GOTO, null);
-            instrList.append(branch2);                
-
-            branch1.setTarget(instrList.append(InstructionConstants.NOP));
-            instrList.append(new PUSH(constGen, 0));
-            
-            branch2.setTarget(instrList.append(InstructionConstants.NOP));
             
             instrList.append(instrFactory.createInvoke(
                 Boolean.class.getName(), "valueOf",
