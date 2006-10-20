@@ -295,11 +295,13 @@ public class LSPResultSetTupleList implements List
     
 	static class ResultSetTuple implements Map
 	{
-		ResultSet rs;
+		final ResultSet rs;
+        ResultSetMetaData rsmd;
 		
 		ResultSetTuple(ResultSet rs)
 		{
-			this.rs = rs;	
+			this.rs = rs;
+            this.rsmd = null;
 		}
 		
 		
@@ -320,8 +322,21 @@ public class LSPResultSetTupleList implements List
 		}
         
         public boolean containsKey(Object key)
-        {
-            throw new UnsupportedOperationException();    
+        {    
+            try {
+                if (rsmd == null) rsmd = rs.getMetaData();
+                
+                for (int i = 1; i<=rsmd.getColumnCount(); i++)
+                {
+                    if (key.equals(rsmd.getColumnName(i)))
+                        return true;
+                }
+                return false;
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeException(e.toString());
+            }
         }
     
         public int size()
