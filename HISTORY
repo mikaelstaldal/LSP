@@ -137,3 +137,9 @@
 * Support CharSequence.
 * Support ResourceBundle.
 * null values can be passed to LSP for use as arguments to extension functions.
+
+
+1.7.1
+-----
+* isUserInRole function in Servlet extlib.
+* nvl() function.
