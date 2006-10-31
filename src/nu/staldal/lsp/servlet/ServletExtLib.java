@@ -232,8 +232,34 @@ public class ServletExtLib extends SimpleExtLib
 
         return context.encodeURL(url);			
 	}
-    
 
+    
+    /**
+     * Extension function <code>isUserInRole(role)</code>.
+     * 
+     * @param _role  the role to check (String)
+     *  
+     * @return <code>true</code> if user is in the given role
+     * 
+     * @throws SAXException
+     *  
+     * @see nu.staldal.lsp.servlet.LSPServletContext#isUserInRole(String)
+     */
+    public Object _isUserInRole(Object _role)
+        throws SAXException
+    {
+        LSPServletContext context = (LSPServletContext)extContext; 
+        
+        if (!(_role instanceof String))
+            throw new LSPException(
+                "Argument to s:isUserInRole(role) function must be a string");
+        
+        String role = (String)_role;
+        
+        return context.isUserInRole(role);         
+    }    
+
+    
     private String lang(String pageName, String key,
                 LSPServletContext context)
         throws SAXException
@@ -256,4 +282,3 @@ public class ServletExtLib extends SimpleExtLib
     }
         
 }
-

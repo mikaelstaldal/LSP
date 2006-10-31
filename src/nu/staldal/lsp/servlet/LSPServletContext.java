@@ -178,5 +178,19 @@ public class LSPServletContext
     {
         return getServletResponse().encodeURL(url);
     }
+
     
+    /**
+     * Check if user is in role.
+     * 
+     * @param role  the role to check
+     *  
+     * @return <code>true</code> if user is in the given role
+     *  
+     * @see javax.servlet.http.HttpServletRequest#isUserInRole(String)
+     */
+    public boolean isUserInRole(String role)
+    {
+        return getServletRequest().isUserInRole(role);
+    }
 }

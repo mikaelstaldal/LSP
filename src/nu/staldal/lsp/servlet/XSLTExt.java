@@ -107,5 +107,21 @@ public class XSLTExt
     {
         return ((LSPServletContext)context).encodeURL(url);    
     }
-}    
 
+    
+    /**
+     * Check if user is in role.
+     * 
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
+     * @param role  the role to check
+     *  
+     * @return <code>true</code> if user is in the given role
+     *  
+     * @see javax.servlet.http.HttpServletRequest#isUserInRole(String)
+     */
+    public static boolean isUserInRole(Object context, String role)
+    {
+        return ((LSPServletContext)context).isUserInRole(role);
+    }
+
+}    
