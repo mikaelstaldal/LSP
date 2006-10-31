@@ -204,5 +204,37 @@ public class TestLSPCompilation
         params.put("theTuple", tuple);
         doTest("NullTupleValue", "", params);
     }
-    
+ 
+    @Test
+    public void testNvl() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("thisIsNotNull", "notNullValue");
+        params.put("thisIsNull", null);
+        doTest("NVL",
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+              + "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+              + "<p>foo</p>\n"
+              + "<p class=\"17\">doh</p>\n"
+              + "<p>notNullValue</p>\n"
+              + "<p>bar</p>\n"
+              + "</html>",
+              params);
+    }    
+
+    @Test(expected=nu.staldal.lsp.LSPException.class)
+    public void testNvlError() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("thisIsNotNull", "notNullValue");
+        doTest("NVL",
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+              + "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+              + "<p>foo</p>\n"
+              + "<p class=\"17\">doh</p>\n"
+              + "<p>notNullValue</p>\n"
+              + "<p>bar</p>\n"
+              + "</html>",
+              params);
+    }    
 }

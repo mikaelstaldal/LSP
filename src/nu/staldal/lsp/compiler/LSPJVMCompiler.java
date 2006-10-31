@@ -2275,6 +2275,24 @@ class LSPJVMCompiler implements Constants
                 INVOKESTATIC));                         
             return Boolean.class;
         }
+        else if (expr.getName().equals("nvl"))
+        {
+            if (expr.numberOfArgs() != 2)
+                throw new LSPException(
+                    "nvl() function must have 2 argument");
+
+            compileSubExpr(expr.getArg(0), methodGen, instrList);
+            instrList.append(InstructionConstants.DUP);            
+            BranchInstruction branch1 = instrFactory.createBranchInstruction(
+                    IFNONNULL, null);            
+            instrList.append(branch1);
+            
+            instrList.append(InstructionConstants.POP);
+            compileSubExpr(expr.getArg(1), methodGen, instrList);        
+
+            branch1.setTarget(instrList.append(InstructionConstants.NOP));
+            return Object.class;
+        }
 		else
 		{
 			throw new LSPException("Unrecognized built-in function: "
