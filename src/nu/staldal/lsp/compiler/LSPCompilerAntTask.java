@@ -64,7 +64,7 @@ public class LSPCompilerAntTask extends Task
 	private File encloseFile;
 	private boolean force;
 	private boolean html;
-    private boolean acceptNull;
+    private boolean acceptUnbound;
 
 	
 	/**
@@ -86,7 +86,7 @@ public class LSPCompilerAntTask extends Task
 		encloseFile = null;
 		force = false;
         html = false;
-        acceptNull= false;
+        acceptUnbound= false;
     }
 
 	
@@ -124,14 +124,25 @@ public class LSPCompilerAntTask extends Task
         this.html = html;
     }
     
-	/**
-     * Accept <code>null</code> as variable value without runtime exception.
+    /**
+     * @param acceptNull 
      * 
-	 * @param acceptNull
+     * @deprecated use {@link #setAcceptUnbound(boolean)} instead
+     */
+    public void setAcceptNull(boolean acceptNull)
+    {
+        setAcceptUnbound(acceptNull);
+    }
+
+    /**
+     * Accept unbound variables and tuple values value without 
+     * runtime exception.
+     * 
+	 * @param acceptUnbound
 	 */
-	public void setAcceptNull(boolean acceptNull)
+	public void setAcceptUnbound(boolean acceptUnbound)
 	{
-		this.acceptNull = acceptNull;
+		this.acceptUnbound = acceptUnbound;
 	}
 
 	/**
@@ -187,7 +198,7 @@ public class LSPCompilerAntTask extends Task
 			throw new BuildException("Must have a destdir attribute");
 
         compiler.setHtml(html);
-        compiler.setAcceptNull(acceptNull);
+        compiler.setAcceptUnbound(acceptUnbound);
 		
 		compiler.setTargetDir(destdir);
 				

@@ -93,7 +93,7 @@ public class LSPCompiler
     private Properties outputProperties;
 
     private boolean html;
-    private boolean acceptNull;
+    private boolean acceptUnbound;
     private String encloseURL;
     
 
@@ -110,7 +110,7 @@ public class LSPCompiler
         resolver = null;
 		jvmCompiler = new LSPJVMCompiler();
         html = false;
-        acceptNull = false;
+        acceptUnbound = false;
         encloseURL = null;
     }
     
@@ -141,18 +141,29 @@ public class LSPCompiler
     
     
     /**
-	 * Set to <code>true</code> to make the compiled page accept 
-     * <code>null</code> values without runtime error.
+     * @param acceptNull 
      * 
-     * @param acceptNull
+     * @deprecated use {@link #setAcceptUnbound(boolean)} instead
      */    
     public void setAcceptNull(boolean acceptNull)
     {
-        this.acceptNull = acceptNull;    
+        setAcceptUnbound(acceptNull);    
     }
     
 
-	/**
+    /**
+     * Set to <code>true</code> to make the compiled page accept 
+     * unbound values without runtime error.
+     * 
+     * @param acceptUnbound
+     */    
+    public void setAcceptUnbound(boolean acceptUnbound)
+    {
+        this.acceptUnbound = acceptUnbound;    
+    }
+
+    
+    /**
 	 * Set enclose to use. Set to <code>null</code> to not use any enclose.
 	 * 
 	 * @param encloseURL URL to the enclose to use
@@ -289,7 +300,7 @@ public class LSPCompiler
 		jvmCompiler.compileToByteCode(pageName, compiledTree, 
 			importedFiles, compileDynamic,
 			extLibsInPage, outputProperties, 
-            out, acceptNull,
+            out, acceptUnbound,
             (encloseURL != null));
 
 		outputProperties = null;

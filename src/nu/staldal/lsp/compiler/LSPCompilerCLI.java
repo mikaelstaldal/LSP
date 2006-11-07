@@ -66,7 +66,7 @@ public class LSPCompilerCLI
 		boolean verbose = false;
 		boolean force = false;
 		boolean html = false;
-		boolean acceptNull = false;
+		boolean acceptUnbound = false;
         
 		String sourcePathSpec = null;
 		File targetDir = null;
@@ -92,10 +92,14 @@ public class LSPCompilerCLI
                 {
                     html = true;
                 }
-				else if (args[i].equals("-acceptNull"))
+				else if (args[i].equals("-acceptUnbound"))
 				{
-					acceptNull = true;
+					acceptUnbound = true;
 				}
+                else if (args[i].equals("-acceptNull")) // deprecated
+                {
+                    acceptUnbound = true;
+                }
 				else if (args[i].equals("-sourcepath"))
 				{
 					i++;
@@ -131,7 +135,7 @@ public class LSPCompilerCLI
 
         LSPCompilerHelper compiler = new LSPCompilerHelper();
         compiler.setHtml(html);
-        compiler.setAcceptNull(acceptNull);
+        compiler.setAcceptUnbound(acceptUnbound);
 
         if (sourcePathSpec != null)
         {
@@ -168,7 +172,7 @@ public class LSPCompilerCLI
 	private static void syntaxError()
 	{
 	    System.err.println("LSP compiler version " + LSPPage.LSP_VERSION_NAME);
-	    System.err.println("Syntax: lspc [-verbose] [-force] [-html] [-acceptNull] [-sourcepath sourcepath] [-d destpath] [-enclose encloseFile] inputFile ...");	
+	    System.err.println("Syntax: lspc [-verbose] [-force] [-html] [-acceptUnbound] [-sourcepath sourcepath] [-d destpath] [-enclose encloseFile] inputFile ...");	
 	}
 
 }

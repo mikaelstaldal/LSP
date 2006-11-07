@@ -475,13 +475,24 @@ public class LSPCompilerHelper
     }    
     
     /**
-	 * Set to <code>true</code> to make the compiled page accept 
-     * <code>null</code> values without runtime error.
-     * 
      * @param acceptNull 
+     * 
+     * @deprecated use {@link #setAcceptUnbound(boolean)} instead
      */
     public void setAcceptNull(boolean acceptNull)
     {
-        compiler.setAcceptNull(acceptNull);    
+        setAcceptUnbound(acceptNull);    
+    }
+
+    
+    /**
+     * Set to <code>true</code> to make the compiled page accept 
+     * unbound values without runtime error.
+     * 
+     * @param acceptUnbound 
+     */
+    public void setAcceptUnbound(boolean acceptUnbound)
+    {
+        compiler.setAcceptUnbound(acceptUnbound);    
     }
 }

@@ -529,7 +529,7 @@ mapping with another type of key will not be found by LSP (e.g. you cannot
 use a Java Number).</p>
 
 <p>It's a runtime error to attempt to reference a non-existing tuple element. 
-Unless the <code>acceptNull</code> parameter is passed to the compiler,
+Unless the <code>acceptUnbound</code> parameter is passed to the compiler,
 then an non-existing tuple element will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
 or the empty tuple. The <code>haselement()</code> function can be used to test if a 
@@ -661,7 +661,7 @@ specified sequence</li>
 in the outermost scope.</p>
 
 <p>It's a runtime error to attempt to reference an unbound variable. 
-Unless the <code>acceptNull</code> parameter is passed to the compiler,
+Unless the <code>acceptUnbound</code> parameter is passed to the compiler,
 then an unbound variable will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
 or the empty tuple. The <code>isset()</code> function can be used to test if a 
@@ -686,7 +686,7 @@ executing the compiled code. <code>lsprt.jar</code> is also needed by the compil
 <p>The LSP compiler is invoked by the application class
 <code>nu.staldal.lsp.compiler.LSPCompilerCLI</code>. The syntax is:</p>
 <pre>
-lspc [-verbose] [-force] [-html] [-acceptNull] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] [-enclose <em>encloseFile</em>] <em>inputFile</em> ...
+lspc [-verbose] [-force] [-html] [-acceptUnbound] [-sourcepath <em>sourcepath</em>] [-d <em>destdir</em>] [-enclose <em>encloseFile</em>] <em>inputFile</em> ...
 </pre>
 
 <p><em>sourcepath</em> specifies where to look for imported files with 
@@ -702,7 +702,7 @@ will trigger recompile).</p>
 the default output method for HTML pages will be <code>html</code>, 
 otherwise it will be <code>xhtml</code>.</p>
 
-<p>If <code>-acceptNull</code> is specified, the LSP page will accept 
+<p>If <code>-acceptUnbound</code> is specified, the LSP page will accept 
 non-existing variables and tuple entries without runtime error. This
 may make it easier to develop the application, but may make it harder
 to debug.</p> 
@@ -737,7 +737,7 @@ classpath as well.</p>
          enclose="<em>enclose file</em>"
          force="<em>force recompiling of all files</em>"
          html="<em>use html as default output method</em>"
-         acceptNull="<em>allow non-existing variables and tuple entries</em>"&gt;
+         acceptUnbound="<em>allow non-existing variables and tuple entries</em>"&gt;
       &lt;fileset dir="lsp"&gt;
         &lt;include name="*.lsp" /&gt;
       &lt;/fileset&gt;
@@ -755,7 +755,7 @@ are also checked, changing an imported file or enclose will trigger recompile).<
 the default output method for HTML pages will be <code>html</code>, 
 otherwise it will be <code>xhtml</code>.</p>
 
-<p>If <code>acceptNull</code> is set, the LSP page will accept 
+<p>If <code>acceptUnbound</code> is set, the LSP page will accept 
 non-existing variables and tuple entries without runtime error. This
 may make it easier to develop the application, but may make it harder
 to debug.</p> 

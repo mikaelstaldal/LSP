@@ -54,7 +54,7 @@
     <target name="lsp">
 	   <lspc sourcepath="templates"
              destdir="${output.dir}/WEB-INF/classes"
-             acceptNull="true">
+             acceptUnbound="true">
          <fileset dir="templates">
            <include name="*.lsp" />
          </fileset>

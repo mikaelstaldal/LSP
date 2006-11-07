@@ -77,7 +77,7 @@ class LSPJVMCompiler implements Constants
 	private static final int PARAM_sax = 4;
 	private static final int PARAM_attrs = 5;
     
-    private boolean acceptNull;
+    private boolean acceptUnbound;
     
 	private String className = null;
 	private ClassGen classGen = null;
@@ -111,10 +111,10 @@ class LSPJVMCompiler implements Constants
     void compileToByteCode(String pageName, LSPNode theTree, 
 		    HashMap<String,String> importedFiles, boolean compileDynamic,
             HashMap<String,String> extLibsInPage, Properties outputProperties, 
-            OutputStream out, boolean acceptNull, boolean hasEnclose)
+            OutputStream out, boolean acceptUnbound, boolean hasEnclose)
         throws IOException, SAXException
 	{
-        this.acceptNull = acceptNull;
+        this.acceptUnbound = acceptUnbound;
         
 		splitNumber = 0;
 		
@@ -1305,7 +1305,7 @@ class LSPJVMCompiler implements Constants
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
-				acceptNull ? "convertToBooleanAcceptNull" : "convertToBoolean",
+				acceptUnbound ? "convertToBooleanAcceptNull" : "convertToBoolean",
 				Type.BOOLEAN,
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
@@ -1439,7 +1439,7 @@ class LSPJVMCompiler implements Constants
 		// Object o = env.lookup(varName);
 		instrList.append(instrFactory.createInvoke(
 			LSPPageBase.class.getName(),
-			acceptNull ? "getVariableValueAcceptNull" : "getVariableValue",
+			acceptUnbound ? "getVariableValueAcceptNull" : "getVariableValue",
 			Type.OBJECT,
 			new Type[] { Type.getType(Environment.class), Type.STRING },
 			INVOKESTATIC));				
@@ -2000,7 +2000,7 @@ class LSPJVMCompiler implements Constants
 			{
 				instrList.append(instrFactory.createInvoke(
 					LSPPageBase.class.getName(),
-					acceptNull ? "convertToBooleanAcceptNull" : "convertToBoolean",
+					acceptUnbound ? "convertToBooleanAcceptNull" : "convertToBoolean",
 					Type.BOOLEAN,
 					new Type[] { Type.OBJECT },
 					INVOKESTATIC));
@@ -2349,7 +2349,7 @@ class LSPJVMCompiler implements Constants
 
 		instrList.append(instrFactory.createInvoke(
 			LSPPageBase.class.getName(),
-			acceptNull ? "getElementFromTupleAcceptNull" : "getElementFromTuple",
+			acceptUnbound ? "getElementFromTupleAcceptNull" : "getElementFromTuple",
 			Type.OBJECT,
 			new Type[] { Type.getType(Map.class), Type.STRING },
 			INVOKESTATIC));		
@@ -2441,7 +2441,7 @@ class LSPJVMCompiler implements Constants
 		{
 			instrList.append(instrFactory.createInvoke(
 				LSPPageBase.class.getName(),
-				acceptNull ? "convertToBooleanAcceptNull" : "convertToBoolean",
+				acceptUnbound ? "convertToBooleanAcceptNull" : "convertToBoolean",
 				Type.BOOLEAN,
 				new Type[] { Type.OBJECT },
 				INVOKESTATIC));
