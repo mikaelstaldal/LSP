@@ -237,4 +237,22 @@ public class TestLSPCompilation
               + "</html>",
               params);
     }    
+
+    @Test
+    public void testIsnull() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("thisIsNotNull", "notNullValue");
+        params.put("thisIsNull", null);
+        doTest("ISNULL",
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+              + "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+              + "<p>false</p>\n"
+              + "<p>true</p>\n"
+              + "<p>isNotNull</p>\n"
+              + "<p>isNull</p>\n"
+              + "</html>",
+              params);
+    }
+
 }

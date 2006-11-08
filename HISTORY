@@ -143,5 +143,6 @@
 -----
 * isUserInRole function in Servlet extlib.
 * nvl() function.
+* isnull() function.
 * rename acceptNull to acceptUnbound since LSP now makes difference between 
 null and unbound.

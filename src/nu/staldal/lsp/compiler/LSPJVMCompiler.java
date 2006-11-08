@@ -2254,7 +2254,7 @@ class LSPJVMCompiler implements Constants
         {
             if (expr.numberOfArgs() != 2)
                 throw new LSPException(
-                    "haselement() function must have 2 argument");
+                    "haselement() function must have 2 arguments");
 
             // Map tuple = evalExprAsTuple(expr.getBase());
             compileSubExprAsTuple(expr.getArg(0), methodGen, instrList);
@@ -2275,11 +2275,39 @@ class LSPJVMCompiler implements Constants
                 INVOKESTATIC));                         
             return Boolean.class;
         }
+        else if (expr.getName().equals("isnull"))
+        {
+            if (expr.numberOfArgs() != 1)
+                throw new LSPException(
+                    "isnull() function must have 1 argument");
+
+            compileSubExpr(expr.getArg(0), methodGen, instrList);
+            BranchInstruction branch1 = instrFactory.createBranchInstruction(
+                    IFNULL, null);            
+            instrList.append(branch1);
+
+            instrList.append(new PUSH(constGen, 0)); // FALSE
+            
+            BranchInstruction branch2 = instrFactory.createBranchInstruction(
+                    GOTO, null);
+            instrList.append(branch2);
+            
+            branch1.setTarget(instrList.append(new PUSH(constGen, 1))); // TRUE            
+
+            branch2.setTarget(instrList.append(InstructionConstants.NOP));            
+            
+            instrList.append(instrFactory.createInvoke(
+                    Boolean.class.getName(), "valueOf",
+                    Type.getType(Boolean.class),
+                    new Type[] { Type.BOOLEAN },
+                    INVOKESTATIC));                         
+            return Boolean.class;
+        }
         else if (expr.getName().equals("nvl"))
         {
             if (expr.numberOfArgs() != 2)
                 throw new LSPException(
-                    "nvl() function must have 2 argument");
+                    "nvl() function must have 2 arguments");
 
             compileSubExpr(expr.getArg(0), methodGen, instrList);
             instrList.append(InstructionConstants.DUP);            

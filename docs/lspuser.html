@@ -533,7 +533,8 @@ Unless the <code>acceptUnbound</code> parameter is passed to the compiler,
 then an non-existing tuple element will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
 or the empty tuple. The <code>haselement()</code> function can be used to test if a 
-tuple has a given element, it will never generate runtime error.</p>
+tuple has a given element, it will never generate runtime error. A tuple element 
+set to <code>null</code> is not considered non-existing.</p>
 
 
 <h3>Grammar</h3>
@@ -646,6 +647,10 @@ specified sequence</li>
 <ul>
 <li>boolean isset(variable) - is the variable bound?</li>
 <li>boolean haselement(tuple, string) - has the tuple a value with the given key?</li>
+</ul>
+<ul>
+<li>boolean isnull(object) - return <code>true</code> if object is <code>null</code>, 
+	<code>false</code> otherwise</li>
 <li>object nvl(object1, object1) - return object1 unless it is <code>null</code>, 
 	return object2 if object1 is <code>null</code></li>
 </ul>
@@ -665,7 +670,8 @@ Unless the <code>acceptUnbound</code> parameter is passed to the compiler,
 then an unbound variable will result in a special value convertible to 
 the empty string, the number 0.0, the boolean value false, the empty list
 or the empty tuple. The <code>isset()</code> function can be used to test if a 
-variable is bound, it will never generate runtime error.</p>
+variable is bound, it will never generate runtime error. A variable bound to 
+<code>null</code> is not considered unbound.</p>
 
 
 <h2>The LSP compiler</h2>
