@@ -90,7 +90,7 @@ public class ServletExtLib extends SimpleExtLib
                     "<s:include> can only be used within the LSP framework");
             }
             
-            Service service;
+            Object service;
             try {
                 service = dispatcher.lookupService(name);
             }
@@ -129,7 +129,7 @@ public class ServletExtLib extends SimpleExtLib
                 ContentHandler.class.getName(), out); 
             try {
                 templateName = 
-                    service.execute(context.getServletRequest(), 
+                    dispatcher.executeService(service, context.getServletRequest(), 
                                     context.getServletResponse(),
                                     lspParams, 
                                     Service.REQUEST_INCLUDE);

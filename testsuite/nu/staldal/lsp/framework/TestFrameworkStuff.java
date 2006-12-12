@@ -3,9 +3,9 @@ package nu.staldal.lsp.framework;
 import junit.framework.*;
 
 
-public class TestFramework extends TestCase
+public class TestFrameworkStuff extends TestCase
 {
-    public TestFramework(String name)
+    public TestFrameworkStuff(String name)
     {
         super(name);
     }

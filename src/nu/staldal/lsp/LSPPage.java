@@ -57,7 +57,7 @@ public interface LSPPage
     /**
      * Current version of LSP.
      */
-    public static final String LSP_VERSION_NAME = "1.7.1b";
+    public static final String LSP_VERSION_NAME = "1.7.2";
     
     /**
      * Version number to check compatibility between runtime and compiled pages.

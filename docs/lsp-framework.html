@@ -10,10 +10,11 @@
 <a href="javadoc/nu/staldal/lsp/framework/package-summary.html">Javadoc</a>.</p>
 
 <p>This framework consists of a Servlet which dispatches requests to 
-services. Each service is a Java class implementing the 
+services. Each service is a Java class implementing either the 
 <a href="javadoc/nu/staldal/lsp/framework/Service.html">nu.staldal.lsp.framework.Service</a> 
 interface (probably by extending the class
-<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html">nu.staldal.lsp.framework.ServiceBase</a>).
+<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html">nu.staldal.lsp.framework.ServiceBase</a>) 
+or by extending the <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a> class.
 The mapping is done based in the class name, so no explicit mapping file is needed.</p>
 
 <p>If your web application is mounted on the URL 

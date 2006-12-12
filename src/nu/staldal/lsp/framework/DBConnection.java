@@ -223,6 +223,18 @@ public class DBConnection
     }
     
     
+    /**
+     * Close connection.
+     *
+     * @throws SQLException  if a database error occurs
+     */
+    public void close()
+        throws SQLException
+    {
+        dbConn.close();    
+    }
+
+    
     private void setParams(PreparedStatement pstmt, Object[] params)
         throws SQLException
     {

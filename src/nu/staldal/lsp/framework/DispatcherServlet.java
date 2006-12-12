@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,8 +43,12 @@ package nu.staldal.lsp.framework;
 import java.io.*;
 import java.util.*;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.*;
 import javax.servlet.http.*;
+import javax.sql.DataSource;
 
 import org.xml.sax.SAXException;
 
@@ -61,7 +65,7 @@ import nu.staldal.lsp.servlet.*;
 public class DispatcherServlet extends HttpServlet
 {
     private LSPManager lspManager;
-    private Map<String,Service> serviceCache;
+    private Map<String,Object> serviceCache;
     
     private List<String> servicePackages;
     private String defaultService;
@@ -93,7 +97,7 @@ public class DispatcherServlet extends HttpServlet
         
         lspManager = LSPManager.getInstance(getServletContext());
         
-        serviceCache = new HashMap<String,Service>();
+        serviceCache = new HashMap<String,Object>();
         
         getServletContext().setAttribute(getClass().getName(), this);
     }
@@ -131,7 +135,7 @@ public class DispatcherServlet extends HttpServlet
         {
             boolean noService = false;
             
-            Service service;
+            Object service;
             try {
                 service = lookupService(serviceName);
             }
@@ -153,10 +157,9 @@ public class DispatcherServlet extends HttpServlet
             }
             else
             {
-                templateName = 
-                    service.execute(request, response, pageParams, requestType);
+                templateName = executeService(service, request, response, pageParams, requestType);
             }
-            if (!noService && templateName == null || templateName.length() == 0)
+            if (!noService && (templateName == null || templateName.length() == 0))
             {
                 break;        
             }
@@ -206,14 +209,80 @@ public class DispatcherServlet extends HttpServlet
     }
     
     
+    /**
+     * Execute a service
+     * 
+     * @param service  the Service
+     * @param request  the HttpServletRequest
+     * @param response  the HttpServletResponse
+     * @param pageParams  page parameters
+     * @param requestType  request type
+     * 
+     * @return same as service
+     * 
+     * @throws ServletException  if the service throws it
+     * @throws IOException  if the service throws it
+     */
+    public String executeService(Object service, HttpServletRequest request, HttpServletResponse response, Map<String, Object> pageParams, int requestType) 
+        throws ServletException, IOException
+    {
+        if (service instanceof Service)
+        {
+            return ((Service)service).execute(request, response, pageParams, requestType);           
+        }
+        else // (service instanceof Class
+        {
+            ThrowawayService ts;            
+            try
+            {
+                ts = (ThrowawayService)((Class)service).newInstance();
+            }
+            catch (InstantiationException e)
+            {
+                throw new ServletException(e);
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new ServletException(e);
+            }
+            
+            ts.init(getServletContext(), request, response, requestType);
+            
+            try
+            {
+                return ts._execute(pageParams);
+            }
+            catch (ServletException e)
+            {
+                throw e;
+            }
+            catch (IOException e)
+            {
+                throw e;
+            }
+            catch (RuntimeException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                throw new ServletException(e);
+            }
+        }
+    }
+
+
     @Override
     public void destroy()
     {
         for (Iterator it = serviceCache.values().iterator(); it.hasNext(); )
         {
-            Service s = (Service)it.next();
+            Object s = it.next();
             
-            s.destroy();
+            if (s instanceof Service)
+            {            
+                ((Service)s).destroy();
+            }
         }
         
         serviceCache.clear();
@@ -270,10 +339,10 @@ public class DispatcherServlet extends HttpServlet
      * @throws IllegalAccessException  if the service cannot be instantiated
      * @throws ServletException  if the service fails to initialize
      */
-    public synchronized Service lookupService(String serviceName)
+    public synchronized Object lookupService(String serviceName)
         throws InstantiationException, IllegalAccessException, ServletException
     {
-        Service s = serviceCache.get(serviceName);
+        Object s = serviceCache.get(serviceName);
         
         if (s == null)
         {
@@ -297,14 +366,20 @@ public class DispatcherServlet extends HttpServlet
             
             if (serviceClass == null) return null;
             
-            s = (Service)serviceClass.newInstance();
-            s.init(getServletContext());
-            
-            serviceCache.put(serviceName, s);
+            if (ThrowawayService.class.isAssignableFrom(serviceClass))
+            {
+                s = serviceClass;
+            }
+            else
+            {
+                Service _s = (Service)serviceClass.newInstance();
+                _s.init(getServletContext());
+                s = _s;
+            }
+            serviceCache.put(serviceName, s);            
         }
         
         return s;
     }
     
 }
-

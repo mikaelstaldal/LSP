@@ -61,7 +61,8 @@ public abstract class ServiceBase implements Service
     protected ServletContext context;
     
     /**
-     * The {@link javax.sql.DataSource} to main database.
+     * The {@link javax.sql.DataSource} to main database,
+     * or <code>null</code> if no database is setup.
      */
     protected DataSource mainDB;
 
