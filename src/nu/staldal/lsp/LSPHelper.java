@@ -625,7 +625,7 @@ public class LSPHelper
             if (!outputProperties.containsKey(OutputKeys.ENCODING)) 
                 outputProperties.setProperty(OutputKeys.ENCODING, htmlEncoding);            
         }
-        else if (method.equals("xhtml"))
+        else if (method.equals("xhtml") || method.equals("xhtml-special"))
         {
 			if (!outputProperties.containsKey(OutputKeys.MEDIA_TYPE)) 
                 outputProperties.setProperty(OutputKeys.MEDIA_TYPE, xhtmlType);

@@ -54,6 +54,7 @@ public class OutputConfig
     public boolean isXhtml = false;
     public boolean isText = false;
     public boolean isHtml = false;
+    public boolean isSpecial = false;
 
     public String version;
     
@@ -98,6 +99,11 @@ public class OutputConfig
         }
         else if (method.equals("xhtml"))
             isXhtml = true;
+        else if (method.equals("xhtml-special"))
+        {
+            isXhtml = true;
+            isSpecial = true;
+        }
         else if (method.equals("text"))
             isText = true;
         else if (method.equals("html"))

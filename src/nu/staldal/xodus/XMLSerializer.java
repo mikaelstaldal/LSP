@@ -70,10 +70,12 @@ public class XMLSerializer extends Serializer
     private boolean wasEndTag = false;
     private boolean wasStartTag = false;
     private int inFormattedElement = 0;
+    private int inNotEscapeElement = 0;
     
     private final Set<String> emptyElements;
     private final Set<String> formattedElements;
-    
+    private final Set<String> notEscapeElements;    
+
     
     XMLSerializer(StreamResult result, OutputConfig outputConfig)
         throws IllegalArgumentException, IOException, 
@@ -107,11 +109,16 @@ public class XMLSerializer extends Serializer
             formattedElements.add("script");
             formattedElements.add("style");
             formattedElements.add("textarea");
+            
+            notEscapeElements = new HashSet<String>(2);
+            notEscapeElements.add("script");
+            notEscapeElements.add("style");            
         }
         else
         {
             emptyElements = null;
             formattedElements = null;
+            notEscapeElements = null;
         }                
     }
 
@@ -397,6 +404,12 @@ public class XMLSerializer extends Serializer
         {
             if (formattedElements.contains(localName))
                 inFormattedElement++;
+            
+            if (outputConfig.isSpecial)
+            {
+                if (notEscapeElements.contains(localName))
+                    inNotEscapeElement++;
+            }
         }        
         
         elementDepth++; 
@@ -522,6 +535,12 @@ public class XMLSerializer extends Serializer
         {
             if (formattedElements.contains(localName))
                 inFormattedElement--;
+            
+            if (outputConfig.isSpecial)
+            {
+                if (notEscapeElements.contains(localName))
+                    inNotEscapeElement++;
+            }
         }
         
         wasEndTag = true;
@@ -576,7 +595,8 @@ public class XMLSerializer extends Serializer
         doFirstInCharacters();
         
         try {
-            if (disableOutputEscaping || nestedCDATA > 0)
+            if (disableOutputEscaping || nestedCDATA > 0
+                    || inNotEscapeElement > 0)
             {
                 out.write(ch, start, length);
             }
@@ -600,7 +620,8 @@ public class XMLSerializer extends Serializer
     private void outputCharacters(CharSequence cs, int start, int end)
         throws IOException
     {
-        if (disableOutputEscaping || nestedCDATA > 0)
+        if (disableOutputEscaping || nestedCDATA > 0
+                || inNotEscapeElement > 0)
         {
             out.append(cs, start, end);
         }
