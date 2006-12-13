@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,24 @@ import java.text.*;
 public class DBConnection
 {
     /**
+     * Default formatter for SQL DATE type.
+     */
+    public static final DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    
+    
+    /**
+     * Default formatter for the SQL TIME type. 
+     */
+    public static final DateFormat DEFAULT_TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    
+    
+    /**
+     * Default formatter for the SQL TIMESTAMP type. 
+     */
+    public static final DateFormat DEFAULT_TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+    
+    
+    /**
      * The object to use when copying a ResultSet (row) and a 
      * JDBC NULL occurs.
      *<p>
@@ -63,6 +81,8 @@ public class DBConnection
      * JDBC NULL occurs.
      *<p>
      * Default is the empty string.
+     *<p>
+     * Set to <code>null</code> to not do any replacement.
      * 
      * @param o the replacement object 
      */
@@ -71,13 +91,27 @@ public class DBConnection
         nullReplacement = o;    
     }
     
+    /**
+     * Get the object to use when copying a ResultSet (row) and a 
+     * JDBC NULL occurs.
+     *<p>
+     * Default is the empty string.
+     * 
+     * @return the object to use when copying a ResultSet (row) and a 
+     * JDBC NULL occurs
+     */
+    public Object getNullReplacement()
+    {
+        return nullReplacement;    
+    }
+    
     
     /**
      * Formatter for the SQL DATE type.
      *<p>
      * Default is <code>SimpleDateFormat("yyyy-MM-dd")</code>.
      */
-    protected DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    protected DateFormat dateFormatter = DEFAULT_DATE_FORMAT;
     
     /**
      * Set formatter for the SQL DATE type.
@@ -108,7 +142,7 @@ public class DBConnection
      *<p>
      * Default is <code>SimpleDateFormat("yyyy-MM-dd  HH:mm:ss")</code>.
      */
-    protected DateFormat timestampFormatter = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");                
+    protected DateFormat timestampFormatter = DEFAULT_TIMESTAMP_FORMAT;                
     
     /**
      * Set formatter for the SQL TIMESTAMP type.
@@ -140,7 +174,7 @@ public class DBConnection
      *<p>
      * Default is <code>SimpleDateFormat("HH:mm:ss")</code>.
      */
-    protected DateFormat timeFormatter = new SimpleDateFormat("HH:mm:ss");
+    protected DateFormat timeFormatter = DEFAULT_TIME_FORMAT;
                 
     /**
      * Set formatter for the SQL TIME type.
@@ -170,7 +204,7 @@ public class DBConnection
     /**
      * The wrapped {@link java.sql.Connection}.
      */
-    protected Connection dbConn;
+    protected final Connection dbConn;
     
     
     /**
@@ -227,6 +261,8 @@ public class DBConnection
      * Close connection.
      *
      * @throws SQLException  if a database error occurs
+     * 
+     * @see java.sql.Connection#close()
      */
     public void close()
         throws SQLException
@@ -281,6 +317,33 @@ public class DBConnection
     
     
     /**
+     * Execute a parameterized query, copy and close the ResultSet.     
+     * 
+     * @param query   the SQL query with '?' parameters
+     * @param params  parameter values
+     *
+     * @return copy of the ResultSet
+     *
+     * @throws SQLException  if a database error occurs
+     *
+     * @see java.sql.PreparedStatement#executeQuery()
+     * @see #setNullReplacement
+     */
+    public List<Map<String,Object>> executeQueryAndCopy(String query, Object... params)
+        throws SQLException
+    {
+        ResultSet rs = null;
+        try {
+            rs = executeQuery(query, params);
+            return _copyResultSet(rs);
+        }
+        finally {
+            closeResultSet(rs);
+        }        
+    }
+    
+    
+    /**
      * Close a {@link java.sql.ResultSet} and its {@link java.sql.Statement}.
      * Does nothing if <var>rs</var> is <code>null</code>.
      *
@@ -320,14 +383,7 @@ public class DBConnection
         throws SQLException
     {
         try {
-            ResultSetMetaData rsmd = rs.getMetaData();
-            
-            List<Map<String,Object>> l = new ArrayList<Map<String,Object>>();        
-            while (rs.next())
-            {                 
-                l.add(_copyResultSetRow(rs, rsmd));
-            }
-            return l;
+            return _copyResultSet(rs);
         }
         finally {
             closeResultSet(rs);
@@ -335,8 +391,22 @@ public class DBConnection
     }
 
         
+    private List<Map<String,Object>> _copyResultSet(ResultSet rs)
+        throws SQLException
+    {
+        ResultSetMetaData rsmd = rs.getMetaData();
+        
+        List<Map<String,Object>> l = new ArrayList<Map<String,Object>>();        
+        while (rs.next())
+        {                 
+            l.add(_copyResultSetRow(rs, rsmd));
+        }
+        return l;
+    }
+    
+
     /**
-     * Copy a {@link java.sql.ResultSet} row {@link java.util.Map}.
+     * Copy a {@link java.sql.ResultSet} row into a {@link java.util.Map}.
      * The current row of the ResultSet is copied, and the ResultSet is not
      * advanced.
      *
@@ -399,8 +469,51 @@ public class DBConnection
     
     
     /**
+     * Execute a parameterized query which and return a copy of the first 
+     * row of the ResultSet. Any subsequent rows are ignored.
+     *<p>
+     * Will do the same translation of dates and null as 
+     * {@link #copyResultSetRow(ResultSet)}.     
+     * 
+     * @param query   the SQL query with '?' parameters
+     * @param params  parameter values
+     *
+     * @return a copy of the first row of the ResultSet
+     *
+     * @throws SQLException  if a database error occurs
+     * @throws NoSuchElementException  if the query rerurns no rows
+     *
+     * @see java.sql.PreparedStatement#executeQuery()
+     * @see #copyResultSetRow(ResultSet)
+     */
+    public Map<String,Object> lookupRow(String query, Object... params)
+        throws SQLException, NoSuchElementException
+    {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        
+        try {
+            pstmt = dbConn.prepareStatement(query);        
+            setParams(pstmt, params);        
+            rs = pstmt.executeQuery();
+            if (!rs.next())
+            {
+                throw new NoSuchElementException("No rows found");    
+            }
+            return copyResultSetRow(rs);
+        }
+        finally {
+            if (rs != null) rs.close();            
+            if (pstmt != null) pstmt.close();            
+        }           
+    }
+
+    
+    /**
      * Execute a parameterized query which and return the first object
      * in the first row of the ResultSet. Any subsequent rows are ignored.     
+     *<p>
+     * Will <em>not</em> do any translation of dates and null. 
      * 
      * @param query   the SQL query with '?' parameters
      * @param params  parameter values
