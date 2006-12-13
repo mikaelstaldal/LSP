@@ -71,6 +71,7 @@ public class DispatcherServlet extends HttpServlet
     private String defaultService;
     private String requestCharset;
 
+    private DataSource mainDB;
     
     @Override
     public void init()
@@ -98,6 +99,24 @@ public class DispatcherServlet extends HttpServlet
         lspManager = LSPManager.getInstance(getServletContext());
         
         serviceCache = new HashMap<String,Object>();
+
+        String dbName = getServletContext().getInitParameter("nu.staldal.lsp.servlet.framework.DB");        
+        if (dbName != null)
+        {
+            try {
+                Context initCtx = new InitialContext();
+                Context javaCtx = (Context)initCtx.lookup("java:comp/env");
+                mainDB = (DataSource)javaCtx.lookup(dbName);
+            }
+            catch (NamingException e)
+            {
+                throw new ServletException(e);    
+            }
+        }
+        else
+        {
+            mainDB = null;
+        }
         
         getServletContext().setAttribute(getClass().getName(), this);
     }
@@ -230,7 +249,7 @@ public class DispatcherServlet extends HttpServlet
         {
             return ((Service)service).execute(request, response, pageParams, requestType);           
         }
-        else // (service instanceof Class
+        else // (service instanceof Class)
         {
             ThrowawayService ts;            
             try
@@ -246,7 +265,7 @@ public class DispatcherServlet extends HttpServlet
                 throw new ServletException(e);
             }
             
-            ts.init(getServletContext(), request, response, requestType);
+            ts.init(getServletContext(), request, response, requestType, mainDB);
             
             try
             {

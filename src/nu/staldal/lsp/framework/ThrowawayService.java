@@ -122,32 +122,18 @@ public abstract class ThrowawayService
     protected int requestType;
 
     final void init(ServletContext context, HttpServletRequest request, HttpServletResponse response, 
-            int requestType)
+            int requestType, DataSource mainDB)
     {
         this.context = context;
         this.request = request;
         this.response = response;        
         this.requestType = requestType;
+        this.mainDB = mainDB;
     }
     
     final String _execute(Map<String,Object> pageParams)
         throws Exception
     {
-        String dbName = context.getInitParameter("nu.staldal.lsp.servlet.framework.DB");
-    
-        if (dbName != null)
-        {
-            try {
-                Context initCtx = new InitialContext();
-                Context javaCtx = (Context)initCtx.lookup("java:comp/env");
-                mainDB = (DataSource)javaCtx.lookup(dbName);
-            }
-            catch (NamingException e)
-            {
-                throw new ServletException(e);    
-            }
-        }
-
         try {            
             if (mainDB != null)
             {
