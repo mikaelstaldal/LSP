@@ -228,6 +228,8 @@ public abstract class ServiceBase implements Service
                 throw (ServletException)e;
             else if (e instanceof IOException)                
                 throw (IOException)e;
+            else if (e instanceof RuntimeException)                
+                throw (RuntimeException)e;
             else
                 throw new ServletException(e);   
         }
