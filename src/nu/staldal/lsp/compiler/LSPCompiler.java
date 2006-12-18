@@ -1150,25 +1150,40 @@ public class LSPCompiler
 	
 	private LSPNode process_if(Element el)
 		throws SAXException
-	{
-        removeWhitespace(el);
-		
+	{		
         String exp = getAttr("test", el, true);
 		try {                        
 			LSPExpr test = compileExpr(el, LSPExpr.parseFromString(exp));            
-            
-            if (el.numberOfChildren() == 1 
-                    && el.getChild(0) instanceof Element)
-            {
-                Element theChild = (Element)el.getChild(0);
+  
+            int n = 0;
+            Element attrEl = null;
 
-                if (theChild.getNamespaceURI().equals(LSP_CORE_NS)
-                        && theChild.getLocalName().equals("attribute"))
+            for (int i = 0; i<el.numberOfChildren(); i++)
+            {
+                Node theNode = el.getChild(i);
+                if (theNode.isWhitespaceNode() && !theNode.getPreserveSpace())
+                    continue;
+                
+                n++;
+                
+                if (theNode instanceof Element)
                 {
-                    return process_attribute(theChild, test);
-                }
+                    Element theChild = (Element)theNode;
+                
+                    if (theChild.getNamespaceURI().equals(LSP_CORE_NS)
+                            && theChild.getLocalName().equals("attribute"))
+                    {
+                        attrEl = theChild;
+                    }
+                }                
+            }
+            
+            if (n == 1 && attrEl != null)
+            {
+                return process_attribute(attrEl, test);
             }
 
+            removeWhitespace(el);
 			return new LSPIf(test, compileChildren(el), el);
 		}
 		catch (ParseException e)

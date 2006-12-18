@@ -80,6 +80,7 @@ public class TestLSPCompilation
             throw e;
         }
         String result = baos.toString("UTF-8");
+        System.out.println(result);
         assertEquals(expectedResult, result);       
     }
     
@@ -255,4 +256,55 @@ public class TestLSPCompilation
               params);
     }
 
+    @Test
+    public void testAttribute() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("flag", "");
+        doTest("TestAttribute",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             + "<root>\n"
+             + "    <input type=\"checkbox\" name=\"box\"/>\n"
+             + "</root>",
+             params);
+    }
+
+    @Test
+    public void testAttribute2() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("flag", "foobar");
+        doTest("TestAttribute",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             + "<root>\n"
+             + "    <input type=\"checkbox\" name=\"box\" checked=\"checked\"/>\n"
+             + "</root>",
+             params);
+    }
+    
+    @Test
+    public void testIf() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("flag", "");
+        doTest("TestIf",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             + "<root>\n"
+             + "\n"
+             + "</root>",
+             params);
+    }    
+
+    @Test
+    public void testIf2() throws Exception
+    {
+        Map params = new HashMap();
+        params.put("flag", "foobar");
+        doTest("TestIf",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             + "<root>\n"
+             + "<x>foo</x>\n"
+             + "</root>",
+             params);
+    }
 }
