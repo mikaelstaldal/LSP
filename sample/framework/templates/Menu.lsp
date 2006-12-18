@@ -14,6 +14,14 @@
 <li><a href="{s:encodeURL('Dirlist1.s')}">Test 5</a></li>
 </ul>
 
+<h2>Parameters</h2>
+
+<form method="post" action="{s:encodeURL('Param1.s')}">
+	A string: <input type="text" name="foo" value=""/><br/>
+	A number: <input type="text" name="bar" value=""/><br/>
+	<input type="submit" value="Submit"/>
+</form>
+
 <h2>Internationalization</h2>
 
 <ul>

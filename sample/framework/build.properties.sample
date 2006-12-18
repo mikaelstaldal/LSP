@@ -5,4 +5,4 @@ LSPC=lspc.jar
 BCEL=bcel.jar
 Servlet=servlet.jar
 
-build.dir=
+warfile=

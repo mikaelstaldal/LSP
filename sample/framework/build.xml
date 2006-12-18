@@ -2,9 +2,11 @@
 <!-- You need Apache Ant, version 1.4 or later, to use it -->
 <!-- Get it from http://jakarta.apache.org/ant/ -->
 
-<project name="LSPFrameworkTest" default="compile">
+<project name="LSPFrameworkTest" default="war">
 
   <property file="build.properties"/>
+	
+  <property name="build.dir" value="../../build/sample/framework"/>
 
   <path id="project.class.path">
         <pathelement location="${LSP}" />
@@ -66,6 +68,12 @@
     </copy>
 
 	<copy file="${LSP}" todir="${build.dir}/WEB-INF/lib" />
+  </target>
+	
+  <target name="war" depends="compile">
+  	<jar destfile="${warfile}">
+    	<fileset dir="${build.dir}"/>  	
+  	</jar>
   </target>
   
 </project>
