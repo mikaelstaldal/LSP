@@ -15,8 +15,8 @@
 
   <property name="Name" value="LSP"/>
   <property name="name" value="lsp"/>
-  <property name="version" value="1.7.1"/>
-  <property name="ver" value="171"/>
+  <property name="version" value="1.7.2"/>
+  <property name="ver" value="172"/>
 
   <property name="src.dir" value="src"/>
   <property name="src.testsuite" value="testsuite"/>

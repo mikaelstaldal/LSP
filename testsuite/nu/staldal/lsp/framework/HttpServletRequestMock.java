@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
@@ -16,6 +18,18 @@ import javax.servlet.http.HttpSession;
 
 public class HttpServletRequestMock implements HttpServletRequest
 {
+    private Hashtable<String,String[]> parameters = new Hashtable<String,String[]>();
+    
+    public void setParameter(String name, String[] value)
+    {
+        parameters.put(name, value);
+    }    
+    
+    public void setParameter(String name, String value)
+    {
+        parameters.put(name, new String[] { value });
+    }    
+
     private final String servletPath;
     
     public HttpServletRequestMock(final String servletPath)
@@ -240,26 +254,28 @@ public class HttpServletRequestMock implements HttpServletRequest
 
     public String getParameter(String name)
     {
-        // TODO Auto-generated method stub
-        return null;
+        String[] param = parameters.get(name);
+        if (param == null)
+            return null;
+        else if (param.length == 0)
+            return null;
+        else 
+            return param[0];
     }
 
     public Map getParameterMap()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.unmodifiableMap(parameters);
     }
 
     public Enumeration getParameterNames()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return parameters.keys();
     }
 
     public String[] getParameterValues(String name)
     {
-        // TODO Auto-generated method stub
-        return null;
+        return parameters.get(name);        
     }
 
     public String getProtocol()

@@ -31,6 +31,10 @@ The mapping is done based in the class name, so no explicit mapping file is need
 same name and display it without any parameters. If neither any LSP page is
 found, a HTTP 404 Not Found response is generated.</p>
 
+<p>Services extending <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a>
+may use the <a href="javadoc/nu/staldal/lsp/framework/Parameter.html">nu.staldal.lsp.framework.Parameter</a> annotation
+to automatically populate fields with HTTP request parameter values.</p>
+
 <p>This framework supports including from an LSP page by using the <code>&lt;s:include&gt;</code>
 element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.</p>
 

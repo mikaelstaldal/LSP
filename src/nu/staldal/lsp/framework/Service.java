@@ -58,10 +58,10 @@ import javax.servlet.http.*;
  * JVM (in case of a distributed application). The {@link #execute execute}
  * method may be invoked concurrently by several threads.
  *<p>
- * It's not recommended to have any instance attributes in the Service class
- * which can be changed by the {@link #execute execute} method. Instance attributes
+ * It's not recommended to have any instance fields in the Service class
+ * which can be changed by the {@link #execute execute} method. Instance fields
  * which are initialized by the {@link #init init} method and then only read by
- * the {@link #execute execute} method are OK. If you have instance attributes which
+ * the {@link #execute execute} method are OK. If you have instance fields which
  * can be changed by the {@link #execute execute} method, access to them need to be
  * synchronized.
  *<p>

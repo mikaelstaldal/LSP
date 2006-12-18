@@ -40,14 +40,11 @@
 
 package nu.staldal.lsp.framework;
 
-import java.io.IOException;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.sql.DataSource;
@@ -63,7 +60,10 @@ import javax.sql.DataSource;
  * A new instance will be created for each request, and that instance of 
  * thrown away after the request. The {@link #execute execute}
  * method is only invoked once per instance, so there are no thread-safety 
- * issues. It's not a problem to use instance attributes.
+ * issues. It's not a problem to use instance fields.
+ *<p>
+ * Use the {@link Parameter} annotation on instance fields to automatically
+ * populate them with HTTP request parameter values.
  */
 public abstract class ThrowawayService
 {
@@ -133,7 +133,116 @@ public abstract class ThrowawayService
     
     final String _execute(Map<String,Object> pageParams)
         throws Exception
-    {
+    {        
+        for (Field f : getClass().getFields())
+        {
+            Parameter p = f.getAnnotation(Parameter.class);
+            if (p != null)
+            {
+                String paramName = (p.value() != null && p.value().length() > 0) ? p.value() : f.getName();
+                String paramValue = request.getParameter(paramName);
+                if (paramValue != null)
+                {
+                    Class<?> type = f.getType();
+                    try {
+                        if (type == String.class)
+                        {
+                            f.set(this, paramValue);
+                        }
+                        
+                        else if (type == Integer.TYPE)
+                        {
+                            f.setInt(this, Integer.parseInt(paramValue));
+                        }
+                        else if (type == Long.TYPE)
+                        {
+                            f.setLong(this, Long.parseLong(paramValue));
+                        }
+                        else if (type == Double.TYPE)
+                        {
+                            f.setDouble(this, Double.parseDouble(paramValue));
+                        }
+                        else if (type == Float.TYPE)
+                        {
+                            f.setFloat(this, Float.parseFloat(paramValue));
+                        }
+                        else if (type == Boolean.TYPE)
+                        {
+                            f.setBoolean(this, Boolean.parseBoolean(paramValue));
+                        }
+                        else if (type == Character.TYPE)
+                        {
+                            f.setChar(this, paramValue.charAt(0));
+                        }
+                        else if (type == Short.TYPE)
+                        {
+                            f.setShort(this, Short.parseShort(paramValue));
+                        }
+                        else if (type == Byte.TYPE)
+                        {
+                            f.setByte(this, Byte.parseByte(paramValue));
+                        }
+                        
+                        else if (Enum.class.isAssignableFrom(type))
+                        {                            
+                            f.set(this, Enum.valueOf((Class<Enum>)type, paramValue));
+                        }
+                        
+                        else if (type == Integer.class)
+                        {
+                            f.set(this, Integer.parseInt(paramValue));
+                        }
+                        else if (type == Long.class)
+                        {
+                            f.set(this, Long.parseLong(paramValue));
+                        }
+                        else if (type == Double.class)
+                        {
+                            f.set(this, Double.parseDouble(paramValue));
+                        }
+                        else if (type == Float.class)
+                        {
+                            f.set(this, Float.parseFloat(paramValue));
+                        }
+                        else if (type == Boolean.class)
+                        {
+                            f.set(this, Boolean.parseBoolean(paramValue));
+                        }
+                        else if (type == Character.class)
+                        {
+                            f.set(this, paramValue.charAt(0));
+                        }
+                        else if (type == Short.class)
+                        {
+                            f.set(this, Short.parseShort(paramValue));
+                        }
+                        else if (type == Byte.class)
+                        {
+                            f.set(this, Byte.parseByte(paramValue));
+                        }
+                    }
+                    catch (IndexOutOfBoundsException e)
+                    {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                                "invalid value for parameter " + paramName);
+                        return null;                        
+                    }  
+                    catch (IllegalArgumentException e)
+                    {
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                                "invalid value for parameter " + paramName);
+                        return null;                        
+                    }  
+                }
+                else if (f.isAnnotationPresent(Mandatory.class))
+                {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                            "mandatory parameter " + paramName + " missing");
+                    return null;
+                }
+            }
+        }
+        
         try {            
             if (mainDB != null)
             {

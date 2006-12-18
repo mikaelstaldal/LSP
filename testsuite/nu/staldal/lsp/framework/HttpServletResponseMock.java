@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HttpServletResponseMock implements HttpServletResponse
 {
-    private final ServletOutputStreamMock outputStream = new ServletOutputStreamMock();    
+    private final ServletOutputStreamMock outputStream = new ServletOutputStreamMock();
+    
+    private int sc = SC_OK;
+    private String msg = null;
 
     public byte[] toByteArray()
     {
@@ -78,14 +81,13 @@ public class HttpServletResponseMock implements HttpServletResponse
 
     public void sendError(int sc) throws IOException
     {
-        // TODO Auto-generated method stub
-
+        sendError(sc, "");
     }
 
     public void sendError(int sc, String msg) throws IOException
     {
-        // TODO Auto-generated method stub
-
+        this.sc = sc;
+        this.msg = msg;
     }
 
     public void sendRedirect(String location) throws IOException
@@ -213,4 +215,13 @@ public class HttpServletResponseMock implements HttpServletResponse
 
     }
 
+    public String getMsg()
+    {
+        return msg;
+    }
+
+    public int getSc()
+    {
+        return sc;
+    }
 }
