@@ -146,3 +146,9 @@
 * nvl() function.
 * rename acceptNull to acceptUnbound since LSP now makes difference between 
 null and unbound.
+
+
+1.7.2
+-----
+* ThrowawayService in framework.
+* Automatic parsing of request parameters in framework.

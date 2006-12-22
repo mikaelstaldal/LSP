@@ -57,7 +57,7 @@ import javax.sql.DataSource;
  * and <code>Class.newInstance</code>, so they must have a public no-arg 
  * constructor.
  *<p>
- * A new instance will be created for each request, and that instance of 
+ * A new instance will be created for each request, and that instance is 
  * thrown away after the request. The {@link #execute execute}
  * method is only invoked once per instance, so there are no thread-safety 
  * issues. It's not a problem to use instance fields.
