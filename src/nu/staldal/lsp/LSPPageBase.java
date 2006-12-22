@@ -210,7 +210,6 @@ public abstract class LSPPageBase implements LSPPage
 
 
     protected static Object convertObjectToLSP(Object value)
-        throws LSPException
     {        
         if (value instanceof String)
         {
@@ -584,7 +583,6 @@ public abstract class LSPPageBase implements LSPPage
 
 	
 	protected static Object getElementFromTupleAcceptNull(Map tuple, String key)
-		throws LSPException
 	{
 		Object o = tuple.get(key);
 		
@@ -619,7 +617,6 @@ public abstract class LSPPageBase implements LSPPage
     
     
 	protected static Object getVariableValueAcceptNull(Environment env, String varName)
-		throws LSPException
 	{
 		Object o = env.lookup(varName);
 		
