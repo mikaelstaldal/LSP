@@ -40,6 +40,10 @@
 
 package nu.staldal.lsp.servlet;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Access LSP functions from XSLT stylesheets.
  */
@@ -124,4 +128,96 @@ public class XSLTExt
         return ((LSPServletContext)context).isUserInRole(role);
     }
 
+    
+    /**
+     * Format a java.util.Date as String using the user's locale.
+     *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
+     * @param date     the date to format
+     * 
+     * @return the formatted date
+     */
+    public static String formatDate(Object context, Date date)
+    {
+        LSPServletContext ctx = (LSPServletContext)context;
+        
+        if (date == null) 
+        {
+            return "";
+        }
+        
+        return DateFormat
+            .getDateInstance(DateFormat.SHORT, ctx.getLSPManager().getUserLocale(ctx.getServletRequest()))
+            .format(date);
+    }    
+
+
+    /**
+     * Format a java.util.Date as String using the user's locale.
+     *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
+     * @param date     the time to format
+     * 
+     * @return the formatted time
+     */
+    public static String formatTime(Object context, Date date)
+    {
+        LSPServletContext ctx = (LSPServletContext)context;
+        
+        if (date == null) 
+        {
+            return "";
+        }
+        
+        return DateFormat
+            .getTimeInstance(DateFormat.SHORT, ctx.getLSPManager().getUserLocale(ctx.getServletRequest()))
+            .format(date);
+    }
+
+
+    /**
+     * Format a java.util.Date as String using the user's locale.
+     *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
+     * @param date     the date/time to format
+     * 
+     * @return the formatted date/time
+     */
+    public static String formatDateTime(Object context, Date date)
+    {
+        LSPServletContext ctx = (LSPServletContext)context;
+        
+        if (date == null) 
+        {
+            return "";
+        }
+        
+        return DateFormat
+            .getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ctx.getLSPManager().getUserLocale(ctx.getServletRequest()))
+            .format(date);
+    }
+
+
+    /**
+     * Format a java.util.Date as String using the user's locale with custom format.
+     *
+     * @param context  the {@link nu.staldal.lsp.servlet.LSPServletContext}
+     * @param pattern  the formatting pattern
+     * @param date     the date/time to format
+     * 
+     * @return the formatted date/time
+     */
+    public static String formatCustomDateTime(Object context, String pattern, Date date)
+    {
+        LSPServletContext ctx = (LSPServletContext)context;
+        
+        if (date == null) 
+        {
+            return "";
+        }
+        
+        return new SimpleDateFormat(pattern,
+                ctx.getLSPManager().getUserLocale(ctx.getServletRequest()))
+            .format(date);
+    }
 }    

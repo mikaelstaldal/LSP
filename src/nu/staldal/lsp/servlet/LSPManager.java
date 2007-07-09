@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005, Mikael Ståldal
+ * Copyright (c) 2003-2007, Mikael Stï¿½ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -370,6 +370,45 @@ public class LSPManager
         throws Exception
     {
         return getLocalizedString(request, null, key); 
+    }
+
+    
+    /**
+     * Get the user's locale.
+     *<p> 
+     * This method is used by the LSP ExtLib date and time formatting functions.
+     *  
+     * @param request  the {@link javax.servlet.http.HttpServletRequest} 
+     *                 to determine the user's locale
+     * 
+     * @return  the user's locale, never <code>null</code>
+     */
+    public Locale getUserLocale(HttpServletRequest request)
+    {
+        Locale userLocale = null;
+        
+        HttpSession theSession = request.getSession(false);
+        if (theSession != null)
+        {
+            userLocale = (Locale)theSession.getAttribute(LOCALE_KEY);            
+        }
+        
+        if (userLocale != null)
+        {
+            return userLocale;
+        }
+        else
+        {
+            for (Enumeration<?> userLocales = request.getLocales();
+                 userLocales.hasMoreElements(); )
+            {
+                userLocale = (Locale)userLocales.nextElement();
+                
+                return userLocale;
+            }
+        }
+        
+        return Locale.getDefault();
     }
     
         

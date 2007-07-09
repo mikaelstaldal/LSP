@@ -60,6 +60,23 @@ values.</p>
 <p>Check if the user is in a given role, using the
 <code>javax.servlet.http.HttpServletRequest.isUserInRole(String)</code> method.</p>
 
+<h4>string s:formatDate(java.util.Date)</h4>
+
+<p>Format a date as a string using the user's locale. Return the empty string if the date is <code>null</code>.</p>
+
+<h4>string s:formatTime(java.util.Date)</h4>
+
+<p>Format a time as a string using the user's locale. Return the empty string if the date is <code>null</code>.</p>
+
+<h4>string s:formatDateTime(java.util.Date)</h4>
+
+<p>Format a date/time as a string using the user's locale. Return the empty string if the date is <code>null</code>.</p>
+
+<h4>string s:formatCustomDateTime(string, java.util.Date)</h4>
+
+<p>Format a date/time as a string using the user's locale with a custom formatting pattern. 
+The pattern is specified as in <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html">java.text.SimpleDateFormat</a>.
+Return the empty string if the date is <code>null</code>.</p>
 
 <h2>XSLT</h2>
 

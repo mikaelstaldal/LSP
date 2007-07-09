@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, Mikael Ståldal
+ * Copyright (c) 2004-2007, Mikael Stï¿½ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 
 package nu.staldal.lsp.servlet;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.servlet.*;
@@ -260,6 +262,134 @@ public class ServletExtLib extends SimpleExtLib
     }    
 
     
+    /**
+     * Extension function <code>formatDate(date)</code>.
+     * 
+     * @param _date  the date to format (java.util.Date)
+     * 
+     * @return the date formatted as String
+     * 
+     * @throws LSPException
+     */
+    public Object _formatDate(Object _date) throws LSPException
+    {
+        LSPServletContext context = (LSPServletContext)extContext;
+        
+        if (_date == null) 
+        {
+            return "";
+        }
+        
+        if (!(_date instanceof Date))
+        {
+            throw new LSPException(                    
+                    "Argument to formatDate(date) function must be a Date");
+        }
+        
+        return DateFormat
+            .getDateInstance(DateFormat.SHORT, context.getLSPManager().getUserLocale(context.getServletRequest()))
+            .format((Date)_date);
+    }
+
+        
+    /**
+     * Extension function <code>formatTime(date)</code>.
+     * 
+     * @param _date  the time to format (java.util.Date)
+     * 
+     * @return the time formatted as String
+     * 
+     * @throws LSPException
+     */
+    public Object _formatTime(Object _date) throws LSPException
+    {
+        LSPServletContext context = (LSPServletContext)extContext;
+        
+        if (_date == null) 
+        {
+            return "";
+        }
+        
+        if (!(_date instanceof Date))
+        {
+            throw new LSPException(                    
+                    "Argument to formatDate(date) function must be a java.util.Date");
+        }
+        
+        return DateFormat
+            .getTimeInstance(DateFormat.SHORT, context.getLSPManager().getUserLocale(context.getServletRequest()))
+            .format((Date)_date);
+    }
+
+
+    /**
+     * Extension function <code>formatDateTime(date)</code>.
+     * 
+     * @param _date  the date/time to format (java.util.Date)
+     * 
+     * @return the date/time formatted as String
+     * 
+     * @throws LSPException
+     */
+    public Object _formatDateTime(Object _date) throws LSPException
+    {
+        LSPServletContext context = (LSPServletContext)extContext;
+        
+        if (_date == null) 
+        {
+            return "";
+        }
+        
+        if (!(_date instanceof Date))
+        {
+            throw new LSPException(                    
+                    "Argument to formatDateTime(date) function must be a java.util.Date");
+        }
+        
+        return DateFormat
+            .getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, 
+                    context.getLSPManager().getUserLocale(context.getServletRequest()))
+            .format((Date)_date);
+    }
+
+    
+    /**
+     * Extension function <code>formatCustomDateTime(date)</code>.
+     * 
+     * @param _pattern  the formatting pattern
+     * @param _date     the date/time to format (java.util.Date)
+     * 
+     * @return the date/time formatted as String
+     * 
+     * @throws LSPException
+     */
+    public Object _formatCustomDateTime(Object _pattern, Object _date) throws LSPException
+    {
+        LSPServletContext context = (LSPServletContext)extContext;
+        
+        if (_date == null) 
+        {
+            return "";
+        }
+        
+        if (!(_pattern instanceof String))
+        {
+            throw new LSPException(                    
+                    "First argument to formatCustomDateTime(pattern, date) function must be a string");
+        }
+
+        if (!(_date instanceof Date))
+        {
+            throw new LSPException(                    
+                    "Second argument to formatCustomDateTime(pattern, date) function must be a java.util.Date");
+        }
+        
+        return new SimpleDateFormat((String)_pattern,  
+                    context.getLSPManager().getUserLocale(context.getServletRequest()))
+            .format((Date)_date);
+    }
+    
+    
     private String lang(String pageName, String key,
                 LSPServletContext context)
         throws SAXException
@@ -279,6 +409,6 @@ public class ServletExtLib extends SimpleExtLib
         {
             throw new SAXException(e);    
         }
-    }
-        
+    }           
+    
 }

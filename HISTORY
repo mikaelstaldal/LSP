@@ -152,3 +152,8 @@ null and unbound.
 -----
 * ThrowawayService in framework.
 * Automatic parsing of request parameters in framework.
+
+
+1.7.3
+-----
+* Date/time formatting functions in Servlet extlib.
