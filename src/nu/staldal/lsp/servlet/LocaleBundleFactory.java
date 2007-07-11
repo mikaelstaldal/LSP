@@ -87,6 +87,6 @@ public interface LocaleBundleFactory
      * 
      * @throws Exception  may throw any Exception 
      */    
-    public Map loadBundle(Locale locale)
+    public Map<String,String> loadBundle(Locale locale)
         throws Exception;    
 }

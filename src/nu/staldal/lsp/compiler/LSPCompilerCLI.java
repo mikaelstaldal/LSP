@@ -154,9 +154,9 @@ public class LSPCompilerCLI
 		
 		if (encloseFile != null) compiler.setEncloseFile(encloseFile);
 		
-		for (Iterator it = mainPages.iterator(); it.hasNext(); )
+		for (Iterator<String> it = mainPages.iterator(); it.hasNext(); )
 		{
-			String name = (String)it.next();
+			String name = it.next();
 			try {
 				if (compiler.doCompile(name, force))
 					if (verbose) System.out.println("Compiling " + name);

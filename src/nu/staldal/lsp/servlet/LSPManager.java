@@ -67,7 +67,7 @@ public class LSPManager
     private final ClassLoader servletClassLoader;
 
     private final LocaleBundleFactory localeBundleFactory;
-    private final Map<Locale,Map> localeBundleCache;	
+    private final Map<Locale,Map<String,String>> localeBundleCache;	
     
 	
 	/**
@@ -126,7 +126,7 @@ public class LSPManager
         this.servletClassLoader = servletClassLoader;
 		this.helper = new LSPHelper(servletClassLoader);
         
-        this.localeBundleCache = Collections.synchronizedMap(new HashMap<Locale,Map>());
+        this.localeBundleCache = Collections.synchronizedMap(new HashMap<Locale,Map<String,String>>());
         
         String localeBundleFactortClassName = context.getInitParameter(
             "nu.staldal.lsp.servlet.LocaleBundleFactory");
@@ -135,7 +135,7 @@ public class LSPManager
             localeBundleFactortClassName = PropertyLocaleBundleFactory.class.getName();
         
         try {
-            Class localeBundleFactoryClass = Class.forName(localeBundleFactortClassName);
+            Class<?> localeBundleFactoryClass = Class.forName(localeBundleFactortClassName);
             localeBundleFactory = (LocaleBundleFactory)localeBundleFactoryClass.newInstance();        
             localeBundleFactory.init(servletClassLoader, context);
         }
@@ -203,7 +203,7 @@ public class LSPManager
      * @deprecated use {@link #executePage(LSPPage,Map,HttpServletRequest,HttpServletResponse)} instead
 	 */
     @Deprecated
-	public void executePage(LSPPage thePage, Map lspParams, 
+	public void executePage(LSPPage thePage, Map<String, Object> lspParams, 
 							ServletRequest request, ServletResponse response)
 		throws SAXException, IOException
 	{		
@@ -225,7 +225,7 @@ public class LSPManager
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
-	public void executePage(LSPPage thePage, Map lspParams, 
+	public void executePage(LSPPage thePage, Map<String, Object> lspParams, 
 							HttpServletRequest request, HttpServletResponse response)
 		throws SAXException, IOException
 	{		
@@ -259,7 +259,7 @@ public class LSPManager
 	 * @deprecated use {@link #executePage(LSPPage,Map,String,HttpServletRequest,HttpServletResponse)} instead
 	 */
     @Deprecated
-	public void executePage(LSPPage thePage, Map lspParams, 
+	public void executePage(LSPPage thePage, Map<String, Object> lspParams, 
 							String stylesheetName, 
                             ServletRequest request, ServletResponse response)
 		throws SAXException, FileNotFoundException, IOException, 
@@ -289,7 +289,7 @@ public class LSPManager
      * @throws IOException      if any I/O error occurs while executing the page
      * @throws TransformerConfigurationException  if the stylesheet cannot be compiled
 	 */	
-	public void executePage(LSPPage thePage, Map lspParams, 
+	public void executePage(LSPPage thePage, Map<String, Object> lspParams, 
 							String stylesheetName, 
                             HttpServletRequest request, HttpServletResponse response)
 		throws SAXException, FileNotFoundException, IOException, 
@@ -432,7 +432,7 @@ public class LSPManager
                                      String pageName, String key)
        throws Exception
     {
-        Map localeBundle = null;        
+        Map<String,String> localeBundle = null;        
         
         Locale userLocale = null;
         
@@ -448,7 +448,7 @@ public class LSPManager
         }
         else
         {
-            for (Enumeration userLocales = request.getLocales();
+            for (Enumeration<?> userLocales = request.getLocales();
                  userLocales.hasMoreElements(); )
             {
                 userLocale = (Locale)userLocales.nextElement();
@@ -472,20 +472,20 @@ public class LSPManager
         String ret = null;        
         if (pageName != null)
         {
-            ret = (String)localeBundle.get(pageName+'$'+key);
+            ret = localeBundle.get(pageName+'$'+key);
         }
         if (ret == null)
         {
-            ret = (String)localeBundle.get(key);
+            ret = localeBundle.get(key);
         }
         return ret;            
     }
 
 
-    private Map loadBundle(Locale locale)
+    private Map<String,String> loadBundle(Locale locale)
        throws Exception
     {
-        Map localeBundle = localeBundleCache.get(locale);
+        Map<String,String> localeBundle = localeBundleCache.get(locale);
         if (localeBundle == null)
         {
             localeBundle = localeBundleFactory.loadBundle(locale);

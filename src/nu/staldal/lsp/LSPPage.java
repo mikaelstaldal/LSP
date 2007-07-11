@@ -121,7 +121,7 @@ public interface LSPPage
 	 *
 	 * @throws SAXException  may throw {@link org.xml.sax.SAXException}
      */
-    public void execute(ContentHandler ch, Map params, Object extContext)
+    public void execute(ContentHandler ch, Map<String,Object> params, Object extContext)
         throws SAXException;
 }
 

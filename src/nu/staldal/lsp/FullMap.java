@@ -52,16 +52,16 @@ import java.util.Map;
  *<p>
  * Implements the Singleton pattern.
  */
-public class FullMap implements Map
+public class FullMap implements Map<String,Object>
 {
     private static final FullMap theInstance = new FullMap();
-   
+       
     /**
      * Singleton.
      * 
      * @return the instance 
      */
-    public static FullMap getInstance()
+    public static Map<String,Object> getInstance()
     {                
         return theInstance;
     }
@@ -99,7 +99,7 @@ public class FullMap implements Map
         throw new UnsupportedOperationException();    
     }
     
-    public Object put(Object key, Object value)
+    public Object put(String key, Object value)
     {
         throw new UnsupportedOperationException();    
     }
@@ -109,7 +109,7 @@ public class FullMap implements Map
         throw new UnsupportedOperationException();    
     }
 
-    public void putAll(Map t)
+    public void putAll(Map<? extends String,?> t)
     {
         throw new UnsupportedOperationException();    
     }
@@ -119,17 +119,17 @@ public class FullMap implements Map
         throw new UnsupportedOperationException();    
     }
 
-    public java.util.Set keySet()
+    public java.util.Set<String> keySet()
     {
         throw new UnsupportedOperationException();    
     }
 
-    public java.util.Collection values()
+    public java.util.Collection<Object> values()
     {
         throw new UnsupportedOperationException();    
     }
 
-    public java.util.Set entrySet()
+    public java.util.Set<Map.Entry<String, Object>> entrySet()
     {
         throw new UnsupportedOperationException();    
     }    

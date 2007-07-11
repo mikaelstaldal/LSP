@@ -91,7 +91,7 @@ public abstract class Parser
      * @throws ParseException if EOF or an illegal token is reached
      * @throws IOException if the {@link nu.staldal.syntax.Lexer} throws it
      */
-	protected Token consumeToken(Class cls)
+	protected Token consumeToken(Class<?> cls)
 		throws ParseException, java.io.IOException
 	{
 		Token t = token;

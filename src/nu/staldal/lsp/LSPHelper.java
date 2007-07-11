@@ -290,7 +290,7 @@ public class LSPHelper
         throws InstantiationException, IllegalAccessException, VerifyError 
 	{
 		try {
-			Class pageClass = Class.forName("_LSP_"+pageName, true, 
+			Class<?> pageClass = Class.forName("_LSP_"+pageName, true, 
 				classLoader);
 
 			LSPPage page = (LSPPage)pageClass.newInstance();
@@ -388,7 +388,7 @@ public class LSPHelper
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
      */ 
-    public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+    public void executePage(LSPPage thePage, Map<String,Object> lspParams, Object extContext,
                             StreamResult out)
         throws FileNotFoundException, SAXException, IOException
     {
@@ -449,7 +449,7 @@ public class LSPHelper
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
-	public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+	public void executePage(LSPPage thePage, Map<String,Object> lspParams, Object extContext,
 							OutputStream out)
 		throws FileNotFoundException, SAXException, IOException
 	{
@@ -471,7 +471,7 @@ public class LSPHelper
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
      */ 
-    public String executePage(LSPPage thePage, Map lspParams, Object extContext)
+    public String executePage(LSPPage thePage, Map<String,Object> lspParams, Object extContext)
         throws FileNotFoundException, SAXException, IOException
     {
         StringBuilder sb = new StringBuilder();
@@ -499,7 +499,7 @@ public class LSPHelper
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
      */ 
-    public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+    public void executePage(LSPPage thePage, Map<String,Object> lspParams, Object extContext,
                             Templates compiledStylesheet, StreamResult out)
         throws SAXException, IOException
     {
@@ -552,7 +552,7 @@ public class LSPHelper
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
 	 */	
-	public void executePage(LSPPage thePage, Map lspParams, Object extContext,
+	public void executePage(LSPPage thePage, Map<String,Object> lspParams, Object extContext,
 							Templates compiledStylesheet, OutputStream out)
 		throws SAXException, IOException
 	{
@@ -580,7 +580,7 @@ public class LSPHelper
      * @throws SAXException  if any error occurs while executing the page
      * @throws IOException   if any I/O error occurs while executing the page
      */ 
-    public String executePage(LSPPage thePage, Map lspParams, Object extContext,
+    public String executePage(LSPPage thePage, Map<String,Object> lspParams, Object extContext,
                             Templates compiledStylesheet)
         throws SAXException, IOException
     {

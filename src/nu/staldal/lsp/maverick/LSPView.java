@@ -91,7 +91,6 @@ class LSPView implements View
     /**
      * Interface method.
      */
-    @SuppressWarnings("unchecked")
 	public void go(ViewContext vctx) 
         throws IOException, ServletException
     {
@@ -99,6 +98,7 @@ class LSPView implements View
         
         if (vctx.getViewParams() != null)
         {
+            // unchecked warning due to use of legacy API
             lspParams.putAll(vctx.getViewParams());
         }
 

@@ -46,7 +46,7 @@ import java.util.*;
 /**
  * Wrap an double[] as a Collection
  */
-public class DoubleArrayCollection implements Collection
+public class DoubleArrayCollection implements Collection<Object>
 {
     private final double[] arr;
     
@@ -56,7 +56,7 @@ public class DoubleArrayCollection implements Collection
     }
 	
 
-    public Iterator iterator()
+    public Iterator<Object> iterator()
     {
         return new DoubleArrayIterator(arr);        
     }
@@ -83,8 +83,7 @@ public class DoubleArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    @SuppressWarnings("unchecked")
-	public Object[] toArray(Object a[])
+    public <T> T[] toArray(T a[])
     {
         throw new UnsupportedOperationException();    
     }
@@ -99,27 +98,27 @@ public class DoubleArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    public boolean containsAll(Collection c)
+    public boolean containsAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(Collection c)
+    public boolean addAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(int index, Collection c)
+    public boolean addAll(int index, Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean removeAll(Collection c)
+    public boolean removeAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean retainAll(Collection c)
+    public boolean retainAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
@@ -142,7 +141,7 @@ public class DoubleArrayCollection implements Collection
     }
 
 
-    static class DoubleArrayIterator implements Iterator
+    static class DoubleArrayIterator implements Iterator<Object>
     {
         private final double[] arr;        
         private int index;
@@ -162,8 +161,7 @@ public class DoubleArrayCollection implements Collection
         public Object next() throws NoSuchElementException
         {
             try {
-                // Should use Double.valueOf() in Java 1.5
-                return new Double(arr[index++]);
+                return Double.valueOf(arr[index++]);
             }
             catch (ArrayIndexOutOfBoundsException e)
             {

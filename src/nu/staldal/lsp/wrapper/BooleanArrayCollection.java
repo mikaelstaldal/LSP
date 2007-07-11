@@ -46,7 +46,7 @@ import java.util.*;
 /**
  * Wrap an boolean[] as a Collection
  */
-public class BooleanArrayCollection implements Collection
+public class BooleanArrayCollection implements Collection<Object>
 {
     private final boolean[] arr;
     
@@ -56,7 +56,7 @@ public class BooleanArrayCollection implements Collection
     }
 	
 
-    public Iterator iterator()
+    public Iterator<Object> iterator()
     {
         return new BooleanArrayIterator(arr);        
     }
@@ -83,8 +83,7 @@ public class BooleanArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    @SuppressWarnings("unchecked")
-	public Object[] toArray(Object a[])
+    public <T> T[] toArray(T a[])
     {
         throw new UnsupportedOperationException();    
     }
@@ -99,27 +98,27 @@ public class BooleanArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    public boolean containsAll(Collection c)
+    public boolean containsAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(Collection c)
+    public boolean addAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(int index, Collection c)
+    public boolean addAll(int index, Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean removeAll(Collection c)
+    public boolean removeAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean retainAll(Collection c)
+    public boolean retainAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
@@ -142,7 +141,7 @@ public class BooleanArrayCollection implements Collection
     }
 
 
-    static class BooleanArrayIterator implements Iterator
+    static class BooleanArrayIterator implements Iterator<Object>
     {
         private final boolean[] arr;        
         private int index;

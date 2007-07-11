@@ -369,7 +369,7 @@ public class XMLSerializer extends Serializer
                 writeAttribute(attQName, atts.getValue(j));                
             }
             
-			for (Enumeration e = nsSup.getDeclaredPrefixes(); 
+			for (Enumeration<?> e = nsSup.getDeclaredPrefixes(); 
                  e.hasMoreElements(); )
 			{
 				String prefix = (String)e.nextElement();

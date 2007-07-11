@@ -163,7 +163,7 @@ public abstract class ServiceBase implements Service
     public void dumpRequestParameters(HttpServletRequest request)
     {
         context.log("--- Request parameters ---");    
-        for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); )
+        for (Enumeration<?> e = request.getParameterNames(); e.hasMoreElements(); )
         {
             String name = (String)e.nextElement();
             context.log(name + "=" + request.getParameter(name));    

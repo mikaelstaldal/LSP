@@ -100,7 +100,7 @@ public class LSPRequestProcessor extends RequestProcessor
             }
             
             Map<String,Object> lspParams = new HashMap<String,Object>();
-            for (Enumeration e = request.getAttributeNames(); e.hasMoreElements(); )
+            for (Enumeration<?> e = request.getAttributeNames(); e.hasMoreElements(); )
             {                
                 String name = (String)e.nextElement();
                 Object value = request.getAttribute(name);

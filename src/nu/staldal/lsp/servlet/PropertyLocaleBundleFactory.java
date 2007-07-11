@@ -58,7 +58,7 @@ class PropertyLocaleBundleFactory implements LocaleBundleFactory
         this.classLoader = classLoader;    
     }
     
-    public Map loadBundle(Locale locale)
+    public Map<String,String> loadBundle(Locale locale)
         throws IOException
     {        
         String name = (locale != null)
@@ -72,7 +72,7 @@ class PropertyLocaleBundleFactory implements LocaleBundleFactory
         props.load(is);
         is.close();
         
-        return props;
+        return (Map)props; // unchecked warning due to use of legacy API
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2003, Mikael Ståldal
+ * Copyright (c) 2002-2007, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,16 +60,16 @@ import java.util.*;
  * <p>
  * This class is not thread-safe, you need to synchronize concurrent access.
  */
-public class Environment 
+public class Environment<K,V>
 {
-	private Frame currentFrame;
+	private Frame<K,V> currentFrame;
 	
 	/**
 	 * Create a new Environment with one empty frame.
 	 */
 	public Environment()
 	{
-		currentFrame = new Frame();
+		currentFrame = new Frame<K,V>();
 	}
 
 	/**
@@ -77,9 +77,9 @@ public class Environment
      *
      * @param initial  the Map with initial bindings
 	 */
-	public Environment(Map initial)
+	public Environment(Map<K,V> initial)
 	{
-		currentFrame = new Frame(initial);
+		currentFrame = new Frame<K,V>(initial);
 	}
 
     /**
@@ -90,7 +90,7 @@ public class Environment
      * @return true if there is any value (possibly <code>null</code>)
      *         bound to the given key 
      */
-    public boolean containsKey(Object key)
+    public boolean containsKey(K key)
     {
         if (key == null) 
             throw new NullPointerException("Key may not be null");
@@ -106,7 +106,7 @@ public class Environment
 	 * @return the value bound to the given key 
 	 * or <code>null</code> if no value is bound to the given key.
 	 */
-	public Object lookup(Object key)
+	public V lookup(K key)
 	{
 		if (key == null) 
 			throw new NullPointerException("Key may not be null");
@@ -126,7 +126,7 @@ public class Environment
 	 *         or <code>null</code> if the given key has no value
 	 *         <em>in the current frame</em>
 	 */
-	public Object bind(Object key, Object value)
+	public V bind(K key, V value)
 	{
 		if (key == null) 
 			throw new NullPointerException("Key may not be null");
@@ -145,7 +145,7 @@ public class Environment
 	 *         or <code>null</code> if the given key has no value
 	 *         <em>in the current frame</em>
 	 */
-	public Object unbind(Object key)
+	public V unbind(K key)
 	{
 		if (key == null) 
 			throw new NullPointerException("Key may not be null");
@@ -158,9 +158,8 @@ public class Environment
 	 */
 	public void pushFrame()
 	{
-		currentFrame = new Frame(currentFrame);	
+		currentFrame = new Frame<K,V>(currentFrame);	
 	}
-
 
 	/**
 	 * Pop a frame from the frame stack. Any bindings in the current frame
@@ -171,7 +170,7 @@ public class Environment
 	 */
 	public void popFrame()
 	{
-		Frame parentFrame = currentFrame.getParent();
+		Frame<K,V> parentFrame = currentFrame.getParent();
 		if (parentFrame == null)
 			throw new EmptyStackException();
 		else
@@ -179,35 +178,35 @@ public class Environment
 	}
 
 
-	static class Frame
+	static class Frame<K,V>
 	{
-		private Frame parent;
-		private Map map;
+		private Frame<K,V> parent;
+		private Map<K,V> map;
 		
-		Frame(Frame p)
+		Frame(Frame<K,V> p)
 		{
 			parent = p;
-			map = new HashMap();
+			map = new HashMap<K,V>();
 		}
 	
 		Frame()
 		{
 			parent = null;
-			map = new HashMap();
+			map = new HashMap<K,V>();
 		}	
 
-		Frame(Map initial)
+		Frame(Map<K,V> initial)
 		{
 			parent = null;
             map = initial;
 		}	
 
-		Frame getParent()
+		Frame<K,V> getParent()
 		{
 			return parent;	
 		}
 		
-        boolean containsKey(Object key)
+        boolean containsKey(K key)
         {
             boolean contains = map.containsKey(key);
             if (!contains && parent != null)
@@ -217,9 +216,9 @@ public class Environment
             return contains;            
         }
         
-		Object lookup(Object key)
+		V lookup(K key)
 		{
-			Object obj = map.get(key);
+			V obj = map.get(key);
 			if (obj == null && parent != null)
 			{
 				obj = parent.lookup(key);	
@@ -227,13 +226,12 @@ public class Environment
 			return obj;
 		}
 		
-		@SuppressWarnings("unchecked")
-		Object bind(Object key, Object value)
+		V bind(K key, V value)
 		{
 			return map.put(key, value);
 		}
 	
-		Object unbind(Object key)
+		V unbind(K key)
 		{
 			return map.remove(key);
 		}			

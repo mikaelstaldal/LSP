@@ -91,7 +91,8 @@ public class LSPRunner
             ? (OutputStream)System.out 
             : (OutputStream)(new FileOutputStream(args[1]));
         
-        helper.executePage(page, Collections.EMPTY_MAP, null, out);
+        Map<String,Object> pageParams = Collections.emptyMap(); 
+        helper.executePage(page, pageParams, null, out);
                            
         out.close();
     }

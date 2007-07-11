@@ -50,7 +50,7 @@ import java.sql.*;
  * The ResultSet can be traversed once only, and will be closed after the 
  * last element has been read.
  */
-public class LSPResultSetTupleList implements List
+public class LSPResultSetTupleList implements List<Object>
 {
 	final ResultSet rs;
 
@@ -78,7 +78,7 @@ public class LSPResultSetTupleList implements List
 		this.rs = rs;
 	}
 
-    public ListIterator listIterator()
+    public ListIterator<Object> listIterator()
     {
         return new ResultSetListIterator(this);        
     }
@@ -102,7 +102,7 @@ public class LSPResultSetTupleList implements List
         throw new UnsupportedOperationException();    
     }
 
-    public Iterator iterator()
+    public Iterator<Object> iterator()
     {
         return new ResultSetListIterator(this);
     }
@@ -112,8 +112,7 @@ public class LSPResultSetTupleList implements List
         throw new UnsupportedOperationException();    
     }
 
-    @SuppressWarnings("unchecked")
-    public Object[] toArray(Object a[])
+    public <T> T[] toArray(T a[])
     {
         throw new UnsupportedOperationException();    
     }
@@ -128,27 +127,27 @@ public class LSPResultSetTupleList implements List
         throw new UnsupportedOperationException();    
     }
 
-    public boolean containsAll(Collection c)
+    public boolean containsAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(Collection c)
+    public boolean addAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(int index, Collection c)
+    public boolean addAll(int index, Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean removeAll(Collection c)
+    public boolean removeAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean retainAll(Collection c)
+    public boolean retainAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
@@ -200,17 +199,17 @@ public class LSPResultSetTupleList implements List
         throw new UnsupportedOperationException();    
     }
 
-    public ListIterator listIterator(int index)
+    public ListIterator<Object> listIterator(int index)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public List subList(int fromIndex, int toIndex)    
+    public List<Object> subList(int fromIndex, int toIndex)    
     {
         throw new UnsupportedOperationException();    
     }
 
-    static class ResultSetListIterator implements ListIterator
+    static class ResultSetListIterator implements ListIterator<Object>
     {
         private final LSPResultSetTupleList rstl;
         
@@ -293,7 +292,7 @@ public class LSPResultSetTupleList implements List
     }
     
     
-	static class ResultSetTuple implements Map
+	static class ResultSetTuple implements Map<String,Object>
 	{
 		final ResultSet rs;
         ResultSetMetaData rsmd;
@@ -354,7 +353,7 @@ public class LSPResultSetTupleList implements List
             throw new UnsupportedOperationException();    
         }
         
-        public Object put(Object key, Object value)
+        public Object put(String key, Object value)
         {
             throw new UnsupportedOperationException();    
         }
@@ -364,7 +363,7 @@ public class LSPResultSetTupleList implements List
             throw new UnsupportedOperationException();    
         }
     
-        public void putAll(Map t)
+        public void putAll(Map<? extends String,? extends Object> t)
         {
             throw new UnsupportedOperationException();    
         }
@@ -374,17 +373,17 @@ public class LSPResultSetTupleList implements List
             throw new UnsupportedOperationException();    
         }
     
-        public java.util.Set keySet()
+        public java.util.Set<String> keySet()
         {
             throw new UnsupportedOperationException();    
         }
     
-        public java.util.Collection values()
+        public java.util.Collection<Object> values()
         {
             throw new UnsupportedOperationException();    
         }
     
-        public java.util.Set entrySet()
+        public java.util.Set<Map.Entry<String,Object>> entrySet()
         {
             throw new UnsupportedOperationException();    
         }

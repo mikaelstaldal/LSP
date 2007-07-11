@@ -46,7 +46,7 @@ import java.util.*;
 /**
  * Wrap an long[] as a Collection
  */
-public class LongArrayCollection implements Collection
+public class LongArrayCollection implements Collection<Object>
 {
     private final long[] arr;
     
@@ -56,7 +56,7 @@ public class LongArrayCollection implements Collection
     }
 	
 
-    public Iterator iterator()
+    public Iterator<Object> iterator()
     {
         return new LongArrayIterator(arr);        
     }
@@ -83,8 +83,7 @@ public class LongArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    @SuppressWarnings("unchecked")
-    public Object[] toArray(Object a[])
+    public <T> T[] toArray(T a[])
     {
         throw new UnsupportedOperationException();    
     }
@@ -99,27 +98,27 @@ public class LongArrayCollection implements Collection
         throw new UnsupportedOperationException();    
     }
 
-    public boolean containsAll(Collection c)
+    public boolean containsAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(Collection c)
+    public boolean addAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean addAll(int index, Collection c)
+    public boolean addAll(int index, Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean removeAll(Collection c)
+    public boolean removeAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
 
-    public boolean retainAll(Collection c)
+    public boolean retainAll(Collection<?> c)
     {
         throw new UnsupportedOperationException();    
     }
@@ -142,7 +141,7 @@ public class LongArrayCollection implements Collection
     }
 
 
-    static class LongArrayIterator implements Iterator
+    static class LongArrayIterator implements Iterator<Object>
     {
         private final long[] arr;        
         private int index;
@@ -162,8 +161,7 @@ public class LongArrayCollection implements Collection
         public Object next() throws NoSuchElementException
         {
             try {
-                // Should use Long.valueOf() in Java 1.5
-                return new Long(arr[index++]);
+                return Long.valueOf(arr[index++]);
             }
             catch (ArrayIndexOutOfBoundsException e)
             {

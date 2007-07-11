@@ -87,7 +87,7 @@ final class LSPRequestDispatcher implements RequestDispatcher
         throws ServletException, java.io.IOException
 	{
 		Map<String,Object> lspParams = new HashMap<String,Object>();
-		for (Enumeration e = request.getAttributeNames(); e.hasMoreElements(); )
+		for (Enumeration<?> e = request.getAttributeNames(); e.hasMoreElements(); )
 		{
 			String name = (String)e.nextElement();
 			lspParams.put(name, request.getAttribute(name));

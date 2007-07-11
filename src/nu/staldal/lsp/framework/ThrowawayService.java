@@ -185,7 +185,8 @@ public abstract class ThrowawayService
                         
                         else if (Enum.class.isAssignableFrom(type))
                         {                            
-                            f.set(this, Enum.valueOf((Class<Enum>)type, paramValue));
+                            // TODO should be possible to get rid of this unchecked warning    
+                            f.set(this, Enum.valueOf(type.asSubclass(Enum.class), paramValue));
                         }
                         
                         else if (type == Integer.class)

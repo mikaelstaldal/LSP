@@ -123,6 +123,7 @@ public class LSPCompiler
      * 
      * @deprecated XHTML is now default, use {@link #setHtml(boolean)} to override it.
      */
+    @Deprecated
     public void setXhtml(boolean xhtml)
     {
         this.html = !xhtml;    
@@ -145,6 +146,7 @@ public class LSPCompiler
      * 
      * @deprecated use {@link #setAcceptUnbound(boolean)} instead
      */    
+    @Deprecated
     public void setAcceptNull(boolean acceptNull)
     {
         setAcceptUnbound(acceptNull);    
@@ -392,7 +394,7 @@ public class LSPCompiler
 	}
 
 
-	private static ArrayList processTemplate(Node n,
+	private static ArrayList<Object> processTemplate(Node n,
         char left, char right, char quot1, char quot2,
         String template)
         throws SAXException
@@ -819,7 +821,7 @@ public class LSPCompiler
     					"Illegal LSP Extension config file: " + fileName);
             }
 
-			Class cls = Class.forName(className);
+			Class<?> cls = Class.forName(className);
 			if (!nu.staldal.lsp.LSPExtLib.class.isAssignableFrom(cls))
 			throw fixSourceException(el, 
 				"LSP Extension class " + className 
@@ -859,11 +861,11 @@ public class LSPCompiler
     private LSPExpr processTemplateExpr(Node n, String template)
         throws SAXException
     {
-		ArrayList vec = processTemplate(n, '{', '}', '\'', '\"', template);
+		ArrayList<Object> vec = processTemplate(n, '{', '}', '\'', '\"', template);
 
 		BuiltInFunctionCall expr = new BuiltInFunctionCall("concat", vec.size());
 
-		for (Iterator e = vec.iterator(); e.hasNext(); )
+		for (Iterator<Object> e = vec.iterator(); e.hasNext(); )
 		{
 			Object o = e.next();
 			if (o instanceof String)
@@ -1380,13 +1382,13 @@ public class LSPCompiler
 					throw fixSourceException(el, 
 						"no handler found for extension namespace " + ns);			
 
-				Class extLibClass;
+				Class<?> extLibClass;
 				String methodName = "_"+fc.getName();
 		
 				try {
 					extLibClass = Class.forName(extLibClassName);
 		
-					Class[] argTypes = new Class[fc.numberOfArgs()];
+					Class<?>[] argTypes = new Class[fc.numberOfArgs()];
 					for (int i = 0; i<fc.numberOfArgs(); i++)
 					{
 						argTypes[i] = Object.class;

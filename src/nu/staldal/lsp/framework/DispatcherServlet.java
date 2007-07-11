@@ -294,7 +294,7 @@ public class DispatcherServlet extends HttpServlet
     @Override
     public void destroy()
     {
-        for (Iterator it = serviceCache.values().iterator(); it.hasNext(); )
+        for (Iterator<Object> it = serviceCache.values().iterator(); it.hasNext(); )
         {
             Object s = it.next();
             
@@ -365,11 +365,11 @@ public class DispatcherServlet extends HttpServlet
         
         if (s == null)
         {
-            Class serviceClass = null;
+            Class<?> serviceClass = null;
             
-            for (Iterator it = servicePackages.iterator(); it.hasNext(); )
+            for (Iterator<String> it = servicePackages.iterator(); it.hasNext(); )
             {
-                String packageName = (String)it.next();
+                String packageName = it.next();
                 String className = packageName + '.' + serviceName;
                 
                 try {

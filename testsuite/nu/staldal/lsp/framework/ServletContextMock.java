@@ -36,7 +36,7 @@ public class ServletContextMock implements ServletContext, ServletConfig
 
     public ServletContext getContext(String uripath)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
@@ -52,85 +52,85 @@ public class ServletContextMock implements ServletContext, ServletConfig
 
     public int getMajorVersion()
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return 0;
     }
 
     public String getMimeType(String file)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public int getMinorVersion()
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return 0;
     }
 
     public RequestDispatcher getNamedDispatcher(String name)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public String getRealPath(String path)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public RequestDispatcher getRequestDispatcher(String path)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public URL getResource(String path) throws MalformedURLException
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public InputStream getResourceAsStream(String path)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public Set getResourcePaths(String path)
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public String getServerInfo()
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public Servlet getServlet(String name) throws ServletException
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public String getServletContextName()
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public Enumeration getServletNames()
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 
     public Enumeration getServlets()
     {
-        // TODO Auto-generated method stub
+        // nothing to do
         return null;
     }
 

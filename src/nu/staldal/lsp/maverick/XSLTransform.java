@@ -144,11 +144,12 @@ class XSLTransform implements Transform
 
 			if (this.getTransformCtx().getTransformParams() != null)
             {
-                for (Iterator it = this.getTransformCtx().getTransformParams().entrySet().iterator(); 
+			    // unchecked warning due to use of legacy API
+                for (Iterator<Map.Entry<String,Object>> it = this.getTransformCtx().getTransformParams().entrySet().iterator(); 
                     it.hasNext(); )
                 {
-                    Map.Entry entry = (Map.Entry)it.next();
-                    tHandler.getTransformer().setParameter((String)entry.getKey(), entry.getValue());
+                    Map.Entry<String,Object> entry = it.next();
+                    tHandler.getTransformer().setParameter(entry.getKey(), entry.getValue());
                 }
             }                        
 			
@@ -187,11 +188,12 @@ class XSLTransform implements Transform
 			
 			if (this.getTransformCtx().getTransformParams() != null)
             {
-                for (Iterator it = this.getTransformCtx().getTransformParams().entrySet().iterator(); 
+			    // unchecked warning due to use of legacy API
+                for (Iterator<Map.Entry<String,Object>> it = this.getTransformCtx().getTransformParams().entrySet().iterator(); 
                     it.hasNext(); )
                 {
-                    Map.Entry entry = (Map.Entry)it.next();
-                    trans.setParameter((String)entry.getKey(), entry.getValue());
+                    Map.Entry<String,Object> entry = it.next();
+                    trans.setParameter(entry.getKey(), entry.getValue());
                 }
             }
 			

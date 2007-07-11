@@ -109,7 +109,8 @@ public class LSPCompilerAntTask extends Task
      *  
      * @deprecated XHTML is now default, use {@link #setHtml(boolean)} to override it.
      */
-	public void setXhtml(boolean xhtml)
+	@Deprecated
+    public void setXhtml(boolean xhtml)
 	{
         this.html = !xhtml;
 	}
@@ -129,6 +130,7 @@ public class LSPCompilerAntTask extends Task
      * 
      * @deprecated use {@link #setAcceptUnbound(boolean)} instead
      */
+    @Deprecated
     public void setAcceptNull(boolean acceptNull)
     {
         setAcceptUnbound(acceptNull);

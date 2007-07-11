@@ -80,7 +80,7 @@ class XMLLocaleBundleFactory implements LocaleBundleFactory
     }
 
     
-    public Map loadBundle(Locale locale)
+    public Map<String,String> loadBundle(Locale locale)
         throws IOException, SAXException
     {        
         String name = (locale != null)
@@ -118,7 +118,7 @@ class XMLLocaleBundleFactory implements LocaleBundleFactory
             res = new HashMap<String,String>();
         }
         
-        Map getRes()
+        Map<String,String> getRes()
         {
             return res;    
         }

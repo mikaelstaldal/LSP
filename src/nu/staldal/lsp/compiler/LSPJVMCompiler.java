@@ -179,7 +179,7 @@ class LSPJVMCompiler implements Constants
                 new ArrayType(Type.STRING, 1), Type.BOOLEAN, Type.LONG, Type.STRING, 
                 Type.STRING, Type.INT }, 
 			INVOKESPECIAL));
-        for (Enumeration e = outputProperties.propertyNames(); e.hasMoreElements(); )
+        for (Enumeration<?> e = outputProperties.propertyNames(); e.hasMoreElements(); )
         {
             String key = (String)e.nextElement();
             String value = outputProperties.getProperty(key);
@@ -596,7 +596,7 @@ class LSPJVMCompiler implements Constants
 			instrList.append(new PUSH(constGen, el.getAttributeType(i)));
 
 			// String value = evalExprAsString(el.getAttributeValue(i));
-            Class valueType = compileExpr(
+            Class<?> valueType = compileExpr(
                 el.getAttributeValue(i), methodGen, instrList);
             if (valueType == Boolean.class)
             {
@@ -1181,7 +1181,7 @@ class LSPJVMCompiler implements Constants
 		LSPExpr expr = el.getExpr();
 
 		// Object o = evalExpr(expr);
-		Class type = compileExpr(expr, methodGen, instrList);
+		Class<?> type = compileExpr(expr, methodGen, instrList);
 		
 		if (type == String.class)
 		{
@@ -1226,7 +1226,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 	
-	private Class compileExpr(LSPExpr expr,
+	private Class<?> compileExpr(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
@@ -1253,7 +1253,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
-		Class type = compileExpr(expr, methodGen, instrList);
+		Class<?> type = compileExpr(expr, methodGen, instrList);
 		if (type != String.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -1272,7 +1272,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
-		Class type = compileExpr(expr, methodGen, instrList);
+		Class<?> type = compileExpr(expr, methodGen, instrList);
 		if (type != Double.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -1300,7 +1300,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
-		Class type = compileExpr(expr, methodGen, instrList);
+		Class<?> type = compileExpr(expr, methodGen, instrList);
 		if (type != Boolean.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -1327,7 +1327,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
-		Class type = compileExpr(expr, methodGen, instrList);
+		Class<?> type = compileExpr(expr, methodGen, instrList);
 		if (type != Collection.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -1345,7 +1345,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
-		Class type = compileExpr(expr, methodGen, instrList);
+		Class<?> type = compileExpr(expr, methodGen, instrList);
 		if (type != Map.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -1358,7 +1358,7 @@ class LSPJVMCompiler implements Constants
 	}
 	
 	
-	private Class compileSubExpr(LSPExpr expr,
+	private Class<?> compileSubExpr(LSPExpr expr,
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
@@ -1406,7 +1406,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 	
-	private Class compileSubExpr(StringLiteral expr,
+	private Class<?> compileSubExpr(StringLiteral expr,
 			MethodGen methodGen, InstructionList instrList)
 	{
 		instrList.append(new PUSH(constGen, expr.getValue()));
@@ -1415,7 +1415,7 @@ class LSPJVMCompiler implements Constants
 	}
 	
 
-	private Class compileSubExpr(NumberLiteral expr,
+	private Class<?> compileSubExpr(NumberLiteral expr,
 			MethodGen methodGen, InstructionList instrList)	
 	{
 		instrList.append(new PUSH(constGen, expr.getValue()));
@@ -1429,7 +1429,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 
-	private Class compileSubExpr(VariableReference expr,
+	private Class<?> compileSubExpr(VariableReference expr,
 			MethodGen methodGen, InstructionList instrList)
 	{
 		instrList.append(instrFactory.createLoad(
@@ -1448,7 +1448,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 
-	private Class compileSubExpr(BinaryExpr expr,
+	private Class<?> compileSubExpr(BinaryExpr expr,
 			MethodGen methodGen, InstructionList instrList)
 		throws SAXException
 	{
@@ -1507,9 +1507,9 @@ class LSPJVMCompiler implements Constants
 		case BinaryExpr.EQ:
 		case BinaryExpr.NE:	{
 			// Object left = evalExpr(expr.getLeft());
-			Class leftType = compileSubExpr(expr.getLeft(), methodGen, instrList);
+			Class<?> leftType = compileSubExpr(expr.getLeft(), methodGen, instrList);
 			// Object right = evalExpr(expr.getRight());
-			Class rightType = compileSubExpr(expr.getRight(), methodGen, instrList);
+			Class<?> rightType = compileSubExpr(expr.getRight(), methodGen, instrList);
 
 			if (leftType == Boolean.class && rightType == Boolean.class)
 			{
@@ -1733,7 +1733,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 
-	private Class compileSubExpr(UnaryExpr expr,
+	private Class<?> compileSubExpr(UnaryExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
@@ -1759,7 +1759,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 
-	private Class compileSubExpr(BuiltInFunctionCall expr,
+	private Class<?> compileSubExpr(BuiltInFunctionCall expr,
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
@@ -1995,7 +1995,7 @@ class LSPJVMCompiler implements Constants
 					"boolean() function must have 1 argument");
 
 			// return Boolean.valueOf(evalExprAsBoolean(expr.getArg(0)));
-			Class type = compileSubExpr(expr.getArg(0), methodGen, instrList);
+			Class<?> type = compileSubExpr(expr.getArg(0), methodGen, instrList);
 			if (type != Boolean.class)
 			{
 				instrList.append(instrFactory.createInvoke(
@@ -2077,7 +2077,7 @@ class LSPJVMCompiler implements Constants
 					"number() function must have 1 argument");
 
 			// return new Double(evalExprAsNumber(expr.getArg(0)));
-			Class type = compileSubExpr(expr.getArg(0), methodGen, instrList);
+			Class<?> type = compileSubExpr(expr.getArg(0), methodGen, instrList);
 			if (type != Double.class)
 			{
 				instrList.append(instrFactory.createInvoke(
@@ -2329,7 +2329,7 @@ class LSPJVMCompiler implements Constants
 	}
 
 
-	private Class compileSubExpr(ExtensionFunctionCall expr,
+	private Class<?> compileSubExpr(ExtensionFunctionCall expr,
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
@@ -2366,7 +2366,7 @@ class LSPJVMCompiler implements Constants
 	}
 	
 	
-	private Class compileSubExpr(TupleExpr expr,
+	private Class<?> compileSubExpr(TupleExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
@@ -2386,7 +2386,7 @@ class LSPJVMCompiler implements Constants
 	}
 	
 	
-	private Class compileSubExpr(ConditionalExpr expr,
+	private Class<?> compileSubExpr(ConditionalExpr expr,
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
@@ -2418,7 +2418,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
-		Class type = compileSubExpr(expr, methodGen, instrList);
+		Class<?> type = compileSubExpr(expr, methodGen, instrList);
 		if (type != String.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -2436,7 +2436,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
-		Class type = compileSubExpr(expr, methodGen, instrList);
+		Class<?> type = compileSubExpr(expr, methodGen, instrList);
 		if (type != Double.class)
 		{			
 			instrList.append(instrFactory.createInvoke(
@@ -2464,7 +2464,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
-		Class type = compileSubExpr(expr, methodGen, instrList);
+		Class<?> type = compileSubExpr(expr, methodGen, instrList);
 		if (type != Boolean.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -2491,7 +2491,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
-		Class type = compileSubExpr(expr, methodGen, instrList);
+		Class<?> type = compileSubExpr(expr, methodGen, instrList);
 		if (type != Collection.class)
 		{
 			instrList.append(instrFactory.createInvoke(
@@ -2508,7 +2508,7 @@ class LSPJVMCompiler implements Constants
 			MethodGen methodGen, InstructionList instrList)	
 		throws SAXException
 	{
-		Class type = compileSubExpr(expr, methodGen, instrList);
+		Class<?> type = compileSubExpr(expr, methodGen, instrList);
 		if (type != Map.class)
 		{
 			instrList.append(instrFactory.createInvoke(

@@ -49,7 +49,7 @@ import java.util.ResourceBundle;
  *
  * @author Mikael Ståldal
  */
-public class ResourceBundleTuple implements Map
+public class ResourceBundleTuple implements Map<String,Object>
 {
     private final ResourceBundle rb;
     
@@ -101,7 +101,7 @@ public class ResourceBundleTuple implements Map
         throw new UnsupportedOperationException();    
     }
     
-    public Object put(Object key, Object value)
+    public Object put(String key, Object value)
     {
         throw new UnsupportedOperationException();    
     }
@@ -111,7 +111,7 @@ public class ResourceBundleTuple implements Map
         throw new UnsupportedOperationException();    
     }
 
-    public void putAll(Map t)
+    public void putAll(Map<? extends String,? extends Object> t)
     {
         throw new UnsupportedOperationException();    
     }
@@ -121,17 +121,17 @@ public class ResourceBundleTuple implements Map
         throw new UnsupportedOperationException();    
     }
 
-    public java.util.Set keySet()
+    public java.util.Set<String> keySet()
     {
         throw new UnsupportedOperationException();    
     }
 
-    public java.util.Collection values()
+    public java.util.Collection<Object> values()
     {
         throw new UnsupportedOperationException();    
     }
 
-    public java.util.Set entrySet()
+    public java.util.Set<Map.Entry<String,Object>> entrySet()
     {
         throw new UnsupportedOperationException();    
     }

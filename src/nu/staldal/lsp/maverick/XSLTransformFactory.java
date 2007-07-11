@@ -80,7 +80,7 @@ public class XSLTransformFactory implements TransformFactory
 			{
 				try
 				{
-					Class resolverClass = Class.forName(uriResolverStr, true, 
+					Class<?> resolverClass = Class.forName(uriResolverStr, true, 
                         lspManager.getClassLoader());
 					this.uriResolver = (URIResolver)resolverClass.newInstance();
 				}

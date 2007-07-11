@@ -138,7 +138,7 @@ public class LSPCompilerHelper
 		try {
 			ClassLoader classLoader = new URLClassLoader(
 				new URL[] { targetDir.toURL() }, getClass().getClassLoader());
-			Class pageClass = Class.forName(
+			Class<?> pageClass = Class.forName(
 				"_LSP_"+getPageName(inputFile.getName()),
 				true,
 				classLoader);
@@ -458,6 +458,7 @@ public class LSPCompilerHelper
      *  
      * @deprecated XHTML is now default, use {@link #setHtml(boolean)} to override it.
      */
+    @Deprecated
     public void setXhtml(boolean xhtml)
     {
         compiler.setXhtml(xhtml);    
@@ -479,6 +480,7 @@ public class LSPCompilerHelper
      * 
      * @deprecated use {@link #setAcceptUnbound(boolean)} instead
      */
+    @Deprecated
     public void setAcceptNull(boolean acceptNull)
     {
         setAcceptUnbound(acceptNull);    

@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
+import java.util.Map;
 
 import nu.staldal.lsp.LSPHelper;
 import nu.staldal.lsp.LSPPage;
@@ -68,7 +69,8 @@ public class TestLSPCompilationEnclose
     	LSPPage thePage = lspHelper.getPage(pageName);
     	assertNotNull(thePage);
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	lspHelper.executePage(thePage, Collections.emptyMap(), null, baos);
+        Map<String,Object> pageParams = Collections.emptyMap();
+    	lspHelper.executePage(thePage, pageParams, null, baos);
     	if (expectedResult != null) assertEquals(expectedResult, baos.toString("UTF-8"));
 	}
 	

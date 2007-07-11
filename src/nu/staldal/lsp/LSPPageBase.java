@@ -119,7 +119,7 @@ public abstract class LSPPageBase implements LSPPage
     }        
 	
 
-    public final void execute(ContentHandler sax, Map params, Object extContext)
+    public final void execute(ContentHandler sax, Map<String,Object> params, Object extContext)
         throws SAXException
 	{
         if (compiledVersionNum > LSPPage.LSP_VERSION_NUM)
@@ -137,9 +137,9 @@ public abstract class LSPPageBase implements LSPPage
                 + ". Please recompile this LSP page.");
         }
         
-        Environment env = new Environment(params);
+        Environment<String,Object> env = new Environment<String,Object>(params);
 
-		Map extLibs = new HashMap();
+		Map<String,LSPExtLib> extLibs = new HashMap<String,LSPExtLib>();
 		
 		for (int i = 0; i < extLibsURLs.length; i++)
 		{
@@ -164,22 +164,21 @@ public abstract class LSPPageBase implements LSPPage
 			// String nsURI = extLibsURLs[i];
 			String className = extLibsClassNames[i];
 			
-			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);			
+			LSPExtLib extLib = extLibs.get(className);			
 			
 			extLib.endPage();
 		}
 	}
 
 
-	@SuppressWarnings("unchecked")
-	protected static final LSPExtLib lookupExtensionHandler(Map extLibs, String nsURI, String className)
+	protected static final LSPExtLib lookupExtensionHandler(Map<String,LSPExtLib> extLibs, String nsURI, String className)
 		throws SAXException
 	{
 		try {
-			LSPExtLib extLib = (LSPExtLib)extLibs.get(className);
+			LSPExtLib extLib = extLibs.get(className);
 			if (extLib == null)
 			{
-				Class extClass = Class.forName(className);
+				Class<?> extClass = Class.forName(className);
 				extLib = (LSPExtLib)extClass.newInstance();
 				extLib.init(nsURI);
 				extLibs.put(className, extLib);
@@ -467,7 +466,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
-	protected static Collection convertToList(Object _value) throws LSPException
+    protected static Collection<?> convertToList(Object _value) throws LSPException
 	{        
         Object value = convertObjectToLSP(_value);
         
@@ -477,7 +476,7 @@ public abstract class LSPPageBase implements LSPPage
         }
         else if (value == Void.TYPE)
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         else if (value == null)
         {
@@ -493,7 +492,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
-	protected static Map convertToTuple(Object _value) throws LSPException
+    protected static Map<?,?> convertToTuple(Object _value) throws LSPException
 	{
         Object value = convertObjectToLSP(_value);
         
@@ -565,7 +564,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 		
 
-	protected static Object getElementFromTuple(Map tuple, String key)
+	protected static Object getElementFromTuple(Map<?,?> tuple, String key)
 		throws LSPException
 	{
 		Object o = tuple.get(key);
@@ -582,7 +581,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 	
-	protected static Object getElementFromTupleAcceptNull(Map tuple, String key)
+	protected static Object getElementFromTupleAcceptNull(Map<?,?> tuple, String key)
 	{
 		Object o = tuple.get(key);
 		
@@ -598,7 +597,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
 
 
-	protected static Object getVariableValue(Environment env, String varName)
+	protected static Object getVariableValue(Environment<String,Object> env, String varName)
 		throws LSPException
 	{
 		Object o = env.lookup(varName);
@@ -616,7 +615,7 @@ public abstract class LSPPageBase implements LSPPage
 	}
     
     
-	protected static Object getVariableValueAcceptNull(Environment env, String varName)
+	protected static Object getVariableValueAcceptNull(Environment<String,Object> env, String varName)
 	{
 		Object o = env.lookup(varName);
 		
@@ -765,10 +764,9 @@ public abstract class LSPPageBase implements LSPPage
 	}
 	
 
-	@SuppressWarnings("unchecked")
-	protected static Collection fnSeq(double start, double end, double step)
+	protected static Collection<Double> fnSeq(double start, double end, double step)
 	{
-		ArrayList vec = new ArrayList((int)((end-start)/step));
+		ArrayList<Double> vec = new ArrayList<Double>((int)((end-start)/step));
 		for (; start <= end; start+=step)
 		 	vec.add(new Double(start));
 		
@@ -777,7 +775,7 @@ public abstract class LSPPageBase implements LSPPage
 
 		
 	protected abstract void _execute(
-			ContentHandler sax, Environment env,
-			Map extLibs, ContentHandler _sax, AttributesImpl attrs)
+			ContentHandler sax, Environment<String,Object> env,
+			Map<String,LSPExtLib> extLibs, ContentHandler _sax, AttributesImpl attrs)
 		throws SAXException, IllegalArgumentException;	
 }
