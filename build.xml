@@ -1,10 +1,9 @@
 <!-- Ant build file for LSP -->
 
-<!-- You need Apache Ant, version 1.5.1 or later, to use it -->
+<!-- You need Apache Ant, version 1.7.0 or later, to use it -->
 <!-- Get Ant from http://ant.apache.org/ -->
 
-<!-- To compile and run the testcases, you need JUnit 3.7 and 
-     the Ant optional tasks installed -->
+<!-- To compile and run the testcases, you need JUnit 4.1 -->
 <!-- Get Junit from http://sourceforge.net/projects/junit/ -->
 
 <!-- Assumes Java 1.5 or later -->
@@ -178,23 +177,34 @@
       </fileset>
     </copy>
 
-    <junit>
+    <junit haltonfailure="yes" haltonerror="yes" fork="yes">
         <formatter type="plain" usefile="no"/>  
-        <test name="nu.staldal.util.TestEnvironment"/>
-        <test name="nu.staldal.lsp.TestLSPParse"/>
-        <test name="nu.staldal.lsp.framework.TestFramework"/>
 
-    	<!-- JUnit 4 tests, does not work with Ant yet
-    	<test name="nu.staldal.xodus.TestXMLCharacterEncoderOutputStream"/>
-        <test name="nu.staldal.xodus.TestXMLCharacterEncodingWriter"/>
-        <test name="nu.staldal.xodus.TestXMLSerializer"/>
-        -->
-    	
-        <classpath>
+    	<classpath>
             <pathelement location="${build.classes}" />
             <pathelement location="${build.testsuite}" />
             <pathelement location="${Servlet}" />
+            <pathelement location="${BCEL}" />
+            <pathelement location="${JUnit}" />
         </classpath>
+
+    	<test name="nu.staldal.xodus.TestXMLCharacterEncodingWriter"/>
+    	<test name="nu.staldal.xodus.TestXMLCharacterEncoderAppendable"/>
+    	<test name="nu.staldal.xodus.TestHTMLSerializer"/>
+    	<test name="nu.staldal.xodus.TestXMLSerializer"/>
+    	<test name="nu.staldal.xodus.TestXMLCharacterEncoderOutputStream"/>
+    	<test name="nu.staldal.xodus.TestCharSequenceWrapper"/>
+    	<test name="nu.staldal.util.TestEnvironment"/>
+    	<test name="nu.staldal.lsp.compiler.TestLSPCompile"/>
+    	<test name="nu.staldal.lsp.compiler.TestLSPCompilationEnclose"/>
+    	<test name="nu.staldal.lsp.compiler.TestLSPCompilation"/>
+    	<test name="nu.staldal.lsp.compiler.TestXhtmlDefault"/>
+    	<test name="nu.staldal.lsp.TestLSPParse"/>
+    	<test name="nu.staldal.lsp.TestLSPPageBase"/>
+    	<test name="nu.staldal.lsp.TestLSPHelper"/>
+    	<test name="nu.staldal.lsp.framework.TestFrameworkStuff"/>
+    	<test name="nu.staldal.lsp.framework.TestTheFramework"/>
+    	
     </junit>
   </target>
 
