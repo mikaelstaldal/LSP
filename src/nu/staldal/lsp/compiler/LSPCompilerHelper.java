@@ -137,7 +137,7 @@ public class LSPCompilerHelper
 
 		try {
 			ClassLoader classLoader = new URLClassLoader(
-				new URL[] { targetDir.toURL() }, getClass().getClassLoader());
+				new URL[] { targetDir.toURI().toURL() }, getClass().getClassLoader());
 			Class<?> pageClass = Class.forName(
 				"_LSP_"+getPageName(inputFile.getName()),
 				true,
@@ -231,7 +231,7 @@ public class LSPCompilerHelper
 					}
 				});
 
-            getFileAsSAX(inputFile.toURL().toString(), sax);            
+            getFileAsSAX(inputFile.toURI().toURL().toString(), sax);            
 					
 			FileOutputStream fos = new FileOutputStream(outputFile);
 			try {
@@ -315,12 +315,12 @@ public class LSPCompilerHelper
                     && url.charAt(1) == ':'
                     && (url.charAt(2) == '/' || url.charAt(2) == '\\'))
         {   // Windows pathname
-			is = new InputSource(new File(url).toURL().toString());
+			is = new InputSource(new File(url).toURI().toURL().toString());
         }
 		else if (url.length() > 2 
                     && url.charAt(0) == '\\' && url.charAt(1) == '\\')
         {   // Windows UNC pathname
-			is = new InputSource(new File(url).toURL().toString());
+			is = new InputSource(new File(url).toURI().toURL().toString());
         }
         else if (Utils.absoluteURL(url))
 		{
@@ -328,7 +328,7 @@ public class LSPCompilerHelper
 		}
 		else if (url.charAt(0) == '/')            
 		{   // UNIX pathname
-			is = new InputSource(new File(url).toURL().toString());
+			is = new InputSource(new File(url).toURI().toURL().toString());
 		}
 		else // relative URL 	
 		{
@@ -345,7 +345,7 @@ public class LSPCompilerHelper
             if (!file.isFile())
                 throw new FileNotFoundException(url + " (File not found)");
             
-            is = new InputSource(file.toURL().toString());
+            is = new InputSource(file.toURI().toURL().toString());
 		}
 
 		try {
@@ -437,7 +437,7 @@ public class LSPCompilerHelper
 		if (encloseFile != null)
 		{
 			try {
-				compiler.setEnclose(encloseFile.toURL().toString());
+				compiler.setEnclose(encloseFile.toURI().toURL().toString());
 			}
 			catch (MalformedURLException e)
 			{
