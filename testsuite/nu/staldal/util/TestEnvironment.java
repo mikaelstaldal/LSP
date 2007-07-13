@@ -11,7 +11,7 @@ public class TestEnvironment extends TestCase
 	protected static final String value1 = "value1";
 	protected static final String value2 = "value2";
 
-	protected Environment env;
+	protected Environment<String,String> env;
 	
     public TestEnvironment(String name)
     {
@@ -21,7 +21,7 @@ public class TestEnvironment extends TestCase
 	@Override
     public void setUp()
 	{
-		env = new Environment();	
+		env = new Environment<String,String>();	
 	}
 
     public void testBind()
@@ -67,7 +67,9 @@ public class TestEnvironment extends TestCase
             fail("Environment did not throw any Exception when trying to pop last frame");
         }
         catch (EmptyStackException e)
-        { }
+        { 
+            // expected
+        }
 	}
 
     public void testNull()
@@ -122,7 +124,9 @@ public class TestEnvironment extends TestCase
             fail("Environment did not throw any Exception when trying to pop last frame");
         }
         catch (EmptyStackException e)
-        { }
+        { 
+            // expected
+        }
     }
     
 }

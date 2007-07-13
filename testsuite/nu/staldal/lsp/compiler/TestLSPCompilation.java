@@ -60,10 +60,11 @@ public class TestLSPCompilation
 	private void doTest(String pageName, String expectedResult)
 		throws Exception
 	{
-        doTest(pageName, expectedResult, Collections.emptyMap());
+        Map<String,Object> params = Collections.emptyMap();            
+        doTest(pageName, expectedResult, params);
 	}
 
-    private void doTest(String pageName, String expectedResult, Map params)
+    private void doTest(String pageName, String expectedResult, Map<String,Object> params)
         throws Exception
     {
         lspCompilerHelper.doCompile(pageName + ".lsp", true);
@@ -182,7 +183,7 @@ public class TestLSPCompilation
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNullVariable2() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("theVar", null);
         doTest("NullVariable", "", params);
     }
@@ -190,8 +191,8 @@ public class TestLSPCompilation
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNullTupleValue1() throws Exception
     {
-        Map params = new HashMap();
-        Map tuple = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String,Object> tuple = new HashMap<String,Object>();
         params.put("theTuple", tuple);
         doTest("NullTupleValue", "", params);
     }
@@ -199,8 +200,8 @@ public class TestLSPCompilation
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNullTupleValue2() throws Exception
     {
-        Map params = new HashMap();
-        Map tuple = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
+        Map<String,Object> tuple = new HashMap<String,Object>();
         tuple.put("theNullValue", null);
         params.put("theTuple", tuple);
         doTest("NullTupleValue", "", params);
@@ -209,7 +210,7 @@ public class TestLSPCompilation
     @Test
     public void testNvl() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("thisIsNotNull", "notNullValue");
         params.put("thisIsNull", null);
         doTest("NVL",
@@ -226,7 +227,7 @@ public class TestLSPCompilation
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNvlError() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("thisIsNotNull", "notNullValue");
         doTest("NVL",
                 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
@@ -242,7 +243,7 @@ public class TestLSPCompilation
     @Test
     public void testIsnull() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("thisIsNotNull", "notNullValue");
         params.put("thisIsNull", null);
         doTest("ISNULL",
@@ -259,7 +260,7 @@ public class TestLSPCompilation
     @Test
     public void testAttribute() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("flag", "");
         doTest("TestAttribute",
                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -272,7 +273,7 @@ public class TestLSPCompilation
     @Test
     public void testAttribute2() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("flag", "foobar");
         doTest("TestAttribute",
                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -285,7 +286,7 @@ public class TestLSPCompilation
     @Test
     public void testIf() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("flag", "");
         doTest("TestIf",
                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -298,7 +299,7 @@ public class TestLSPCompilation
     @Test
     public void testIf2() throws Exception
     {
-        Map params = new HashMap();
+        Map<String,Object> params = new HashMap<String,Object>();
         params.put("flag", "foobar");
         doTest("TestIf",
                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

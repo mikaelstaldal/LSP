@@ -61,6 +61,7 @@ public class HttpServletResponseMock implements HttpServletResponse
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public String encodeRedirectUrl(String url)
     {
         // nothing to do
@@ -73,6 +74,7 @@ public class HttpServletResponseMock implements HttpServletResponse
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public String encodeUrl(String url)
     {
         // nothing to do
@@ -120,6 +122,7 @@ public class HttpServletResponseMock implements HttpServletResponse
 
     }
 
+    @SuppressWarnings("deprecation")
     public void setStatus(int sc, String sm)
     {
         // nothing to do

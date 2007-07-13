@@ -55,7 +55,9 @@ public class TestLSPParse extends TestCase
                 + invalidExpr);
         }
         catch (ParseException e)
-        { }
+        { 
+            // expected
+        }
 
         try {
     		LSPExpr.parseFromString(invalidExpr2);
@@ -63,7 +65,9 @@ public class TestLSPParse extends TestCase
                 + invalidExpr2);
         }
         catch (ParseException e)
-        { }                
+        { 
+            // expected
+        }
 	}
     
     public void testCheckName() throws ParseException
@@ -76,7 +80,9 @@ public class TestLSPParse extends TestCase
                 + invalidName1);
         }
         catch (ParseException e)
-        { }                
+        { 
+            // expected
+        }
 
         try {
             LSPExprParser.checkName(invalidName2);        
@@ -84,7 +90,9 @@ public class TestLSPParse extends TestCase
                 + invalidName2);
         }
         catch (ParseException e)
-        { }                
+        { 
+            // expected
+        }
 
         try {
             LSPExprParser.checkName(invalidName3);        
@@ -92,7 +100,9 @@ public class TestLSPParse extends TestCase
                 + invalidName3);
         }
         catch (ParseException e)
-        { }                
+        { 
+            // expected
+        }
     }
 	
 	public static void main(String[] args)

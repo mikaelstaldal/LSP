@@ -22,6 +22,7 @@ public class TestCharSequenceWrapper
     @Before
     public void setUp() throws Exception
     {
+        // nothing to do
     }
 
     /**
@@ -30,6 +31,7 @@ public class TestCharSequenceWrapper
     @After
     public void tearDown() throws Exception
     {
+        // nothing to do
     }
     
     public void testCharArray(char[] charArray)
@@ -77,7 +79,9 @@ public class TestCharSequenceWrapper
             cs.subSequence(0, 6);
             fail("Should throw StringIndexOutOfBoundsException");
         }
-        catch (StringIndexOutOfBoundsException e) {}
+        catch (StringIndexOutOfBoundsException e) {
+            // expected
+        }
         
     }
     

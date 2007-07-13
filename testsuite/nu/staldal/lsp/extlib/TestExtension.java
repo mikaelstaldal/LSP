@@ -100,14 +100,17 @@ public class TestExtension implements LSPExtLib, ContentHandler
 
     public void setDocumentLocator(Locator locator)
     {
+        // nothing to do
     }
 
     public void startDocument()
     {
+        // nothing to do
     }
 
     public void endDocument()
     {
+        // nothing to do
     }
 
     public void startElement(String namespaceURI, String localName,

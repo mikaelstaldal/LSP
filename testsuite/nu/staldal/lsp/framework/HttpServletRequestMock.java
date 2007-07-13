@@ -168,6 +168,7 @@ public class HttpServletRequestMock implements HttpServletRequest
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean isRequestedSessionIdFromUrl()
     {
         // nothing to do
@@ -290,6 +291,7 @@ public class HttpServletRequestMock implements HttpServletRequest
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public String getRealPath(String path)
     {
         // nothing to do

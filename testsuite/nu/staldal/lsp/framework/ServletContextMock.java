@@ -110,6 +110,7 @@ public class ServletContextMock implements ServletContext, ServletConfig
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public Servlet getServlet(String name) throws ServletException
     {
         // nothing to do
@@ -122,12 +123,14 @@ public class ServletContextMock implements ServletContext, ServletConfig
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public Enumeration getServletNames()
     {
         // nothing to do
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public Enumeration getServlets()
     {
         // nothing to do
@@ -139,6 +142,7 @@ public class ServletContextMock implements ServletContext, ServletConfig
         System.err.println("ServletContext.log(): " + msg);
     }
 
+    @SuppressWarnings("deprecation")
     public void log(Exception exception, String msg)
     {
         System.err.println("ServletContext.log(): " + msg);

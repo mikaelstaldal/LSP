@@ -94,48 +94,59 @@ public class StringExtension implements LSPExtLib, ContentHandler
 
     public void setDocumentLocator(Locator locator)
     {
+        // nothing to do
     }
 
     public void startDocument()
     {
+        // nothing to do
     }
 
     public void endDocument()
     {
+        // nothing to do
     }
 
     public void startElement(String namespaceURI, String localName,
                              String qname, Attributes atts)
     {
+        // nothing to do
     }
 
     public void endElement(String namespaceURI, String localName,
                            String qname)
     {
+        // nothing to do
     }
 
     public void startPrefixMapping(String prefix, String uri)
     {
+        // nothing to do
     }
 
     public void endPrefixMapping(String prefix)
     {
+        // nothing to do
     }
 
     public void characters(char[] chars, int start, int length)
     {
+        // nothing to do
     }
 
     public void ignorableWhitespace(char[] chars, int start, int length)
     {
+        // nothing to do
     }
 
     public void processingInstruction(String target, String data)
     {
+        // nothing to do
     }
 
     public void skippedEntity(String name)
     {
+        // nothing to do
     }
 
 	
