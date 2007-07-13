@@ -218,12 +218,17 @@
     <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet,nu.staldal.xodus,nu.staldal.lsp.framework"
              encoding="iso-8859-1"
     	     sourcepath="${src.dir}"
-             classpath="${Ant};${BCEL};${Servlet}"
              destdir="dist/docs/javadoc"
              author="true"
              version="true"
              windowtitle="LSP API"
-             doctitle="LSP"/>
+             doctitle="LSP">
+	  <classpath>
+        <pathelement location="${Servlet}" />
+        <pathelement location="${BCEL}" />
+        <pathelement location="${Ant}" />
+      </classpath>
+    </javadoc>
   </target>
 
 
