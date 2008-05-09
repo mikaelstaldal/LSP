@@ -127,8 +127,7 @@ public class DispatcherServlet extends HttpServlet
         throws ServletException, IOException
     {
         doService(request, response, Service.REQUEST_GET);
-    }
-    
+    }    
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -137,6 +136,19 @@ public class DispatcherServlet extends HttpServlet
         doService(request, response, Service.REQUEST_POST);
     }
 
+    @Override
+    public void doPut(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException
+    {
+        doService(request, response, Service.REQUEST_PUT);
+    }
+
+    @Override
+    public void doDelete(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException
+    {
+        doService(request, response, Service.REQUEST_DELETE);
+    }
     
     private void doService(HttpServletRequest request, HttpServletResponse response,
             int requestType)
@@ -147,7 +159,16 @@ public class DispatcherServlet extends HttpServlet
             request.setCharacterEncoding(requestCharset);
         }
         
-        String serviceName = fixServiceName(request.getServletPath());
+        String serviceName = fixServiceName(request.getServletPath());        
+        if (serviceName.length() == 0) {
+            serviceName = fixServiceName(request.getPathInfo());
+        }
+        if (serviceName.length() == 0) {
+            if (defaultService != null) {
+                serviceName = defaultService;
+            }
+        }
+        
 
         Map<String,Object> pageParams = new HashMap<String,Object>();
         while (true)
@@ -317,14 +338,11 @@ public class DispatcherServlet extends HttpServlet
      *
      * @return never return <code>null</code>
      */
-    public String fixServiceName(String requestPath)
+    public static String fixServiceName(String requestPath)
     {
         if (requestPath == null || requestPath.length() == 0)
         {
-            if (defaultService == null)
-                return "";
-            else                    
-                return defaultService;                    
+            return "";
         }
 
         int startPos = requestPath.startsWith("/") ? 1 : 0;
@@ -335,10 +353,7 @@ public class DispatcherServlet extends HttpServlet
         String ret = requestPath.substring(startPos, dot);
         if (ret.length() == 0)
         {
-            if (defaultService == null)
-                return "";
-            else                    
-                return defaultService;                    
+            return "";
         }
         else
         {

@@ -179,7 +179,8 @@ public abstract class ServiceBase implements Service
      * @param response    the {@link javax.servlet.http.HttpServletResponse}
      * @param pageParams  map for page parameters
      * @param requestType the type of request:
-     *        {@link #REQUEST_GET}, {@link #REQUEST_POST} or {@link #REQUEST_INCLUDE}
+     *        {@link #REQUEST_GET}, {@link #REQUEST_POST}, {@link #REQUEST_PUT}, {@link #REQUEST_DELETE} 
+     *        or {@link #REQUEST_INCLUDE}  
      * @param dbConn  database connection to use for this request, 
      *                or <code>null</code> if no database has been setup
      *

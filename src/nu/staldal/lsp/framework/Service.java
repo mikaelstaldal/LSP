@@ -85,7 +85,16 @@ public interface Service
      * Request type include.
      */
     public static final int REQUEST_INCLUDE = 3;
+
+    /**
+     * Request type PUT.
+     */
+    public static final int REQUEST_PUT = 4;
     
+    /**
+     * Request type DELETE.
+     */
+    public static final int REQUEST_DELETE = 5;
     
     /**
      * Prefix for request attributes for include attributes.
@@ -114,11 +123,11 @@ public interface Service
      *<p>
      * May be invoked concurrently by several threads.
      *<p>
-     * Is invoked for GET, POST and HEAD requests. You should not treat
+     * Is invoked for GET, POST, PUT, DELETE and HEAD requests. You should not treat
      * HEAD requests differently than GET requests, the framework will
      * automatically discard the body and only send the headers. The
      * <code>requestType</code> parameter indicate the type of request.
-     * See the HTTP specification for differences between GET and POST 
+     * See the HTTP specification for differences between GET, POST, PUT and DELETE 
      * requests.
      *<p>
      * There are three choices to create the response:
@@ -153,7 +162,8 @@ public interface Service
      * @param response    the {@link javax.servlet.http.HttpServletResponse}
      * @param pageParams  map for page parameters
      * @param requestType the type of request:
-     *        {@link #REQUEST_GET}, {@link #REQUEST_POST} or {@link #REQUEST_INCLUDE}  
+     *        {@link #REQUEST_GET}, {@link #REQUEST_POST}, {@link #REQUEST_PUT}, {@link #REQUEST_DELETE} 
+     *        or {@link #REQUEST_INCLUDE}  
      *
      * @return name of the page to view, or <code>null</code> to not 
      *         use any page, or the name of an other service to forward to
