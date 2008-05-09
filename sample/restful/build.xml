@@ -1,0 +1,79 @@
+<!-- Ant build file for LSP Framework Test -->
+<!-- You need Apache Ant, version 1.4 or later, to use it -->
+<!-- Get it from http://jakarta.apache.org/ant/ -->
+
+<project name="LSPFrameworkTest" default="war">
+
+  <property file="build.properties"/>
+	
+  <property name="build.dir" value="../../build/sample/restful"/>
+
+  <path id="project.class.path">
+        <pathelement location="${LSP}" />
+        <pathelement location="${Servlet}" />
+  </path>
+
+  <taskdef name="lspc" classname="nu.staldal.lsp.compiler.LSPCompilerAntTask">
+    <classpath>
+      <pathelement location="${LSPC}" />
+      <pathelement location="${LSP}" />
+      <pathelement location="${BCEL}" />
+      <pathelement location="${Servlet}" />
+    </classpath>
+  </taskdef>  
+
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dir}/WEB-INF"/>
+    <mkdir dir="${build.dir}/WEB-INF/classes"/>
+    <mkdir dir="${build.dir}/WEB-INF/lib"/>
+  </target>
+  
+  <target name="compile" depends="init"
+  	description="Compiles application">
+    <javac srcdir="src"
+    	   includes="**/*"
+           destdir="${build.dir}/WEB-INF/classes"
+           optimize="on" debug="on"
+           deprecation="on">
+    	<classpath refid="project.class.path"/>
+	</javac>
+
+    <copy todir="${build.dir}/WEB-INF/classes">
+      <fileset dir="src">
+        <include name="**/*" />
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+
+    <lspc sourcepath="templates"
+          destdir="${build.dir}/WEB-INF/classes">
+      <fileset dir="templates">
+        <include name="*.lsp" />
+      </fileset>
+    </lspc>    
+
+    <copy todir="${build.dir}">
+      <fileset dir="web">
+        <include name="**/*" />
+      </fileset>
+    </copy>
+
+    <copy todir="${build.dir}/WEB-INF">
+      <fileset dir="${basedir}">
+        <include name="*.xml" />
+        <exclude name="build.xml" />
+      </fileset>
+    </copy>
+
+	<copy file="${LSP}" todir="${build.dir}/WEB-INF/lib" />
+  </target>
+	
+  <target name="war" depends="compile">
+  	<jar destfile="${warfile}">
+    	<fileset dir="${build.dir}"/>  	
+  	</jar>
+  </target>
+  
+</project>

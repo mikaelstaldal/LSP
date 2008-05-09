@@ -68,7 +68,7 @@ public class DispatcherServlet extends HttpServlet
     private Map<String,Object> serviceCache;
     
     private List<String> servicePackages;
-    private String defaultService;
+    String defaultService;
     private String requestCharset;
 
     private DataSource mainDB;
@@ -118,7 +118,7 @@ public class DispatcherServlet extends HttpServlet
             mainDB = null;
         }
         
-        getServletContext().setAttribute(getClass().getName(), this);
+        getServletContext().setAttribute(DispatcherServlet.class.getName(), this);
     }
          
 
@@ -150,6 +150,10 @@ public class DispatcherServlet extends HttpServlet
         doService(request, response, Service.REQUEST_DELETE);
     }
     
+    protected boolean useTemplateIfServiceIsNotFound() {
+        return true;
+    }
+    
     private void doService(HttpServletRequest request, HttpServletResponse response,
             int requestType)
         throws ServletException, IOException
@@ -159,7 +163,7 @@ public class DispatcherServlet extends HttpServlet
             request.setCharacterEncoding(requestCharset);
         }
 
-        String serviceName = fixServiceName(request.getServletPath());
+        String serviceName = dispatchService(request);
 
         Map<String,Object> pageParams = new HashMap<String,Object>();
         while (true)
@@ -183,8 +187,14 @@ public class DispatcherServlet extends HttpServlet
             
             if (service == null)
             {
-                noService = true;
-                templateName = serviceName;
+                if (useTemplateIfServiceIsNotFound()) {
+                    noService = true;
+                    templateName = serviceName;
+                } else {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, 
+                            "Service \'"+serviceName+"\' not found");    
+                    return;                    
+                }
             }
             else
             {
@@ -325,12 +335,14 @@ public class DispatcherServlet extends HttpServlet
     /**
      * Strip leading '/' and extension, apply defaultService.
      * 
-     * @param requestPath the HTTP request path
+     * @param request the HtthServletRequest
      *
      * @return never return <code>null</code>
      */
-    public String fixServiceName(String requestPath)
+    public String dispatchService(HttpServletRequest request)
     {
+        String requestPath = request.getServletPath();
+        
         if (requestPath == null || requestPath.length() == 0)
         {
             if (defaultService == null)

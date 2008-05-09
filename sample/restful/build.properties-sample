@@ -1,0 +1,8 @@
+# sample, adapt for your system
+
+LSP=lsprt.jar
+LSPC=lspc.jar
+BCEL=bcel.jar
+Servlet=servlet.jar
+
+warfile=
