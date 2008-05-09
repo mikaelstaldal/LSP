@@ -254,7 +254,7 @@ public class DispatcherServlet extends HttpServlet
             ThrowawayService ts;            
             try
             {
-                ts = (ThrowawayService)((Class)service).newInstance();
+                ts = (ThrowawayService)((Class<?>)service).newInstance();
             }
             catch (InstantiationException e)
             {

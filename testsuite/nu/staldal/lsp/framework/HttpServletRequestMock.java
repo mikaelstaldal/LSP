@@ -67,13 +67,13 @@ public class HttpServletRequestMock implements HttpServletRequest
         return null;
     }
 
-    public Enumeration getHeaderNames()
+    public Enumeration<?> getHeaderNames()
     {
         // nothing to do
         return null;
     }
 
-    public Enumeration getHeaders(String name)
+    public Enumeration<?> getHeaders(String name)
     {
         // nothing to do
         return null;
@@ -193,7 +193,7 @@ public class HttpServletRequestMock implements HttpServletRequest
         return null;
     }
 
-    public Enumeration getAttributeNames()
+    public Enumeration<?> getAttributeNames()
     {
         // nothing to do
         return null;
@@ -247,7 +247,7 @@ public class HttpServletRequestMock implements HttpServletRequest
         return null;
     }
 
-    public Enumeration getLocales()
+    public Enumeration<?> getLocales()
     {
         // nothing to do
         return null;
@@ -264,12 +264,12 @@ public class HttpServletRequestMock implements HttpServletRequest
             return param[0];
     }
 
-    public Map getParameterMap()
+    public Map<?,?> getParameterMap()
     {
         return Collections.unmodifiableMap(parameters);
     }
 
-    public Enumeration getParameterNames()
+    public Enumeration<?> getParameterNames()
     {
         return parameters.keys();
     }

@@ -29,7 +29,7 @@ public class ServletContextMock implements ServletContext, ServletConfig
         return attrs.get(name);
     }
 
-    public Enumeration getAttributeNames()
+    public Enumeration<?> getAttributeNames()
     {
         return attrs.keys();
     }
@@ -45,7 +45,7 @@ public class ServletContextMock implements ServletContext, ServletConfig
         return initParams.get(name);
     }
 
-    public Enumeration getInitParameterNames()
+    public Enumeration<?> getInitParameterNames()
     {
         return initParams.keys();
     }
@@ -98,7 +98,7 @@ public class ServletContextMock implements ServletContext, ServletConfig
         return null;
     }
 
-    public Set getResourcePaths(String path)
+    public Set<?> getResourcePaths(String path)
     {
         // nothing to do
         return null;
@@ -124,14 +124,14 @@ public class ServletContextMock implements ServletContext, ServletConfig
     }
 
     @SuppressWarnings("deprecation")
-    public Enumeration getServletNames()
+    public Enumeration<?> getServletNames()
     {
         // nothing to do
         return null;
     }
 
     @SuppressWarnings("deprecation")
-    public Enumeration getServlets()
+    public Enumeration<?> getServlets()
     {
         // nothing to do
         return null;

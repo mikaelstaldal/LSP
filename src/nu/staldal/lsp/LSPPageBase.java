@@ -403,7 +403,7 @@ public abstract class LSPPageBase implements LSPPage
         }
         else if (value instanceof Collection)
         {
-            return !(((Collection)value).isEmpty());
+            return !(((Collection<?>)value).isEmpty());
         }
         else if (value == null)
         {
@@ -450,7 +450,7 @@ public abstract class LSPPageBase implements LSPPage
 		}
         else if (value instanceof Collection)
         {
-            return !(((Collection)value).isEmpty());
+            return !(((Collection<?>)value).isEmpty());
         }
         else if (value == null)
         {
@@ -472,7 +472,7 @@ public abstract class LSPPageBase implements LSPPage
         
         if (value instanceof Collection)
         {
-			return (Collection)value;
+			return (Collection<?>)value;
         }
         else if (value == Void.TYPE)
         {
@@ -498,7 +498,7 @@ public abstract class LSPPageBase implements LSPPage
         
 		if (value instanceof Map)
         {
-			return (Map)value;
+			return (Map<?,?>)value;
         }
         else if (value == Void.TYPE)           
         {
