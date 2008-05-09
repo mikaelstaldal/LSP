@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2006, Mikael Ståldal
+ * Copyright (c) 2005-2006, Mikael Stï¿½ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,17 +158,8 @@ public class DispatcherServlet extends HttpServlet
         {
             request.setCharacterEncoding(requestCharset);
         }
-        
-        String serviceName = fixServiceName(request.getServletPath());        
-        if (serviceName.length() == 0) {
-            serviceName = fixServiceName(request.getPathInfo());
-        }
-        if (serviceName.length() == 0) {
-            if (defaultService != null) {
-                serviceName = defaultService;
-            }
-        }
-        
+
+        String serviceName = fixServiceName(request.getServletPath());
 
         Map<String,Object> pageParams = new HashMap<String,Object>();
         while (true)
@@ -338,11 +329,14 @@ public class DispatcherServlet extends HttpServlet
      *
      * @return never return <code>null</code>
      */
-    public static String fixServiceName(String requestPath)
+    public String fixServiceName(String requestPath)
     {
         if (requestPath == null || requestPath.length() == 0)
         {
-            return "";
+            if (defaultService == null)
+                return "";
+            else                    
+                return defaultService;                    
         }
 
         int startPos = requestPath.startsWith("/") ? 1 : 0;
@@ -353,7 +347,10 @@ public class DispatcherServlet extends HttpServlet
         String ret = requestPath.substring(startPos, dot);
         if (ret.length() == 0)
         {
-            return "";
+            if (defaultService == null)
+                return "";
+            else                    
+                return defaultService;                    
         }
         else
         {
