@@ -271,4 +271,52 @@
     <delete dir="dist"/>
   </target>
 
+  <target name="ujl" depends="init"
+  	description="Compiles UJL ">
+
+  	<mkdir dir="build/ujl-classes"/>
+    <javac srcdir="ujl/java"
+           destdir="build/ujl-classes"
+           encoding="UTF-8"
+           source="1.5" target="1.5"
+           optimize="on" debug="on"
+           deprecation="on">
+	</javac>
+    <copy todir="build/ujl-classes" includeEmptyDirs="no">
+      <fileset dir="ujl/java">
+        <exclude name="**/*.java" />
+        <exclude name="**/*.lex" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+
+    <jar jarfile="ujl.jar">
+      <fileset dir="build/ujl-classes"> 
+         <include name="nu/staldal/ujl/**" />
+      </fileset>	 
+    </jar>
+  	
+    <mkdir dir="build/ujl-javadoc"/>
+    <javadoc packagenames="nu.staldal.ujl.tuple"
+             encoding="UTF-8"
+    		 charset="UTF-8"
+      	     sourcepath="ujl/java"
+             destdir="build/ujl-javadoc"
+             author="true"
+             version="true"
+             windowtitle="Useful Java Library"
+             doctitle="Useful Java Library">
+    </javadoc>
+  	
+    <zip zipfile="ujl.zip">
+      <zipfileset prefix="javadoc" dir="build/ujl-javadoc"> 
+         <include name="*/**"/>
+      </zipfileset>
+      <fileset dir=".">   	
+          <include name="ujl.jar"/>
+      </fileset>
+    </zip>
+  	
+  </target>
+	
 </project>
