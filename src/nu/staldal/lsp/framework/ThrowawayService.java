@@ -43,11 +43,14 @@ package nu.staldal.lsp.framework;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.sql.DataSource;
+
+import nu.staldal.lsp.servlet.LSPManager;
 
 
 /**
@@ -102,7 +105,7 @@ public abstract class ThrowawayService
      * The HttpServletResponse.
      */
     protected HttpServletResponse response;
-
+   
     /**
      * The {@link javax.sql.DataSource} to main database,
      * or <code>null</code> if no database is setup.
@@ -121,6 +124,15 @@ public abstract class ThrowawayService
      */
     protected int requestType;
 
+    /**
+     * Get the user's locale.
+     * 
+     * @return  the user's locale, never <code>null</code>
+     */
+    protected Locale getUserLocale() {
+        return LSPManager.getInstance(context).getUserLocale(request);
+    }
+    
     final void init(ServletContext context, HttpServletRequest request, HttpServletResponse response, 
             int requestType, DataSource mainDB)
     {
@@ -221,6 +233,11 @@ public abstract class ThrowawayService
                         {
                             f.set(this, Byte.parseByte(paramValue));
                         }
+                        
+                        /* else if (type == Date.class)
+                        {
+                            f.set(this, null); // TODO parse date/time
+                        } */                      
                     }
                     catch (IndexOutOfBoundsException e)
                     {
