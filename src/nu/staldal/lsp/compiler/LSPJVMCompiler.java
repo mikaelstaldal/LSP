@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005, Mikael Ståldal
+ * Copyright (c) 2003-2008, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -125,6 +125,9 @@ class LSPJVMCompiler implements Constants
 			pageName+".lsp", 
 			ACC_PUBLIC | ACC_FINAL | ACC_SUPER,
 			new String[] {}); 
+        
+        classGen.setMajor(49);
+        classGen.setMinor(0);
 
 		constGen = classGen.getConstantPool();
 
