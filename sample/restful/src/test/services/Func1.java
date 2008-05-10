@@ -32,6 +32,7 @@ public class Func1 implements Service
             pageParams.put("str", "FOO");
         
         pageParams.put("num", new Integer(4711));
+        pageParams.put("ExtraArgs", request.getAttribute(RestfulDispatcherServlet.EXTRA_ARGS));
         return "Func1";
     }
     

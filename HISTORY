@@ -157,3 +157,8 @@ null and unbound.
 1.7.3
 -----
 * Date/time formatting functions in Servlet extlib.
+
+
+1.8
+---
+* Support for RESTful web applications in framework.

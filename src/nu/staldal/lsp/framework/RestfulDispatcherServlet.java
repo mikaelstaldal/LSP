@@ -1,5 +1,9 @@
 package nu.staldal.lsp.framework;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -12,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RestfulDispatcherServlet extends DispatcherServlet {
 
+    public static final String EXTRA_ARGS = "ExtraArgs";
+    
     @Override
     protected boolean useTemplateIfServiceIsNotFound() {
         return false;
@@ -22,27 +28,36 @@ public class RestfulDispatcherServlet extends DispatcherServlet {
     {
         String requestPath = request.getPathInfo();
         
-        if (requestPath == null || requestPath.length() == 0)
-        {
+        List<String> extra = new ArrayList<String>(); 
+        StringBuilder className = new StringBuilder();
+
+        if (requestPath != null) {
+            boolean first = true;
+            for (StringTokenizer st = new StringTokenizer(requestPath, "/"); st.hasMoreTokens(); ) {
+                String part = st.nextToken();
+                if (part.length() == 0) {
+                    continue;
+                }
+                if (Character.isJavaIdentifierStart(part.charAt(0)) && extra.isEmpty()) {
+                    if (!first) className.append('.');
+                    className.append(part);
+                } else {
+                    extra.add(part);
+                }
+                
+                first = false;
+            }
+        }        
+        request.setAttribute(EXTRA_ARGS, extra);
+        
+        if (className.length() == 0) {
             if (defaultService == null)
                 return "";
             else                    
                 return defaultService;                    
         }
-
-        int startPos = requestPath.startsWith("/") ? 1 : 0;
-
-        String ret = requestPath.substring(startPos);
-        if (ret.length() == 0)
-        {
-            if (defaultService == null)
-                return "";
-            else                    
-                return defaultService;                    
-        }
-        else
-        {
-            return ret.replace('/', '.');    
+        else {
+            return className.toString();    
         }
     }    
     

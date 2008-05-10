@@ -18,7 +18,8 @@ import javax.servlet.http.HttpSession;
 
 public class HttpServletRequestMock implements HttpServletRequest
 {
-    private Hashtable<String,String[]> parameters = new Hashtable<String,String[]>();
+    private Hashtable<String,String[]> parameters = new Hashtable<String,String[]>();    
+    private Hashtable<String,Object> attributes = new Hashtable<String,Object>();
     
     public void setParameter(String name, String[] value)
     {
@@ -31,12 +32,19 @@ public class HttpServletRequestMock implements HttpServletRequest
     }    
 
     private final String servletPath;
+    private final String pathInfo;
     
     public HttpServletRequestMock(final String servletPath)
     {
-        this.servletPath = servletPath;
+        this(servletPath, null);
     }
 
+    public HttpServletRequestMock(final String servletPath, final String pathInfo)
+    {
+        this.servletPath = servletPath;
+        this.pathInfo = pathInfo;
+    }
+    
     public String getAuthType()
     {
         // nothing to do
@@ -93,8 +101,7 @@ public class HttpServletRequestMock implements HttpServletRequest
 
     public String getPathInfo()
     {
-        // nothing to do
-        return null;
+        return pathInfo;
     }
 
     public String getPathTranslated()
@@ -189,14 +196,12 @@ public class HttpServletRequestMock implements HttpServletRequest
 
     public Object getAttribute(String name)
     {
-        // nothing to do
-        return null;
+        return attributes.get(name);
     }
 
     public Enumeration<?> getAttributeNames()
     {
-        // nothing to do
-        return null;
+        return attributes.keys();
     }
 
     public String getCharacterEncoding()
@@ -348,14 +353,12 @@ public class HttpServletRequestMock implements HttpServletRequest
 
     public void removeAttribute(String name)
     {
-        // nothing to do
-
+        attributes.remove(name);
     }
 
     public void setAttribute(String name, Object o)
     {
-        // nothing to do
-
+        attributes.put(name, o);
     }
 
     public void setCharacterEncoding(String env)

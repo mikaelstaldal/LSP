@@ -8,6 +8,8 @@
 
 <ul>
 <li><a href="{s:encodeURL('Func1')}">Test 1</a></li>
+<li><a href="{s:encodeURL('Func1/17')}">Test 1 with param</a></li>
+<li><a href="{s:encodeURL('Func1/17/abc')}">Test 1 with params</a></li>
 <li><a href="{s:encodeURL('Forward')}">Forward to Test 1</a></li>
 <li><a href="{s:encodeURL('Func2')}">Broken link to Test 2</a></li>
 <li><a href="{s:encodeURL('subdir/Func2')}">Test 2</a></li>

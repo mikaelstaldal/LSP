@@ -17,6 +17,37 @@ interface (probably by extending the class
 or by extending the <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a> class.
 The mapping is done based in the class name, so no explicit mapping file is needed.</p>
 
+<p>Services extending <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a>
+may use the <a href="javadoc/nu/staldal/lsp/framework/Parameter.html">nu.staldal.lsp.framework.Parameter</a> annotation
+to automatically populate fields with HTTP request parameter values.</p>
+
+<p>This framework supports including from an LSP page by using the <code>&lt;s:include&gt;</code>
+element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.</p>
+
+<p>If you want to use a database, add the following to your <code>WEB-INF/web.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;context-param&gt;
+  &lt;param-name&gt;nu.staldal.lsp.servlet.framework.DB&lt;/param-name&gt;
+  &lt;param-value&gt;<var>jdbc/TheDB</var>&lt;/param-value&gt;
+&lt;/context-param&gt;
+
+&lt;resource-ref&gt;
+  &lt;description&gt;The DB Connection&lt;/description&gt;
+  &lt;res-ref-name&gt;<var>jdbc/TheDB</var>&lt;/res-ref-name&gt;
+  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
+  &lt;res-auth&gt;Container&lt;/res-auth&gt;
+&lt;/resource-ref&gt;
+</pre>
+
+<p>and you will get a connection to the database in 
+<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html#execute(javax.servlet.http.HttpServletRequest,%20javax.servlet.http.HttpServletResponse,%20java.util.Map,%20int,%20nu.staldal.lsp.framework.DBConnection)">nu.staldal.lsp.framework.ServiceBase.execute()</a>.</p>
+
+<p>There are two mapping strategies available.</p>
+
+
+<h2>The normal mapping strategy</h2>
+
 <p>If your web application is mounted on the URL 
 <var>http://www.example.com/myapp</var> and ServicePackages is set to 
 <var>com.example.services</var>, the following mapping is performed:</p>
@@ -30,13 +61,6 @@ The mapping is done based in the class name, so no explicit mapping file is need
 <p>If no service is found, an attempt is made to load an LSP page with the 
 same name and display it without any parameters. If neither any LSP page is
 found, a HTTP 404 Not Found response is generated.</p>
-
-<p>Services extending <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a>
-may use the <a href="javadoc/nu/staldal/lsp/framework/Parameter.html">nu.staldal.lsp.framework.Parameter</a> annotation
-to automatically populate fields with HTTP request parameter values.</p>
-
-<p>This framework supports including from an LSP page by using the <code>&lt;s:include&gt;</code>
-element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.</p>
 
 <p>Add the following to your <code>WEB-INF/web.xml</code> file:</p>
 
@@ -101,26 +125,88 @@ application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
 
 <p>and create an empty file <code>.s</code> in your web application.</p>
 
-<p>If you want to use a database, add the following to your <code>WEB-INF/web.xml</code> file:</p>
+<p>See the <code>sample/framework</code> directory for a complete example.</p>
+
+
+<h2>The RESTful mapping strategy</h2>
+
+<p>If your web application is mounted on the URL 
+<var>http://www.example.com/myapp</var> and ServicePackages is set to 
+<var>com.example.services</var>, the following mapping is performed:</p>
+
+<table border="1">
+<tr align="left"><th>Request URL</th><th>Java class</th><th>ExtraArgs</th></tr>
+<tr><td>http://www.example.com/myapp/Foo</td><td>com.example.services.Foo</td><td>[]<td></tr>
+<tr><td>http://www.example.com/myapp/Bar</td><td>com.example.services.Bar</td><td>[]</tr>
+<tr><td>http://www.example.com/myapp/foo/Bar</td><td>com.example.services.foo.Bar</td><td>[]</td></tr>
+<tr><td>http://www.example.com/myapp/Foo/17</td><td>com.example.services.Foo</td><td>["17"]</td></tr>
+<tr><td>http://www.example.com/myapp/Foo/17/Bar</td><td>com.example.services.Foo</td><td>["17","Bar"]</td></tr>
+</table>
+
+<p>The first URL path component which doesn't begin with a Java identifier character (such as a digit) 
+stop the mapping. Any extra URL path components are added to a List<String> which is passed as an attribute
+<code>"ExtraArgs"</code> in the <code>ServletRequest</code>.</p>
+
+<p>If no service is found, a HTTP 404 Not Found response is generated. (No attempt to load an LSP page is made.)</p>
+
+<p>Add the following to your <code>WEB-INF/web.xml</code> file:</p>
 
 <pre class="boxed">
-&lt;context-param&gt;
-  &lt;param-name&gt;nu.staldal.lsp.servlet.framework.DB&lt;/param-name&gt;
-  &lt;param-value&gt;<var>jdbc/TheDB</var>&lt;/param-value&gt;
-&lt;/context-param&gt;
+&lt;servlet&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;nu.staldal.lsp.framework.RestfulDispatcherServlet&lt;/servlet-class&gt;
 
-&lt;resource-ref&gt;
-  &lt;description&gt;The DB Connection&lt;/description&gt;
-  &lt;res-ref-name&gt;<var>jdbc/TheDB</var>&lt;/res-ref-name&gt;
-  &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
-  &lt;res-auth&gt;Container&lt;/res-auth&gt;
-&lt;/resource-ref&gt;
+  &lt;init-param&gt;
+      &lt;param-name&gt;ServicePackages&lt;/param-name&gt;
+      &lt;param-value&gt;<var>list of Java packages, separated by comma</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+  
+  &lt;init-param&gt;
+      &lt;param-name&gt;RequestCharset&lt;/param-name&gt;
+      &lt;param-value&gt;<var>charset to decode HTTP requests with</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
 </pre>
 
-<p>and you will get a connection to the database in 
-<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html#execute(javax.servlet.http.HttpServletRequest,%20javax.servlet.http.HttpServletResponse,%20java.util.Map,%20int,%20nu.staldal.lsp.framework.DBConnection)">nu.staldal.lsp.framework.ServiceBase.execute()</a>.</p>
+<p><code>RequestCharset</code> should be set to the same charset as your 
+HTML pages are encoded with.</p>
 
-<p>See the <code>sample/framework</code> directory for a complete example.</p>
+<p>If you want to use a service (e.g. <var>Menu</var>) as welcome page to your web 
+application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
+
+<pre class="boxed">
+&lt;servlet&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;nu.staldal.lsp.framework.RestfulDispatcherServlet&lt;/servlet-class&gt;
+
+  &lt;init-param&gt;
+      &lt;param-name&gt;ServicePackages&lt;/param-name&gt;
+      &lt;param-value&gt;<var>list of Java packages, separated by comma</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+
+  &lt;init-param&gt;
+      &lt;param-name&gt;RequestCharset&lt;/param-name&gt;
+      &lt;param-value&gt;<var>charset to decode HTTP requests with</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;
+  
+  &lt;init-param&gt;
+      &lt;param-name&gt;DefaultService&lt;/param-name&gt;
+      &lt;param-value&gt;<var>Menu</var>&lt;/param-value&gt;
+  &lt;/init-param&gt;  
+&lt;/servlet&gt;
+
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;DispatcherServlet&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+</pre>
+
+<p>See the <code>sample/restful</code> directory for a complete example.</p>
 
 </body>
 </html>
