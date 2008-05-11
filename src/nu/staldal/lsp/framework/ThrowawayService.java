@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2008, Mikael Ståldal
+ * Copyright (c) 2006-2008, Mikael Stï¿½ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,7 @@ package nu.staldal.lsp.framework;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -85,7 +86,17 @@ public abstract class ThrowawayService
      * Request type include.
      */
     public static final int REQUEST_INCLUDE = 3;
-        
+
+    /**
+     * Request type PUT.
+     */
+    public static final int REQUEST_PUT = 4;
+    
+    /**
+     * Request type DELETE.
+     */
+    public static final int REQUEST_DELETE = 5;
+    
     /**
      * Prefix for request attributes for include attributes.
      */
@@ -120,9 +131,16 @@ public abstract class ThrowawayService
     
     /**
      * The request type.
-     *        {@link #REQUEST_GET}, {@link #REQUEST_POST} or {@link #REQUEST_INCLUDE}  
+     *        {@link #REQUEST_GET}, {@link #REQUEST_POST}, {@link #REQUEST_PUT}, {@link #REQUEST_DELETE} 
+     *        or {@link #REQUEST_INCLUDE}  
      */
     protected int requestType;
+    
+    /**
+     * Any extra URL path components from {@link RestfulDispatcherServlet}, 
+     * or <code>null</code> if another dispatcher is used.
+     */
+    protected List<String> extraArgs;
 
     /**
      * Get the user's locale.
@@ -141,6 +159,8 @@ public abstract class ThrowawayService
         this.response = response;        
         this.requestType = requestType;
         this.mainDB = mainDB;
+        
+        this.extraArgs = (List)request.getAttribute(RestfulDispatcherServlet.EXTRA_ARGS);
     }
     
     final String _execute(Map<String,Object> pageParams)

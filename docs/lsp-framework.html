@@ -145,7 +145,8 @@ application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
 
 <p>The first URL path component which doesn't begin with a Java identifier character (such as a digit) 
 stop the mapping. Any extra URL path components are added to a List<String> which is passed as an attribute
-<code>"ExtraArgs"</code> in the <code>ServletRequest</code>.</p>
+<code>"ExtraArgs"</code> in the <code>ServletRequest</code>. This will also end up in <code>extraArgs</code> in
+<a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a></p>
 
 <p>If no service is found, a HTTP 404 Not Found response is generated. (No attempt to load an LSP page is made.)</p>
 
