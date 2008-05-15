@@ -162,3 +162,4 @@ null and unbound.
 1.8
 ---
 * Support for RESTful web applications in framework.
+* Improved date/time formatting functions in Servlet extlib.

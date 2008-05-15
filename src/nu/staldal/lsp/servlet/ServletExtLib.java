@@ -262,6 +262,28 @@ public class ServletExtLib extends SimpleExtLib
     }    
 
     
+    private Date parseDate(Object _date) throws LSPException 
+    {
+        if (_date instanceof Date)
+        {
+            return (Date)_date;        
+        } 
+        else if (_date instanceof Long)
+        {
+            return new Date(((Number)_date).longValue());
+        }
+        else if (_date instanceof String) 
+        {
+            return new Date(Long.parseLong((String)_date));
+        }
+        else
+        {
+            throw new LSPException(                    
+                    "Argument must be a Date, Long or String");
+        }        
+    }
+    
+    
     /**
      * Extension function <code>formatDate(date)</code>.
      * 
@@ -279,16 +301,10 @@ public class ServletExtLib extends SimpleExtLib
         {
             return "";
         }
-        
-        if (!(_date instanceof Date))
-        {
-            throw new LSPException(                    
-                    "Argument to formatDate(date) function must be a Date");
-        }
-        
+
         return DateFormat
             .getDateInstance(DateFormat.SHORT, context.getLSPManager().getUserLocale(context.getServletRequest()))
-            .format((Date)_date);
+            .format(parseDate(_date));
     }
 
         
@@ -310,15 +326,9 @@ public class ServletExtLib extends SimpleExtLib
             return "";
         }
         
-        if (!(_date instanceof Date))
-        {
-            throw new LSPException(                    
-                    "Argument to formatDate(date) function must be a java.util.Date");
-        }
-        
         return DateFormat
             .getTimeInstance(DateFormat.SHORT, context.getLSPManager().getUserLocale(context.getServletRequest()))
-            .format((Date)_date);
+            .format(parseDate(_date));
     }
 
 
@@ -340,16 +350,10 @@ public class ServletExtLib extends SimpleExtLib
             return "";
         }
         
-        if (!(_date instanceof Date))
-        {
-            throw new LSPException(                    
-                    "Argument to formatDateTime(date) function must be a java.util.Date");
-        }
-        
         return DateFormat
             .getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, 
                     context.getLSPManager().getUserLocale(context.getServletRequest()))
-            .format((Date)_date);
+            .format(parseDate(_date));
     }
 
     
@@ -378,15 +382,9 @@ public class ServletExtLib extends SimpleExtLib
                     "First argument to formatCustomDateTime(pattern, date) function must be a string");
         }
 
-        if (!(_date instanceof Date))
-        {
-            throw new LSPException(                    
-                    "Second argument to formatCustomDateTime(pattern, date) function must be a java.util.Date");
-        }
-        
         return new SimpleDateFormat((String)_pattern,  
                     context.getLSPManager().getUserLocale(context.getServletRequest()))
-            .format((Date)_date);
+            .format(parseDate(_date));
     }
     
     

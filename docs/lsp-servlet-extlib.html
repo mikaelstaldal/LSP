@@ -60,23 +60,28 @@ values.</p>
 <p>Check if the user is in a given role, using the
 <code>javax.servlet.http.HttpServletRequest.isUserInRole(String)</code> method.</p>
 
-<h4>string s:formatDate(java.util.Date)</h4>
+<h4>string s:formatDate(date)</h4>
 
 <p>Format a date as a string using the user's locale. Return the empty string if the date is <code>null</code>.</p>
 
-<h4>string s:formatTime(java.util.Date)</h4>
+<h4>string s:formatTime(date)</h4>
 
 <p>Format a time as a string using the user's locale. Return the empty string if the date is <code>null</code>.</p>
 
-<h4>string s:formatDateTime(java.util.Date)</h4>
+<h4>string s:formatDateTime(date)</h4>
 
 <p>Format a date/time as a string using the user's locale. Return the empty string if the date is <code>null</code>.</p>
 
-<h4>string s:formatCustomDateTime(string, java.util.Date)</h4>
+<h4>string s:formatCustomDateTime(string, date)</h4>
 
 <p>Format a date/time as a string using the user's locale with a custom formatting pattern. 
 The pattern is specified as in <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/text/SimpleDateFormat.html">java.text.SimpleDateFormat</a>.
 Return the empty string if the date is <code>null</code>.</p>
+
+<p><code>date</code> arguments may be <code>java.util.Date</code>, 
+<code>number</code> which is used as argument to <code>java.util.Date</code> constructor 
+or <code>string</code> which is parsed as a long and used as argument to <code>java.util.Date</code> constructor.
+
 
 <h2>XSLT</h2>
 
