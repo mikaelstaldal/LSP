@@ -319,4 +319,51 @@
   	
   </target>
 	
+  <target name="xmltree" depends="init"
+    description="Compiles XMLTree">
+
+    <mkdir dir="build/xmltree-classes"/>
+    <javac srcdir="xmltree/java"
+           destdir="build/xmltree-classes"
+           encoding="iso-8859-1"
+           source="1.5" target="1.5"
+           optimize="on" debug="on"
+           deprecation="on">
+    </javac>
+    <copy todir="build/xmltree-classes" includeEmptyDirs="no">
+      <fileset dir="xmltree/java">
+        <exclude name="**/*.java" />
+        <exclude name="**/*.lex" />
+        <exclude name="**/package.html" />
+      </fileset>
+    </copy>
+
+    <jar jarfile="xmltree.jar">
+      <fileset dir="build/xmltree-classes"> 
+         <include name="nu/staldal/xmltree/**" />
+      </fileset>     
+    </jar>
+    
+    <mkdir dir="build/xmltree-javadoc"/>
+    <javadoc packagenames="nu.staldal.xmltree"
+             encoding="iso-8859-1"
+             charset="UTF-8"
+             sourcepath="xmltree/java"
+             destdir="build/xmltree-javadoc"
+             author="true"
+             version="true"
+             windowtitle="XMLTree"
+             doctitle="XMLTree">
+    </javadoc>
+    
+    <zip zipfile="xmltree.zip">
+      <zipfileset prefix="javadoc" dir="build/xmltree-javadoc"> 
+         <include name="*/**"/>
+      </zipfileset>
+      <fileset dir=".">     
+          <include name="xmltree.jar"/>
+      </fileset>
+    </zip>
+    
+  </target>
 </project>
