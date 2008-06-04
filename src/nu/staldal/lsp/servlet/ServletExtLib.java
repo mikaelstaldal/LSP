@@ -386,7 +386,31 @@ public class ServletExtLib extends SimpleExtLib
                     context.getLSPManager().getUserLocale(context.getServletRequest()))
             .format(parseDate(_date));
     }
-    
+
+
+    /**
+     * Extension function <code>formatXMLDateTime(date)</code>.
+     * 
+     * @param _date     the date/time to format (java.util.Date)
+     * 
+     * @return the date/time formatted as String
+     * 
+     * @throws LSPException
+     */
+    public Object _formatXMLDateTime(Object _date) throws LSPException
+    {
+        if (_date == null) 
+        {
+            return "";
+        }
+        
+        DateFormat df = new SimpleDateFormat(
+                    "yyyy-MM-dd\'T\'HH:mm:ss\'Z\'",  
+                    Locale.ENGLISH);
+        df.setTimeZone(TimeZone.getTimeZone("GMT"));                
+        return df.format(parseDate(_date));
+    }
+        
     
     private String lang(String pageName, String key,
                 LSPServletContext context)
