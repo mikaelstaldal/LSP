@@ -9,5 +9,4 @@ Servlet=servlet.jar
 Struts=struts.jar
 Maverick=maverick.jar
 JDOM=jdom.jar
-CommonsCollections=commons-collections.jar
 

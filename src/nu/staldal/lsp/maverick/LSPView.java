@@ -49,10 +49,9 @@ import org.xml.sax.*;
 
 import org.infohazard.maverick.flow.*; 
 
-import org.apache.commons.collections.BeanMap;
-
 import nu.staldal.lsp.*;
 import nu.staldal.lsp.servlet.*;
+import nu.staldal.lsp.wrapper.ReadonlyBeanMap;
 
 
 class LSPView implements View
@@ -118,7 +117,7 @@ class LSPView implements View
         }
         else
         {
-            lspParams.put(beanName, new BeanMap(model));
+            lspParams.put(beanName, new ReadonlyBeanMap(model));
         }            
 
         TransformStep next = vctx.getNextStep();

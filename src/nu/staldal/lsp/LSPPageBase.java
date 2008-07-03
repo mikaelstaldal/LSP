@@ -511,15 +511,7 @@ public abstract class LSPPageBase implements LSPPage
         }
         else
         {
-            try {
-                return new org.apache.commons.collections.BeanMap(value);
-            }
-            catch (NoClassDefFoundError e)
-            {
-                throw new LSPException(
-                    "Convert to tuple not implemented for type "
-                    + value.getClass().getName());
-            }
+            return new ReadonlyBeanMap(value);
         }
 	}
 
