@@ -1,0 +1,17 @@
+<body>
+<div class="ZtExpand-theMap">
+<p class="Zt-foo">a</p>
+<p class="Zt-bar">b</p>
+<p class="Zt-baz">c</p>
+</div>
+<div class="ZtExpand-theFruit">
+<p>Name: <span class="Zt-name">a</span></p>
+<p>Taste: <span class="Zt-taste">b</span></p>
+<p>Color: <span class="Zt-color">c</span></p>
+</div>
+<table>
+<tr><th>Name</th><th>Taste</th><th>Color</th></tr>
+<tr class="ZtList-theTable"><td class="Zt-name">aaa</td><td class="Zt-taste">bbb</td><td class="Zt-color">ccc</td></tr>
+<tr class="ZtRemove-"><td><em>AAA</em></td><td>BBB</td><td>CCC</td></tr>
+</table>
+</body>

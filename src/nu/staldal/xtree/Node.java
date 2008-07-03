@@ -48,6 +48,7 @@ import org.xml.sax.*;
 /**
  * Base class for a node in an XTree. 
  */
+@Deprecated
 public abstract class Node implements java.io.Serializable, Locator
 {
     /**

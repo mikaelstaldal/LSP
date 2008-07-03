@@ -308,4 +308,21 @@ public class TestLSPCompilation
              + "</root>",
              params);
     }
+
+    @Test
+    public void testListAndMap() throws Exception
+    {
+        Map<String,Object> params = new HashMap<String,Object>();
+        params.put("lm", new ListAndMap());
+        doTest("ListAndMap",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             + "<root>\n"
+             + "<h1>FOO</h1>\n"
+             + "<p>Number 0</p>"
+             + "<p>Number 1</p>"
+             + "<p>Number 2</p>\n"
+             + "<h1>BAR</h1>\n"
+             + "</root>",
+             params);
+    }    
 }

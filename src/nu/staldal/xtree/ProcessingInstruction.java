@@ -45,6 +45,7 @@ import org.xml.sax.*;
 /**
  * An XML processing instruction.
  */
+@Deprecated
 public class ProcessingInstruction extends Node
 {
 	static final long serialVersionUID = 813983310154546819L;

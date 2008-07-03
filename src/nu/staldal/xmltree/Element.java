@@ -121,6 +121,20 @@ public class Element extends NodeWithChildren {
         
         this.attributeMap = new AttributeMap(numberOfAttributes);
     }
+    
+    /**
+     * Pseudo-copy constructor, do not copy the children, but allocate room for them.
+     * 
+     * @param element  the element to copy
+     */
+    public Element(Element element) {
+        super(element);        
+        this.name = element.name;
+        this.baseURI = element.baseURI;
+        this.namespacePrefixes = new ArrayList<String>(element.namespacePrefixes);
+        this.namespaceURIs= new ArrayList<String>(element.namespaceURIs);
+        this.attributeMap = new AttributeMap(element.attributeMap);
+    }
 
     /**
      * Get the namespace URI for this element. May be the empty string.
@@ -301,21 +315,38 @@ public class Element extends NodeWithChildren {
      *             if any of the ContentHandler methods throw it
      */
     public void outputStartElement(ContentHandler sax) throws SAXException {
+        outputStartElement(sax, attributeMap);
+    }
+
+    /**
+     * Fire the startElement event to the given SAX2 ContentHandler. Will also
+     * fire startPrefixMapping events. Override attributes.
+     * 
+     * @param sax
+     *            the ContentHandler
+     * @param attributes
+     *            the attributes to use instead of the normal ones            
+     * 
+     * @throws SAXException
+     *             if any of the ContentHandler methods throw it
+     */
+    public void outputStartElement(ContentHandler sax, Map<String, String> attributes) 
+            throws SAXException {
         for (int i = 0; i < namespacePrefixes.size(); i++) {
             sax.startPrefixMapping(namespacePrefixes.get(i), namespaceURIs
                     .get(i));
         }
 
         AttributesImpl atts = new AttributesImpl();
-        for (Map.Entry<String, String> entry : attributeMap.entrySet()) {
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
             QName qname = QName.valueOf(entry.getKey());
 
             atts.addAttribute(qname.getNamespaceURI(), qname.getLocalPart(),
                     "", "CDATA", entry.getValue());
         }
         sax.startElement(name.getNamespaceURI(), name.getLocalPart(), "", atts);
-    }
-
+    }        
+    
     /**
      * Fire the endElement event to the given SAX2 ContentHandler. Will also
      * fire endPrefixMapping events.
@@ -338,30 +369,11 @@ public class Element extends NodeWithChildren {
     public void toSAX(ContentHandler sax) throws SAXException {
         outputStartElement(sax);
 
-        for (Node node : getChildren()) {
+        for (Node node : this) {
             node.toSAX(sax);
         }
 
         outputEndElement(sax);
-    }
-
-    /**
-     * Shortcut method for getting the value of an attribute.
-     * 
-     * @param name
-     *            the (qualified) name of the attribute
-     * 
-     * @return the attrubute value, never <code>null</code>
-     * 
-     * @throws SAXParseException
-     *             if the attribute doesn't exist
-     */
-    public String getAttrValue(String name) throws SAXParseException {
-        String v = attributeMap.get(name);
-        if (v == null)
-            throw new SAXParseException("Attribute " + name + " expected", this);
-        else
-            return v;
     }
 
     /**
@@ -372,14 +384,14 @@ public class Element extends NodeWithChildren {
      *         than one children or one non-Text child
      */
     public String getTextContentOrNull() {
-        if (getChildren().isEmpty()) {
+        if (isEmpty()) {
             return "";
         }
-        else if (getChildren().size() > 1) {
+        else if (size() > 1) {
             return null;
         }
         else {
-            Node node = getChildren().get(0);
+            Node node = get(0);
             if (!(node instanceof Text))
                 return null;
 
@@ -414,10 +426,42 @@ public class Element extends NodeWithChildren {
         attributeMap.put(name, value);        
     }
 
-    public String getAttribute(String name) {
+    /**
+     * Shortcut method for getting the value of an attribute.
+     * 
+     * @param name
+     *            the (qualified) name of the attribute
+     * 
+     * @return the attrubute value, or <code>null</code> if the attribute doesn't exist
+     */
+    public String getAttributeOrNull(String name) {
         return attributeMap.get(name);
     }
 
+    /**
+     * Shortcut method for getting the value of an attribute.
+     * 
+     * @param name
+     *            the (qualified) name of the attribute
+     * 
+     * @return the attrubute value, never <code>null</code>
+     * 
+     * @throws SAXParseException
+     *             if the attribute doesn't exist
+     */
+    public String getAttribute(String name) throws SAXParseException {
+        String v = getAttributeOrNull(name);
+        if (v == null)
+            throw new SAXParseException("Attribute " + name + " expected", this);
+        else
+            return v;
+    }
+    
+    /**
+     * Get the Map with attributes for this element.
+     * 
+     * @return the Map with attributes for this element
+     */
     public Map<String,String> getAttributes() {
         return attributeMap;
     }

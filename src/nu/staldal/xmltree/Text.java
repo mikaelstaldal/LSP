@@ -64,7 +64,7 @@ public class Text extends Node {
      *            the number of characters to read from the buffer
      * @param forceCopy
      *            force copying of the data, if false a reference to the buffer
-     *            may be keept.
+     *            may be kept.
      */
     public Text(char[] data, int start, int length, boolean forceCopy) {
         value = new String(data, start, length);

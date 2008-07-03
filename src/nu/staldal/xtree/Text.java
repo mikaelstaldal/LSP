@@ -46,6 +46,7 @@ import org.xml.sax.*;
 /**
  * Character content in an XML document. This class is immutible.
  */
+@Deprecated
 public class Text extends Node
 {
 	static final long serialVersionUID = -128692223369356277L;

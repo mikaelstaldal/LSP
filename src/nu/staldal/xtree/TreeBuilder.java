@@ -54,6 +54,7 @@ import org.xml.sax.*;
  *
  * The TreeBuilder ensures that the tree will not have two adjacent Text nodes.
  */
+@Deprecated
 public class TreeBuilder implements ContentHandler, ErrorHandler
 {
 	public static final boolean DEBUG = false;

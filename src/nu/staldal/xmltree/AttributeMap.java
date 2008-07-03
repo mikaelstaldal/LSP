@@ -27,6 +27,10 @@ class AttributeMap implements Map<String, String> {
         }        
     }
 
+    AttributeMap(AttributeMap map) {
+        attributes = new HashMap<String, String>(map.attributes);
+    }
+    
     public String get(Object key) {
         return attributes.get(key);
     }

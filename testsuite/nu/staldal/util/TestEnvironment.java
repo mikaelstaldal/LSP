@@ -49,6 +49,13 @@ public class TestEnvironment extends TestCase
 		assertEquals(value2, env.lookup(key1));
 		env.popFrame();
 		assertEquals(value1, env.lookup(key1));
+
+		Map<String,String> m = new HashMap<String,String>();
+		m.put(key1, value2);
+        env.pushFrame(m);
+        assertEquals(value2, env.lookup(key1));
+        env.popFrame();
+        assertEquals(value1, env.lookup(key1));		
 		
 		env.pushFrame();
 		assertEquals(value1, env.lookup(key1));

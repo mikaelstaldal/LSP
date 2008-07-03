@@ -46,6 +46,7 @@ import java.util.ArrayList;
 /**
  * Base class for a node with children. The children are ordered. 
  */
+@Deprecated
 public abstract class NodeWithChildren extends Node
 {
     private ArrayList<Node> children;

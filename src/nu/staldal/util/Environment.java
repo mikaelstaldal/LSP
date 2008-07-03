@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2007, Mikael Ståldal
+ * Copyright (c) 2002-2008, Mikael Ståldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -161,6 +161,16 @@ public class Environment<K,V>
 		currentFrame = new Frame<K,V>(currentFrame);	
 	}
 
+    /**
+     * Push a new frame on the frame stack, with initial values.
+     * 
+     * @param initial  the Map with initial bindings for the new frame
+     */
+    public void pushFrame(Map<K,V> initial)
+    {
+        currentFrame = new Frame<K,V>(currentFrame, initial);    
+    }
+    
 	/**
 	 * Pop a frame from the frame stack. Any bindings in the current frame
 	 * will be discarded.
@@ -180,27 +190,33 @@ public class Environment<K,V>
 
 	static class Frame<K,V>
 	{
-		private Frame<K,V> parent;
-		private Map<K,V> map;
+		private final Frame<K,V> parent;
+		private final Map<K,V> map;
 		
+        Frame()
+        {
+            parent = null;
+            map = new HashMap<K,V>();
+        }   
+
 		Frame(Frame<K,V> p)
 		{
 			parent = p;
 			map = new HashMap<K,V>();
 		}
 	
-		Frame()
-		{
-			parent = null;
-			map = new HashMap<K,V>();
-		}	
-
 		Frame(Map<K,V> initial)
 		{
 			parent = null;
             map = initial;
 		}	
 
+        Frame(Frame<K,V> p, Map<K,V> initial)
+        {
+            parent = p;
+            map = initial;
+        }
+    
 		Frame<K,V> getParent()
 		{
 			return parent;	

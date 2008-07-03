@@ -44,12 +44,16 @@ import java.io.*;
 import java.util.*;
 
 import org.xml.sax.*;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.*;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
 import nu.staldal.xodus.*;
+import nu.staldal.zt.ZtCompiler;
 
 
 /**
@@ -67,6 +71,7 @@ public class LSPHelper
     private final Map<String,LSPPage> lspPages;
     private final Map<String,Templates> stylesheets;
 	private final SAXTransformerFactory tfactory;
+    private final SAXParserFactory spf;
 
     private String htmlType = "text/html";
     private String xhtmlType = "text/html";
@@ -100,6 +105,23 @@ public class LSPHelper
                 + tf.getClass().getName() + " doesn't support SAX");
         }            
 		this.tfactory = (SAXTransformerFactory)tf;
+		
+        try {
+            spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            spf.setValidating(false);
+            spf.setFeature("http://xml.org/sax/features/namespaces", true);
+            spf.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+            spf.setFeature("http://xml.org/sax/features/validation", false);
+        }
+        catch (ParserConfigurationException e)
+        {
+            throw new Error("Unable to configure XML parser");  
+        }
+        catch (SAXException e)
+        {
+            throw new Error("Unable to configure XML parser");  
+        }		
 	}
 
     
@@ -277,6 +299,7 @@ public class LSPHelper
 		if (page == null)
 		{
 			page = loadPage(pageName);
+            lspPages.put(pageName, page);                       
 		}
 		
 		return page;
@@ -292,23 +315,86 @@ public class LSPHelper
 		try {
 			Class<?> pageClass = Class.forName("_LSP_"+pageName, true, 
 				classLoader);
-
-			LSPPage page = (LSPPage)pageClass.newInstance();
-            
-            fixOutputProperties(page.getOutputProperties());
-			
-			lspPages.put(pageName, page);			
-			
+			LSPPage page = (LSPPage)pageClass.newInstance();            
+            fixOutputProperties(page.getOutputProperties());			
 		  	return page;            
 		}
 		catch (ClassNotFoundException e)
 		{
-			return null;
+			LSPPage page = loadZtPage(pageName);
+            fixOutputProperties(page.getOutputProperties());
+            return page;			
 		}				
 	}
 
 
 	/**
+	 * Load ZeroTemplate page.
+	 * 
+     * @param pageName  the name of the ZT page
+     *
+     * @return <code>null</code> if the given page is not found     
+     */
+    private LSPPage loadZtPage(String pageName) {
+        InputStream is = classLoader.getResourceAsStream(pageName+".zt");
+        if (is == null) {
+            return null;
+        }
+        try {
+            ZtCompiler compiler = new ZtCompiler();
+            ContentHandler sax = compiler.startCompile(pageName);
+            
+            try {
+                XMLReader parser = spf.newSAXParser().getXMLReader(); 
+
+                parser.setContentHandler(sax);
+                parser.setErrorHandler(new ErrorHandler() {
+                    public void fatalError(SAXParseException e) 
+                        throws SAXParseException
+                    {
+                        throw e;
+                    }
+
+                    public void error(SAXParseException e) 
+                        throws SAXParseException
+                    {
+                        throw e;
+                    }
+
+                    public void warning(SAXParseException e)
+                    {
+                        // do nothing
+                    }               
+                });
+
+                parser.parse(new InputSource(is));
+            }
+            catch (ParserConfigurationException e) {
+                throw new RuntimeException(e);
+            }                   
+            
+            return compiler.finishCompile();            
+        }
+        catch (LSPException e) {
+            throw new RuntimeException(e);
+        }
+        catch (SAXException e) {
+            throw new RuntimeException(e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                is.close();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+    /**
      * Get Content-Type (Internet Media Type, MIME type) with character 
 	 * encoding as "charset" parameter from an LSP page. If the LSP page 
 	 * specifies a stylesheet, the Content-Type for the stylesheet will 

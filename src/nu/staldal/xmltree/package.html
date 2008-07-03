@@ -13,5 +13,8 @@ to its root element. It's not possible to distinguish between a complete
 document and a document fragment, both are simply representated by an {@link
 nu.staldal.xmltree.Element}.</p>
 
+<p>Qualified names are representated as in {@link javax.xml.namespace.QName#toString}:
+"{" + Namespace URI + "}" + local part. If the Namespace URI is empty, 
+only the local part is used (no "{" "}").</p>
 </body>
 </html>

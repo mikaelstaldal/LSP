@@ -208,7 +208,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler {
             node.setSystemId(textSystemId);
             node.setLine(textLine);
             node.setColumn(textColumn);
-            parent.getChildren().add(node);
+            parent.add(node);
         }
 
         textBuffer = null;
@@ -249,7 +249,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler {
         }
         else {
             Element parent = elementStack.peek();
-            parent.getChildren().add(el);
+            parent.add(el);
         }
 
         for (int i = 0; i < atts.getLength(); i++) {
@@ -348,7 +348,7 @@ public class TreeBuilder implements ContentHandler, ErrorHandler {
             node.setLine(locator.getLineNumber());
             node.setColumn(locator.getColumnNumber());
         }
-        parent.getChildren().add(node);
+        parent.add(node);
     }
 
     public void skippedEntity(String name) throws SAXException {

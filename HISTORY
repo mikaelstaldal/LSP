@@ -163,3 +163,9 @@ null and unbound.
 ---
 * Support for RESTful web applications in framework.
 * Improved date/time formatting functions in Servlet extlib.
+
+
+1.9
+---
+* Removed dependency on Apache Commons Collections.
+* ZeroTemplate

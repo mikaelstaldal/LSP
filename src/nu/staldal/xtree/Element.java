@@ -50,6 +50,7 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * An XML Element.
  */
+@Deprecated
 public class Element extends NodeWithChildren
 {
 	static final long serialVersionUID = -1804355746259349573L;

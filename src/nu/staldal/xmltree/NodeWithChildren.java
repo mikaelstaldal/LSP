@@ -40,17 +40,19 @@
 
 package nu.staldal.xmltree;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.xml.sax.SAXParseException;
 
 /**
  * Base class for a node with children. The children are ordered.
  */
-public abstract class NodeWithChildren extends Node {
-    private final NodeList children;
+public abstract class NodeWithChildren extends Node implements List<Node> {
+    private final ArrayList<Node> children;
 
     /**
      * Construct a node which children.
@@ -67,18 +69,22 @@ public abstract class NodeWithChildren extends Node {
      *            unknown
      */
     public NodeWithChildren(int capacity) {
-        children = new NodeList(this, capacity);
+        if (capacity >= 0)
+            this.children = new ArrayList<Node>(capacity);
+        else
+            this.children = new ArrayList<Node>();
     }
-
+    
     /**
-     * Return all children.
+     * Pseudo-copy constructor, do not copy the children, but allocate room for them.
      * 
-     * @return all children.
+     * @param node  node to copy.
      */
-    public List<Node> getChildren() {
-        return children;
+    protected NodeWithChildren(NodeWithChildren node) {
+        super(node);
+        children = new ArrayList<Node>(node.children.size());
     }
-
+    
     /**
      * Shortcut method for getting the first Element child with a specified
      * name.
@@ -89,7 +95,7 @@ public abstract class NodeWithChildren extends Node {
      *         <code>null</code> if there is no such child.
      */
     public Element getFirstChildElementOrNull(String name) {
-        for (Node node : getChildren()) {
+        for (Node node : this) {
             if (node instanceof Element) {
                 Element e = (Element)node;
                 if (e.getName().equals(name)) {
@@ -129,7 +135,7 @@ public abstract class NodeWithChildren extends Node {
      *         Element children.
      */
     public Element getFirstChildElementOrNull() {
-        for (Node node : getChildren()) {
+        for (Node node : this) {
             if (node instanceof Element) {
                 return (Element)node;
             }
@@ -164,7 +170,7 @@ public abstract class NodeWithChildren extends Node {
             private int theSize = -1;
 
             public boolean contains(Object o) {
-                return (o instanceof Element) && getChildren().contains(o);
+                return (o instanceof Element) && contains(o);
             }
 
             public boolean containsAll(Collection<?> c) {
@@ -179,7 +185,7 @@ public abstract class NodeWithChildren extends Node {
 
             public Iterator<Element> iterator() {
                 return new Iterator<Element>() {
-                    private Iterator<Node> nodes = getChildren().iterator();
+                    private Iterator<Node> nodes = NodeWithChildren.this.iterator();
 
                     private Element nextElement = null;
 
@@ -214,7 +220,7 @@ public abstract class NodeWithChildren extends Node {
 
             private void calcSize() {
                 theSize = 0;
-                for (Node node : getChildren()) {
+                for (Node node : NodeWithChildren.this) {
                     if (node instanceof Element) {
                         theSize++;
                     }
@@ -268,4 +274,110 @@ public abstract class NodeWithChildren extends Node {
         };
     }
 
+    
+    // List implementation
+    
+    public Node get(int index) {
+        return children.get(index);
+    }
+    
+    public boolean add(Node newChild) {
+        newChild.setParent(this);
+        return children.add(newChild);
+    }
+    
+    public Node set(int index, Node newChild) {
+        Node oldChild = children.get(index);
+        oldChild.setParent(null);
+        newChild.setParent(this);
+        children.set(index, newChild);
+        return oldChild;
+    }
+
+    public boolean addAll(Collection<? extends Node> c) {
+        for (Node n : c) {
+            add(n);
+        }
+        return c.size() > 0;
+    }
+
+    public void clear() {
+        for (Node child : children) {
+            child.setParent(null);
+        }
+        children.clear();
+    }
+
+    public boolean contains(Object o) {
+        return children.contains(o);
+    }
+
+    public boolean containsAll(Collection<?> c) {
+        return children.containsAll(c);
+    }
+
+    public boolean isEmpty() {
+        return children.isEmpty();
+    }
+
+    public Iterator<Node> iterator() {
+        return children.iterator();
+    }
+
+    public int size() {
+        return children.size();
+    }
+
+    public Object[] toArray() {
+        return children.toArray();
+    }
+
+    public <T> T[] toArray(T[] a) {
+        return children.toArray(a);
+    }
+    
+    public boolean remove(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean retainAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void add(int index, Node element) {
+        throw new UnsupportedOperationException();
+    }
+
+    public boolean addAll(int index, Collection<? extends Node> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    public int indexOf(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    public int lastIndexOf(Object o) {
+        throw new UnsupportedOperationException();
+    }
+
+    public ListIterator<Node> listIterator() {
+        return children.listIterator();
+    }
+
+    public ListIterator<Node> listIterator(int index) {
+        return children.listIterator(index);
+    }
+
+    public Node remove(int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public List<Node> subList(int fromIndex, int toIndex) {
+        throw new UnsupportedOperationException();
+    }    
+    
 }

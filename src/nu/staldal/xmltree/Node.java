@@ -82,6 +82,26 @@ public abstract class Node implements java.io.Serializable, Locator {
     }
 
     /**
+     * Default constructor.
+     */
+    public Node() {
+        // nothing to do
+    }
+    
+    /**
+     * Copy constructor.
+     * 
+     * @param node  the node to copy
+     */
+    protected Node(Node node) {
+        publicId = node.publicId;
+        systemId = node.systemId;
+        line = node.line;
+        column = node.column;
+        parent = node.parent;
+    }
+    
+    /**
      * Get the parent of this node.
      * 
      * @return the parent of this node, or <code>null</code> if this node has

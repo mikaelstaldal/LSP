@@ -14,8 +14,8 @@
 
   <property name="Name" value="LSP"/>
   <property name="name" value="lsp"/>
-  <property name="version" value="1.8"/>
-  <property name="ver" value="18"/>
+  <property name="version" value="1.9"/>
+  <property name="ver" value="19"/>
 
   <property name="src.dir" value="src"/>
   <property name="src.testsuite" value="testsuite"/>
@@ -47,13 +47,12 @@
 
 	<!-- LSP core runtime -->
     <javac srcdir="${src.dir}"
-    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/util/*,nu/staldal/xodus/*"
+    	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/util/*,nu/staldal/xodus/*,nu/staldal/xmltree/*"
            destdir="${build.classes}"
            encoding="iso-8859-1"
            source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
-       <classpath location="${CommonsCollections}" />
 	</javac>
 
 	<!-- Servlet and Java EE integration -->
@@ -66,7 +65,6 @@
            deprecation="on">
        <compilerarg value="-Xlint:unchecked"/>           
        <classpath location="${Servlet}" />
-       <classpath location="${CommonsCollections}" />
        <classpath location="${Struts}" />
        <classpath location="${Maverick}" />
        <classpath location="${JDOM}" />
@@ -97,6 +95,7 @@
          <include name="nu/staldal/lsp/wrapper/*" />
          <include name="nu/staldal/lsp/servlet/**/*" />
          <include name="nu/staldal/xodus/**/*" />
+         <include name="nu/staldal/xmltree/**/*" />
          <include name="nu/staldal/lsp/struts/**/*" />
          <include name="nu/staldal/lsp/maverick/**/*" />
          <include name="nu/staldal/lsp/framework/**/*" />
@@ -204,6 +203,7 @@
     	<test name="nu.staldal.lsp.TestLSPHelper"/>
     	<test name="nu.staldal.lsp.framework.TestFrameworkStuff"/>
     	<test name="nu.staldal.lsp.framework.TestTheFramework"/>
+        <test name="nu.staldal.zt.TestZt"/>
     	
     </junit>
   </target>
@@ -215,7 +215,7 @@
       <fileset dir="docs" includes="*.html,*.css,*.dtd"/>
     </copy>
     <mkdir dir="dist/docs/javadoc"/>
-    <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet,nu.staldal.xodus,nu.staldal.lsp.framework"
+    <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet,nu.staldal.xodus,nu.staldal.lsp.framework,nu.staldal.xmltree"
              encoding="iso-8859-1"
     	     sourcepath="${src.dir}"
              destdir="dist/docs/javadoc"
@@ -323,7 +323,8 @@
     description="Compiles XMLTree">
 
     <mkdir dir="build/xmltree-classes"/>
-    <javac srcdir="xmltree/java"
+    <javac srcdir="${src.dir}"
+           includes="nu/staldal/xmltree/**/*"
            destdir="build/xmltree-classes"
            encoding="iso-8859-1"
            source="1.5" target="1.5"
@@ -331,7 +332,8 @@
            deprecation="on">
     </javac>
     <copy todir="build/xmltree-classes" includeEmptyDirs="no">
-      <fileset dir="xmltree/java">
+      <fileset dir="${src.dir}">
+      	<include name="nu/staldal/xmltree/**/*" />
         <exclude name="**/*.java" />
         <exclude name="**/*.lex" />
         <exclude name="**/package.html" />
@@ -348,7 +350,7 @@
     <javadoc packagenames="nu.staldal.xmltree"
              encoding="iso-8859-1"
              charset="UTF-8"
-             sourcepath="xmltree/java"
+             sourcepath="${src.dir}"
              destdir="build/xmltree-javadoc"
              author="true"
              version="true"
