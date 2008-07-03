@@ -53,6 +53,7 @@ import javax.servlet.http.*;
 /**
  * Abstract base class for Service. See {@link Service}.
  */
+@Deprecated
 public abstract class ServiceBase implements Service
 {
     /**

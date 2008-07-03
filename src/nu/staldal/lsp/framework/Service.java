@@ -68,6 +68,7 @@ import javax.servlet.http.*;
  * The life cycle and instance management of Services are very similar to 
  * {@link javax.servlet.Servlet}, see the Servlet specification for details.
  */
+@Deprecated
 public interface Service
 {
     
