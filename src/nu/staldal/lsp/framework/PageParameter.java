@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 /**
- * A field in a {@link FancyService} with this annotation  
+ * A field in a {@link EasyService} with this annotation  
  * set will be automatically passed as a page parameter to the template.
  * The page parameter name is the <code>value</code> argument, or 
  * the field name if the <code>value</code> argument is not set. 

@@ -169,4 +169,4 @@ null and unbound.
 ---
 * Removed dependency on Apache Commons Collections.
 * ZeroTemplate.
-* Fancy Service.
+* EasyService.

@@ -10,16 +10,14 @@
 <a href="javadoc/nu/staldal/lsp/framework/package-summary.html">Javadoc</a>.</p>
 
 <p>This framework consists of a Servlet which dispatches requests to 
-services. Each service is a Java class implementing either the 
-<a href="javadoc/nu/staldal/lsp/framework/Service.html">nu.staldal.lsp.framework.Service</a> 
-interface (probably by extending the class
-<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html">nu.staldal.lsp.framework.ServiceBase</a>) 
-or by extending the <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a> class.
+services. Each service is a Java class extending the <a href="javadoc/nu/staldal/lsp/framework/EasyService.html">nu.staldal.lsp.framework.EasyService</a> class.
 The mapping is done based in the class name, so no explicit mapping file is needed.</p>
 
-<p>Services extending <a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html">nu.staldal.lsp.framework.ThrowawayService</a>
-may use the <a href="javadoc/nu/staldal/lsp/framework/Parameter.html">nu.staldal.lsp.framework.Parameter</a> annotation
-to automatically populate fields with HTTP request parameter values.</p>
+<p>Services may use the <a href="javadoc/nu/staldal/lsp/framework/Parameter.html">nu.staldal.lsp.framework.Parameter</a> 
+annotation to automatically populate fields with HTTP request parameter values.</p>
+
+<p>Services may use the <a href="javadoc/nu/staldal/lsp/framework/PageParameter.html">nu.staldal.lsp.framework.PageParameter</a> 
+annotation to automatically pass page parameters to templates.</p>
 
 <p>This framework supports including from an LSP page by using the <code>&lt;s:include&gt;</code>
 element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.</p>
@@ -41,7 +39,7 @@ element in the <a href="lsp-servlet-extlib.html">Servlet extension library</a>.<
 </pre>
 
 <p>and you will get a connection to the database in 
-<a href="javadoc/nu/staldal/lsp/framework/ServiceBase.html#execute(javax.servlet.http.HttpServletRequest,%20javax.servlet.http.HttpServletResponse,%20java.util.Map,%20int,%20nu.staldal.lsp.framework.DBConnection)">nu.staldal.lsp.framework.ServiceBase.execute()</a>.</p>
+<a href="javadoc/nu/staldal/lsp/framework/ThrowawayService.html#dbConn">dbConn</a>.</p>
 
 <p>There are two mapping strategies available.</p>
 
@@ -211,4 +209,3 @@ application, add the following to your <code>WEB-INF/web.xml</code> file:</p>
 
 </body>
 </html>
-

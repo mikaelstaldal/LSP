@@ -126,28 +126,28 @@ public class DispatcherServlet extends HttpServlet
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        doService(request, response, Service.REQUEST_GET);
+        doService(request, response, ThrowawayService.REQUEST_GET);
     }    
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        doService(request, response, Service.REQUEST_POST);
+        doService(request, response, ThrowawayService.REQUEST_POST);
     }
 
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        doService(request, response, Service.REQUEST_PUT);
+        doService(request, response, ThrowawayService.REQUEST_PUT);
     }
 
     @Override
     public void doDelete(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
-        doService(request, response, Service.REQUEST_DELETE);
+        doService(request, response, ThrowawayService.REQUEST_DELETE);
     }
     
     protected boolean useTemplateIfServiceIsNotFound() {

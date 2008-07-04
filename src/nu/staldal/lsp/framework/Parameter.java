@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
 /**
- * Mark a field in a {@link ThrowawayService} with this annotation to 
+ * Mark a field in a {@link ThrowawayService} or {@link Easy Service} with this annotation to 
  * set have it automatically populated with the value of a HTTP request 
  * parameter. The parameter name is the <code>value</code> argument, or 
  * the field name if the <code>value</code> argument is not set. 

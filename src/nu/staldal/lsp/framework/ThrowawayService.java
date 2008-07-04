@@ -322,12 +322,11 @@ public abstract class ThrowawayService
     /**
      * Invoked for a request to this Service.
      *<p>
-     * Is invoked for GET, POST and HEAD requests. You should not treat
+     * Is invoked for GET, HEAD, POST, PUT and DELETE requests. You should not treat
      * HEAD requests differently than GET requests, the framework will
      * automatically discard the body and only send the headers. The
-     * <code>requestType</code> parameter indicate the type of request.
-     * See the HTTP specification for differences between GET and POST 
-     * requests.
+     * {@link #requestType} field indicate the type of request.
+     * See the HTTP specification for differences between GET and POST requests.
      *<p>
      * There are three choices to create the response:
      *<ol>
