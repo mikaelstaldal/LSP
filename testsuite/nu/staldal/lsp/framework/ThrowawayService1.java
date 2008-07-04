@@ -1,17 +1,18 @@
 package nu.staldal.lsp.framework;
 
-import java.util.Map;
-
-public class ThrowawayService1 extends ThrowawayService
+public class ThrowawayService1 extends EasyService
 {
     private int instanceCounter = 0;
+    
+    @PageParameter
+    public String msg;
 
     @Override
-    public String execute(Map<String, Object> pageParams) throws Exception
+    public String execute() throws Exception
     {
         instanceCounter++;
         
-        pageParams.put("msg", "ThrowawayService1: servletPath=" + request.getServletPath() + " instanceCounter="+instanceCounter);
+        msg = "ThrowawayService1: servletPath=" + request.getServletPath() + " instanceCounter="+instanceCounter;
         
         return "TestPage";
     }
