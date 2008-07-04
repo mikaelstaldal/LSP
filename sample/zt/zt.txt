@@ -1,0 +1,133 @@
+Zero Template
+-------------
+
+theStr="Hello, world!"
++
+<span class="Zt-theStr">Sample text</span>
+==>
+<span>Hello, world!</span>
+
+theStr="<em>Hello, world!</em>"
++
+<span class="big Zt-theStr">Sample text</span>
+==>
+<span class="big">&lt;em&gt;Hello, world!&lt;/em&gt;</span>
+
+theStr="<em>Hello, world!</em>"
++
+<span id="hello" class="ZtLiteral-theStr">Sample text</span>
+==>
+<span id="hello"><em>Hello, world!</em></span>
+
+
+theStr="http://www.foo.com/bar"
++
+<a class="ZtAttr-href-theStr" href="http://www.example.com/">A link</a>
+==>
+<a href="http://www.foo.com/bar">A link</a>
+
+rows="5"
+cols="40"
+text="The textarea content"
++
+<textarea class="ZtAttr-rows-rows ZtAttr-cols-cols Zt-text">text</textarea>
+==>
+<textarea rows="5" cols="40">The textarea content</textarea>
+
+
+cond=true
++
+<div class="ZtIf-cond">
+  <!-- a lot off stuff -->
+</div>
+==>
+<div>
+  <!-- a lot off stuff -->
+</div>
+
+cond=false
++
+<div class="ZtIf-cond">
+  <!-- a lot off stuff -->
+</div>
+==>
+<!-- nothing! -->
+
+cond=false
++
+<div class="ZtIfNot-cond">
+  <!-- a lot off stuff -->
+</div>
+==>
+<div>
+  <!-- a lot off stuff -->
+</div>
+
+cond=true
++
+<div class="ZtIfNot-cond">
+  <!-- a lot off stuff -->
+</div>
+==>
+<!-- nothing! -->
+
+
+theMap={foo:"FOO", bar:"BAR", baz:"BAZ"}
++
+<div class="ZtExpand-theMap">
+<p class="Zt-foo">a</p>
+<p class="Zt-bar">b</p>
+<p class="Zt-baz">c</p>
+</div>
+==>
+<div>
+<p>FOO</p>
+<p>BAR</p>
+<p>BAZ</p>
+</div>
+
+
+theTable=[
+    {name:"Orange",     taste:"sweet", color:"orange"},
+    {name:"Lemon",      taste:"sour",  color:"yellow"},
+    {name:"Strawberry", taste:"sweet", color:"red"}
+]
++
+<table>
+<tr><th>Name</th><th>Taste</th><th>Color</th><tr>
+<tr class="ZtList-theTable"><td class="Zt-name">aaa</td><td class="Zt-taste">bbb</td><td class="Zt-color">ccc</td></tr>
+<tr class="ZtRemove-"><td><em>AAA</em></td><td>BBB</td><td>CCC</td></tr>
+</table>
+==>
+<table>
+<tr><th>Name</th><th>Taste</th><th>Color</th></tr>
+<tr><td>Orange</td><td>sweet</td><td>orange</td></tr>
+<tr><td>Lemon</td><td>sour</td><td>yellow</td></tr>
+<tr><td>Strawberry</td><td>sweet</td><td>red</td></tr>
+</table>
+
+
+theList=["foo", "bar", "baz", "buzz"]
++
+<ul>
+  <li class="ZtList-theList"><em class="Zt-">First</em></li>
+  <li class="ZtRemove-"><em>Second</em></li>
+  <li class="ZtRemove-"><em>Third</em></li>
+</ul>
+==>
+<ul>
+  <li><em>foo</em></li>
+  <li><em>bar</em></li>
+  <li><em>baz</em></li>
+  <li><em>buzz</em></li>
+</ul>
+
+
+<p>Foo...</p>
+<div class="ZtInclude-OtherZtFile"/>
+<p>Bar...</p>
+==>
+<p>Foo...</p>
+<!-- content of OtherZtFile.zt -->
+<p>Bar...</p>
+
