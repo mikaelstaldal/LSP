@@ -18,15 +18,15 @@ class ZtInterpreter implements LSPPage {
 
     private final ZtElement compiledTree;
     private final String pageName;
+    private final String[] compileDependentFiles;
     private final long timeCompiled;
     private final Properties outputProperties;
     
-    private final static String[] EMPTY_STRING_ARRAY = new String[0];
-        
-    public ZtInterpreter(ZtElement compiledTree, String pageName, long timeCompiled,
-            Properties outputProperties) {
+    public ZtInterpreter(ZtElement compiledTree, String pageName, String[] compileDependentFiles, 
+            long timeCompiled, Properties outputProperties) {
         this.compiledTree = compiledTree;
         this.pageName = pageName;
+        this.compileDependentFiles = compileDependentFiles;
         this.timeCompiled = timeCompiled;
         this.outputProperties = outputProperties;
     }
@@ -38,7 +38,7 @@ class ZtInterpreter implements LSPPage {
     }
 
     public String[] getCompileDependentFiles() {
-        return EMPTY_STRING_ARRAY;
+        return compileDependentFiles;
     }
 
     public Properties getOutputProperties() {

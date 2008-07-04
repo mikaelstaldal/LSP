@@ -299,7 +299,9 @@ public class LSPHelper
 		if (page == null)
 		{
 			page = loadPage(pageName);
-            lspPages.put(pageName, page);                       
+			if (page != null) {
+			    lspPages.put(pageName, page);
+			}
 		}
 		
 		return page;
@@ -322,11 +324,58 @@ public class LSPHelper
 		catch (ClassNotFoundException e)
 		{
 			LSPPage page = loadZtPage(pageName);
+			if (page == null) {
+			    return null;
+			}
             fixOutputProperties(page.getOutputProperties());
             return page;			
 		}				
 	}
 
+	boolean getFileAsSAX(String url, ContentHandler sax) throws SAXException, IOException {
+        InputStream is = null;
+        try {
+            is = classLoader.getResourceAsStream(url);
+            if (is == null) {
+                return false;
+            }
+            
+            XMLReader parser = spf.newSAXParser().getXMLReader(); 
+
+            parser.setContentHandler(sax);
+            parser.setErrorHandler(new ErrorHandler() {
+                public void fatalError(SAXParseException e) 
+                        throws SAXParseException {
+                    throw e;
+                }
+
+                public void error(SAXParseException e) 
+                        throws SAXParseException {
+                    throw e;
+                }
+
+                public void warning(SAXParseException e) {
+                    // do nothing
+                }               
+            });
+            
+            InputSource inputSource = new InputSource(is);
+            inputSource.setSystemId(url);
+            parser.parse(inputSource);
+            return true;
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }            
+        }
+	}	
 
 	/**
 	 * Load ZeroTemplate page.
@@ -336,60 +385,34 @@ public class LSPHelper
      * @return <code>null</code> if the given page is not found     
      */
     private LSPPage loadZtPage(String pageName) {
-        InputStream is = classLoader.getResourceAsStream(pageName+".zt");
-        if (is == null) {
-            return null;
-        }
         try {
             ZtCompiler compiler = new ZtCompiler();
-            ContentHandler sax = compiler.startCompile(pageName);
-            
-            try {
-                XMLReader parser = spf.newSAXParser().getXMLReader(); 
-
-                parser.setContentHandler(sax);
-                parser.setErrorHandler(new ErrorHandler() {
-                    public void fatalError(SAXParseException e) 
-                        throws SAXParseException
-                    {
-                        throw e;
-                    }
-
-                    public void error(SAXParseException e) 
-                        throws SAXParseException
-                    {
-                        throw e;
-                    }
-
-                    public void warning(SAXParseException e)
-                    {
-                        // do nothing
-                    }               
-                });
-
-                parser.parse(new InputSource(is));
+            ContentHandler sax = compiler.startCompile(pageName,
+                    new URLResolver() {
+                        public void resolve(String url, ContentHandler ch) 
+                                throws IOException, SAXException {
+                            if (!getFileAsSAX(url+".zt", ch)) {
+                                throw new FileNotFoundException(url+".zt");
+                            }
+                        }
+                    });
+            if (!getFileAsSAX(pageName+".zt", sax)) {
+                return null;
             }
-            catch (ParserConfigurationException e) {
-                throw new RuntimeException(e);
-            }                   
             
             return compiler.finishCompile();            
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
         catch (LSPException e) {
             throw new RuntimeException(e);
         }
+        catch (SAXParseException e) {
+            throw new RuntimeException(e.getSystemId()+":"+e.getLineNumber()+":"+e.getColumnNumber()+": "+e.getMessage(), e);
+        }
         catch (SAXException e) {
             throw new RuntimeException(e);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                is.close();
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 

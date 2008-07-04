@@ -40,7 +40,9 @@
 
 package nu.staldal.zt;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -50,6 +52,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import nu.staldal.lsp.LSPPage;
+import nu.staldal.lsp.URLResolver;
 import nu.staldal.xmltree.Element;
 import nu.staldal.xmltree.Node;
 import nu.staldal.xmltree.ProcessingInstruction;
@@ -57,7 +60,7 @@ import nu.staldal.xmltree.Text;
 import nu.staldal.xmltree.TreeBuilder;
 
 /**
- * Compiles an Zt page.
+ * Compiles an ZeroTemplate page.
  * 
  * <p>
  * An instance of this class may be reused, but is not thread safe.
@@ -66,9 +69,14 @@ public class ZtCompiler {
     private static final boolean DEBUG = false;
 
     private static final String XHTML_NS = "http://www.w3.org/1999/xhtml";
+    
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     private TreeBuilder tb;
 
+    private URLResolver resolver;
+    private HashMap<String,String> importedFiles;
+    
     private String pageName;
 
     private Element currentSourceElement;
@@ -82,12 +90,13 @@ public class ZtCompiler {
     private boolean acceptUnbound;
 
     /**
-     * Create a new LSP compiler. The instance may be reused, but may
+     * Create a new ZeroTemplate compiler. The instance may be reused, but may
      * <em>not</em> be used from several threads concurrently. Create several
      * instances if multiple threads needs to compile concurrently.
      */
     public ZtCompiler() {
         tb = null;
+        resolver = null;
         pageName = null;
         html = false;
         acceptUnbound = false;
@@ -114,20 +123,24 @@ public class ZtCompiler {
     }
 
     /**
-     * Start compilation of an LSP page.
+     * Start compilation of an Zt page.
      * 
      * @param pageName  page name
+     * @param resolver  {@link nu.staldal.lsp.URLResolver} to use for resolving 
+     *                   <code>include</code> and enclose
      * 
-     * @return SAX2 ContentHandler to feed the LSP source into
+     * @return SAX2 ContentHandler to feed the ZeroTemplate source into
      * 
      * @throws SAXException
      */
-    public ContentHandler startCompile(String pageName) throws SAXException {
+    public ContentHandler startCompile(String pageName, URLResolver resolver) throws SAXException {
         if (!checkPageName(pageName))
             throw new SAXException("Illegal page name: " + pageName);
 
         this.pageName = pageName;
+        this.resolver = resolver;
         tb = new TreeBuilder();
+        importedFiles = new HashMap<String,String>();        
 
         return tb;
     }
@@ -152,8 +165,10 @@ public class ZtCompiler {
      * 
      * @throws SAXException
      *             if any compilation error occurs
+     * @throws IOException if any I/O error occurs when reading 
+     *             included files, or when writing compiled code
      */
-    public LSPPage finishCompile() throws SAXException {
+    public LSPPage finishCompile() throws SAXException, IOException {
         if (tb == null)
             throw new IllegalStateException(
                     "startCompile() must be invoked before finishCompile()");
@@ -164,6 +179,8 @@ public class ZtCompiler {
         if (DEBUG)
             System.out.println("ZeroTemplate compile...");
 
+        processImports(tree);
+        
         currentElement = null;
         currentSourceElement = null;
         outputProperties = null;
@@ -190,12 +207,14 @@ public class ZtCompiler {
             outputProperties.setProperty("method", method);
         }
 
-        LSPPage result = new ZtInterpreter(compiledTree, pageName, startTime,
-                outputProperties);
+        LSPPage result = new ZtInterpreter(compiledTree, pageName, importedFiles.keySet().toArray(EMPTY_STRING_ARRAY), 
+                startTime, outputProperties);
 
         outputProperties = null;
         tb = null;
+        resolver = null;
         pageName = null;
+        importedFiles = null;
 
         long timeElapsed = System.currentTimeMillis() - startTime;
         if (DEBUG)
@@ -203,7 +222,7 @@ public class ZtCompiler {
 
         return result;
     }
-
+        
     static SAXException fixSourceException(Node node, String msg) {
         return new SAXParseException(msg, null, node.getSystemId(), node
                 .getLineNumber(), node.getColumnNumber());
@@ -218,6 +237,59 @@ public class ZtCompiler {
                 .getLineNumber(), node.getColumnNumber());
     }
 */
+    
+    private static boolean containsSystemId(Node node, String systemId) {
+        if (systemId.equals(node.getSystemId())) 
+            return true;
+        else if (node.getParent() != null)
+            return containsSystemId(node.getParent(), systemId);
+        else
+            return false;
+    }
+    
+    private void processImports(Element el) throws SAXException, IOException {
+        for (int i = 0; i<el.size(); i++) {
+            Node _child = el.get(i);
+            if (!(_child instanceof Element)) {
+                continue;
+            }
+            Element child = (Element)_child;
+            
+            String classes = child.getAttributeOrNull("class");
+            String url = null;
+            if (classes != null) {
+                for (StringTokenizer st = new StringTokenizer(classes); st.hasMoreTokens(); ) {
+                    String cls = st.nextToken();
+    
+                    if (cls.startsWith("ZtInclude-")) {
+                        url = cls.substring(10);
+                        break;
+                    }
+                }
+            }
+                
+            if (url != null) {
+                boolean duplicate = false;
+                if (importedFiles.put(url, url) != null)
+                    duplicate = true;
+    
+                TreeBuilder tb = new TreeBuilder();
+                resolver.resolve(url, tb);
+                Element importedDoc = tb.getTree();
+                importedFiles.put(url, importedDoc.getSystemId());
+                
+                if (duplicate) {
+                    if (containsSystemId(child, importedDoc.getSystemId()))
+                        throw fixSourceException(child, "circular import");
+                }
+    
+                el.set(i, importedDoc);
+                processImports(importedDoc);
+            } else {
+                processImports(child);
+            }
+        }
+    }
     
     private Node compileNode(Node node) throws SAXException {
         if (node instanceof Element)
@@ -288,6 +360,8 @@ public class ZtCompiler {
                     throw fixSourceException(el, "ZtRemove may not be repeted"); 
                 }
                 ztRemove = true;
+            } else if (cls.startsWith("ZtInclude-")) {
+                throw fixSourceException(el, "Internal error: non-processed ZtInclude found!"); 
             } else {
                 normalClasses.add(cls);
             }
@@ -313,8 +387,7 @@ public class ZtCompiler {
                     || zt != null || ztLiteral != null || ztExpand != null || ztList != null) {
                 throw fixSourceException(el, "ZtRemove may not be combined with other Zt commands"); 
             } else {
-                return new ZtRemoveElement(el, ztAttr, ztString,
-                        stringIsLiteral, ztExpand, ztList);
+                return new ZtRemoveElement(el, ztAttr, ztString, stringIsLiteral, ztExpand, ztList);
             }
         } else if (ztIf != null) {
             if (ztIfNot != null) {
@@ -327,8 +400,7 @@ public class ZtCompiler {
             newEl = new ZtIfNotElement(el, ztAttr, ztString,
                                        stringIsLiteral, ztExpand, ztList, ztIfNot);
         } else {
-            newEl = new ZtElement(el, ztAttr, ztString,
-                                  stringIsLiteral, ztExpand, ztList);
+            newEl = new ZtElement(el, ztAttr, ztString, stringIsLiteral, ztExpand, ztList);
         }
         
         if (normalClasses.isEmpty()) {
