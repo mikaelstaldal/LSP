@@ -168,5 +168,5 @@ null and unbound.
 1.9
 ---
 * Removed dependency on Apache Commons Collections.
-* ZeroTemplate.
 * EasyService.
+* ZeroTemplate preview.
