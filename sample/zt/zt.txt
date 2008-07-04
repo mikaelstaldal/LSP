@@ -131,3 +131,35 @@ theList=["foo", "bar", "baz", "buzz"]
 <!-- content of OtherZtFile.zt -->
 <p>Bar...</p>
 
+
+<html>
+<head>
+<title>foo</title>
+</head>
+<body>
+<h1>FOO</h1>
+<div class="ZtContent-">
+<p>Sample content...</p>
+</div>
+</body>
+</html>
++
+<div>
+<p>Foo...</p>
+<p>Bar...</p>
+</div>
+==>
+<html>
+<head>
+<title>foo</title>
+</head>
+<body>
+<h1>FOO</h1>
+<div>
+<p>Foo...</p>
+<p>Bar...</p>
+</div>
+<p>Sample content...</p>
+</div>
+</body>
+</html>
