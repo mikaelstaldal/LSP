@@ -110,16 +110,16 @@ theTable=[
 theList=["foo", "bar", "baz", "buzz"]
 +
 <ul>
-  <li class="ZtList-theList"><em class="ZtText-">First</em></li>
-  <li class="ZtRemove-"><em>Second</em></li>
-  <li class="ZtRemove-"><em>Third</em></li>
+  <li class="ZtList-theList ZtText-">First</li>
+  <li class="ZtRemove-">Second</li>
+  <li class="ZtRemove-">Third</li>
 </ul>
 ==>
 <ul>
-  <li><em>foo</em></li>
-  <li><em>bar</em></li>
-  <li><em>baz</em></li>
-  <li><em>buzz</em></li>
+  <li>foo</li>
+  <li>bar</li>
+  <li>baz</li>
+  <li>buzz</li>
 </ul>
 
 
@@ -143,7 +143,7 @@ theMatrix=[["one", "two", "three"], ["four", "five", "six"], ["seven", "eight", 
 +
 <table>
   <tr class="ZtList-theMatrix">
-    <td class="ZtList-"><span class="ZtText">X</span></td>
+    <td class="ZtList- ZtText-">X</td>
   </tr>
 </table>
 ==>
