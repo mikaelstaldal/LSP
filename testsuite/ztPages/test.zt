@@ -1,9 +1,9 @@
 <body>
-<span class="Zt-helloWorld">Sample text</span>
-<span class="big Zt-helloWorldEm">Sample text</span>
+<span class="ZtText-helloWorld">Sample text</span>
+<span class="big ZtText-helloWorldEm">Sample text</span>
 <span id="hello" class="ZtLiteral-helloWorldEm">Sample text</span>
 <a class="ZtAttr-href-url" href="http://www.example.com/">A link</a>
-<textarea class="ZtAttr-rows-rows ZtAttr-cols-cols Zt-text">text</textarea>
+<textarea class="ZtAttr-rows-rows ZtAttr-cols-cols ZtText-text">text</textarea>
 <div class="ZtIf-trueCond">
 <h1>if true</h1>
 </div>
@@ -17,7 +17,7 @@
 <h1>if not false</h1>
 </div>
 <ul>
-<li class="ZtList-theList"><em class="Zt-">First</em></li>
+<li class="ZtList-theList"><em class="ZtText-">First</em></li>
 <li class="ZtRemove-"><em>Second</em></li>
 <li class="ZtRemove-"><em>Third</em></li>
 </ul>

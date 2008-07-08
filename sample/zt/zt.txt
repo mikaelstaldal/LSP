@@ -3,13 +3,13 @@ Zero Template
 
 theStr="Hello, world!"
 +
-<span class="Zt-theStr">Sample text</span>
+<span class="ZtText-theStr">Sample text</span>
 ==>
 <span>Hello, world!</span>
 
 theStr="<em>Hello, world!</em>"
 +
-<span class="big Zt-theStr">Sample text</span>
+<span class="big ZtText-theStr">Sample text</span>
 ==>
 <span class="big">&lt;em&gt;Hello, world!&lt;/em&gt;</span>
 
@@ -30,7 +30,7 @@ rows="5"
 cols="40"
 text="The textarea content"
 +
-<textarea class="ZtAttr-rows-rows ZtAttr-cols-cols Zt-text">text</textarea>
+<textarea class="ZtAttr-rows-rows ZtAttr-cols-cols ZtText-text">text</textarea>
 ==>
 <textarea rows="5" cols="40">The textarea content</textarea>
 
@@ -75,9 +75,9 @@ cond=true
 theMap={foo:"FOO", bar:"BAR", baz:"BAZ"}
 +
 <div class="ZtExpand-theMap">
-<p class="Zt-foo">a</p>
-<p class="Zt-bar">b</p>
-<p class="Zt-baz">c</p>
+<p class="ZtText-foo">a</p>
+<p class="ZtText-bar">b</p>
+<p class="ZtText-baz">c</p>
 </div>
 ==>
 <div>
@@ -95,7 +95,7 @@ theTable=[
 +
 <table>
 <tr><th>Name</th><th>Taste</th><th>Color</th><tr>
-<tr class="ZtList-theTable"><td class="Zt-name">aaa</td><td class="Zt-taste">bbb</td><td class="Zt-color">ccc</td></tr>
+<tr class="ZtList-theTable"><td class="ZtText-name">aaa</td><td class="ZtText-taste">bbb</td><td class="ZtText-color">ccc</td></tr>
 <tr class="ZtRemove-"><td><em>AAA</em></td><td>BBB</td><td>CCC</td></tr>
 </table>
 ==>
@@ -110,7 +110,7 @@ theTable=[
 theList=["foo", "bar", "baz", "buzz"]
 +
 <ul>
-  <li class="ZtList-theList"><em class="Zt-">First</em></li>
+  <li class="ZtList-theList"><em class="ZtText-">First</em></li>
   <li class="ZtRemove-"><em>Second</em></li>
   <li class="ZtRemove-"><em>Third</em></li>
 </ul>

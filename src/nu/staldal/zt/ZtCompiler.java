@@ -310,7 +310,7 @@ public class ZtCompiler {
         }
         List<String> normalClasses = new ArrayList<String>();
         
-        String zt = null;
+        String ztText = null;
         String ztLiteral = null;
         List<ZtAttr> ztAttr = new ArrayList<ZtAttr>();
         String ztExpand = null;
@@ -323,11 +323,11 @@ public class ZtCompiler {
             String cls = st.nextToken();
 
             // Dispatch Zt command
-            if (cls.startsWith("Zt-")) {
-                if (zt != null) {
-                    throw fixSourceException(el, "Zt may not be repeted"); 
+            if (cls.startsWith("ZtText-")) {
+                if (ztText != null) {
+                    throw fixSourceException(el, "ZtText may not be repeted"); 
                 }
-                zt = cls.substring(3);
+                ztText = cls.substring(7);
             } else if (cls.startsWith("ZtLiteral-")) {
                 if (ztLiteral != null) {
                     throw fixSourceException(el, "ZtLiteral may not be repeted"); 
@@ -367,13 +367,13 @@ public class ZtCompiler {
             }
         }
        
-        if (zt != null && ztLiteral != null) {
-            throw fixSourceException(el, "Zt may not be combined with ZtLiteral");             
+        if (ztText != null && ztLiteral != null) {
+            throw fixSourceException(el, "ZtText may not be combined with ZtLiteral");             
         }
         String ztString = null;
         boolean stringIsLiteral = false;
-        if (zt != null) {
-            ztString = zt;
+        if (ztText != null) {
+            ztString = ztText;
             stringIsLiteral = false;
         } else if (ztLiteral != null) {
             ztString = ztLiteral;
@@ -384,7 +384,7 @@ public class ZtCompiler {
         
         if (ztRemove) {
             if (ztIf != null || ztIfNot != null || !ztAttr.isEmpty()
-                    || zt != null || ztLiteral != null || ztExpand != null || ztList != null) {
+                    || ztText != null || ztLiteral != null || ztExpand != null || ztList != null) {
                 throw fixSourceException(el, "ZtRemove may not be combined with other Zt commands"); 
             } else {
                 return new ZtRemoveElement(el, ztAttr, ztString, stringIsLiteral, ztExpand, ztList);
