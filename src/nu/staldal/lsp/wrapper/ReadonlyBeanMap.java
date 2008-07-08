@@ -69,6 +69,9 @@ public class ReadonlyBeanMap implements Map<String, Object> {
     }
 
     private Member lookupMember(String property) {
+        if (property.length() == 0) {
+            return null;
+        }
         try {
             String methodName = "get"
                     + Character.toUpperCase(property.charAt(0))

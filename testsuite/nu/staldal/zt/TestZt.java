@@ -89,10 +89,10 @@ public class TestZt {
                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                + "<body>\n"
                + "<ul>\n"
-               + "<li><em>foo</em></li>"
-               + "<li><em>bar</em></li>" 
-               + "<li><em>baz</em></li>"
-               + "<li><em>buzz</em></li>\n"
+               + "<li>foo</li>"
+               + "<li>bar</li>" 
+               + "<li>baz</li>"
+               + "<li>buzz</li>\n"
                + "\n" 
                + "\n" 
                + "</ul>\n"
@@ -115,7 +115,8 @@ public class TestZt {
                + "\n" 
                + "\n" 
                + "</ul>\n"
-               + "</body>", params);
+               + "</body>", 
+               params);
     }
     
     @Test
@@ -134,7 +135,41 @@ public class TestZt {
                + "\n" 
                + "\n" 
                + "</ul>\n"
-               + "</body>", params);
+               + "</body>", 
+               params);
+    }
+    
+    @Test
+    public void testMatrix() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("theMatrix", Arrays.asList(
+                Arrays.asList("one", "two", "three"),
+                Arrays.asList("four", "five", "six"),
+                Arrays.asList("seven", "eight", "nine")                     
+            ));
+
+        doTest("matrix",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+               + "<body>\n"
+               + "<table>\n"
+               + "<tr>\n"
+               + "<td>one</td>"
+               + "<td>two</td>"
+               + "<td>three</td>\n"
+               + "</tr>"
+               + "<tr>\n"
+               + "<td>four</td>"
+               + "<td>five</td>"
+               + "<td>six</td>\n"
+               + "</tr>"
+               + "<tr>\n"
+               + "<td>seven</td>"
+               + "<td>eight</td>"
+               + "<td>nine</td>\n"
+               + "</tr>\n"
+               + "</table>\n"
+               + "</body>", 
+               params);
     }
     
     @Test

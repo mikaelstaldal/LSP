@@ -139,6 +139,32 @@ theList=["foo", "bar", "baz", "buzz"]
 </ul>
 
 
+theMatrix=[["one", "two", "three"], ["four", "five", "six"], ["seven", "eight", "nine]]
++
+<table>
+  <tr class="ZtList-theMatrix">
+    <td class="ZtList-"><span class="ZtText">X</span></td>
+  </tr>
+</table>
+==>
+<table>
+  <tr>
+    <td>one</td>
+    <td>two</td>
+    <td>three</td>
+  </tr>
+  <tr>
+    <td>four</td>
+    <td>five</td>
+    <td>six</td>
+  </tr>
+  <tr>
+    <td>seven</td>
+    <td>eight</td>
+    <td>nine</td>
+  </tr>
+</table>
+
 
 <p>Foo...</p>
 <div class="ZtInclude-OtherZtFile"/>

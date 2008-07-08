@@ -189,7 +189,9 @@ public class ZtElement extends Element {
                 if (item instanceof CharSequence
                         || item instanceof char[]
                         || item instanceof Enum
-                        || item instanceof Boolean) {
+                        || item instanceof Boolean
+                        || item instanceof Iterable<?>
+                        || item.getClass().isArray()) {
                     env.pushFrame();                    
                     env.bind("", item);
                 } else if (item instanceof Map) {
