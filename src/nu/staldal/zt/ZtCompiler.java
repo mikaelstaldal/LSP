@@ -72,22 +72,15 @@ public class ZtCompiler {
     
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-    private TreeBuilder tb;
-
-    private URLResolver resolver;
-    private HashMap<String,String> importedFiles;
+    private boolean html;
+    private boolean acceptUnbound;
     
     private String pageName;
+    private URLResolver resolver;
 
-    private Element currentSourceElement;
-
-    private ZtElement currentElement;
-
-    private Properties outputProperties;
-
-    private boolean html;
-
-    private boolean acceptUnbound;
+    private TreeBuilder tb;
+    private HashMap<String,String> importedFiles;    
+    private Properties outputProperties;    
 
     /**
      * Create a new ZeroTemplate compiler. The instance may be reused, but may
@@ -95,11 +88,19 @@ public class ZtCompiler {
      * instances if multiple threads needs to compile concurrently.
      */
     public ZtCompiler() {
-        tb = null;
-        resolver = null;
-        pageName = null;
         html = false;
         acceptUnbound = false;
+        
+        reset();
+    }
+    
+    private void reset() {        
+        pageName = null;        
+        resolver = null;
+        
+        tb = null;
+        importedFiles = null;
+        outputProperties = null;
     }
 
     /**
@@ -121,7 +122,7 @@ public class ZtCompiler {
     public void setAcceptUnbound(boolean acceptUnbound) {
         this.acceptUnbound = acceptUnbound;
     }
-
+    
     /**
      * Start compilation of an Zt page.
      * 
@@ -139,9 +140,8 @@ public class ZtCompiler {
 
         this.pageName = pageName;
         this.resolver = resolver;
+        
         tb = new TreeBuilder();
-        importedFiles = new HashMap<String,String>();        
-
         return tb;
     }
 
@@ -179,11 +179,10 @@ public class ZtCompiler {
         if (DEBUG)
             System.out.println("ZeroTemplate compile...");
 
-        processImports(tree);
+        tree = processEnclose(tree);
         
-        currentElement = null;
-        currentSourceElement = null;
-        outputProperties = null;
+        importedFiles = new HashMap<String,String>();        
+        processImports(tree);
 
         ZtElement compiledTree = compileNode(tree);
 
@@ -210,12 +209,8 @@ public class ZtCompiler {
         LSPPage result = new ZtInterpreter(compiledTree, pageName, importedFiles.keySet().toArray(EMPTY_STRING_ARRAY), 
                 startTime, outputProperties);
 
-        outputProperties = null;
-        tb = null;
-        resolver = null;
-        pageName = null;
-        importedFiles = null;
-
+        reset();
+        
         long timeElapsed = System.currentTimeMillis() - startTime;
         if (DEBUG)
             System.out.println("in " + timeElapsed + " ms");
@@ -246,6 +241,62 @@ public class ZtCompiler {
         else
             return false;
     }
+    
+    private Element processEnclose(Element content) throws SAXException, IOException {
+        String classes = content.getAttributeOrNull("class");
+        String encloseUrl = null;
+        if (classes != null) {
+            for (StringTokenizer st = new StringTokenizer(classes); st.hasMoreTokens(); ) {
+                String cls = st.nextToken();
+
+                if (cls.startsWith("ZtEnclose-")) {
+                    encloseUrl = cls.substring(10);
+                    break;
+                }
+            }
+        }
+        
+        if (encloseUrl != null) {            
+            TreeBuilder encloseTb = new TreeBuilder();
+            resolver.resolve(encloseUrl, encloseTb);
+            Element enclose = encloseTb.getTree();
+            encloseTb = null;
+            
+            processEncloseInclude(enclose, content);
+            return enclose;
+        } else {
+            return content;
+        }        
+    }    
+
+    private void processEncloseInclude(Element el, Element content) throws SAXException, IOException {   
+        for (int i = 0; i<el.size(); i++) {
+            Node _child = el.get(i);
+            if (!(_child instanceof Element)) {
+                continue;
+            }
+            Element child = (Element)_child;
+            
+            String classes = child.getAttributeOrNull("class");
+            boolean found = false;
+            if (classes != null) {
+                for (StringTokenizer st = new StringTokenizer(classes); st.hasMoreTokens(); ) {
+                    String cls = st.nextToken();
+    
+                    if (cls.startsWith("ZtContent-")) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+                
+            if (found) {
+                el.set(i, content);
+            } else {
+                processEncloseInclude(child, content);
+            }
+        }
+    }    
     
     private void processImports(Element el) throws SAXException, IOException {
         for (int i = 0; i<el.size(); i++) {
@@ -362,6 +413,8 @@ public class ZtCompiler {
                 ztRemove = true;
             } else if (cls.startsWith("ZtInclude-")) {
                 throw fixSourceException(el, "Internal error: non-processed ZtInclude found!"); 
+            } else if (cls.startsWith("ZtEnclose-")) {
+                // just ignore 
             } else {
                 normalClasses.add(cls);
             }
@@ -418,8 +471,6 @@ public class ZtCompiler {
             newEl.getAttributes().put("class", sb.toString());
         }            
         
-        currentElement = newEl;
-        currentSourceElement = el;
         compileChildren(el, newEl);
 
         return newEl;

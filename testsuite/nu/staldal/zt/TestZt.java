@@ -165,6 +165,29 @@ public class TestZt {
     }
 
     @Test
+    public void testEnclose() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("foo", "--FOO--");
+        params.put("bar", "--BAR--");
+
+        doTest("useenclose",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+             + "<root>\n"
+             + "<head>\n"
+             + "<title>--FOO--</title>\n"
+             + "</head>\n"
+             + "<body>\n"
+             + "<h1>Heading</h1>\n"
+             + "<ul>\n"
+             + "<li>Foo...</li>\n"
+             + "<li>--BAR--</li>\n"
+             + "</ul>\n"
+             + "</body>\n"
+             + "</root>",                
+               params);
+    }   
+
+    @Test
     public void testNotFound() throws Exception {
         assertNull(lspHelper.getPage("bogus"));
     }    

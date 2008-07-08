@@ -144,10 +144,10 @@ theList=["foo", "bar", "baz", "buzz"]
 </body>
 </html>
 +
-<div>
-<p>Foo...</p>
-<p>Bar...</p>
-</div>
+<ul class="ZtEnclose-TheEnclose">
+<li>Foo...</li>
+<li>Bar...</li>
+</ul>
 ==>
 <html>
 <head>
@@ -155,11 +155,10 @@ theList=["foo", "bar", "baz", "buzz"]
 </head>
 <body>
 <h1>FOO</h1>
-<div>
-<p>Foo...</p>
-<p>Bar...</p>
-</div>
-<p>Sample content...</p>
-</div>
+<ul>
+<li>Foo...</li>
+<li>Bar...</li>
+</ul>
 </body>
 </html>
+
