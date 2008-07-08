@@ -20,8 +20,8 @@ public class ZtIfElement extends ZtElement {
     private final String cond;
     
     public ZtIfElement(Element element, List<ZtAttr> attrs, String string,
-            boolean stringIsLiteral, String map, String list, String cond) {
-        super(element, attrs, string, stringIsLiteral, map, list);
+            boolean stringIsLiteral, String map, String list, boolean listIsOddEven, String cond) {
+        super(element, attrs, string, stringIsLiteral, map, list, listIsOddEven);
         this.cond = cond;
     }
 

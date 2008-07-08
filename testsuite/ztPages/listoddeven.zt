@@ -1,0 +1,7 @@
+<body>
+<ul>
+<li class="ZtList-theList odd"><em class="ZtText-">First</em></li>
+<li class="ZtRemove-"><em>Second</em></li>
+<li class="ZtRemove-"><em>Third</em></li>
+</ul>
+</body>

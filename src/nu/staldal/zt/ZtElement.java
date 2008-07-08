@@ -38,15 +38,17 @@ public class ZtElement extends Element {
     private final boolean stringIsLiteral;
     private final String map;
     private final String list;    
+    private final boolean listIsOddEven;
     
     public ZtElement(Element element, List<ZtAttr> attrs, String string,
-            boolean stringIsLiteral, String map, String list) {
+            boolean stringIsLiteral, String map, String list, boolean listIsOddEven) {
         super(element);
         this.attrs = attrs;
         this.string = string;
         this.stringIsLiteral = stringIsLiteral;
         this.map = map;
         this.list = list;
+        this.listIsOddEven = listIsOddEven;
     }
 
     public List<ZtAttr> getAttrs() {
@@ -67,6 +69,10 @@ public class ZtElement extends Element {
 
     public String getList() {
         return list;
+    }
+    
+    public boolean isListIsOffEven() {
+        return listIsOddEven;
     }
 
     protected String getString(String key, Environment<String,Object> env) 
@@ -178,6 +184,7 @@ public class ZtElement extends Element {
         
         if (list != null) {
             Iterable<?> value = getListNotNull(list, env);
+            int index = 1;
             for (Object item : value) {
                 if (item instanceof CharSequence
                         || item instanceof char[]
@@ -192,11 +199,16 @@ public class ZtElement extends Element {
                 } else {
                     env.pushFrame(new ReadonlyBeanMap(item));                    
                 }
-                _toSAX(sax, env);                
+                String extraClass = null;
+                if (listIsOddEven) {
+                    extraClass = (index % 2 == 0) ? "even" : "odd";
+                }
+                _toSAX(sax, env, extraClass);                
                 env.popFrame();
+                index++;
             }
         } else {
-            _toSAX(sax, env);
+            _toSAX(sax, env, null);
         }
         
         if (map != null) {
@@ -204,10 +216,19 @@ public class ZtElement extends Element {
         }
     }
     
-    private void _toSAX(ContentHandler sax, Environment<String, Object> env) 
+    private void _toSAX(ContentHandler sax, Environment<String, Object> env, String extraClass) 
             throws SAXException {
-        if (!attrs.isEmpty()) {
+        if (extraClass != null || !attrs.isEmpty()) {
             Map<String,String> attrCopy = new HashMap<String,String>(getAttributes());
+            
+            if (extraClass != null) {
+                String cls = attrCopy.get("class");
+                if (cls != null) {
+                    attrCopy.put("class", cls+' '+extraClass);
+                } else {
+                    attrCopy.put("class", extraClass);
+                }
+            }
             
             for (ZtAttr ztAttr : attrs) {
                 String value = getString(ztAttr.getString(), env);

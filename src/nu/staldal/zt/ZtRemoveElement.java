@@ -1,6 +1,6 @@
 package nu.staldal.zt;
 
-import java.util.List;
+import java.util.Collections;
 
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -17,9 +17,8 @@ public class ZtRemoveElement extends ZtElement {
 
     private static final long serialVersionUID = -665145344324415819L;
 
-    public ZtRemoveElement(Element element, List<ZtAttr> attrs, String string,
-            boolean stringIsLiteral, String map, String list) {
-        super(element, attrs, string, stringIsLiteral, map, list);
+    public ZtRemoveElement(Element element) {
+        super(element, Collections.EMPTY_LIST, null, false, null, null, false);
     }
         
     @Override

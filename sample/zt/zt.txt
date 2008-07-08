@@ -123,6 +123,23 @@ theList=["foo", "bar", "baz", "buzz"]
 </ul>
 
 
+theList=["foo", "bar", "baz", "buzz"]
++
+<ul>
+  <li class="ZtList-theList odd"><em class="ZtText-">First</em></li>
+  <li class="ZtRemove-"><em>Second</em></li>
+  <li class="ZtRemove-"><em>Third</em></li>
+</ul>
+==>
+<ul>
+  <li class="odd"><em>foo</em></li>
+  <li class="even"><em>bar</em></li>
+  <li class="odd"><em>baz</em></li>
+  <li class="even"><em>buzz</em></li>
+</ul>
+
+
+
 <p>Foo...</p>
 <div class="ZtInclude-OtherZtFile"/>
 <p>Bar...</p>

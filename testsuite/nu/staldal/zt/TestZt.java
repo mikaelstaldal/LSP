@@ -64,23 +64,79 @@ public class TestZt {
 
         params.put("theList", Arrays.asList("foo", "bar", "baz", "buzz"));
 
-        doTest(
-                "test",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                        + "<body>\n"
-                        + "<span>Hello, World!</span>\n"
-                        + "<span class=\"big\">&lt;em&gt;Hello, World!&lt;/em&gt;</span>\n"
-                        + "<span id=\"hello\"><em>Hello, World!</em></span>\n"
-                        + "<a href=\"http://www.foo.com/bar\">A link</a>\n"
-                        + "<textarea cols=\"40\" rows=\"5\">The textarea content</textarea>\n"
-                        + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
-                        + "\n" + "<div>\n" + "<h1>if not false</h1>\n"
-                        + "</div>\n" + "<ul>\n" + "<li><em>foo</em></li>"
-                        + "<li><em>bar</em></li>" + "<li><em>baz</em></li>"
-                        + "<li><em>buzz</em></li>\n" + "\n" + "\n" + "</ul>\n"
-                        + "</body>", params);
+        doTest("test",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<body>\n"
+                + "<span>Hello, World!</span>\n"
+                + "<span class=\"big\">&lt;em&gt;Hello, World!&lt;/em&gt;</span>\n"
+                + "<span id=\"hello\"><em>Hello, World!</em></span>\n"
+                + "<a href=\"http://www.foo.com/bar\">A link</a>\n"
+                + "<textarea cols=\"40\" rows=\"5\">The textarea content</textarea>\n"
+                + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
+                + "\n" + "<div>\n" + "<h1>if not false</h1>\n"
+                + "</div>\n" + "<ul>\n" + "<li><em>foo</em></li>"
+                + "<li><em>bar</em></li>" + "<li><em>baz</em></li>"
+                + "<li><em>buzz</em></li>\n" + "\n" + "\n" + "</ul>\n"
+                + "</body>", params);
     }
 
+    @Test
+    public void testList() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("theList", Arrays.asList("foo", "bar", "baz", "buzz"));
+
+        doTest("list",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+               + "<body>\n"
+               + "<ul>\n"
+               + "<li><em>foo</em></li>"
+               + "<li><em>bar</em></li>" 
+               + "<li><em>baz</em></li>"
+               + "<li><em>buzz</em></li>\n"
+               + "\n" 
+               + "\n" 
+               + "</ul>\n"
+               + "</body>", params);
+    }
+    
+    @Test
+    public void testListOddEven() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("theList", Arrays.asList("foo", "bar", "baz", "buzz"));
+
+        doTest("listoddeven",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+               + "<body>\n"
+               + "<ul>\n"
+               + "<li class=\"odd\"><em>foo</em></li>"
+               + "<li class=\"even\"><em>bar</em></li>" 
+               + "<li class=\"odd\"><em>baz</em></li>"
+               + "<li class=\"even\"><em>buzz</em></li>\n"
+               + "\n" 
+               + "\n" 
+               + "</ul>\n"
+               + "</body>", params);
+    }
+    
+    @Test
+    public void testListOddEvenAttr() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("theList", Arrays.asList("foo", "bar", "baz", "buzz"));
+
+        doTest("listoddevenattr",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+               + "<body>\n"
+               + "<ul>\n"
+               + "<li class=\"foo odd\"><em>foo</em></li>"
+               + "<li class=\"foo even\"><em>bar</em></li>" 
+               + "<li class=\"foo odd\"><em>baz</em></li>"
+               + "<li class=\"foo even\"><em>buzz</em></li>\n"
+               + "\n" 
+               + "\n" 
+               + "</ul>\n"
+               + "</body>", params);
+    }
+    
     @Test
     public void testMap() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();

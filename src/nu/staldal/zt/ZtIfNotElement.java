@@ -16,11 +16,12 @@ import nu.staldal.xmltree.Element;
 public class ZtIfNotElement extends ZtElement {
 
     private static final long serialVersionUID = -1264317968724820687L;
+    
     private final String cond;
     
     public ZtIfNotElement(Element element, List<ZtAttr> attrs, String string,
-            boolean stringIsLiteral, String map, String list, String cond) {
-        super(element, attrs, string, stringIsLiteral, map, list);
+            boolean stringIsLiteral, String map, String list, boolean listIsOddEven, String cond) {
+        super(element, attrs, string, stringIsLiteral, map, list, listIsOddEven);
         this.cond = cond;
     }
     

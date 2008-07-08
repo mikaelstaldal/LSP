@@ -419,6 +419,8 @@ public class ZtCompiler {
                 normalClasses.add(cls);
             }
         }
+        
+        boolean listIsOddEven = (ztList != null) && normalClasses.contains("odd");
        
         if (ztText != null && ztLiteral != null) {
             throw fixSourceException(el, "ZtText may not be combined with ZtLiteral");             
@@ -440,22 +442,25 @@ public class ZtCompiler {
                     || ztText != null || ztLiteral != null || ztExpand != null || ztList != null) {
                 throw fixSourceException(el, "ZtRemove may not be combined with other Zt commands"); 
             } else {
-                return new ZtRemoveElement(el, ztAttr, ztString, stringIsLiteral, ztExpand, ztList);
+                return new ZtRemoveElement(el);
             }
         } else if (ztIf != null) {
             if (ztIfNot != null) {
                 throw fixSourceException(el, "ZtIf may not be combined with ZtItNot"); 
             } else {
                 newEl = new ZtIfElement(el, ztAttr, ztString,
-                                        stringIsLiteral, ztExpand, ztList, ztIf);
+                                        stringIsLiteral, ztExpand, ztList, listIsOddEven, ztIf);
             }
         } else if (ztIfNot != null) {
             newEl = new ZtIfNotElement(el, ztAttr, ztString,
-                                       stringIsLiteral, ztExpand, ztList, ztIfNot);
+                                       stringIsLiteral, ztExpand, ztList, listIsOddEven, ztIfNot);
         } else {
-            newEl = new ZtElement(el, ztAttr, ztString, stringIsLiteral, ztExpand, ztList);
-        }
+            newEl = new ZtElement(el, ztAttr, ztString, stringIsLiteral, ztExpand, ztList, listIsOddEven);
+        }               
         
+        if (listIsOddEven) {
+            normalClasses.remove("odd");
+        }
         if (normalClasses.isEmpty()) {
             newEl.getAttributes().remove("class");
         } else {
