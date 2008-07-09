@@ -135,5 +135,23 @@ public class TestEnvironment extends TestCase
             // expected
         }
     }
+
+    public void testFrameNull2()
+    {
+        assertNull(env.bind(key1, value1));
+        assertEquals(value1, env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        
+        env.pushFrame();
+        assertEquals(value1, env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+        assertEquals(null, env.bind(key1, null));
+        assertTrue(env.containsKey(key1));
+        assertNull(env.lookup(key1));
+
+        env.popFrame();
+        assertEquals(value1, env.lookup(key1));
+        assertTrue(env.containsKey(key1));
+    }
     
 }

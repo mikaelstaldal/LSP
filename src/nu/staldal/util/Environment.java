@@ -50,7 +50,7 @@ import java.util.*;
  * An environment consists of several <em>frames</em> in a stack.
  * All modifications are made in the <em>current frame</em> 
  * (top of the stack), but a lookup will search all other frames if
- * a key is not found in the current frame. When a frame is poped,
+ * a key is not found in the current frame. When a frame is popped,
  * all modifications made since the last push is discarded and the original
  * state of the Environment is restored. An Environment always has at least
  * one frame, which cannot be popped.
@@ -104,7 +104,9 @@ public class Environment<K,V>
 	 * @param key  the key
 	 *
 	 * @return the value bound to the given key 
-	 * or <code>null</code> if no value is bound to the given key.
+	 *         or <code>null</code> if no value is bound to the given key
+	 *         (<em>Note:</em> <code>null</code> can mean both no value and
+	 *         the null value).
 	 */
 	public V lookup(K key)
 	{
@@ -122,7 +124,7 @@ public class Environment<K,V>
 	 * @param key    the key, may not be <code>null</code>
 	 * @param value  the value, may be <code>null</code>
 	 *
-	 * @return the previous value for the given key, 
+	 * @return the previous value for the given key <em>in the current frame</em>, 
 	 *         or <code>null</code> if the given key has no value
 	 *         <em>in the current frame</em>
 	 */
@@ -139,9 +141,9 @@ public class Environment<K,V>
 	 * current frame, has no effect if the key has a value in any parent
 	 * frame.
 	 *
-	 * @param key    the key, may not be <code>null</code>
+	 * @param key  the key, may not be <code>null</code>
 	 *
-	 * @return the previous value for the given key, 
+	 * @return the previous value for the given key <em>in the current frame</em>, 
 	 *         or <code>null</code> if the given key has no value
 	 *         <em>in the current frame</em>
 	 */
@@ -234,12 +236,13 @@ public class Environment<K,V>
         
 		V lookup(K key)
 		{
-			V obj = map.get(key);
-			if (obj == null && parent != null)
-			{
-				obj = parent.lookup(key);	
-			}
-			return obj;
+		    if (map.containsKey(key)) {
+		        return map.get(key);
+		    } else if (parent != null) {
+		        return parent.lookup(key);
+		    } else {
+		        return null;
+		    }
 		}
 		
 		V bind(K key, V value)
