@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,9 +78,79 @@ public class TestZt {
                 + "</div>\n" + "<ul>\n" + "<li><em>foo</em></li>"
                 + "<li><em>bar</em></li>" + "<li><em>baz</em></li>"
                 + "<li><em>buzz</em></li>\n" + "\n" + "\n" + "</ul>\n"
-                + "</body>", params);
+                + "</body>", 
+                params);
     }
 
+    @Test
+    public void testIf() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("trueCond", true);
+        params.put("falseCond", false);
+
+        doTest("if",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<body>\n"
+                + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
+                + "</body>", 
+                params);
+    }
+
+    @Test
+    public void testIfUnbound() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("trueCond", true);
+
+        doTest("if",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<body>\n"
+                + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
+                + "</body>", 
+                params);
+    }
+    
+    @Test
+    public void testIfString() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("trueCond", "foo");
+        params.put("falseCond", "");
+
+        doTest("if",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<body>\n"
+                + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
+                + "</body>", 
+                params);
+    }
+    
+    @Test
+    public void testIfArray() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("trueCond", new String[] { "foo", "bar" });
+        params.put("falseCond", new String[] {});
+
+        doTest("if",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<body>\n"
+                + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
+                + "</body>", 
+                params);
+    }
+    
+    @Test
+    public void testIfList() throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("trueCond", Arrays.asList("foo", "bar"));
+        params.put("falseCond", Collections.EMPTY_LIST);
+
+        doTest("if",
+               "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<body>\n"
+                + "<div>\n" + "<h1>if true</h1>\n" + "</div>\n" + "\n"
+                + "</body>", 
+                params);
+    }
+    
     @Test
     public void testList() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
@@ -96,7 +167,8 @@ public class TestZt {
                + "\n" 
                + "\n" 
                + "</ul>\n"
-               + "</body>", params);
+               + "</body>", 
+               params);
     }
     
     @Test

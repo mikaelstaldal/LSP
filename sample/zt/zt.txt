@@ -53,6 +53,13 @@ cond=false
 ==>
 <!-- nothing! -->
 
++
+<div class="ZtIf-cond">
+  <!-- a lot off stuff -->
+</div>
+==>
+<!-- nothing! -->
+
 cond=false
 +
 <div class="ZtIfNot-cond">

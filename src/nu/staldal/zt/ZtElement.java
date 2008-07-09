@@ -1,6 +1,7 @@
 package nu.staldal.zt;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -105,16 +106,39 @@ public class ZtElement extends Element {
         return value;
     }
     
+    /**
+     * Unbound = false
+     */
     protected boolean getBooleanNotNull(String key, Environment<String,Object> env) 
             throws SAXException {
         if (!env.containsKey(key)) {
-            throw new SAXException("Parameter " + key + " not defined");
+            return false;
         }
         Object value = env.lookup(key);
         if (value == null) {
             throw new SAXException("Parameter " + key + " is null");
         } else if (value instanceof Boolean) {
             return (Boolean)value;
+        } else if (value instanceof CharSequence) {
+            return ((CharSequence)value).length() > 0;
+        } else if (value instanceof char[]) {
+            return ((char[])value).length > 0;
+        } else if (value instanceof Collection<?>) {
+            return ((Collection<?>)value).size() > 0;
+        } else if (value instanceof int[]) {
+            return ((int[])value).length > 0;
+        } else if (value instanceof short[]) {
+            return ((short[])value).length > 0;
+        } else if (value instanceof long[]) {
+            return ((long[])value).length > 0;
+        } else if (value instanceof float[]) {
+            return ((float[])value).length > 0;
+        } else if (value instanceof double[]) {
+            return ((double[])value).length > 0;
+        } else if (value instanceof boolean[]) {
+            return ((boolean[])value).length > 0;
+        } else if (value instanceof Object[]) {
+            return ((Object[])value).length > 0;
         } else {
             throw new SAXException("Parameter " + key + " must be boolean, but is: " + value.getClass().getName());                
         }        
