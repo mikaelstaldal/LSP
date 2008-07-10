@@ -89,7 +89,7 @@ public class ZtElement extends Element {
         } else if (value instanceof CharSequence) {            
             return value.toString(); // TODO handle CharSequence directly?
         } else if (value instanceof char[]) {
-            return new String((char[])value);
+            return new String((char[])value); // TODO handle char[] directly?
         } else if (value instanceof Enum) {
             return value.toString();    
         } else {
