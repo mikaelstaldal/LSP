@@ -351,6 +351,17 @@ and a <code>ZtEnclose</code> directive in its root element.</p>
 &lt;/html&gt;
 </pre>
 
+<h2>Combining directives</h2>
+
+<p>A single element may contain one <code>ZtText</code> or <code>ZtLiteral</code> (but not both), any number of 
+<code>ZtAttr</code>, one <code>ZtIf</code> or <code>ZtIfNot</code> (but not both), one <code>ZtExpand</code>, 
+and one <code>ZtList</code>.</p>
+
+<p><code>ZtRemove</code>, <code>ZtInclude</code> or <code>ZtContent</code> may not be combined with any other 
+directives.</p>
+
+<p><code>ZtEnclose</code> may only once occur at the root element and can be combined with other directives.</p>
+
 
 <h2>Passing parameters from Java to ZeroTemplate</h2>
 
@@ -379,8 +390,7 @@ and a <code>ZtEnclose</code> directive in its root element.</p>
 </table>
 
 <p>If a Java object of another type is used as a <code>map</code>, it is considered to be a JavaBean, 
-and an attempt is made to use its public properties or fields as <code>map</code> values (implemented with 
-<a href="javadoc/nu/staldal/lsp/wrapper/ReadonlyBeanMap.html"><code>ReadonlyBeanMap</code></a>).</p>
+and an attempt is made to use its public properties or fields as <code>map</code> values.</p>
 
 </body>
 </html>

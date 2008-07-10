@@ -413,6 +413,8 @@ public class ZtCompiler {
                 ztRemove = true;
             } else if (cls.startsWith("ZtInclude-")) {
                 throw fixSourceException(el, "Internal error: non-processed ZtInclude found!"); 
+            } else if (cls.startsWith("ZtContent-")) {
+                throw fixSourceException(el, "Internal error: non-processed ZtContent found!"); 
             } else if (cls.startsWith("ZtEnclose-")) {
                 // just ignore 
             } else {
