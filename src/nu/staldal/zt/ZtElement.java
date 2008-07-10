@@ -124,7 +124,7 @@ public class ZtElement extends Element {
         } else if (value instanceof char[]) {
             return ((char[])value).length > 0;
         } else if (value instanceof Collection<?>) {
-            return ((Collection<?>)value).size() > 0;
+            return !((Collection<?>)value).isEmpty();
         } else if (value instanceof int[]) {
             return ((int[])value).length > 0;
         } else if (value instanceof short[]) {
