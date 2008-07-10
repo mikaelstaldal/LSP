@@ -157,7 +157,7 @@ public class ZtElement extends Element {
         } else if (value instanceof ResourceBundle) {
             return new ResourceBundleTuple((ResourceBundle)value);        
         } else if (value instanceof CharSequence
-                    || value instanceof char[]
+                    || value.getClass().isArray()
                     || value instanceof Enum
                     || value instanceof Boolean) {
             throw new SAXException("Parameter " + key + " must be map, but is: " + value.getClass().getName());                            
@@ -166,7 +166,7 @@ public class ZtElement extends Element {
         }        
     }
     
-    protected Iterable<?> getListNotNull(String key, Environment<String,Object> env)
+    protected Collection<?> getListNotNull(String key, Environment<String,Object> env)
             throws SAXException {
         if (!env.containsKey(key)) {
             throw new SAXException("Parameter " + key + " not defined");
@@ -174,8 +174,8 @@ public class ZtElement extends Element {
         Object value = env.lookup(key);
         if (value == null) {
             throw new SAXException("Parameter " + key + " is null");
-        } else if (value instanceof Iterable) {            
-            return (Iterable<?>)value;
+        } else if (value instanceof Collection) {            
+            return (Collection<?>)value;
         } else if (value instanceof int[]) {
             return new IntArrayCollection((int[])value);
         } else if (value instanceof short[]) {
@@ -207,14 +207,13 @@ public class ZtElement extends Element {
         }
         
         if (list != null) {
-            Iterable<?> value = getListNotNull(list, env);
+            Collection<?> value = getListNotNull(list, env);
             int index = 1;
             for (Object item : value) {
                 if (item instanceof CharSequence
-                        || item instanceof char[]
                         || item instanceof Enum
                         || item instanceof Boolean
-                        || item instanceof Iterable<?>
+                        || item instanceof Collection<?>
                         || item.getClass().isArray()) {
                     env.pushFrame();                    
                     env.bind("", item);
