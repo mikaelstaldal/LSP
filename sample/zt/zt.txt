@@ -79,7 +79,7 @@ cond=true
 <!-- nothing! -->
 
 
-theMap={foo:"FOO", bar:"BAR", baz:"BAZ"}
+theMap={"foo":"FOO", "bar":"BAR", "baz":"BAZ"}
 +
 <div class="ZtExpand-theMap">
 <p class="ZtText-foo">a</p>
@@ -95,13 +95,13 @@ theMap={foo:"FOO", bar:"BAR", baz:"BAZ"}
 
 
 theTable=[
-    {name:"Orange",     taste:"sweet", color:"orange"},
-    {name:"Lemon",      taste:"sour",  color:"yellow"},
-    {name:"Strawberry", taste:"sweet", color:"red"}
+    {"name":"Orange",     "taste":"sweet", "color":"orange"},
+    {"name":"Lemon",      "taste":"sour",  "color":"yellow"},
+    {"name":"Strawberry", "taste":"sweet", "color":"red"}
 ]
 +
 <table>
-<tr><th>Name</th><th>Taste</th><th>Color</th><tr>
+<tr><th>Name</th><th>Taste</th><th>Color</th></tr>
 <tr class="ZtList-theTable"><td class="ZtText-name">aaa</td><td class="ZtText-taste">bbb</td><td class="ZtText-color">ccc</td></tr>
 <tr class="ZtRemove-"><td><em>AAA</em></td><td>BBB</td><td>CCC</td></tr>
 </table>

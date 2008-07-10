@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<html>
+<head><title>ZeroTemplate</title>
+<link rel="stylesheet" type="text/css" href="manual.css" />
+</head>
+<body>
+<h1>ZeroTemplate</h1>
+
+<h2>Overview</h2>
+
+<p>ZeroTemplate is a light-weight web template language. 
+ZeroTemplate keeps all business logic and technical details 
+out of templates. Templates are valid XHTML which can be developed 
+in any HTML editor which supports XML syntax and previewed in any 
+web browser.</p>
+
+
+<h2>ZeroTemplate basics</h2>
+
+<p>An ZeroTemplate page is a well-formed (validity is not required) XML document, 
+typically XHTML. All ZeroTemplate directives are encoded in the <code>class</code> 
+attribute which is allowed in almost all HTML elements. All ZeroTemplate directives are 
+removed before final output. A <code>class</code> attribute containing only ZeroTemplate 
+directives is completely removed before final output.</p>
+
+<p>Comments in the ZeroTemplate page are ignored and not sent to output. Any DTD 
+is not sent to the output.</p>
+
+
+<h2>Types and variables</h2>
+
+<p>ZeroTemplate has four types:</p>
+
+<ul>
+<li><code>boolean</code> - <code>true</code> or <code>false</code></li>
+<li><code>string</code></li>
+<li><code>list</code> - an ordered sequence of elements</li>
+<li><code>map</code> - an <a href="http://en.wikipedia.org/wiki/Associative_array">associative array</a> 
+with <code>string</code> keys. The empty string is a valid key, <code>null</code> is not.</li>
+</ul>
+
+<p>An attempt to reference an unbound variable or map element results 
+in runtime error unless otherwise stated. A variable bound to 
+<code>null</code> is not considered unbound.</p>
+
+<p>An attempt to reference a variable or map element with a value of unexpected type 
+(including <code>null</code>) results in runtime error unless otherwise stated.</p>
+
+<p>The parameters passed to the ZeroTemplate page are bound to variables 
+in the outermost scope.</p>
+
+
+<h2>ZeroTemplate directives</h2>
+
+<p>All ZeroTemplate directives starts with "Zt" and contains at least one dash ("-").</p>
+
+
+<h3>ZtText</h3>
+
+<p><b>Syntax:</b><br/>
+ZtText-<em>string</em></p>
+
+<p>The <em>string</em> is inserted into the containing element. 
+Any content in the containing element is discarded.</p>
+
+<p>Any markup in the string to be inserted is escaped using
+<code>&amp;amp;</code>, <code>&amp;lt;</code> and <code>&amp;gt;</code>.</p>  
+
+<p><b>Example:</b></p>
+<pre class="example">
+hello="Hello, world!"
+</pre>
++
+<pre class="example">
+&lt;span class="ZtText-hello"&gt;Sample text&lt;/span&gt;
+</pre>
+==>
+<pre class="example">
+&lt;span&gt;Hello, world!&lt;/span&gt;
+</pre>
+
+
+<h3>ZtLiteral</h3>
+
+<p><b>Syntax:</b><br/>
+ZtLiteral-<em>string</em></p>
+
+<p>The <em>string</em> is inserted into the containing element. 
+Any content in the containing element is discarded.</p>
+
+<p>Any markup in the string to be inserted is <em>not</em> escaped. This allows 
+you to include a HTML fragment. <em>Note:</em> This may cause the output to be 
+ill-formed, make sure that the string to inserted contains well-balanced XML.</p>
+
+<p><b>Example:</b></p>
+<pre class="example">
+hello="&lt;em&gt;Hello, world!&lt;/em&gt;"
+</pre>
++
+<pre class="example">
+&lt;span class="ZtLiteral-hello"&gt;Sample text&lt;/span&gt;
+</pre>
+==>
+<pre class="example">
+&lt;span&gt;&lt;em&gt;Hello, world!&lt;/em&gt;&lt;/span&gt;
+</pre>
+
+
+<h3>ZtAttr</h3>
+
+<p><b>Syntax:</b><br/>
+ZtAttr-<em>attributeName</em>-<em>string</em></p>
+
+<p>The <em>string</em> is inserted into an attribute of the 
+containing element, replacing any existing attribute. If <em>string</em> 
+is <code>null</code>, the attribute is removed.
+There can be several ZtAttr directives on a single element.</p>
+
+<p><b>Example:</b></p>
+<pre class="example">
+rows="5"
+cols="40"
+</pre>
++
+<pre class="example">
+&lt;textarea class="ZtAttr-rows-rows ZtAttr-cols-cols"&gt;text&lt;/textarea&gt;
+</pre>
+==>
+<pre class="example">
+&lt;textarea rows="5" cols="40"&gt;text&lt;/textarea&gt;
+</pre>
+
+
+<h3>ZtIf</h3>
+
+<p><b>Syntax:</b><br/>
+ZtIf-<em>boolean</em></p>
+
+<p>If <em>boolean</em> is <code>false</code>, the containing element with all content is removed.</p>
+
+<p>A non-empty string or list is considered as <code>true</code>. An empty string or list is considered as 
+<code>false</code>. If <em>boolean</em> is unbound, it is considered as <code>false</code>.
+
+<p><b>Example:</b></p>
+<pre class="example">
+cond=true
+</pre>
++
+<pre class="example">
+&lt;p class="ZtIf-cond"&gt;The text goes here...&lt;/p&gt;
+</pre>
+==>
+<pre class="example">
+&lt;p&gt;The text goes here...&lt;/p&gt;
+</pre>
+
+
+<h3>ZtIfNot</h3>
+
+<p><b>Syntax:</b><br/>
+ZtIfNot-<em>boolean</em></p>
+
+<p>If <em>boolean</em> is <code>true</code>, the containing element with all content is removed.</p>
+
+<p>A non-empty string or list is considered as <code>true</code>. An empty string or list is considered as 
+<code>false</code>. If <em>boolean</em> is unbound, it is considered as <code>false</code>.
+
+<p><b>Example:</b></p>
+<pre class="example">
+cond=false
+</pre>
++
+<pre class="example">
+&lt;p class="ZtIfNot-cond"&gt;The text goes here...&lt;/p&gt;
+</pre>
+==>
+<pre class="example">
+&lt;p&gt;The text goes here...&lt;/p&gt;
+</pre>
+
+
+<h3>ZtRemove</h3>
+
+<p><b>Syntax:</b><br/>
+ZtRemove-</p>
+
+<p>Unconditionally remove the containing element with all its content.</p>
+
+<p><b>Example:</b></p>
+<pre class="example">
+&lt;p class="ZtRemove-"&gt;The text goes here...&lt;/p&gt;
+</pre>
+==>
+<pre class="example">
+</pre>
+
+
+<h3>ZtExpand</h3>
+
+<p><b>Syntax:</b><br/>
+ZtExpand-<em>map</em></p>
+
+<p>Expand <em>map</em> and bind each of its elements as a single variable in the containing element.</p>
+
+<p><b>Example:</b></p>
+<pre class="example">
+stuff={"foo":"FOO", "bar":"BAR", "baz":"BAZ"}
+</pre>
++
+<pre class="example">
+&lt;div class="ZtExpand-stuff"&gt;
+&lt;p class="ZtText-foo"&gt;a&lt;/p&gt;
+&lt;p class="ZtText-bar"&gt;b&lt;/p&gt;
+&lt;p class="ZtText-baz"&gt;c&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+==>
+<pre class="example">
+&lt;div&gt;
+&lt;p&gt;FOO&lt;/p&gt;
+&lt;p&gt;BAR&lt;/p&gt;
+&lt;p&gt;BAZ&lt;/p&gt;
+&lt;/div&gt;
+</pre>
+
+
+<h3>ZtList</h3>
+
+<p><b>Syntax:</b><br/>
+ZtList-<em>list</em></p>
+
+<p>Repeat the containing element once for each element in <em>list</em>.
+The list element is bound to an unnamed variable (the empty string), unless it's a <code>map</code> then it is 
+automatically expanded as if <code>ZtExpand</code> was used.</p> 
+
+<p><b>Example 1:</b></p>
+<pre class="example">
+words=["foo", "bar", "baz", "buzz"]
+</pre>
++
+<pre class="example">
+&lt;ul&gt;
+  &lt;li class="ZtList-theList ZtText-"&gt;First&lt;/li&gt;
+  &lt;li class="ZtRemove-"&gt;Second&lt;/li&gt;
+  &lt;li class="ZtRemove-"&gt;Third&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+==>
+<pre class="example">
+&lt;ul&gt;
+  &lt;li&gt;foo&lt;/li&gt;
+  &lt;li&gt;bar&lt;/li&gt;
+  &lt;li&gt;baz&lt;/li&gt;
+  &lt;li&gt;buzz&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+
+<p><b>Example 2:</b></p>
+<pre class="example">
+fruits=[
+    {"name":"Orange",     "taste":"sweet", "color":"orange"},
+    {"name":"Lemon",      "taste":"sour",  "color":"yellow"},
+    {"name":"Strawberry", "taste":"sweet", "color":"red"}
+]</pre>
++
+<pre class="example">
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Taste&lt;/th&gt;&lt;th&gt;Color&lt;/th&gt;&lt;/tr&gt;
+&lt;tr class="ZtList-theTable"&gt;&lt;td class="ZtText-name"&gt;aaa&lt;/td&gt;&lt;td class="ZtText-taste"&gt;bbb&lt;/td&gt;&lt;td class="ZtText-color"&gt;ccc&lt;/td&gt;&lt;/tr&gt;
+&lt;tr class="ZtRemove-"&gt;&lt;td&gt;&lt;em&gt;AAA&lt;/em&gt;&lt;/td&gt;&lt;td&gt;BBB&lt;/td&gt;&lt;td&gt;CCC&lt;/td&gt;&lt;/tr&gt;
+&lt;/table>
+</pre>
+==>
+<pre class="example">
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Taste&lt;/th&gt;&lt;th&gt;Color&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Orange&lt;/td&gt;&lt;td&gt;sweet&lt;/td&gt;&lt;td&gt;orange&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Lemon&lt;/td&gt;&lt;td&gt;sour&lt;/td&gt;&lt;td&gt;yellow&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Strawberry&lt;/td&gt;&lt;td&gt;sweet&lt;/td&gt;&lt;td&gt;red&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+<h3>ZtInclude</h3>
+
+<p><b>Syntax:</b><br/>
+ZtInclude-<em>page</em></p>
+
+<p>Replace the containing element with the content of <em>page</em>.</p>
+
+
+<h3>ZtEnclose and ZtContent</h3>
+
+<p><b>Syntax:</b><br/>
+ZtEnclose-<em>page</em></p>
+
+<p><b>Syntax:</b><br/>
+ZtContent-</p>
+
+<p>A web application usually consists of several pages with similar structure.
+All pages may have a header and menu in common, but different content in the "middle" 
+of the page. You want a separate templates file for each page, so you might end
+up with several templates files with the common structure repeated in all of them. This is 
+inconvenient since you need to change several files when the common structure changes.</p>
+
+<p>Some common parts could be extracted to files you <code>ZtInclude</code>, but that 
+strategy tends to be cumbersome due to the requirement of each included file to have 
+well-balanced markup. A better way to handle 
+this is to use the <em>enclose</em> feature of ZeroTemplate.</p>
+
+<p>An <em>enclose</em> is a ZeroTemplate file which defines the common structure of several 
+pages. The enclose uses the <code>ZtContent</code> directive to include the part
+that are different in each page. The main ZeroTemplate files will contain the unique part
+and a <code>ZtEnclose</code> directive in its root element.</p>
+
+<p>An enclose file may use all ZeroTemplate features, and have access to page parameters.</p>
+
+<p><b>Example:</b></p>
+<pre class="example">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;foo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;FOO&lt;/h1&gt;
+&lt;div class="ZtContent-"&gt;
+&lt;p&gt;Sample content...&lt;/p&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
++
+<pre class="example">
+&lt;ul class="ZtEnclose-TheEnclose"&gt;
+&lt;li&gt;Foo...&lt;/li&gt;
+&lt;li&gt;Bar...&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+==>
+<pre class="example">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;foo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;FOO&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Foo...&lt;/li&gt;
+&lt;li&gt;Bar...&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+
+<h2>Passing parameters from Java to ZeroTemplate</h2>
+
+<table border="1">
+<tr align="left"><th>ZeroTemplate type</th><th>Java type</th></tr>
+
+<tr><td>boolean</td><td><code>java.lang.Boolean</code></td></tr>
+
+<tr><td>string</td><td><code>java.lang.String</code><br/><code>java.lang.CharSequence</code><br/><code>char[]</code><br/>
+<code>java.lang.Enum</code></td></tr>
+
+<tr><td>list</td><td><code>java.util.Collection</code> (only the <code>iterator()</code>, <code>size()</code> and <code>isEmpty()</code> methods are used)<br/>
+<code>Object[]</code><br/>
+<code>int[]</code><br/>
+<code>short[]</code><br/>
+<code>long[]</code><br/>
+<code>double[]</code><br/>
+<code>float[]</code><br/>
+<code>boolean[]</code><br/>
+</td></tr>
+
+<tr><td>map</td><td><code>java.util.Map</code> (only the <code>get(Object)</code> and <code>containsKey(Object)</code> methods with <code>java.lang.String</code> keys are used)<br/>
+<code>java.util.ResourceBundle</code> 
+</td></tr>
+
+</table>
+
+<p>If a Java object of another type is used as a <code>map</code>, it is considered to be a JavaBean, 
+and an attempt is made to use its public properties or fields as <code>map</code> values (implemented with 
+<a href="javadoc/nu/staldal/lsp/wrapper/ReadonlyBeanMap.html"><code>ReadonlyBeanMap</code></a>).</p>
+
+</body>
+</html>
