@@ -75,7 +75,7 @@ class Text(Node):
         self.text = text
 
     def render(self, out, context):
-        out.write(self.text)
+        out.write(self.text.encode('UTF-8'))
     
 
 class EntityRef(Node):
@@ -84,7 +84,7 @@ class EntityRef(Node):
         self.name = name
 
     def render(self, out, context):
-        out.write("&%s;" % self.name)
+        out.write("&%s;" % self.name.encode('UTF-8'))
 
 
 class Element(NodeWithChildren):
@@ -95,11 +95,11 @@ class Element(NodeWithChildren):
 
     def render(self, out, context):
         if not self.children and self.tag in EMPTY_ELEMENTS:
-            out.write("<%s />" % self.tag)
+            out.write("<%s />" % self.tag.encode('UTF-8'))
         else:
-            out.write("<%s>" % self.tag)
+            out.write("<%s>" % self.tag.encode('UTF-8'))
             NodeWithChildren.render(self, out, context)
-            out.write("</%s>" % self.tag)
+            out.write("</%s>" % self.tag.encode('UTF-8'))
         
 
 class MyHTMLParser(HTMLParser):    
