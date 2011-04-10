@@ -1,8 +1,6 @@
-@NAME@ @VERSION@, built on @DATE@.
-
-LSP is an open source project hosted at SourceForge,
-http://sourceforge.net/projects/lspx/
+LSP is an advanced web template language based on XML technology.
+LSP provides powerful and easy to use presentation logic, but keeps
+business logic and technical details out of templates. LSP is compiled
+into Java bytecode for efficient execution.
 
 LSP is relesed under the modified BSD license, see LICENSE.
-
-For usage instructions, see the LSP User Guide in docs/lspuser.html
