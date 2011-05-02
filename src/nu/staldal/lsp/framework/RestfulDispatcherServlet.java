@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * Will be available in {@link javax.servlet.ServletContext} under the key
  * <code>nu.staldal.lsp.framework.DispatcherServlet</code>.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class RestfulDispatcherServlet extends DispatcherServlet {
 

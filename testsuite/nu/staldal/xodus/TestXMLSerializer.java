@@ -16,7 +16,7 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Test XMLSerializer.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class TestXMLSerializer
 {
@@ -49,7 +49,7 @@ public class TestXMLSerializer
     {
         ser.startDocument();
         ser.startElement("", "root", "", new AttributesImpl());
-        ser.characters("Räksmörgås!");
+        ser.characters("RÃ¤ksmÃ¶rgÃ¥s!");
         ser.characters("0123456789".toCharArray(), 5, 2);
         ser.append('&');
         ser.append("Gurka");
@@ -59,7 +59,7 @@ public class TestXMLSerializer
         ser.endDocument();
         
         assertEquals(
-                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<root>Räksmörgås!56&amp;Gurka567</root><!-- Kommentar -->",
+                "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<root>RÃ¤ksmÃ¶rgÃ¥s!56&amp;Gurka567</root><!-- Kommentar -->",
                 os.toString(ENC));        
     }
 

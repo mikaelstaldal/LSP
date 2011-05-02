@@ -20,9 +20,9 @@ public class TestLSPParse extends TestCase
 		"ConditionalExpr(BinaryExpr(NumberLiteral(2.0),6,NumberLiteral(3.0)),BinaryExpr(NumberLiteral(5.0),12,NumberLiteral(8.0)),StringLiteral(foo))";
 
     public static final String correctExpr3 = 
-		"$Räksmörgåsëüû";
+		"$RÃ¤ksmÃ¶rgÃ¥sÃ«Ã¼Ã»";
     public static final String correctTest3 =
-		"VariableReference(Räksmörgåsëüû)";
+		"VariableReference(RÃ¤ksmÃ¶rgÃ¥sÃ«Ã¼Ã»)";
         
     public static final String invalidExpr = "1+2-a-3.2*f($a.b,$c)";
     public static final String invalidExpr2 = "if 5 else 8";

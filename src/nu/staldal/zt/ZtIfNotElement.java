@@ -11,7 +11,7 @@ import nu.staldal.xmltree.Element;
 /**
  * Element with ZeroTemplate IfNot command.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class ZtIfNotElement extends ZtElement {
 

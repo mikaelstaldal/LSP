@@ -3,7 +3,7 @@ package nu.staldal.ujl.tuple;
 /**
  * Immutable tuple with 0 elements. Singleton.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class Tuple0 implements Tuple {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2005, Mikael Ståldal
+ * Copyright (c) 2003-2005, Mikael StÃ¥ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ import nu.staldal.lsp.wrapper.*;
  * This class is not part of the public API, it should only be used by compiled 
  * LSP pages. It is declared public since compiled LSP pages needs to access it.  
  * 
- *  @author Mikael Ståldal
+ *  @author Mikael StÃ¥ldal
  */
 public abstract class LSPPageBase implements LSPPage
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2006, Mikael St�ldal
+ * Copyright (c) 2005-2006, Mikael Stï¿½ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

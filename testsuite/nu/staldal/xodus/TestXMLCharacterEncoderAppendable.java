@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * Test XMLCharacterEncoder with Appendable.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class TestXMLCharacterEncoderAppendable
 {
@@ -48,13 +48,13 @@ public class TestXMLCharacterEncoderAppendable
         encoder.append("BCDEF");
         encoder.append("0123456789", 2, 5);
         encoder.write('Z');
-        encoder.write("åäö");
+        encoder.write("Ã¥Ã¤Ã¶");
         encoder.write("---***---", 3, 3);
         encoder.write("###".toCharArray());
         encoder.write("---***---", 3, 3);
         encoder.write("---$$$---".toCharArray(),3,3);
         encoder.finish();
         
-        assertEquals("not encoded", "ABCDEF234Zåäö***###***$$$", sb.toString());
+        assertEquals("not encoded", "ABCDEF234ZÃ¥Ã¤Ã¶***###***$$$", sb.toString());
     }
 }

@@ -13,7 +13,7 @@ import java.lang.annotation.ElementType;
  * the field name if the <code>value</code> argument is not set. 
  * The field must be <code>public</code>. 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

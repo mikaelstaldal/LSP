@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 /**
  * Test default output type. 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class TestXhtmlDefault
 {

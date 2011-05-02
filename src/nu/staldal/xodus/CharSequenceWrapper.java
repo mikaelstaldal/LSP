@@ -3,7 +3,7 @@ package nu.staldal.xodus;
 /**
  * Wrap char[] as a CharSequence without copying.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class CharSequenceWrapper implements CharSequence
 {

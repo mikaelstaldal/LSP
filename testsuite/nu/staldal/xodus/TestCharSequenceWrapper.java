@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 /**
  * 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class TestCharSequenceWrapper
 {

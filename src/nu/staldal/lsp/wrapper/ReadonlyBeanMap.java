@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Mikael Ståldal
+ * Copyright (c) 2008, Mikael StÃ¥ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,7 +51,7 @@ import java.util.HashMap;
  * Implementation of read only Map for a Java bean. This class is <em>not</em>
  * thread-safe
  * 
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class ReadonlyBeanMap implements Map<String, Object> {
     private final Object bean;

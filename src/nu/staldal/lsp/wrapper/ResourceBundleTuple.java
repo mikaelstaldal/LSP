@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, Mikael Ståldal
+ * Copyright (c) 2006, Mikael StÃ¥ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,7 @@ import java.util.ResourceBundle;
 /**
  * Implementation of Map for a ResourceBundle. 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class ResourceBundleTuple implements Map<String,Object>
 {

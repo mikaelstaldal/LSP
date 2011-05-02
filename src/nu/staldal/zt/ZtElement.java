@@ -28,7 +28,7 @@ import nu.staldal.util.Environment;
 /**
  * Element with ZeroTemplate commands.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class ZtElement extends Element {
 

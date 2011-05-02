@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-200`5, Mikael Ståldal
+ * Copyright (c) 2001-200`5, Mikael StÃ¥ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@ import nu.staldal.syntax.*;
 /**
  * Parser for LSP expressions.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class LSPExprParser extends Parser
 {

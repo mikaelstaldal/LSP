@@ -10,7 +10,7 @@ import javax.xml.XMLConstants;
 /**
  * Map for element.attributes.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 class AttributeMap implements Map<String, String> {
 

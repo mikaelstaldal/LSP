@@ -11,7 +11,7 @@ import nu.staldal.xmltree.Element;
 /**
  * ZtRemove.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class ZtRemoveElement extends ZtElement {
 

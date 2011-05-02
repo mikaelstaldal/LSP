@@ -12,7 +12,7 @@ import nu.staldal.util.Environment;
 /**
  * ZeroTemplate interpreter.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 class ZtInterpreter implements LSPPage {
 

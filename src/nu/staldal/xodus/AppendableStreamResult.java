@@ -5,7 +5,7 @@ import javax.xml.transform.stream.StreamResult;
 /**
  * StreamResult with an {@link java.lang.Appendable}.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class AppendableStreamResult extends StreamResult
 {

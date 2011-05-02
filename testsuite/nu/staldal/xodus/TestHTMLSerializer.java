@@ -63,7 +63,7 @@ public class TestHTMLSerializer
 		ser.characters("foo & bar");
 		ser.endElement("", "body", "");
 
-        ser.characters("Räksmörgås!");
+        ser.characters("RÃ¤ksmÃ¶rgÃ¥s!");
         ser.characters("0123456789".toCharArray(), 5, 2);
         ser.append('&');
         ser.append("Gurka");
@@ -79,7 +79,7 @@ public class TestHTMLSerializer
 		  + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">"
 		  + "<style>foo & bar</style></head>"
 		  + "<body>foo &amp; bar<script>foo & bar</script>foo &amp; bar</body>"
-          + "Räksmörgås!56&amp;Gurka567"
+          + "RÃ¤ksmÃ¶rgÃ¥s!56&amp;Gurka567"
 		  + "</html>",
 
 		  baos.toString("UTF-8"));

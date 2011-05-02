@@ -26,7 +26,7 @@ import java.lang.annotation.ElementType;
  *
  * @see javax.servlet.http.HttpServletRequest#getParameter(String)
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

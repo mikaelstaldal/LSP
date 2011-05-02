@@ -3,7 +3,7 @@ package nu.staldal.ujl.tuple;
 /**
  * Mutable tuple with 4 elements. 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  * 
  * @param <T1> type of the first element in the tuple
  * @param <T2> type of the second element in the tuple

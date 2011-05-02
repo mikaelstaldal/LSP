@@ -12,7 +12,7 @@ import java.lang.annotation.ElementType;
  * 
  * @see Parameter
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

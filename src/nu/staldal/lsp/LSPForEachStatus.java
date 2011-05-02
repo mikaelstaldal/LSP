@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2004, Mikael Ståldal
+ * Copyright (c) 2003-2004, Mikael StÃ¥ldal
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ import java.util.*;
  * This class is not part of the public API, it should only be used by compiled 
  * LSP pages. It is declared public since compiled LSP pages needs to access it. 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class LSPForEachStatus implements Map<String,Object>
 {

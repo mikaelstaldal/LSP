@@ -21,7 +21,7 @@ import java.util.Map;
  * Use the {@link PageParameter} annotation on instance fields to automatically
  * use them as page parameters to templates.
  * 
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public abstract class EasyService extends ThrowawayService {
 

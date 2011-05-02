@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Immutable tuple. 
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public interface Tuple extends Serializable {
 

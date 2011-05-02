@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Zt attribute.
  *
- * @author Mikael Ståldal
+ * @author Mikael StÃ¥ldal
  */
 public class ZtAttr implements Serializable {
     
