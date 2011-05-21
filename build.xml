@@ -49,7 +49,7 @@
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/*,nu/staldal/lsp/wrapper/*,nu/staldal/util/*,nu/staldal/xodus/*,nu/staldal/xmltree/*"
            destdir="${build.classes}"
-           encoding="iso-8859-1"
+           encoding="utf-8"
            source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
@@ -59,7 +59,7 @@
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/servlet/**/*,nu/staldal/lsp/struts/**/*,nu/staldal/lsp/maverick/**/*,nu/staldal/lsp/framework/**/*"
            destdir="${build.classes}"
-           encoding="iso-8859-1"
+           encoding="utf-8"
            source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
@@ -116,7 +116,7 @@
     <javac srcdir="${src.dir}"
     	   includes="nu/staldal/lsp/compiler/*,nu/staldal/lsp/compile/*,nu/staldal/lsp/expr/*,nu/staldal/lsp/compiledexpr/*,nu/staldal/syntax/**/*,nu/staldal/xtree/**/*"
            destdir="${build.classes}"
-           encoding="iso-8859-1"
+           encoding="utf-8"
            source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
@@ -157,7 +157,7 @@
     <javac srcdir="${src.testsuite}"
     	   includes="nu/staldal/**/*"
            destdir="${build.testsuite}"
-           encoding="iso-8859-1"
+           encoding="utf-8"
            source="1.5" target="1.5"
            optimize="off" debug="on"
            deprecation="on">
@@ -216,7 +216,7 @@
     </copy>
     <mkdir dir="dist/docs/javadoc"/>
     <javadoc packagenames="nu.staldal.lsp,nu.staldal.lsp.compiler,nu.staldal.lsp.servlet,nu.staldal.xodus,nu.staldal.lsp.framework,nu.staldal.xmltree"
-             encoding="iso-8859-1"
+             encoding="utf-8"
     	     sourcepath="${src.dir}"
              destdir="dist/docs/javadoc"
              author="true"
@@ -326,7 +326,7 @@
     <javac srcdir="${src.dir}"
            includes="nu/staldal/xmltree/**/*"
            destdir="build/xmltree-classes"
-           encoding="iso-8859-1"
+           encoding="utf-8"
            source="1.5" target="1.5"
            optimize="on" debug="on"
            deprecation="on">
@@ -348,7 +348,7 @@
     
     <mkdir dir="build/xmltree-javadoc"/>
     <javadoc packagenames="nu.staldal.xmltree"
-             encoding="iso-8859-1"
+             encoding="utf-8"
              charset="UTF-8"
              sourcepath="${src.dir}"
              destdir="build/xmltree-javadoc"
