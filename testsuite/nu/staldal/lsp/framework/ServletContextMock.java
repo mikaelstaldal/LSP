@@ -175,4 +175,8 @@ public class ServletContextMock implements ServletContext, ServletConfig
         return "MockServlet";
     }
 
+    public String getContextPath()
+    {
+        return "/mockservlet";
+    }
 }
