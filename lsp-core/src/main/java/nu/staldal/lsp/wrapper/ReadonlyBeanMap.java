@@ -40,6 +40,8 @@
 
 package nu.staldal.lsp.wrapper;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
@@ -50,7 +52,7 @@ import java.util.HashMap;
 /**
  * Implementation of read only Map for a Java bean. This class is <em>not</em>
  * thread-safe
- * 
+ *
  * @author Mikael Ståldal
  */
 public class ReadonlyBeanMap implements Map<String, Object> {
@@ -60,48 +62,41 @@ public class ReadonlyBeanMap implements Map<String, Object> {
 
     /**
      * Constructor.
-     * 
-     * @param bean  the Java bean to wrap
+     *
+     * @param bean the Java bean to wrap
      */
     public ReadonlyBeanMap(Object bean) {
         this.bean = bean;
-        this.cache = new HashMap<String, Member>();        
+        this.cache = new HashMap<String, Member>();
     }
 
     private Member lookupMember(String property) {
-        if (property.length() == 0) {
+        if (property.isEmpty()) {
             return null;
         }
-        try {
-            String methodName = "get"
-                    + Character.toUpperCase(property.charAt(0))
-                    + property.substring(1);
-            return bean.getClass().getMethod(methodName);
-        }
-        catch (SecurityException e) {
-            throw new RuntimeException(e);
-        }
-        catch (NoSuchMethodException e) {
+        return tryToLookupMember(property, "get", "is");
+    }
+
+    private Member tryToLookupMember(final String property, final String... prefixes) {
+        final Class<? extends Object> beanClass = bean.getClass();
+
+        for (final String prefix : prefixes) {
             try {
-                String methodName = "is"
-                        + Character.toUpperCase(property.charAt(0))
-                        + property.substring(1);
-                return bean.getClass().getMethod(methodName);
+                final String methodName = prefix + StringUtils.capitalize(property);
+                return beanClass.getMethod(methodName);
+            } catch (NoSuchMethodException ignored) {
             }
-            catch (SecurityException ee) {
-                throw new RuntimeException(ee);
-            }
-            catch (NoSuchMethodException ee) {
-                try {
-                    return bean.getClass().getField(property);
-                }
-                catch (SecurityException eee) {
-                    throw new RuntimeException(eee);
-                }
-                catch (NoSuchFieldException eee) {
-                    return null;
-                }
-            }
+        }
+
+        try {
+            return beanClass.getField(property);
+        } catch (NoSuchFieldException ignored) {
+        }
+
+        try {
+            return beanClass.getMethod(property);
+        } catch (NoSuchMethodException e) {
+            return null;
         }
     }
 
@@ -117,39 +112,35 @@ public class ReadonlyBeanMap implements Map<String, Object> {
     }
 
     public Object get(Object key) {
-        Member member = getMember((String)key);
+        Member member = getMember((String) key);
         if (member == null) {
             return null;
         }
 
         try {
             if (member instanceof Method) {
-                return ((Method)member).invoke(bean);
+                return ((Method) member).invoke(bean);
             } else if (member instanceof Field) {
-                return ((Field)member).get(bean);
+                return ((Field) member).get(bean);
             } else {
                 throw new Error("Unknown Member: " + member.getClass().getName());
             }
-        }
-        catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new RuntimeException(e);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             Throwable ee = e.getCause();
             if (ee instanceof RuntimeException) {
-                throw (RuntimeException)ee;
-            }
-            else {
+                throw (RuntimeException) ee;
+            } else {
                 throw new RuntimeException(ee);
             }
         }
     }
 
     public boolean containsKey(Object key) {
-        return getMember((String)key) != null;
+        return getMember((String) key) != null;
     }
 
     public int size() {
