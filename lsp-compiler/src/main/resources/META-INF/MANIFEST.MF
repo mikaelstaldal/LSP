@@ -1,0 +1,2 @@
+Main-Class: nu.staldal.lsp.compiler.LSPCompilerCLI
+Class-Path: lsp-core.jar bcel.jar

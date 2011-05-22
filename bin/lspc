@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# UNIX shell script for running lspc
-
-# export LSP_HOME=/usr/local/lsp
-
-java -classpath ${CLASSPATH}:bcel.jar:${LSP_HOME}/lspc.jar:${LSP_HOME}/lsprt.jar nu.staldal.lsp.compiler.LSPCompilerCLI $*
