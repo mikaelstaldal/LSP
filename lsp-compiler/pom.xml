@@ -58,7 +58,7 @@
 				<version>1.4.3</version>
 				<executions>
 					<execution>
-						<phase>validate</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>
