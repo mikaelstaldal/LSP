@@ -23,17 +23,17 @@ import org.junit.Test;
 public class TestLSPCompilation
 {
 	private static File classDir;
-	
+
 	private LSPCompilerHelper lspCompilerHelper;
 	private LSPHelper lspHelper;
-		
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception
 	{
 		classDir = new File("LSPclasses");
 		classDir.mkdir();
 	}
-		
+
 	@Before
 	public void setUp() throws Exception
 	{
@@ -60,7 +60,7 @@ public class TestLSPCompilation
 	private void doTest(String pageName, String expectedResult)
 		throws Exception
 	{
-        Map<String,Object> params = Collections.emptyMap();            
+        Map<String,Object> params = Collections.emptyMap();
         doTest(pageName, expectedResult, params);
 	}
 
@@ -68,7 +68,7 @@ public class TestLSPCompilation
         throws Exception
     {
         lspCompilerHelper.doCompile(pageName + ".lsp", true);
-        
+
         LSPPage thePage = lspHelper.getPage(pageName);
         assertNotNull(thePage);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -82,9 +82,9 @@ public class TestLSPCompilation
         }
         String result = baos.toString("UTF-8");
         System.out.println(result);
-        assertEquals(expectedResult, result);       
+        assertEquals(expectedResult, result);
     }
-    
+
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testSimplePageWithError()
 		throws Exception
@@ -95,7 +95,7 @@ public class TestLSPCompilation
     		  + "<p>Hello, world!</p>\n"
     		  + "</root>");
     }
-	
+
     @Test
     public void testWhitespacePreserve()
 		throws Exception
@@ -104,27 +104,27 @@ public class TestLSPCompilation
     			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
     		  + "<root>\n"
     		  + "<ul xml:space=\"preserve\">\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>1</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>2</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>3</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>4</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>5</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>6</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>7</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>8</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>9</li>\n"
-    		  + "\n"	    
+    		  + "\n"
     		  + "<li>10</li>\n"
-    		  + "\n"	        			    
+    		  + "\n"
     		  +	"</ul>\n"
     		  + "</root>");
     }
@@ -173,7 +173,7 @@ public class TestLSPCompilation
               + "<p class=\"foo&amp;bar\"></p>\n"
               + "</html>");
     }
-    
+
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNullVariable1() throws Exception
     {
@@ -187,7 +187,7 @@ public class TestLSPCompilation
         params.put("theVar", null);
         doTest("NullVariable", "", params);
     }
-    
+
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNullTupleValue1() throws Exception
     {
@@ -206,7 +206,7 @@ public class TestLSPCompilation
         params.put("theTuple", tuple);
         doTest("NullTupleValue", "", params);
     }
- 
+
     @Test
     public void testNvl() throws Exception
     {
@@ -222,7 +222,7 @@ public class TestLSPCompilation
               + "<p>bar</p>\n"
               + "</html>",
               params);
-    }    
+    }
 
     @Test(expected=nu.staldal.lsp.LSPException.class)
     public void testNvlError() throws Exception
@@ -238,7 +238,7 @@ public class TestLSPCompilation
               + "<p>bar</p>\n"
               + "</html>",
               params);
-    }    
+    }
 
     @Test
     public void testIsnull() throws Exception
@@ -282,7 +282,7 @@ public class TestLSPCompilation
              + "</root>",
              params);
     }
-    
+
     @Test
     public void testIf() throws Exception
     {
@@ -294,7 +294,7 @@ public class TestLSPCompilation
              + "\n"
              + "</root>",
              params);
-    }    
+    }
 
     @Test
     public void testIf2() throws Exception
@@ -324,5 +324,17 @@ public class TestLSPCompilation
              + "<h1>BAR</h1>\n"
              + "</root>",
              params);
-    }    
+    }
+
+  @Test
+  public void shouldAcceptNullContextMap() throws Exception
+  {
+        doTest("DefaultTest", "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" +
+            "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n" +
+            "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>Test</title></head>\n" +
+            "<body>\n" +
+            "<p>Hello,<br />world!</p>\n" +
+            "</body>\n" +
+            "</html>");
+  }
 }

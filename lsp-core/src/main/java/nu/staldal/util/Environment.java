@@ -44,216 +44,188 @@ import java.util.*;
 
 /**
  * An Environment is used to store bindings from keys to values.
- * <p>
+ * <p/>
  * Keys are non-null Objects, values are Objects which may be <code>null</code>.
- * <p>
+ * <p/>
  * An environment consists of several <em>frames</em> in a stack.
- * All modifications are made in the <em>current frame</em> 
+ * All modifications are made in the <em>current frame</em>
  * (top of the stack), but a lookup will search all other frames if
  * a key is not found in the current frame. When a frame is popped,
  * all modifications made since the last push is discarded and the original
  * state of the Environment is restored. An Environment always has at least
  * one frame, which cannot be popped.
- * <p>
+ * <p/>
  * This class is useful for handling variable bindings in an interpreter
  * for language with scoped access to variables.
- * <p>
+ * <p/>
  * This class is not thread-safe, you need to synchronize concurrent access.
  */
-public class Environment<K,V>
-{
-	private Frame<K,V> currentFrame;
-	
-	/**
-	 * Create a new Environment with one empty frame.
-	 */
-	public Environment()
-	{
-		currentFrame = new Frame<K,V>();
-	}
+public class Environment<K, V> {
+    private Frame<K, V> currentFrame;
 
-	/**
-	 * Create a new Environment initialized with the binding in a Map.
+    /**
+     * Create a new Environment with one empty frame.
+     */
+    public Environment() {
+        currentFrame = new Frame<K, V>();
+    }
+
+    /**
+     * Create a new Environment initialized with the binding in a Map.
      *
-     * @param initial  the Map with initial bindings
-	 */
-	public Environment(Map<K,V> initial)
-	{
-		currentFrame = new Frame<K,V>(initial);
-	}
+     * @param initial the Map with initial bindings
+     */
+    public Environment(Map<K, V> initial) {
+        currentFrame = new Frame<K, V>(initial);
+    }
 
     /**
      * Check if there is any value bound to the given key.
      *
-     * @param key  the key
-     *
+     * @param key the key
      * @return true if there is any value (possibly <code>null</code>)
-     *         bound to the given key 
+     *         bound to the given key
      */
-    public boolean containsKey(K key)
-    {
-        if (key == null) 
+    public boolean containsKey(K key) {
+        if (key == null)
             throw new NullPointerException("Key may not be null");
-        
+
         return currentFrame.containsKey(key);
     }
 
     /**
-	 * Lookup the value bound to the given key.
-	 *
-	 * @param key  the key
-	 *
-	 * @return the value bound to the given key 
-	 *         or <code>null</code> if no value is bound to the given key
-	 *         (<em>Note:</em> <code>null</code> can mean both no value and
-	 *         the null value).
-	 */
-	public V lookup(K key)
-	{
-		if (key == null) 
-			throw new NullPointerException("Key may not be null");
-		
-		return currentFrame.lookup(key);
-	}
-	
-	/**
-	 * Bind a value to the given key. Will replace any previous value
-	 * for the given key in the current frame, or shadow any value for the
-	 * current key in any parent frame.
-	 *
-	 * @param key    the key, may not be <code>null</code>
-	 * @param value  the value, may be <code>null</code>
-	 *
-	 * @return the previous value for the given key <em>in the current frame</em>, 
-	 *         or <code>null</code> if the given key has no value
-	 *         <em>in the current frame</em>
-	 */
-	public V bind(K key, V value)
-	{
-		if (key == null) 
-			throw new NullPointerException("Key may not be null");
-        
-		return currentFrame.bind(key, value);
-	}
+     * Lookup the value bound to the given key.
+     *
+     * @param key the key
+     * @return the value bound to the given key
+     *         or <code>null</code> if no value is bound to the given key
+     *         (<em>Note:</em> <code>null</code> can mean both no value and
+     *         the null value).
+     */
+    public V lookup(K key) {
+        if (key == null)
+            throw new NullPointerException("Key may not be null");
 
-	/**
-	 * Unbind any value from the given key. Will only unbind values in the
-	 * current frame, has no effect if the key has a value in any parent
-	 * frame.
-	 *
-	 * @param key  the key, may not be <code>null</code>
-	 *
-	 * @return the previous value for the given key <em>in the current frame</em>, 
-	 *         or <code>null</code> if the given key has no value
-	 *         <em>in the current frame</em>
-	 */
-	public V unbind(K key)
-	{
-		if (key == null) 
-			throw new NullPointerException("Key may not be null");
-		
-		return currentFrame.unbind(key);
-	}
-	
-	/**
-	 * Push a new frame on the frame stack.
-	 */
-	public void pushFrame()
-	{
-		currentFrame = new Frame<K,V>(currentFrame);	
-	}
+        return currentFrame.lookup(key);
+    }
+
+    /**
+     * Bind a value to the given key. Will replace any previous value
+     * for the given key in the current frame, or shadow any value for the
+     * current key in any parent frame.
+     *
+     * @param key   the key, may not be <code>null</code>
+     * @param value the value, may be <code>null</code>
+     * @return the previous value for the given key <em>in the current frame</em>,
+     *         or <code>null</code> if the given key has no value
+     *         <em>in the current frame</em>
+     */
+    public V bind(K key, V value) {
+        if (key == null)
+            throw new NullPointerException("Key may not be null");
+
+        return currentFrame.bind(key, value);
+    }
+
+    /**
+     * Unbind any value from the given key. Will only unbind values in the
+     * current frame, has no effect if the key has a value in any parent
+     * frame.
+     *
+     * @param key the key, may not be <code>null</code>
+     * @return the previous value for the given key <em>in the current frame</em>,
+     *         or <code>null</code> if the given key has no value
+     *         <em>in the current frame</em>
+     */
+    public V unbind(K key) {
+        if (key == null)
+            throw new NullPointerException("Key may not be null");
+
+        return currentFrame.unbind(key);
+    }
+
+    /**
+     * Push a new frame on the frame stack.
+     */
+    public void pushFrame() {
+        currentFrame = new Frame<K, V>(currentFrame);
+    }
 
     /**
      * Push a new frame on the frame stack, with initial values.
-     * 
-     * @param initial  the Map with initial bindings for the new frame
+     *
+     * @param initial the Map with initial bindings for the new frame
      */
-    public void pushFrame(Map<K,V> initial)
-    {
-        currentFrame = new Frame<K,V>(currentFrame, initial);    
+    public void pushFrame(Map<K, V> initial) {
+        currentFrame = new Frame<K, V>(currentFrame, initial);
     }
-    
-	/**
-	 * Pop a frame from the frame stack. Any bindings in the current frame
-	 * will be discarded.
-	 *
-	 * @throws java.util.EmptyStackException if an attempt is made to
-	 * pop the last frame.
-	 */
-	public void popFrame()
-	{
-		Frame<K,V> parentFrame = currentFrame.getParent();
-		if (parentFrame == null)
-			throw new EmptyStackException();
-		else
-			currentFrame = parentFrame;	
-	}
+
+    /**
+     * Pop a frame from the frame stack. Any bindings in the current frame
+     * will be discarded.
+     *
+     * @throws java.util.EmptyStackException if an attempt is made to
+     *                                       pop the last frame.
+     */
+    public void popFrame() {
+        Frame<K, V> parentFrame = currentFrame.getParent();
+        if (parentFrame == null)
+            throw new EmptyStackException();
+        else
+            currentFrame = parentFrame;
+    }
 
 
-	static class Frame<K,V>
-	{
-		private final Frame<K,V> parent;
-		private final Map<K,V> map;
-		
-        Frame()
-        {
-            parent = null;
-            map = new HashMap<K,V>();
-        }   
+    static class Frame<K, V> {
+        private final Frame<K, V> parent;
+        private final Map<K, V> map;
 
-		Frame(Frame<K,V> p)
-		{
-			parent = p;
-			map = new HashMap<K,V>();
-		}
-	
-		Frame(Map<K,V> initial)
-		{
-			parent = null;
-            map = initial;
-		}	
+        Frame() {
+            this(null, null);
+        }
 
-        Frame(Frame<K,V> p, Map<K,V> initial)
-        {
+        Frame(Frame<K, V> p) {
+            this(p, null);
+        }
+
+        Frame(Map<K, V> initial) {
+            this(null, initial);
+        }
+
+        Frame(Frame<K, V> p, Map<K, V> initial) {
             parent = p;
-            map = initial;
+            map = (initial != null) ? initial : new HashMap<K, V>();
         }
-    
-		Frame<K,V> getParent()
-		{
-			return parent;	
-		}
-		
-        boolean containsKey(K key)
-        {
+
+        Frame<K, V> getParent() {
+            return parent;
+        }
+
+        boolean containsKey(K key) {
             boolean contains = map.containsKey(key);
-            if (!contains && parent != null)
-            {
-                contains = parent.containsKey(key);   
+            if (!contains && parent != null) {
+                contains = parent.containsKey(key);
             }
-            return contains;            
+            return contains;
         }
-        
-		V lookup(K key)
-		{
-		    if (map.containsKey(key)) {
-		        return map.get(key);
-		    } else if (parent != null) {
-		        return parent.lookup(key);
-		    } else {
-		        return null;
-		    }
-		}
-		
-		V bind(K key, V value)
-		{
-			return map.put(key, value);
-		}
-	
-		V unbind(K key)
-		{
-			return map.remove(key);
-		}			
-	}
+
+        V lookup(K key) {
+            if (map.containsKey(key)) {
+                return map.get(key);
+            } else if (parent != null) {
+                return parent.lookup(key);
+            } else {
+                return null;
+            }
+        }
+
+        V bind(K key, V value) {
+            return map.put(key, value);
+        }
+
+        V unbind(K key) {
+            return map.remove(key);
+        }
+    }
 }
 
