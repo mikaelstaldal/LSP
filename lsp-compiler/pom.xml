@@ -58,7 +58,8 @@
 				<version>1.4.3</version>
 				<executions>
 					<execution>
-						<phase>generate-sources</phase>
+						<!-- so that IDE can spot compiled LSPExprLexer class -->
+						<phase>validate</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>

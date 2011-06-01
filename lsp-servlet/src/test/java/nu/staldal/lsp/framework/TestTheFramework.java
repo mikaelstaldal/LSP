@@ -1,18 +1,16 @@
 package nu.staldal.lsp.framework;
 
-import static org.junit.Assert.*;
+import nu.staldal.lsp.compiler.LSPCompilerHelper;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import javax.servlet.http.HttpServletResponse;
-
-import nu.staldal.lsp.compiler.LSPCompilerHelper;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class TestTheFramework
 {
@@ -71,7 +69,6 @@ public class TestTheFramework
         if (expectedResult != null)
         {
             String result = response.toString("UTF-8");
-            // System.out.println(result);
             assertEquals(expectedResult, result);
         }
     }

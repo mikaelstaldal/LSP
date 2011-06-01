@@ -1,21 +1,20 @@
 package nu.staldal.lsp.compiler;
 
 
+import nu.staldal.lsp.LSPHelper;
+import nu.staldal.lsp.LSPPage;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Map;
-
-import nu.staldal.lsp.LSPHelper;
-import nu.staldal.lsp.LSPPage;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -72,8 +71,7 @@ public class TestXhtmlDefault
         Map<String,Object> pageParams = Collections.emptyMap();
         lspHelper.executePage(thePage, pageParams, null, baos);
         String result = baos.toString("UTF-8");
-        System.out.println(result);
-        assertEquals(expectedResult, result);       
+        assertEquals(expectedResult, result);
     }
     
     @Test

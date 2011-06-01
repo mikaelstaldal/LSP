@@ -4,7 +4,7 @@ import nu.staldal.syntax.*;
 
 import java.io.*;
 
-public class TestLexer
+public class TstLexer
 {
 	public static void main(String[] args) throws IOException
 	{

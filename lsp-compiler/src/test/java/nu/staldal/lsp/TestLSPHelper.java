@@ -1,6 +1,11 @@
 package nu.staldal.lsp;
 
-import static org.junit.Assert.*;
+import nu.staldal.lsp.compiler.LSPCompilerHelper;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
@@ -8,15 +13,7 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Map;
 
-import nu.staldal.lsp.LSPHelper;
-import nu.staldal.lsp.LSPPage;
-import nu.staldal.lsp.compiler.LSPCompilerHelper;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TestLSPHelper
 {
@@ -65,7 +62,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                       + "<root>\n"
                       + "<p>Hello, world!</p>\n"
@@ -83,7 +79,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html>\n"
                 + "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><title>Test</title></head>\n"
                 + "<body>\n"                
@@ -103,7 +98,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("<div>\n"
                    + "<p>Hello,<br>world!</p>\n"
                    + "</div>",
@@ -120,7 +114,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();        
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
                 + "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><title>Test</title></head>\n"
                 + "<body>\n"                
@@ -140,7 +133,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("<div xmlns=\"http://www.w3.org/1999/xhtml\">\n"
                    + "<p>Hello,<br />world!</p>\n"
                    + "</div>",
@@ -157,7 +149,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                    + "<foo xmlns=\"http://foobar.com/foo\">\n"
                    + "<p>Hello,<br/>world!</p>\n"
@@ -175,7 +166,6 @@ public class TestLSPHelper
         assertNotNull(thePage);
         Map<String,Object> pageParams = Collections.emptyMap();
         String result = lspHelper.executePage(thePage, pageParams, null);
-        System.out.println(result);
         assertEquals("First line\n"
                    + "Second line\n"
                    + "Third line\n",

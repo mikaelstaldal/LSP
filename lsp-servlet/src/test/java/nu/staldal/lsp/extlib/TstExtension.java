@@ -45,7 +45,7 @@ import org.xml.sax.*;
 import nu.staldal.lsp.*;
 
 
-public class TestExtension implements LSPExtLib, ContentHandler
+public class TstExtension implements LSPExtLib, ContentHandler
 {
 	private ContentHandler sax;
 	private int funcCalls;
@@ -55,7 +55,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	public void init(String namespaceURI)
 		throws LSPException
 	{
-		System.out.println("TestExtension.init(" + namespaceURI + ")");	
+		System.out.println("TstExtension.init(" + namespaceURI + ")");
 	}
 
 
@@ -65,7 +65,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 		this.targetURL = targetURL;
 		funcCalls = 0;
 		
-		System.out.println("TestExtension.startPage(" 
+		System.out.println("TstExtension.startPage("
 			+ targetURL + ") for the " 
 			+ (++pageHits) + " time");	
 	}
@@ -74,7 +74,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	public void endPage()
 		throws LSPException
 	{
-		System.out.println("TestExtension.endPage(" 
+		System.out.println("TstExtension.endPage("
 			+ targetURL + ")");	
 	}
 
@@ -82,7 +82,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	public ContentHandler beforeElement(ContentHandler out)
 		throws SAXException
 	{
-		System.out.println("TestExtension.beforeElement()");	
+		System.out.println("TstExtension.beforeElement()");
 		this.sax = out;
 		
 		return this;
@@ -91,7 +91,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 	public String afterElement()
 		throws SAXException
 	{
-		System.out.println("TestExtension.afterElement()");	
+		System.out.println("TstExtension.afterElement()");
 		return null;
 	}
 		
@@ -166,7 +166,7 @@ public class TestExtension implements LSPExtLib, ContentHandler
 
 	public Object function(String name, Object[] args)
 	{
-		System.out.println("TestExtension.function(" + name + ")");	
+		System.out.println("TstExtension.function(" + name + ")");
 		return "[Function " + name + " invoked with " + args.length + " parameters for the " + (++funcCalls) + " time]";
 	}
 
