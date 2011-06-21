@@ -4,14 +4,17 @@ import nu.staldal.lsp.LSPPage;
 import nu.staldal.lsp.URLResolver;
 import nu.staldal.lsp.Utils;
 import nu.staldal.lsp.compiler.LSPCompiler;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -165,8 +168,12 @@ public class LspHotCompilerHelper
 	 */
 	public LspClass doCompile(final File inputFile, final LspPageNameGenerator pageNameGenerator) {
 
-		currentPagePath = new File(inputFile.getParent());
+		final File foundEnclosingPage = findEnclosingPage(inputFile);
+		if (foundEnclosingPage != null) {
+			setEncloseFile(foundEnclosingPage);
+		}
 
+		currentPagePath = new File(inputFile.getParent());
 		final String pageName = pageNameGenerator.generatePageName(inputFile);
 
 		try {
@@ -196,6 +203,34 @@ public class LspHotCompilerHelper
 			throw new RuntimeException(message, spe);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private File findEnclosingPage(final File inputFile) {
+		try {
+			final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+
+			final String[] enclosePageName = new String[1];
+
+			try {
+				parser.parse(inputFile, new DefaultHandler() {
+					@Override
+					public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+						if ("lsp:root".equals(qName)) {
+							enclosePageName[0] = attributes.getValue("extend");
+						} else {
+							enclosePageName[0] = attributes.getValue("lsp:extend");
+						}
+						throw new SAXException(); // break parsing
+					}
+				});
+			} catch (SAXException ignored) {
+			}
+
+			final File enclosePageFile = new File(inputFile.getParentFile(), enclosePageName[0]);
+			return enclosePageFile;
+		} catch (Exception e) {
+			return null;
 		}
 	}
 
