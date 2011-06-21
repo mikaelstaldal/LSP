@@ -51,7 +51,8 @@ public class LspViewResolver implements ViewResolver {
 	}
 
 	File getViewsDir() throws MalformedURLException {
-		return new File(applicationContext.getServletContext().getResource("/").getFile(), viewsPath);
+		final String realPath = applicationContext.getServletContext().getRealPath("");
+		return new File(realPath, viewsPath);
 	}
 
 	private File createParentViewFileOrNull() throws MalformedURLException {
