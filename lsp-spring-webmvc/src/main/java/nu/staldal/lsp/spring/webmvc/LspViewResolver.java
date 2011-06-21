@@ -44,7 +44,7 @@ public class LspViewResolver implements ViewResolver {
 		final File parentViewFile = createParentViewFileOrNull();
 
 		if (viewFile.exists() && (parentViewFile == null || parentViewFile.exists())) {
-			return new LspView(lspPagesClassLoader, lspPageNameGenerator, viewFile, parentViewFile);
+			return new LspView(applicationContext.getServletContext(), lspPagesClassLoader, lspPageNameGenerator, viewFile, parentViewFile);
 		} else {
 			return null;
 		}

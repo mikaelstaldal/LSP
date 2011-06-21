@@ -72,10 +72,10 @@ public class LspViewTest extends AbstractWebApplicationTest {
 		final LspPageNameGenerator lspPageNameGenerator = createLspPageNameGenerator();
 
 		// when
-		final LspView firstView = new LspView(lspPagesClassLoader, lspPageNameGenerator, pageFile, parentFile);
+		final LspView firstView = new LspView(servletContext, lspPagesClassLoader, lspPageNameGenerator, pageFile, parentFile);
 		final LspClass firstClass = firstView.compileOrReuseLspPageClass();
 
-		final LspView secondView = new LspView(lspPagesClassLoader, lspPageNameGenerator, pageFile, parentFile);
+		final LspView secondView = new LspView(servletContext, lspPagesClassLoader, lspPageNameGenerator, pageFile, parentFile);
 		final LspClass secondClass = secondView.compileOrReuseLspPageClass();
 		// then
 		assertThat(firstClass.getClassBytes(), equalTo(secondClass.getClassBytes()));

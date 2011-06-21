@@ -12,15 +12,16 @@ import java.util.Map;
 
 public class LspView implements View {
 
-	final File pageFile;
-	final File parentFile;
+    private final ServletContext servletContext;
 	private final LspPagesClassLoader lspPagesClassLoader;
 	private final LspPageNameGenerator lspPageNameGenerator;
+    final File pageFile;
+	final File parentFile;
 
-	public LspView(final LspPagesClassLoader lspPagesClassLoader, final LspPageNameGenerator lspPageNameGenerator,
-			final File pageFile, final File parentViewFile) {
-
-		this.pageFile = pageFile;
+	public LspView(final ServletContext servletContext, final LspPagesClassLoader lspPagesClassLoader,
+                   final LspPageNameGenerator lspPageNameGenerator, final File pageFile, final File parentViewFile) {
+        this.servletContext = servletContext;
+        this.pageFile = pageFile;
 		this.parentFile = parentViewFile;
 		this.lspPagesClassLoader = lspPagesClassLoader;
 		this.lspPageNameGenerator = lspPageNameGenerator;
@@ -38,7 +39,6 @@ public class LspView implements View {
 		final LspClass lspClass = compileOrReuseLspPageClass();
 //		FileUtils.writeByteArrayToFile(new File("/tmp/lastClass.class"), lspClass.getClassBytes());
 
-		final ServletContext servletContext = request.getSession().getServletContext();
 		final LSPManager lspManager = LSPManager.getInstance(servletContext, lspPagesClassLoader);
 		final LSPPage page = lspManager.getPage(lspClass.getPageName());
 
