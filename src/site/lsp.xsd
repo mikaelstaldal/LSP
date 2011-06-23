@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+		targetNamespace="http://staldal.nu/LSP/core" xmlns:lsp="http://staldal.nu/LSP/core">
+
+	<xs:element name="value-of">
+		<xs:complexType>
+			<xs:attribute name="select" use="required" type="xs:string"/>
+			<xs:attribute name="disable-output-escaping" use="optional" type="xs:boolean"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="if">
+		<xs:complexType>
+			<xs:attribute name="test" use="required" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="choose">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="lsp:when" minOccurs="1" maxOccurs="unbounded"/>
+				<xs:element ref="lsp:otherwise" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="when">
+		<xs:complexType>
+			<xs:attribute name="test" use="required" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="otherwise">
+		<xs:complexType/>
+	</xs:element>
+
+	<xs:element name="for-each">
+		<xs:complexType>
+			<xs:attribute name="select" use="required" type="xs:string"/>
+			<xs:attribute name="var" use="required" type="xs:string"/>
+			<xs:attribute name="status" use="optional" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="let" />
+
+	<xs:element name="import">
+		<xs:complexType>
+			<xs:attribute name="file" use="required" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="root">
+		<xs:complexType>
+			<xs:attribute name="extend" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="processing-instruction">
+		<xs:complexType>
+			<xs:attribute name="name" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="element">
+		<xs:complexType>
+			<xs:attribute name="name" use="required" type="xs:NCName"/>
+			<xs:attribute name="namespace" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="attribute">
+		<xs:complexType>
+			<xs:attribute name="name" use="required" type="xs:NCName"/>
+			<xs:attribute name="namespace" use="required" type="xs:NCName"/>
+			<xs:attribute name="value" use="required" type="xs:NCName"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="output">
+		<xs:complexType>
+			<xs:attribute name="doctype-public" use="optional" type="xs:NCName"/>
+			<xs:attribute name="doctype-system" use="optional" type="xs:NCName"/>
+			<xs:attribute name="encoding" use="optional" default="UTF-8" type="xs:string"/>
+			<xs:attribute name="indent" use="optional" type="lsp:yesNo"/>
+			<xs:attribute name="media-type" use="optional" type="xs:NCName"/>
+			<xs:attribute name="method" use="required" type="lsp:outputMethod"/>
+			<xs:attribute name="omit-xml-declaration" use="optional" type="lsp:yesNo"/>
+			<xs:attribute name="standalone" use="optional" type="lsp:yesNo"/>
+			<xs:attribute name="stylesheet" use="optional" type="xs:NCName"/>
+			<xs:attribute name="version" use="optional" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:simpleType name="outputMethod">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="xml"/>
+			<xs:enumeration value="html"/>
+			<xs:enumeration value="xhtml"/>
+			<xs:enumeration value="text"/>
+			<xs:enumeration value="html-fragment"/>
+			<xs:enumeration value="xhtml-fragment"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="yesNo">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="yes"/>
+			<xs:enumeration value="no"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="include">
+		<xs:complexType>
+			<xs:attribute name="part" use="required" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="part">
+		<xs:complexType>
+			<xs:attribute name="name" use="required" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
