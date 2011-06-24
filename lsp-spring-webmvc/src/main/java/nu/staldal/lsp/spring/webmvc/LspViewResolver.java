@@ -14,8 +14,10 @@ public class LspViewResolver implements ViewResolver {
 	@Autowired
 	private WebApplicationContext applicationContext;
 
+	@Autowired(required = false)
+	private LspPageNameGenerator lspPageNameGenerator = new DefaultLspPageNameGenerator();
+
 	private final LspPagesClassLoader lspPagesClassLoader;
-	private final LspPageNameGenerator lspPageNameGenerator;
 
 	private String viewsPath;
 	private String parentView;
@@ -23,7 +25,10 @@ public class LspViewResolver implements ViewResolver {
 
 	public LspViewResolver() {
 		lspPagesClassLoader = new LspPagesClassLoader(Thread.currentThread().getContextClassLoader());
-		lspPageNameGenerator = new LspPageNameGenerator();
+	}
+
+	public void setLspPageNameGenerator(final LspPageNameGenerator lspPageNameGenerator) {
+		this.lspPageNameGenerator = lspPageNameGenerator;
 	}
 
 	public void setViewsPath(final String viewsPath) {
@@ -50,12 +55,12 @@ public class LspViewResolver implements ViewResolver {
 		}
 	}
 
-	File getViewsDir() throws MalformedURLException {
+	public File getViewsDir() throws MalformedURLException {
 		final String realPath = applicationContext.getServletContext().getRealPath("");
 		return new File(realPath, viewsPath);
 	}
 
-	private File createParentViewFileOrNull() throws MalformedURLException {
+	public File createParentViewFileOrNull() throws MalformedURLException {
 		if (parentView != null) {
 			return new File(getViewsDir(), parentView + suffix);
 		} else {
