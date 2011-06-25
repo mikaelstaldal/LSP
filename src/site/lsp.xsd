@@ -10,7 +10,10 @@
 	</xs:element>
 
 	<xs:element name="if">
-		<xs:complexType>
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:any minOccurs="0"/>
+			</xs:sequence>
 			<xs:attribute name="test" use="required" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
@@ -25,11 +28,18 @@
 	</xs:element>
 	<xs:element name="when">
 		<xs:complexType>
+			<xs:sequence>
+				<xs:any minOccurs="0"/>
+			</xs:sequence>
 			<xs:attribute name="test" use="required" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="otherwise">
-		<xs:complexType/>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
 	</xs:element>
 
 	<xs:element name="for-each">
@@ -49,8 +59,11 @@
 	</xs:element>
 
 	<xs:element name="root">
-		<xs:complexType>
-			<xs:attribute name="extend" use="required" type="xs:NCName"/>
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:any minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="extend" use="optional" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
 
@@ -63,29 +76,29 @@
 	<xs:element name="element">
 		<xs:complexType>
 			<xs:attribute name="name" use="required" type="xs:NCName"/>
-			<xs:attribute name="namespace" use="required" type="xs:NCName"/>
+			<xs:attribute name="namespace" use="optional" type="xs:NCName"/>
 		</xs:complexType>
 	</xs:element>
 
 	<xs:element name="attribute">
 		<xs:complexType>
 			<xs:attribute name="name" use="required" type="xs:NCName"/>
-			<xs:attribute name="namespace" use="required" type="xs:NCName"/>
-			<xs:attribute name="value" use="required" type="xs:NCName"/>
+			<xs:attribute name="namespace" use="optional" type="xs:NCName"/>
+			<xs:attribute name="value" use="required" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
 
 	<xs:element name="output">
 		<xs:complexType>
-			<xs:attribute name="doctype-public" use="optional" type="xs:NCName"/>
-			<xs:attribute name="doctype-system" use="optional" type="xs:NCName"/>
+			<xs:attribute name="doctype-public" use="optional" type="xs:string"/>
+			<xs:attribute name="doctype-system" use="optional" type="xs:string"/>
 			<xs:attribute name="encoding" use="optional" default="UTF-8" type="xs:string"/>
 			<xs:attribute name="indent" use="optional" type="lsp:yesNo"/>
-			<xs:attribute name="media-type" use="optional" type="xs:NCName"/>
-			<xs:attribute name="method" use="required" type="lsp:outputMethod"/>
+			<xs:attribute name="media-type" use="optional" type="xs:string"/>
+			<xs:attribute name="method" use="optional" type="lsp:outputMethod"/>
 			<xs:attribute name="omit-xml-declaration" use="optional" type="lsp:yesNo"/>
 			<xs:attribute name="standalone" use="optional" type="lsp:yesNo"/>
-			<xs:attribute name="stylesheet" use="optional" type="xs:NCName"/>
+			<xs:attribute name="stylesheet" use="optional" type="xs:string"/>
 			<xs:attribute name="version" use="optional" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
@@ -115,7 +128,11 @@
 	</xs:element>
 
 	<xs:element name="part">
-		<xs:complexType>
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:any minOccurs="0"/>
+				<xs:any namespace="lsp" minOccurs="0" />
+			</xs:sequence>
 			<xs:attribute name="name" use="required" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
