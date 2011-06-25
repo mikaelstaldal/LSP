@@ -3,6 +3,7 @@ package nu.staldal.lsp.compiler;
 import nu.staldal.lsp.LSPException;
 import nu.staldal.lsp.LSPHelper;
 import nu.staldal.lsp.LSPPage;
+import nu.staldal.lsp.LspTestsUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class TestLSPCompilation
 	{
 		lspCompilerHelper = new LSPCompilerHelper();
 		lspCompilerHelper.setTargetDir(classDir);
-		lspCompilerHelper.setStartDir(new File(new File(new File(new File("src"), "test"), "resources"), "lspPages"));
+		lspCompilerHelper.setStartDir(LspTestsUtils.getLspPagesDir());
 		lspHelper = new LSPHelper(new URLClassLoader(new URL[] { classDir.toURL() }));
 	}
 
@@ -281,7 +282,19 @@ public class TestLSPCompilation
              params);
     }
 
-    @Test
+	@Test
+	public void testExpressionInAttribute() throws Exception {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("id", "test");
+		doTest("TestAttributeExpression",
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+						+ "<root>\n"
+						+ "	<div id=\"test\"/>\n"
+						+ "</root>",
+				params);
+	}
+
+	@Test
     public void testIf() throws Exception
     {
         Map<String,Object> params = new HashMap<String,Object>();
