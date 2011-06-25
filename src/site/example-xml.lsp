@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html xmlns:lsp="http://staldal.nu/LSP/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://staldal.nu/LSP/core lsp.xsd">
+		xsi:schemaLocation="http://staldal.nu/LSP/core http://staldal.nu/LSP/core/lsp.xsd">
 
 	<lsp:value-of select="required" disable-output-escaping="true"/>
 
