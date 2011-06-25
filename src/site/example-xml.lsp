@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<html xmlns:lsp="http://staldal.nu/LSP/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://staldal.nu/LSP/core"
+<html xmlns:lsp="http://staldal.nu/LSP/core"
       xmlns="http://www.w3.org/1999/xhtml">
 <head><title>XML schema example</title></head>
 <body>
